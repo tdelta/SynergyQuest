@@ -12,6 +12,8 @@ git lfs install
 ## Folder Structure
 
 * Unity Game: `./Mobile-ControlledCooperativeMultiplayerGame`
+* Mockups: `./Documentation/Mockups`
+* Component Diagram: `./Documentation/ComponentDiagram`
 
 ## How to keep Graphics Pixel Perfect
 
