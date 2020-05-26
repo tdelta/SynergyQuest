@@ -1,4 +1,4 @@
-This is a TypeScript library to set inputs from a remote controller to the
+This is a TypeScript library to send inputs from a remote controller to the
 Unity game.
 
 See the `ControllerInput` class in `./src/ControllerInputSender.ts` for
