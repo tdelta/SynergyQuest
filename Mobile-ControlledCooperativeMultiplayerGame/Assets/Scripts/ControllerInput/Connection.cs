@@ -4,45 +4,48 @@ using UnityEngine;
 using WebSocketSharp;
 using WebSocketSharp.Server;
 
+/**
+ * Handles a single connection to a controller.
+ *
+ * It receives incoming messages, parses them from JSON strings into objects
+ * and since it runs on a separate threat, it puts them into a message queue.
+ */
 public class Connection : WebSocketBehavior
 {
-    private ConcurrentQueue<Message> msgs;
+    // The message queue which is used to pass received messages to the
+    // Unity main thread.
+    // This field will be set by the `SetMessageQueue` method, which is
+    // called when a connection is instantiated.
+    private ConcurrentQueue<Message> _msgs;
     
-    // to avoid allocation
-    private Message messageBuffer = new Message();
-    private ButtonMessage buttonMessageBuffer = new ButtonMessage();
-    private JoystickMessage joystickMessage = new JoystickMessage();
+    // to avoid too much allocation for every received data, we create a buffer
+    // into which the data will be parsed.
+    private Message _messageBuffer = new Message();
 
+    /**
+     * This method is called on initialization to set the reference to
+     * a queue which allows us to send parsed messages to the main thread.
+     */
     public void SetMessageQueue(ConcurrentQueue<Message> msgs)
     {
-        this.msgs = msgs;
+        this._msgs = msgs;
     }
     
+    /**
+     * Called every time a message is received.
+     * It parses the message from JSON and puts the resulting object in
+     * the queue buffer for the main thread.
+     */
     protected override void OnMessage(MessageEventArgs e)
     {
-        Message msg = parseMessage(e.Data);
+        Message msg = Message.FromJson(
+            e.Data,
+            _messageBuffer
+        );
+        
         if (msg != null)
         {
-            msgs.Enqueue(msg);
+            _msgs.Enqueue(msg);
         }
-    }
-
-    Message parseMessage(String str)
-    {
-        Debug.Log(str);
-        
-        JsonUtility.FromJsonOverwrite(str, messageBuffer);
-        switch (messageBuffer.type)
-        {
-            case MessageType.Button:
-                JsonUtility.FromJsonOverwrite(str, buttonMessageBuffer);
-                return buttonMessageBuffer;
-
-            case MessageType.Joystick:
-                JsonUtility.FromJsonOverwrite(str, joystickMessage);
-                return joystickMessage;
-        }
-
-        return null;
     }
 }

@@ -1,0 +1,22 @@
+{
+  "name": "controller-input-lib",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest"
+  },
+  "author": "",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "@types/jest": "^25.2.3",
+    "jest": "^26.0.1",
+    "ts-jest": "^26.0.0",
+    "typescript": "^3.9.3"
+  },
+  "dependencies": {
+    "isomorphic-ws": "^4.0.1",
+    "ws": "^7.3.0"
+  }
+}
