@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using Boo.Lang.Runtime;
 using UnityEngine;
 
 using WebSocketSharp.Server;
@@ -216,7 +215,7 @@ public class ControllerInput : MonoBehaviour
 
         else
         {
-            throw new RuntimeException("Can not set color if no controller is connected.");
+            throw new ApplicationException("Can not set color if no controller is connected.");
         }
 
         // NOTE: There is also a method SendToAsync, however, if I understand the source code of websocket-sharp
