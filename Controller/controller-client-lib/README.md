@@ -1,9 +1,9 @@
-# controller-input-lib
+# controller-client-lib
 
 This is a TypeScript library to send inputs from a remote controller to the
-Unity game.
+Unity game and also receive some data from the game.
 
-See the `ControllerInput` class in `./src/ControllerInputSender.ts` for
+See the `ControllerClient` class in `./src/ControllerClient.ts` for
 documentation.
 
 The server part of the Game is implemented by the `ControllerInput` prefab /
@@ -14,7 +14,7 @@ with the `ControllerDebugUI` component and running `npm test`.
 See also the `./__tests__/send.ts` file.
 
 Furthermore, a react testing app which uses this app can be found at
-`../input-lib-test-app`.
+`../controller-lib-test-app`.
 
 # Usage
 
@@ -27,10 +27,10 @@ npm run build
 To add the library to a node app:
 
 ```bash
-npm install --save path/to/controller-input-lib
+npm install --save path/to/controller-client-lib
 ```
 
-For a full usage example see `../input-lib-test-app`;
+For a full usage example see `../controller-lib-test-app`;
 
 # Technical stuff
 

@@ -1,5 +1,5 @@
 {
-  "name": "input-lib-test-app",
+  "name": "controller-lib-test-app",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -10,7 +10,7 @@
     "@types/node": "^12.12.42",
     "@types/react": "^16.9.35",
     "@types/react-dom": "^16.9.8",
-    "controller-input-lib": "file:../controller-input-lib",
+    "controller-client-lib": "file:../controller-client-lib",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-scripts": "3.4.1",

@@ -7,8 +7,9 @@ using UnityEngine;
  */
 public enum MessageType
 {
-    Button = 0,
-    Joystick = 1
+    Button = 0,     // sent by controller
+    Joystick = 1,   // sent by controller
+    PlayerColor = 2 // sent by game
 }
 
 /**
@@ -48,9 +49,21 @@ public class Message
 
             case MessageType.Joystick:
                 return JsonUtility.FromJson<JoystickMessage>(str);
+            
+            case MessageType.PlayerColor:
+                return JsonUtility.FromJson<PlayerColorMessage>(str);
         }
 
         return null;
+    }
+
+    /**
+     * Serialize this message into JSON. Since the JsonUtility class we use for this seems to handle the polymorphism
+     * of this Message type on its own, we need no overrides.
+     */
+    public string ToJson()
+    {
+        return JsonUtility.ToJson(this);
     }
 }
 
@@ -66,4 +79,16 @@ public class JoystickMessage : Message
 {
     public float horizontal;
     public float vertical;
+}
+
+[Serializable]
+public class PlayerColorMessage : Message
+{
+    // Hexadecimal color value with leading '#'
+    public string color;
+
+    public PlayerColorMessage(string color)
+    {
+        this.color = color;
+    }
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, ControllerInputSender } from 'controller-input-lib';
+import { Button, ControllerClient } from 'controller-client-lib';
 
 /**
  * The following interfaces form an ADT to track the state of the connection
@@ -10,18 +10,24 @@ interface NotConnected {
 const NotConnectedC: NotConnected = {kind: "NotConnected"};
 
 interface Connecting {
-  kind: "Connecting"
+  kind: "Connecting",
+  client: ControllerClient
 };
-const ConnectingC: Connecting = {kind: "Connecting"};
+function ConnectingC(c: ControllerClient): Connecting {
+  return {
+    kind: "Connecting",
+    client: c
+  };
+};
 
 interface Connected {
   kind: "Connected",
-  sender: ControllerInputSender
+  client: ControllerClient
 };
-function ConnectedC(s: ControllerInputSender): Connected {
+function ConnectedC(c: ControllerClient): Connected {
   return {
     kind: "Connected",
-    sender: s
+    client: c
   };
 };
 
@@ -29,6 +35,12 @@ type ConnectionStatus = NotConnected | Connecting | Connected;
 
 export interface AppState {
   connectionStatus: ConnectionStatus;
+
+  color?: string;
+  attackChecked: boolean;
+  pullChecked: boolean;
+  horizontalSliderVal: number;
+  verticalSliderVal: number;
 }
 
 /**
@@ -39,6 +51,15 @@ class App extends React.Component<{}, AppState> {
   private vertRef = React.createRef<HTMLInputElement>();
   private horRef = React.createRef<HTMLInputElement>();
 
+  private static readonly initialState: AppState = {
+      connectionStatus: NotConnectedC,
+      color: undefined,
+      attackChecked: false,
+      pullChecked: false,
+      horizontalSliderVal: 0,
+      verticalSliderVal: 0
+  };
+
   constructor(props: {}) {
     super(props);
 
@@ -46,9 +67,7 @@ class App extends React.Component<{}, AppState> {
     this.handleInputChange = this.handleInputChange.bind(this);
 
     // Initialize as not connected
-    this.state = {
-      connectionStatus: NotConnectedC
-    };
+    this.state = App.initialState;
   }
 
   /**
@@ -64,22 +83,37 @@ class App extends React.Component<{}, AppState> {
     // Get a map from input names to their values in the form
     let data = new FormData(e.target as HTMLFormElement)
 
-    // Update the state to "Connecting"
-    this.setState({
-      connectionStatus: ConnectingC
+    let onConnect = () => {
+      this.setState({
+        ...this.state,
+        connectionStatus: ConnectedC(client)
+      });
+    };
+
+    let onDisconnect = () => {
+      this.setState(App.initialState)
+    };
+
+    let onError = onDisconnect;
+
+    let onSetPlayerColor = (color: string) => this.setState({
+      ...this.state,
+      color: color, // <- set new color
     });
 
-    // Try to establish a connection
-    ControllerInputSender.connect(
+    let client = new ControllerClient(
       data.get('address') as string,
+      onConnect,
+      onDisconnect,
+      onError,
+      onSetPlayerColor,
       +data.get('port')!
-    )
-    .then( // As soon as a connection has been established, update the state
-           // with the initialized sender object.
-        sender => this.setState({
-          connectionStatus: ConnectedC(sender)
-        })
     );
+
+    // Update the state to "Connecting"
+    this.setState({
+      connectionStatus: ConnectingC(client)
+    });
   }
 
   /**
@@ -87,23 +121,35 @@ class App extends React.Component<{}, AppState> {
    */
   handleInputChange(e:  React.ChangeEvent) {
     if (this.state.connectionStatus.kind === "Connected") {
-      let sender = this.state.connectionStatus.sender;
+      let sender = this.state.connectionStatus.client;
       let node = e.target as any;
       let name = node.name;
 
       switch(name) {
         case "attack":
+          this.setState({...this.state, attackChecked: !this.state.attackChecked});
+
           sender.setButton(Button.Attack, node.checked);
           break;
         case "pull":
+          this.setState({...this.state, pullChecked: !this.state.pullChecked});
+
           sender.setButton(Button.Pull, node.checked);
           break;
         case "vertical":
         case "horizontal":
-          let vertVal = this.vertRef.current?.value as any;
-          let horVal = this.horRef.current?.value as any;
+          let vertVal = this.vertRef.current?.value as number | undefined;
+          let horVal = this.horRef.current?.value as number | undefined;
 
-          sender.setJoystickPosition(vertVal, horVal);
+          if (vertVal != null && horVal != null) {
+            this.setState({
+              ...this.state,
+              horizontalSliderVal: horVal,
+              verticalSliderVal: vertVal,
+            });
+
+            sender.setJoystickPosition(vertVal, horVal);
+          }
       }
     }
   }
@@ -130,12 +176,14 @@ class App extends React.Component<{}, AppState> {
         body = <span>Connecting...</span>
         break;
       case "Connected":
-        body = <span>Y</span>;
+        let color = this.state.color == null ? 'undefined' : this.state.color;
+
         body = <p>
-          Attack:             <input name="attack" type="checkbox" onChange={this.handleInputChange}/><br/>
-          Pull:               <input name="pull" type="checkbox" onChange={this.handleInputChange}/><br/>
-          Joystick Vertical:  <input name="vertical" ref={this.vertRef} type="range" min="-1" max="1" defaultValue="0" step="0.05" onChange={this.handleInputChange}/><br/>
-          Joystick Horizontal:  <input name="horizontal" ref={this.horRef} type="range" min="-1" max="1" defaultValue="0" step="0.05" onChange={this.handleInputChange}/>
+          Assigned Color:       <div style={{fontWeight: "bold", display: "inline", color: color}}>{color}</div><br/>
+          Attack:               <input name="attack" type="checkbox" checked={this.state.attackChecked} onChange={this.handleInputChange}/><br/>
+          Pull:                 <input name="pull" type="checkbox" checked={this.state.pullChecked} onChange={this.handleInputChange}/><br/>
+          Joystick Vertical:    <input name="vertical" type="range" min="-1" max="1" value={this.state.verticalSliderVal} step="0.05" ref={this.vertRef} onChange={this.handleInputChange}/><br/>
+          Joystick Horizontal:  <input name="horizontal" type="range" min="-1" max="1" value={this.state.horizontalSliderVal} step="0.05" ref={this.horRef} onChange={this.handleInputChange}/>
         </p>;
         break;
     }

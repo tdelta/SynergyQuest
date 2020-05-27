@@ -1,4 +1,4 @@
-This app serves as an example on how to use `../controller-input-lib` in a
+This app serves as an example on how to use `../controller-client-lib` in a
 react app.
 See `src/App.tsx`.
 

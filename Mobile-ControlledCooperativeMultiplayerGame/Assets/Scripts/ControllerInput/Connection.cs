@@ -9,6 +9,8 @@ using WebSocketSharp.Server;
  *
  * It receives incoming messages, parses them from JSON strings into objects
  * and since it runs on a separate threat, it puts them into a message queue.
+ *
+ * For sending, see the methods of the `ControllerInput` class.
  */
 public class Connection : WebSocketBehavior
 {
@@ -16,7 +18,7 @@ public class Connection : WebSocketBehavior
     // Unity main thread.
     // This field will be set by the `SetMessageQueue` method, which is
     // called when a connection is instantiated.
-    private ConcurrentQueue<Message> _msgs;
+    private ConcurrentQueue<Message> _msgsToMainThread;
     
     // to avoid too much allocation for every received data, we create a buffer
     // into which the data will be parsed.
@@ -28,7 +30,7 @@ public class Connection : WebSocketBehavior
      */
     public void SetMessageQueue(ConcurrentQueue<Message> msgs)
     {
-        this._msgs = msgs;
+        this._msgsToMainThread = msgs;
     }
     
     /**
@@ -45,7 +47,7 @@ public class Connection : WebSocketBehavior
         
         if (msg != null)
         {
-            _msgs.Enqueue(msg);
+            _msgsToMainThread.Enqueue(msg);
         }
     }
 }
