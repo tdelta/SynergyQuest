@@ -71,7 +71,7 @@ public class ControllerInput : MonoBehaviour
     {
         Log($"Starting HTTP server on port {_port}...");
         
-        _wss = new WebSocketServer($"ws://127.0.0.1:{_port}");
+        _wss = new WebSocketServer($"ws://0.0.0.0:{_port}");
         
         // The connection class will handle the connection on a different
         // thread.
