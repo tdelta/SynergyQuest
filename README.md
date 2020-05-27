@@ -14,7 +14,9 @@ git lfs install
 * Unity Game: `./Mobile-ControlledCooperativeMultiplayerGame`
 * Mockups: `./Documentation/Mockups`
 * Component Diagram: `./Documentation/ComponentDiagram`
-* Controller TypeScript Client library: `./Controller/ControllerInputLib`
+* Controller
+  * TypeScript Client library: `./Controller/controller-input-lib`
+  * React App which shows how to use the library: `./Controller/input-lib-test-app`
 
 ## How to keep Graphics Pixel Perfect
 
