@@ -145,10 +145,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 947a0de2eeec8c7adac378ca1cf9f9b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  directionSpeed: 2.5
-  directionChangeTime: 0.5
-  flightSpeed: 0.1
-  flightChangeTime: 0.125
+  directionSpeed: 1.5
+  directionChangeTime: 1
+  flightSpeed: 2
+  flightChangeTime: 0.15
+  timeInvincible: 1
+  healthPoints: 5
 --- !u!95 &4188588700924867490
 Animator:
   serializedVersion: 3

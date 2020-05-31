@@ -2,15 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BatController : MonoBehaviour {
+public class BatController : EnemyController {
     public float directionSpeed = 1;
     public float directionChangeTime = 1;
     public float flightSpeed = 1;
     public float flightChangeTime = 1;
-    
 
-    private Rigidbody2D rigidbody2D;
-    private Animator animator;
     private float directionTimer;
     private Vector2 direction;
     private float changeNoiseTime;
@@ -19,15 +16,15 @@ public class BatController : MonoBehaviour {
         new Vector2(1, 1), new Vector2(1, -1)};
     private int currentMotion = 0;
     
-    void Start() {
-        rigidbody2D = GetComponent<Rigidbody2D>();
-        animator = GetComponent<Animator>();
-        direction = Random.insideUnitCircle.normalized;
+    protected override void Start() {
+        base.Start();
         directionTimer = directionChangeTime;
+        direction = Random.insideUnitCircle.normalized;
         flightTimer = flightChangeTime;
     }
 
-    void Update() {
+    protected override void Update() {
+        base.Update();
         directionTimer -= Time.deltaTime;
         flightTimer -= Time.deltaTime;
 
@@ -45,18 +42,21 @@ public class BatController : MonoBehaviour {
     Vector2 getNewOffset() {
         var flightMotion = flightMotions[currentMotion];
         var offset = Time.deltaTime * directionSpeed * direction;
-        offset += flightSpeed * flightMotion;
+        offset += flightSpeed * Time.deltaTime * flightMotion;
         animator.SetFloat("Move Y", flightMotion.y);
         return offset;
     }
 
-    void FixedUpdate() {
-        Vector2 position = rigidbody2D.position;
-        position += getNewOffset();
-        rigidbody2D.MovePosition(position);
+    protected override void FixedUpdate() {
+        if (!isDead) {
+            Vector2 position = rigidbody2D.position;
+            position += getNewOffset();
+            rigidbody2D.MovePosition(position);
+        }
     }
 
-        void OnCollisionEnter2D(Collision2D other) {
+    protected override void OnCollisionEnter2D(Collision2D other) {
+        base.OnCollisionEnter2D(other);
         direction = -direction;
     }
 }
