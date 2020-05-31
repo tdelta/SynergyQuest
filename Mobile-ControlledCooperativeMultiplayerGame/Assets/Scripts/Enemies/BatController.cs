@@ -10,7 +10,6 @@ public class BatController : EnemyController {
 
     private float directionTimer;
     private Vector2 direction;
-    private float changeNoiseTime;
     private float flightTimer;
     private Vector2[] flightMotions = new []{new Vector2(-1, 1), new Vector2(-1, -1),
         new Vector2(1, 1), new Vector2(1, -1)};
@@ -39,7 +38,7 @@ public class BatController : EnemyController {
         }
     }
 
-    Vector2 getNewOffset() {
+    Vector2 computeNewOffset() {
         var flightMotion = flightMotions[currentMotion];
         var offset = Time.deltaTime * directionSpeed * direction;
         offset += flightSpeed * Time.deltaTime * flightMotion;
@@ -50,7 +49,7 @@ public class BatController : EnemyController {
     protected override void FixedUpdate() {
         if (!isDead) {
             Vector2 position = rigidbody2D.position;
-            position += getNewOffset();
+            position += computeNewOffset();
             rigidbody2D.MovePosition(position);
         }
     }
