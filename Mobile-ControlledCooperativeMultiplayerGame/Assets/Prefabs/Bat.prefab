@@ -29,7 +29,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5481500327407250211}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.0499955, y: -1.4720218, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -85,7 +85,7 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
-  m_SpriteSortPoint: 0
+  m_SpriteSortPoint: 1
 --- !u!50 &5481500327407250214
 Rigidbody2D:
   serializedVersion: 4
@@ -120,7 +120,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: -0.1}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -145,12 +145,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 947a0de2eeec8c7adac378ca1cf9f9b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  timeInvincible: 1
+  healthPoints: 5
   directionSpeed: 1.5
   directionChangeTime: 1
   flightSpeed: 2
   flightChangeTime: 0.15
-  timeInvincible: 1
-  healthPoints: 5
 --- !u!95 &4188588700924867490
 Animator:
   serializedVersion: 3
