@@ -6,7 +6,7 @@ AnimationClip:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: BatDeath
+  m_Name: KnightHitRight
   serializedVersion: 6
   m_Legacy: 0
   m_Compressed: 0
@@ -20,13 +20,13 @@ AnimationClip:
   m_PPtrCurves:
   - curve:
     - time: 0
-      value: {fileID: 7801246764459682756, guid: 58d1591cedbc49063af4d6c888922af3,
+      value: {fileID: 4445329437732904335, guid: f0c336b53c626296c9b1a38f9772e710,
         type: 3}
     - time: 0.33333334
-      value: {fileID: 6117000835302039273, guid: 58d1591cedbc49063af4d6c888922af3,
+      value: {fileID: -4161681692043255833, guid: f0c336b53c626296c9b1a38f9772e710,
         type: 3}
     - time: 0.6666667
-      value: {fileID: 9141984380771908558, guid: 58d1591cedbc49063af4d6c888922af3,
+      value: {fileID: -6437285016975815235, guid: f0c336b53c626296c9b1a38f9772e710,
         type: 3}
     attribute: m_Sprite
     path: 
@@ -47,9 +47,9 @@ AnimationClip:
       customType: 23
       isPPtrCurve: 1
     pptrCurveMapping:
-    - {fileID: 7801246764459682756, guid: 58d1591cedbc49063af4d6c888922af3, type: 3}
-    - {fileID: 6117000835302039273, guid: 58d1591cedbc49063af4d6c888922af3, type: 3}
-    - {fileID: 9141984380771908558, guid: 58d1591cedbc49063af4d6c888922af3, type: 3}
+    - {fileID: 4445329437732904335, guid: f0c336b53c626296c9b1a38f9772e710, type: 3}
+    - {fileID: -4161681692043255833, guid: f0c336b53c626296c9b1a38f9772e710, type: 3}
+    - {fileID: -6437285016975815235, guid: f0c336b53c626296c9b1a38f9772e710, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}
