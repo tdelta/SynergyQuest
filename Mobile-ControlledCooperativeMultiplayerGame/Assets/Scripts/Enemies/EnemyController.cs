@@ -5,20 +5,34 @@ using UnityEngine;
 abstract public class EnemyController : MonoBehaviour {
     public float timeInvincible = 1;
     public int   healthPoints = 1;
+    public float directionSpeed = 1;
+    public float directionChangeTime = 1;
+    public int damageFactor = 1;
 
     protected new Rigidbody2D rigidbody2D;
     protected Animator animator;
-    protected bool isDead;
-
+    protected float directionTimer;
+    protected Vector2 direction;
+    
+    bool isDead;
     bool isInvincible;
     float invincibleTimer;
 
     protected virtual void Start() {
         rigidbody2D = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+        directionTimer = directionChangeTime;
+        direction = Random.insideUnitCircle.normalized;
     }
 
     protected virtual void Update() {
+        directionTimer -= Time.deltaTime;
+
+        if (directionTimer < 0) {
+            direction = Random.insideUnitCircle.normalized;
+            directionTimer = directionChangeTime;
+        }
+
         if (isInvincible) {
             invincibleTimer -= Time.deltaTime;
             if (invincibleTimer < 0) {
@@ -29,13 +43,17 @@ abstract public class EnemyController : MonoBehaviour {
     }
 
     protected virtual void OnCollisionEnter2D(Collision2D other) {
-        if (isInvincible)
+        var player = other.gameObject.GetComponent<PlayerController>();
+        if (player == null) {
+            direction = -direction;
+            return;
+        } else if (isInvincible)
                 return;
 
         invincibleTimer = timeInvincible;
         isInvincible = true;
         animator.SetTrigger("Hit");
-        healthPoints--;
+        healthPoints -= player.getDamage();
 
         if (healthPoints == 0) {
             isDead = true;
@@ -45,5 +63,17 @@ abstract public class EnemyController : MonoBehaviour {
 
     }
 
-    protected abstract void FixedUpdate();
+    protected abstract Vector2 computeNewOffset();
+    
+    protected virtual void FixedUpdate() {
+        if (!isDead) {
+            Vector2 position = rigidbody2D.position;
+            position += computeNewOffset();
+            rigidbody2D.MovePosition(position);
+        }
+    }
+
+    public int getDamage() {
+        return damageFactor;
+    }
 }

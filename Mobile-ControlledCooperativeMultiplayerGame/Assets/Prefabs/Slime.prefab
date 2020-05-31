@@ -101,6 +101,7 @@ MonoBehaviour:
   healthPoints: 10
   directionSpeed: 0.3
   directionChangeTime: 5
+  damageFactor: 1
 --- !u!61 &4379324440833947342
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -114,18 +115,18 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: -0.125}
+  m_Offset: {x: 0, y: -0.15}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.7, y: 0.6}
+    oldSize: {x: 0.875, y: 0.75}
     newSize: {x: 0.7, y: 0.6}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.6, y: 0.35}
+  m_Size: {x: 0.8, y: 0.5}
   m_EdgeRadius: 0
 --- !u!50 &4379324440833947343
 Rigidbody2D:

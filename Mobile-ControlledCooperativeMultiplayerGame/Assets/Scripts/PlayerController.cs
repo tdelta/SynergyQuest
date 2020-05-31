@@ -52,4 +52,14 @@ public class PlayerController : MonoBehaviour
         transform.position = newPosition;
     }
 
+    public Vector2 getPosition()
+    {
+        return transform.position;
+    }
+
+    public int getDamage()
+    {
+        return 1; //TODO :)
+    }
+
 }
