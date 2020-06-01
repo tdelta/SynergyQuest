@@ -6,20 +6,13 @@ public class PlayerController : MonoBehaviour
 {
 
     public float speed;
+    public int healthPoints;
 
     Animator animator;
-
 
     float vertical;
     float horizontal;
     Vector2 lookDirection = new Vector2(1,0);
-
-    public Transform attackPointTop;
-    public Transform attackPointBottom;
-    public Transform attackPointLeft;
-    public Transform attackPointRight;
-
-    public float attackRadius;
     bool attacking = false;
 
     // Start is called before the first frame update
@@ -44,6 +37,16 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    void OnCollisionEnter2D(Collision2D collision)  {
+        if (collision.collider.gameObject.tag == "Enemy"){
+            int damage = collision.collider.gameObject.GetComponent<EnemyController>().getDamage();
+            healthPoints -= damage;
+        }
+        if (healthPoints <= 0) {
+            Destroy(this.gameObject);
+        }
+    }
+
     public Vector2 getPosition()
     {
         return transform.position;
@@ -57,10 +60,10 @@ public class PlayerController : MonoBehaviour
     private void attack()
     {
         animator.SetTrigger("Attack");
-        StartCoroutine(attackCo());
+        StartCoroutine(attackCoroutine());
     }
 
-    private IEnumerator attackCo()
+    private IEnumerator attackCoroutine()
     {
         attacking = true;
         yield return new WaitForSeconds(0.3f);

@@ -399,12 +399,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fad7292b03eb81d43964fdc5d3fcfe1e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 0
-  attackPointTop: {fileID: 645781149}
-  attackPointBottom: {fileID: 1684417764}
-  attackPointLeft: {fileID: 1894431302}
-  attackPointRight: {fileID: 268351231}
-  attackRadius: 0.3
+  speed: 3
+  healthPoints: 5
 --- !u!95 &4270148256400962754
 Animator:
   serializedVersion: 3

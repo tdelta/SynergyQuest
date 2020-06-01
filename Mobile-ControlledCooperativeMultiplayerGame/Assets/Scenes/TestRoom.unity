@@ -301,11 +301,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Slime
       objectReference: {fileID: 0}
-    - target: {fileID: 4379324440833947341, guid: 6a13ea0bf761f33ce9577e68788b9501,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 4379324440833947347, guid: 6a13ea0bf761f33ce9577e68788b9501,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -2614,6 +2609,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: ControllerDebugUI
       objectReference: {fileID: 0}
+    - target: {fileID: 1004154467507645108, guid: c3feebedb21ef771cbe9f44a42d72010,
+        type: 3}
+      propertyPath: m_TagString
+      value: Untagged
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c3feebedb21ef771cbe9f44a42d72010, type: 3}
 --- !u!1001 &4270148256464369323
@@ -2696,11 +2696,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Bat
-      objectReference: {fileID: 0}
-    - target: {fileID: 5481500327407250211, guid: f0c1adf6b4e8d2006a9096257c9a2e80,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5481500327407250232, guid: f0c1adf6b4e8d2006a9096257c9a2e80,
         type: 3}
@@ -2894,11 +2889,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Knight
-      objectReference: {fileID: 0}
-    - target: {fileID: 6235775845409623576, guid: 70fb5d4b16c32a5928ddb9b900ce3af0,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 70fb5d4b16c32a5928ddb9b900ce3af0, type: 3}

@@ -47,7 +47,14 @@ abstract public class EnemyController : MonoBehaviour {
         if (player == null) {
             direction = -direction;
             return;
-        } else if (isInvincible)
+        } 
+        
+        /*
+        To be disscussed (Marc): Von wo kommt der Damage. putDamage durch den 
+        Player oder hier.
+
+
+        else if (isInvincible)
                 return;
 
         invincibleTimer = timeInvincible;
@@ -60,7 +67,24 @@ abstract public class EnemyController : MonoBehaviour {
             animator.SetTrigger("Dead");
             Destroy(gameObject, 1);
         }
+        */
 
+    }
+
+    public void putDamage(int amount){
+        if(isInvincible) {
+            return;
+        }
+        invincibleTimer = timeInvincible;
+        isInvincible = true;
+        animator.SetTrigger("Hit");
+        healthPoints -= amount;
+
+        if (healthPoints == 0) {
+            isDead = true;
+            animator.SetTrigger("Dead");
+            Destroy(gameObject, 1);
+        }
     }
 
     protected abstract Vector2 computeNewOffset();

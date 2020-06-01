@@ -6,6 +6,9 @@ public class PlayerHit : MonoBehaviour
 {
     private void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log("Ich habe einen Gegner getroffen");
+        if (other.gameObject.tag == "Enemy") {
+            EnemyController enemy = other.gameObject.GetComponent<EnemyController>();
+            enemy.putDamage(1); 
+        }
     }
 }

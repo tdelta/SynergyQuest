@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 2643077272644952694}
   m_Layer: 0
   m_Name: Bat
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -123,6 +123,7 @@ MonoBehaviour:
   healthPoints: 3
   directionSpeed: 1.5
   directionChangeTime: 1
+  damageFactor: 1
   flightSpeed: 2
   flightChangeTime: 0.15
 --- !u!95 &4188588700924867490
