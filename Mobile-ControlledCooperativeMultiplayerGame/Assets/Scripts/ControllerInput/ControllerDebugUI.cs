@@ -8,7 +8,7 @@ using UnityEngine;
  */
 public class ControllerDebugUI : MonoBehaviour
 {
-    [SerializeField] private ControllerInput _input;
+    private ControllerInput _input;
 
     [SerializeField] private TextMeshProUGUI _verticalValLabel;
     
@@ -18,6 +18,11 @@ public class ControllerDebugUI : MonoBehaviour
     
     [SerializeField] private TextMeshProUGUI _pullValLabel;
 
+    public void SetInput(ControllerInput input)
+    {
+        this._input = input;
+    }
+    
     // Update is called once per frame
     void Update()
     {
