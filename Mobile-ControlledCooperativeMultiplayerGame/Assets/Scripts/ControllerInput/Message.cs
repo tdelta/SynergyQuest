@@ -17,14 +17,14 @@ using UnityEngine;
  */
 public enum MessageType
 {
-    Button = 0,            // Button input, sent by controller
-    Joystick = 1,          // Joystick input, sent by controller
-    PlayerColor = 2,       // Color assigned to a player, sent by the game
-    Name = 3,              // Name of the player, sent by controller upon establishing a connection
-    NameTaken = 4,         // Game rejects player name since it is already used by another controller, sent by game
-    NameOk = 5,            // Game accepts player name, sent by game
-    MaxPlayersReached = 6, // Game rejects connection since the maximum number of controllers is already connected to it, sent by game
-    None = 7               // Placeholder type for base class
+    None = 0,              // Placeholder type for base class
+    Name = 1,              // Name of the player, sent by controller upon establishing a connection
+    NameTaken = 2,         // Game rejects player name since it is already used by another controller, sent by game
+    NameOk = 3,            // Game accepts player name, sent by game
+    MaxPlayersReached = 4, // Game rejects connection since the maximum number of controllers is already connected to it, sent by game
+    Button = 5,            // Button input, sent by controller
+    Joystick = 6,          // Joystick input, sent by controller
+    PlayerColor = 7,       // Color assigned to a player, sent by the game
 }
 
 /**
