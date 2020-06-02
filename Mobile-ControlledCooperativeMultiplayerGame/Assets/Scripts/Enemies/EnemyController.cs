@@ -42,7 +42,7 @@ abstract public class EnemyController : MonoBehaviour {
         }
     }
 
-    protected virtual void OnCollisionEnter2D(Collision2D other) {
+    void OnCollisionEnter2D(Collision2D other) {
         var player = other.gameObject.GetComponent<PlayerController>();
         if (player == null) {
             direction = -direction;
@@ -89,7 +89,7 @@ abstract public class EnemyController : MonoBehaviour {
 
     protected abstract Vector2 computeNewOffset();
     
-    protected virtual void FixedUpdate() {
+    void FixedUpdate() {
         if (!isDead) {
             Vector2 position = rigidbody2D.position;
             position += computeNewOffset();
