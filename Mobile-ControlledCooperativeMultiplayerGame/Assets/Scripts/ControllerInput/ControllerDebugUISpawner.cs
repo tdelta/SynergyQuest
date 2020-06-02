@@ -26,5 +26,15 @@ public class ControllerDebugUISpawner : MonoBehaviour
 
         var DebugUi = DebugUiObject.GetComponent<ControllerDebugUI>();
         DebugUi.SetInput(input);
+        
+        Vector3[] worldCorners = new Vector3[4];
+        DebugUiObject.GetComponent<RectTransform>().GetWorldCorners(worldCorners);
+        var width = worldCorners[2].x - worldCorners[1].x;
+        
+        _nextSpawnLocation.Set(
+            _nextSpawnLocation.x + width,
+            _nextSpawnLocation.y,
+            _nextSpawnLocation.z
+        );
     }
 }

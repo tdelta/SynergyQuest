@@ -10,6 +10,11 @@ export enum Button {
   Pull = 1
 }
 
+export enum ConnectFailureReason {
+  NameAlreadyTaken,
+  MaxPlayersReached
+}
+
 /**
  * Allows to connect to a Coop-Dungeon game and send controller inputs
  * or receive messages from the game.
@@ -36,30 +41,35 @@ export enum Button {
 export class ControllerClient {
   private socket: WebSocket.WebSocket;
 
+  private ready: boolean = false;
+
   // Player color assigned by the game. May be undefined until the server
   // sends a colour.
   private color?: string;
 
+
+  public onConnectFailure: (reason: ConnectFailureReason) => any;
+
   /**
    * Callback which is called when a connection to a game has been established
    */
-  private onConnect: () => any;
+  public onReady: () => any;
 
   /**
    * Callback which is called when the connection to a game has been closed
    */
-  private onDisconnect: () => any;
+  public onDisconnect: () => any;
 
   /**
    * Callback which is called when the connection to a game has been closed due
    * to an error.
    */
-  private onError: () => any;
+  public onError: () => any;
 
   /**
    * Callback which is called whenever the server assigns this client a color.
    */
-  private onSetPlayerColor: (color: string) => any;
+  public onSetPlayerColor: (color: string) => any;
 
   /**
    * Connects to the game and creates a ControllerClient instance.
@@ -75,33 +85,16 @@ export class ControllerClient {
    * @param onSetPlayerColor Callback which is called whenever the server assigns this client a color. (optional)
    * @param port             Port where the game is listening for controller connections (optional, default: 4242)
    **/
-  public constructor(
-    address: string,
-    onConnect: () => any,
-    onDisconnect: () => any = () => {},
-    onError: () => any = () => {},
-    onSetPlayerColor: (color: string) => any = (_: string) => {},
-    port: number = 4242
-  ) {
-    this.onMessage = this.onMessage.bind(this);
+  public constructor() {
+    this.ensureReady = this.ensureReady.bind(this);
+    this.sendMessage = this.sendMessage.bind(this);
+    this.handleSocketOpen = this.handleSocketOpen.bind(this);
+    this.handleSocketClose = this.handleSocketClose.bind(this);
+    this.handleSocketError = this.handleSocketError.bind(this);
+    this.handleMessage = this.handleMessage.bind(this);
     this.setJoystickPosition = this.setJoystickPosition.bind(this);
     this.setButton = this.setButton.bind(this);
     this.getColor = this.getColor.bind(this);
-
-    this.onConnect = onConnect;
-    this.onDisconnect = onDisconnect;
-    this.onError = onError;
-    this.onSetPlayerColor = onSetPlayerColor;
-
-    this.socket = this.connect(address, port);
-
-    this.socket.onopen = (_: Event) => this.onConnect();
-    this.socket.onclose = (_: CloseEvent) => this.onDisconnect();
-    this.socket.onerror = (_: Event) => {
-      console.error("ControllerClient: Connection to game closed due to an error.");
-      this.onError();
-    };
-    this.socket.onmessage = this.onMessage;
   }
 
   /**
@@ -117,11 +110,10 @@ export class ControllerClient {
       throw Error("Only joystick positions in the interval [-1; 1] are allowed.");
     }
 
+    this.ensureReady();
     let msg = MessageFormat.createJoystickMessage(vertical, horizontal);
 
-    this.socket.send(
-      JSON.stringify(msg)
-    );
+    this.sendMessage(msg);
   }
 
   /**
@@ -131,11 +123,10 @@ export class ControllerClient {
    * @param onOff  whether the button is pressed (`true`) or not (`false`)
    */
   public setButton(button: Button, onOff: boolean) {
+    this.ensureReady();
     let msg = MessageFormat.createButtonMessage(button, onOff);
 
-    this.socket.send(
-      JSON.stringify(msg)
-    );
+    this.sendMessage(msg);
   }
 
   /**
@@ -151,7 +142,11 @@ export class ControllerClient {
     return this.color;
   }
 
-  public isConnected(): boolean {
+  public isReady(): boolean {
+    return this.ready;
+  }
+
+  private isConnected(): boolean {
     return this.socket.readyState === 1;
   }
 
@@ -161,10 +156,33 @@ export class ControllerClient {
    * @param address The network address where the game is running
    * @param port Port where the game is listening for controller connections (default: 4242)
    **/
-  private connect(address: string, port: number = 4242): WebSocket {
-    let socket = new WebSocket(`ws://${address}:${port}/sockets/`);
+  public connect(name: string, address: string, port: number = 4242) {
+    if (this.socket?.readyState != 2 && this.socket?.readyState != 3) {
+      this.socket?.close();
+    }
 
-    return socket;
+    this.socket = new WebSocket(`ws://${address}:${port}/sockets/`);
+
+    this.socket.onopen = (_: Event) => this.handleSocketOpen(name);
+    this.socket.onclose = (_: CloseEvent) => this.handleSocketClose();
+    this.socket.onerror = (_: Event) => this.handleSocketError();
+    this.socket.onmessage = this.handleMessage;
+  }
+
+  private handleSocketOpen(name: string) {
+    this.sendMessage(
+      MessageFormat.createNameMessage(name)
+    );
+  }
+
+  private handleSocketClose() {
+    this.ready = false;
+    this.onDisconnect?.();
+  }
+
+  private handleSocketError() {
+    console.error("ControllerClient: Connection to game experienced an error.");
+    this.onError?.();
   }
 
   /**
@@ -172,15 +190,52 @@ export class ControllerClient {
    *
    * @param msgEvent message event received over the websocket, see also `WebSocket.onmessage`.
    */
-  private onMessage(msgEvent: MessageEvent) {
+  private handleMessage(msgEvent: MessageEvent) {
     // deserialize the message from JSON
     let msg = MessageFormat.messageFromJSON(msgEvent.data);
 
-    // If the server sent a player color, set the color and call the callback
-    // `onSetPlayerColor` which can be set by users of the library.
-    if (MessageFormat.isPlayerColorMessage(msg)) {
-      this.color = msg.color;
-      this.onSetPlayerColor(msg.color);
+    MessageFormat.matchMessage(msg, {
+      ...MessageFormat.defaultMatcher,
+
+      PlayerColorMessage: msg => {
+        // If the server sent a player color, set the color and call the callback
+        // `onSetPlayerColor` which can be set by users of the library.
+        this.color = msg.color;
+        this.onSetPlayerColor?.(msg.color);
+      },
+
+      NameTakenMessage: _ => {
+        this.socket.close();
+        this.onConnectFailure?.(ConnectFailureReason.NameAlreadyTaken);
+      },
+
+      MaxPlayersReachedMessage: _ => {
+        this.socket.close();
+        this.onConnectFailure?.(ConnectFailureReason.MaxPlayersReached);
+      },
+
+      NameOkMessage: _ => {
+        this.ready = true;
+        this.onReady?.();
+      },
+    });
+  }
+
+  private sendMessage(msg: MessageFormat.Message) {
+    if (this.isConnected()) {
+      this.socket.send(
+        JSON.stringify(msg)
+      );
+    }
+
+    else {
+      throw new Error("Can not send message if client is not connected.");
+    }
+  }
+
+  private ensureReady() {
+    if (!this.ready) {
+      throw Error("Can not interact with game since the connection is not ready yet.");
     }
   }
 }

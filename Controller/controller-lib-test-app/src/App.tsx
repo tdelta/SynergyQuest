@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, ControllerClient } from 'controller-client-lib';
+import { Button, ControllerClient, ConnectFailureReason } from 'controller-client-lib';
 
 /**
  * The following interfaces form an ADT to track the state of the connection
@@ -36,6 +36,7 @@ type ConnectionStatus = NotConnected | Connecting | Connected;
 export interface AppState {
   connectionStatus: ConnectionStatus;
 
+  failureMessage?: string;
   color?: string;
   attackChecked: boolean;
   pullChecked: boolean;
@@ -53,6 +54,7 @@ class App extends React.Component<{}, AppState> {
 
   private static readonly initialState: AppState = {
       connectionStatus: NotConnectedC,
+      failureMessage: undefined,
       color: undefined,
       attackChecked: false,
       pullChecked: false,
@@ -83,30 +85,57 @@ class App extends React.Component<{}, AppState> {
     // Get a map from input names to their values in the form
     let data = new FormData(e.target as HTMLFormElement)
 
-    let onConnect = () => {
+
+    let client = new ControllerClient();
+
+    client.onReady = () => {
       this.setState({
         ...this.state,
-        connectionStatus: ConnectedC(client)
+        connectionStatus: ConnectedC(client),
+        failureMessage: undefined
       });
     };
 
-    let onDisconnect = () => {
-      this.setState(App.initialState)
+    client.onConnectFailure = (reason: ConnectFailureReason) => {
+      let failMessage: string;
+      switch(reason) {
+        case ConnectFailureReason.NameAlreadyTaken:
+          failMessage = "Could not connect, since someone with that name is already connected.";
+          break;
+
+        case ConnectFailureReason.MaxPlayersReached:
+          failMessage = "Could not connect, since the game is already full and no more players can join.";
+          break;
+      }
+
+      this.setState({
+        ...App.initialState,
+        failureMessage: failMessage
+      });
     };
 
-    let onError = onDisconnect;
+    client.onDisconnect = () => {
+      this.setState({
+        ...App.initialState,
+        failureMessage: this.state.failureMessage
+      });
+    };
 
-    let onSetPlayerColor = (color: string) => this.setState({
+    client.onError = () => {
+      this.setState({
+        ...this.state,
+        failureMessage: "Some sort of connection error occured."
+      });
+    };
+
+    client.onSetPlayerColor = (color: string) => this.setState({
       ...this.state,
       color: color, // <- set new color
     });
 
-    let client = new ControllerClient(
+    client.connect(
+      data.get('name') as string,
       data.get('address') as string,
-      onConnect,
-      onDisconnect,
-      onError,
-      onSetPlayerColor,
       +data.get('port')!
     );
 
@@ -164,8 +193,11 @@ class App extends React.Component<{}, AppState> {
       case "NotConnected":
         body = <form onSubmit={this.connect}>
           <label>
+            Player Name: <input name="name" defaultValue="Link"/>
+          </label><br/>
+          <label>
             Address: <input name="address" defaultValue={window.location.hostname}/>
-              </label><br/>
+          </label><br/>
           <label>
             Port:    <input name="port" type="number" defaultValue="4242"/>
           </label><br/>
@@ -188,8 +220,17 @@ class App extends React.Component<{}, AppState> {
         break;
     }
 
+    let failureDisplay: React.ReactNode;
+    if (this.state.failureMessage != null) {
+      failureDisplay = <span style={{fontWeight: "bold", color: "red", paddingBottom: "2em"}}>{this.state.failureMessage}</span>;
+    }
+    else {
+      failureDisplay = <span></span>;
+    }
+
     return (
       <div className="App">
+        {failureDisplay}
         {body}
       </div>
     );

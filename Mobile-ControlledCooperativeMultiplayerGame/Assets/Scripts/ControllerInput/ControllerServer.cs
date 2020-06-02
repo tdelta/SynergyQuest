@@ -165,7 +165,7 @@ public class ControllerServer : MonoBehaviour
                 // ^ NOTICE: As far as I understand it, reference assignment should be
                 //           thread-safe. However, if strange things happen, we should look
                 //           here first.
-                Log("A new controller connection has been established.");
+                Log("A new connection has been established.");
             });
         
         // Now we need to get a handle to the session manager which
@@ -273,7 +273,7 @@ public class ControllerServer : MonoBehaviour
                         input.HandleMessage(update.message);
                     }
 
-                    else
+                    else if (!(update.message is Message.NameMessage))
                     {
                         LogError("Got a message from a connection which is not associated with any input. This should never happen and is a programming error.");
                     }
@@ -328,6 +328,11 @@ public class ControllerServer : MonoBehaviour
         //       NetworkStream, reading and writing at the same time should be thread-safe.
         //       However, no two threads should send at the same time and no two threads should be receiving at the same
         //       time: https://docs.microsoft.com/en-us/dotnet/api/system.net.sockets.networkstream?view=netcore-3.1
+    }
+
+    private void OnDestroy()
+    {
+        _wss.Stop();
     }
 
     private void Log(String str) {

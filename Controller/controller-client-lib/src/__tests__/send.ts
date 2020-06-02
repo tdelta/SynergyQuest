@@ -9,9 +9,13 @@ const sleep = (waitTimeInMs: number) => new Promise(resolve => setTimeout(resolv
 
 beforeAll(() => {
   return new Promise(resolve => {
-      controllerClient = new ControllerClient(
-        "127.0.0.1",
-        resolve
+      controllerClient = new ControllerClient();
+
+      controllerClient.onReady = resolve;
+
+      controllerClient.connect(
+        "MaxMuster",
+        "127.0.0.1"
       );
   });
 });
