@@ -10,15 +10,17 @@ export enum Button {
   Pull = 1
 }
 
+/**
+ * Different reasons why the game rejected a connection
+ */
 export enum ConnectFailureReason {
-  NameAlreadyTaken,
-  MaxPlayersReached
+  NameAlreadyTaken, // A controller is already connected with the same player name
+  MaxPlayersReached // The maximum amount of players is already connected to the game
 }
 
 /**
  * Allows to connect to a Coop-Dungeon game and send controller inputs
  * or receive messages from the game.
- * Instantiate using the static `create()` method.
  *
  * Internally, this class sends and receives JSON encoded messages over
  * websockets.  For the format of the websockets, see the `Message` class
@@ -28,11 +30,18 @@ export enum ConnectFailureReason {
  * ```typescript
  *   import { ControllerClient, Button } from controller_client_lib;
  *
- *   ControllerClient
- *     .connect('127.0.0.1')
- *     .then(sender => {
- *       sender.setButton(Button.Attack, true);
- *     });
+ *   let client = new ControllerClient();
+ *
+ *   client.onReady = () => {
+ *     ...
+ *     client.setButton(Button.Attack, true);
+ *     ...
+ *   };
+ *
+ *   client.onConnectFailure = () => { ... };
+ *   ...
+ *
+ *   client.connect('Max Muster', '127.0.0.1');
  * ```
  *
  * For further examples, see the few tests in the folder `__tests__` or the
@@ -41,50 +50,56 @@ export enum ConnectFailureReason {
 export class ControllerClient {
   private socket: WebSocket.WebSocket;
 
+  /**
+   * Indicates, whether a connection has been established fully.
+   * That is, the game is now ready to receive inputs.
+   *
+   * This is set after the game accepted the player name etc.
+   */
   private ready: boolean = false;
 
-  // Player color assigned by the game. May be undefined until the server
-  // sends a colour.
+  /**
+   * Player color assigned by the game. May be undefined until the server
+   * sends a colour.
+   */
   private color?: string;
 
-
+  /**
+   * Callback which can be set by users and which is called if the server
+   * refused to establish a connection for the given reason.
+   */
   public onConnectFailure: (reason: ConnectFailureReason) => any;
 
   /**
-   * Callback which is called when a connection to a game has been established
+   * Callback which can be set by users and which is called when a connection to
+   * a game has been fully established so that it is ready to receive inputs.
    */
   public onReady: () => any;
 
   /**
-   * Callback which is called when the connection to a game has been closed
+   * Callback which can be set by users and which is called when the connection
+   * to a game has been closed
    */
   public onDisconnect: () => any;
 
   /**
-   * Callback which is called when the connection to a game has been closed due
-   * to an error.
+   * Callback which can be set by users and which is called when the connection
+   * to a game experienced some sort of error.
    */
   public onError: () => any;
 
   /**
-   * Callback which is called whenever the server assigns this client a color.
+   * Callback which can be set by users and which is called whenever the server
+   * assigns this client a color.
    */
   public onSetPlayerColor: (color: string) => any;
 
   /**
-   * Connects to the game and creates a ControllerClient instance.
-   * Be aware that the client is not immediately connected.
+   * Creates a ControllerClient instance.
    *
-   * Register callbacks `onConnect`, `onDisconnect`, `onError` to keep track of
-   * when the client is ready for use.
-   *
-   * @param address          The network address where the game is running
-   * @param onConnect        Callback which is called when a connection to a game has been established
-   * @param onDisconnect     Callback which is called when the connection to a game has been closed (optional)
-   * @param onError          Callback which is called when the connection to a game has been closed due to an error (optional)
-   * @param onSetPlayerColor Callback which is called whenever the server assigns this client a color. (optional)
-   * @param port             Port where the game is listening for controller connections (optional, default: 4242)
-   **/
+   * After creating an instance, set the callbacks you want to use and then call
+   * the `connect` method.
+   */
   public constructor() {
     this.ensureReady = this.ensureReady.bind(this);
     this.sendMessage = this.sendMessage.bind(this);
@@ -95,6 +110,34 @@ export class ControllerClient {
     this.setJoystickPosition = this.setJoystickPosition.bind(this);
     this.setButton = this.setButton.bind(this);
     this.getColor = this.getColor.bind(this);
+  }
+
+  /**
+   * Connects to the game.
+   * Be aware that the client is not immediately connected.
+   *
+   * Register callbacks `onConnect`, `onDisconnect`, `onError` to keep track of
+   * when the client is ready for use.
+   *
+   * @param name    Name of the player using this controller
+   * @param address The network address where the game is running
+   * @param port    Port where the game is listening for controller connections (optional, default: 4242)
+   **/
+  public connect(name: string, address: string, port: number = 4242) {
+    // if the there is already a socket which is not closed or closing...
+    if (this.socket?.readyState != 2 && this.socket?.readyState != 3) {
+      // then close it first
+      this.socket?.close();
+    }
+
+    // Create a new websocket and connect to the game
+    this.socket = new WebSocket(`ws://${address}:${port}/sockets/`);
+
+    // Set all event handlers of the socket to local methods
+    this.socket.onopen = (_: Event) => this.handleSocketOpen(name);
+    this.socket.onclose = (_: CloseEvent) => this.handleSocketClose();
+    this.socket.onerror = (_: Event) => this.handleSocketError();
+    this.socket.onmessage = this.handleMessage;
   }
 
   /**
@@ -142,6 +185,13 @@ export class ControllerClient {
     return this.color;
   }
 
+  /**
+   * Returns whether the client is fully connected to a game and can send
+   * inputs.
+   *
+   * DO NOT check this function periodically to determine if a connection is
+   * established yet. Instead set the `onReady` and `onDisconnect` callbacks.
+   */
   public isReady(): boolean {
     return this.ready;
   }
@@ -151,35 +201,27 @@ export class ControllerClient {
   }
 
   /**
-   * Connects to the game and creates a websocket.
-   *
-   * @param address The network address where the game is running
-   * @param port Port where the game is listening for controller connections (default: 4242)
-   **/
-  public connect(name: string, address: string, port: number = 4242) {
-    if (this.socket?.readyState != 2 && this.socket?.readyState != 3) {
-      this.socket?.close();
-    }
-
-    this.socket = new WebSocket(`ws://${address}:${port}/sockets/`);
-
-    this.socket.onopen = (_: Event) => this.handleSocketOpen(name);
-    this.socket.onclose = (_: CloseEvent) => this.handleSocketClose();
-    this.socket.onerror = (_: Event) => this.handleSocketError();
-    this.socket.onmessage = this.handleMessage;
-  }
-
+   * Called as soon as a raw websocket connection has been established.
+   */
   private handleSocketOpen(name: string) {
+    // A client must first send a player name before anything else.
+    // We do this, as soon as a raw websocket connection has been established.
     this.sendMessage(
       MessageFormat.createNameMessage(name)
     );
   }
 
+  /**
+   * Called if the websocket connection to the game has been closed.
+   */
   private handleSocketClose() {
     this.ready = false;
     this.onDisconnect?.();
   }
 
+  /**
+   * Called if some sort of error happened with the websocket connection.
+   */
   private handleSocketError() {
     console.error("ControllerClient: Connection to game experienced an error.");
     this.onError?.();
@@ -194,8 +236,31 @@ export class ControllerClient {
     // deserialize the message from JSON
     let msg = MessageFormat.messageFromJSON(msgEvent.data);
 
+    // For each kind of message do something different:
+    // (This simulates ADT match functions as known from Haskell or Scala)
     MessageFormat.matchMessage(msg, {
-      ...MessageFormat.defaultMatcher,
+      ...MessageFormat.defaultMatcher, // <- for all kinds of messages, do nothing but for the ones listed below
+
+      NameTakenMessage: _ => {
+        // The game says someone is already using this player name.
+        // Establishing a connection has failed then and must be retried.
+        this.socket.close();
+        this.onConnectFailure?.(ConnectFailureReason.NameAlreadyTaken);
+      },
+
+      MaxPlayersReachedMessage: _ => {
+        // The game says the maximum number of players is already connected.
+        // Establishing a connection has failed then and must be retried.
+        this.socket.close();
+        this.onConnectFailure?.(ConnectFailureReason.MaxPlayersReached);
+      },
+
+      NameOkMessage: _ => {
+        // The game has accepted our player name and the connection is now fully
+        // established.
+        this.ready = true;
+        this.onReady?.();
+      },
 
       PlayerColorMessage: msg => {
         // If the server sent a player color, set the color and call the callback
@@ -203,24 +268,15 @@ export class ControllerClient {
         this.color = msg.color;
         this.onSetPlayerColor?.(msg.color);
       },
-
-      NameTakenMessage: _ => {
-        this.socket.close();
-        this.onConnectFailure?.(ConnectFailureReason.NameAlreadyTaken);
-      },
-
-      MaxPlayersReachedMessage: _ => {
-        this.socket.close();
-        this.onConnectFailure?.(ConnectFailureReason.MaxPlayersReached);
-      },
-
-      NameOkMessage: _ => {
-        this.ready = true;
-        this.onReady?.();
-      },
     });
   }
 
+  /**
+   * Converts a message to a JSON string and sends it to the game over the
+   * websocket.
+   *
+   * It throws an exception if we are not connected.
+   */
   private sendMessage(msg: MessageFormat.Message) {
     if (this.isConnected()) {
       this.socket.send(
@@ -233,6 +289,13 @@ export class ControllerClient {
     }
   }
 
+  /**
+   * Should be called before sending any kind of message which may only be sent
+   * if a connection has been fully established.
+   *
+   * It ensures the connection is ready to send inputs by throwing an exception
+   * otherwise.
+   */
   private ensureReady() {
     if (!this.ready) {
       throw Error("Can not interact with game since the connection is not ready yet.");
