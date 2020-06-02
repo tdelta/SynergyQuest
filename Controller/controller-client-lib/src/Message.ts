@@ -1,36 +1,28 @@
 import { Button } from './ControllerClient';
 
+/**
+ * This namespace describes the format of messages sent between controller and
+ * game and provides utilities to create, (de-)serialize and handle messages.
+ *
+ * It is only used internally by the client library and is not intended to be
+ * used directly.
+ *
+ * Similar code can be found in the Unity game in the file `Message.cs`
+ */
 export namespace MessageFormat {
+  /**
+   * The different kinds of messages
+   */
   export enum MessageType {
-    Button = 0,            // Sent by controller
-    Joystick = 1,          // Sent by controller
-    PlayerColor = 2,       // Sent by the game
-    Name = 3,              // Sent by controller
-    NameTaken = 4,         // Sent by game
-    NameOk = 5,            // Sent by game
-    MaxPlayersReached = 6, // Sent by game
+    Button = 0,            // Button input, sent by controller
+    Joystick = 1,          // Joystick input, sent by controller
+    PlayerColor = 2,       // Color assigned to a player, sent by the game
+    Name = 3,              // Name of the player, sent by controller upon establishing a connection
+    NameTaken = 4,         // Game rejects player name since it is already used by another controller, sent by game
+    NameOk = 5,            // Game accepts player name, sent by game
+    MaxPlayersReached = 6, // Game rejects connection since the maximum number of controllers is already connected to it, sent by game
     None = 7               // Placeholder type for base class
   }
-
-  export interface Matcher {
-    readonly ButtonMessage:            (_: ButtonMessage) => any           ;
-    readonly JoystickMessage:          (_: JoystickMessage) => any         ;
-    readonly PlayerColorMessage:       (_: PlayerColorMessage) => any      ;
-    readonly NameMessage:              (_: NameMessage) => any             ;
-    readonly NameTakenMessage:         (_: NameTakenMessage) => any        ;
-    readonly NameOkMessage:            (_: NameOkMessage) => any           ;
-    readonly MaxPlayersReachedMessage: (_: MaxPlayersReachedMessage) => any;
-  }
-
-  export let defaultMatcher: Matcher = {
-    ButtonMessage:            _ => {},
-    JoystickMessage:          _ => {},
-    PlayerColorMessage:       _ => {},
-    NameMessage:              _ => {},
-    NameTakenMessage:         _ => {},
-    NameOkMessage:            _ => {},
-    MaxPlayersReachedMessage: _ => {}
-  };
 
   /**
    * This interface hierarchy determines the format of the JSON messages sent
@@ -38,21 +30,12 @@ export namespace MessageFormat {
    *
    * The base interface only carries an identifier which determines the type of the
    * message. See also the `MessageType` enum.
+   *
+   * Messages can be used a bit like an ADT, see the `matchMessage` function
+   * down below.
    */
   export interface Message {
     readonly type: MessageType
-  }
-
-  export function matchMessage(msg: Message, matcher: Matcher) {
-    switch (msg.type) {
-      case MessageType.Button:            matcher.ButtonMessage(msg as ButtonMessage); break;
-      case MessageType.Joystick:          matcher.JoystickMessage(msg as JoystickMessage); break;
-      case MessageType.PlayerColor:       matcher.PlayerColorMessage(msg as PlayerColorMessage); break;
-      case MessageType.Name:              matcher.NameMessage(msg as NameMessage); break;
-      case MessageType.NameTaken:         matcher.NameTakenMessage(msg as NameTakenMessage); break;
-      case MessageType.NameOk:            matcher.NameOkMessage(msg as NameOkMessage); break;
-      case MessageType.MaxPlayersReached: matcher.MaxPlayersReachedMessage(msg as MaxPlayersReachedMessage); break;
-    }
   }
 
   export function isMessage(obj: any): obj is Message {
@@ -110,6 +93,12 @@ export namespace MessageFormat {
   export interface MaxPlayersReachedMessage extends Message {
   }
 
+  /**
+   * Creates an object conforming to the message interfaces from a JSON encoded
+   * string representation of it.
+   *
+   * This function is used to deserialize messages sent from the game.
+   */
   export function messageFromJSON(str: string): Message {
     let msgObj = JSON.parse(str);
 
@@ -122,4 +111,57 @@ export namespace MessageFormat {
     // Until then its too much maintenance overhead.
     return msgObj;
   }
+
+  /**
+   * Using a switch-case on the message types is cumbersome since it requires
+   * typecasts etc.
+   *
+   * Instead we simulate a "Match" functionality as it is used in functional
+   * programming languages like Haskell or Scala for ADTs.
+   *
+   * See the `handleMessage` method of `ControllerClient` for an usage example.
+   *
+   * @param msg     message for which we want to execute different actions depending on the type.
+   * @param matcher contains a callback action for each kind of message.
+   */
+  export function matchMessage(msg: Message, matcher: Matcher) {
+    switch (msg.type) {
+      case MessageType.Button:            matcher.ButtonMessage(msg as ButtonMessage); break;
+      case MessageType.Joystick:          matcher.JoystickMessage(msg as JoystickMessage); break;
+      case MessageType.PlayerColor:       matcher.PlayerColorMessage(msg as PlayerColorMessage); break;
+      case MessageType.Name:              matcher.NameMessage(msg as NameMessage); break;
+      case MessageType.NameTaken:         matcher.NameTakenMessage(msg as NameTakenMessage); break;
+      case MessageType.NameOk:            matcher.NameOkMessage(msg as NameOkMessage); break;
+      case MessageType.MaxPlayersReached: matcher.MaxPlayersReachedMessage(msg as MaxPlayersReachedMessage); break;
+    }
+  }
+
+  /**
+   * See `matchMessage` function for an explanation.
+   */
+  export interface Matcher {
+    readonly ButtonMessage:            (_: ButtonMessage) => any           ;
+    readonly JoystickMessage:          (_: JoystickMessage) => any         ;
+    readonly PlayerColorMessage:       (_: PlayerColorMessage) => any      ;
+    readonly NameMessage:              (_: NameMessage) => any             ;
+    readonly NameTakenMessage:         (_: NameTakenMessage) => any        ;
+    readonly NameOkMessage:            (_: NameOkMessage) => any           ;
+    readonly MaxPlayersReachedMessage: (_: MaxPlayersReachedMessage) => any;
+  }
+
+  /**
+   * Can be used to avoid setting a match action for every message type when we
+   * just want to set it for some.
+   *
+   * See the `handleMessage` method of `ControllerClient` for an usage example.
+   */
+  export let defaultMatcher: Matcher = {
+    ButtonMessage:            _ => {},
+    JoystickMessage:          _ => {},
+    PlayerColorMessage:       _ => {},
+    NameMessage:              _ => {},
+    NameTakenMessage:         _ => {},
+    NameOkMessage:            _ => {},
+    MaxPlayersReachedMessage: _ => {}
+  };
 }
