@@ -8,7 +8,7 @@ public class PlayerHit : MonoBehaviour
     {
         if (other.gameObject.tag == "Enemy") {
             EnemyController enemy = other.gameObject.GetComponent<EnemyController>();
-            enemy.putDamage(1); 
+            enemy.putDamage(1, (other.transform.position - transform.position).normalized); 
         }
     }
 }
