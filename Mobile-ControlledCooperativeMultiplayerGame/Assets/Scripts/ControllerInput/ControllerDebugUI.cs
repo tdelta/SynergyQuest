@@ -3,8 +3,7 @@ using TMPro;
 using UnityEngine;
 
 /**
- * Displays remote inputs from the ControllerInput class
- * live as an UI element for debugging purposes.
+ * Displays remote inputs from the ControllerInput class live as an UI element for debugging purposes.
  */
 public class ControllerDebugUI : MonoBehaviour
 {

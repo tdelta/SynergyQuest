@@ -1,74 +1,7 @@
-using System;
 using System.Collections.Concurrent;
 using UnityEngine;
 using WebSocketSharp;
 using WebSocketSharp.Server;
-
-public abstract class ConnectionUpdate
-{
-    public readonly int connectionId;
-
-    public sealed class NameUpdate : ConnectionUpdate
-    {
-        public readonly string name;
-        public readonly string websocketId;
-
-        public NameUpdate(int connectionId, string name, string websocketId)
-            : base(connectionId)
-        {
-            this.name = name;
-            this.websocketId = websocketId;
-        }
-        
-        public override void Match( Matcher matcher )
-        {
-            matcher.NameUpdate(this);
-        }
-    }
-    
-    public sealed class MessageUpdate : ConnectionUpdate
-    {
-        public readonly Message message;
-
-        public MessageUpdate(int connectionId, Message msg)
-            : base(connectionId)
-        {
-            this.message = msg;
-        }
-
-        public override void Match( Matcher matcher )
-        {
-            matcher.MessageUpdate(this);
-        }
-    }
-
-    public sealed class DisconnectUpdate : ConnectionUpdate
-    {
-        public DisconnectUpdate(int connectionId)
-            : base(connectionId)
-        { }
-        
-        public override void Match( Matcher matcher )
-        {
-            matcher.DisconnectUpdate(this);
-        }
-    }
-
-    public sealed class Matcher
-    {
-        public Action<NameUpdate> NameUpdate = _ => {};
-        public Action<MessageUpdate> MessageUpdate = _ => { };
-        public Action<DisconnectUpdate> DisconnectUpdate = _ => {};
-    }
-
-    public abstract void Match( Matcher matcher );
-
-    private ConnectionUpdate(int connectionId)
-    {
-        this.connectionId = connectionId;
-    }
-}
-
 
 /**
  * Handles a single connection to a controller.
@@ -80,15 +13,15 @@ public abstract class ConnectionUpdate
  */
 public class Connection : WebSocketBehavior
 {
-    // Though the websocket library already provides an ID for every connection, we use our own numeric IDs since th
+    // Though the websocket library already provides an ID for every connection, we use our own numeric IDs since the
     // library uses string ids which are expensive to compare. And we need to compare IDs a LOT in the server update
     // function.
     // It is set by the server using the `Initialize` method of this class
     private int _connectionId = -1;
     
-    // The message queue which is used to pass received messages to the
-    // Unity main thread.
-    // This field will be set by the `SetMessageQueue` method, which is
+    // The message queue which is used to pass received messages and other events
+    // to the Unity main thread.
+    // This field will be set by the `Initialize` method, which is
     // called when a connection is instantiated.
     private ConcurrentQueue<ConnectionUpdate> _updatesToMainThread;
     
@@ -97,8 +30,10 @@ public class Connection : WebSocketBehavior
     private Message _messageBuffer = new Message(MessageType.None);
 
     /**
-     * This method is called on initialization to set the reference to
-     * a queue which allows us to send parsed messages to the main thread.
+     * This method is called on initialization of a websocket connection in `ControllerServer`.
+     * 
+     * It passes us the numeric id this connection has been given and sets a reference to a queue which allows us to
+     * send parsed messages to the main thread.
      */
     public void Initialize(
         int connectionId,
@@ -123,6 +58,9 @@ public class Connection : WebSocketBehavior
         
         if (msg != null)
         {
+            // If the received message is the special "NameMessage" which is necessary to fully establish a connection
+            // with a player name, also send a NameUpdate to the ControllerServer.
+            // It can then handle the further steps to setup the connection.
             if (msg is Message.NameMessage message)
             {
                 var name = message.name;
@@ -132,6 +70,7 @@ public class Connection : WebSocketBehavior
                 );
             }
             
+            // For all messages, simply forward them to `ControllerServer` with the annotated connection id
             _updatesToMainThread.Enqueue(
                 new ConnectionUpdate.MessageUpdate(_connectionId, msg)
             );

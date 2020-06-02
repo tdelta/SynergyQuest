@@ -1,114 +1,18 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using UnityEngine;
 
 using WebSocketSharp.Server;
 
 /**
- * Identifiers of the different buttons supported by the controller.
- * See the `GetButton` method of the `ControllerInput` class.
- */
-public enum Button
-{
-    Attack,
-    Pull
-}
-
-class ClientCollection
-{
-    private int _nextPlayerId = 0;
-    private Dictionary<int, ControllerInput> _controllerInputs = new Dictionary<int, ControllerInput>();
-    private Dictionary<string, int> _namesToPlayerIds = new Dictionary<string, int>();
-    private Dictionary<int, int> _connectionIdToPlayerId = new Dictionary<int, int>();
-    private Dictionary<int, string> _playerIdToWebsocketId = new Dictionary<int, string>();
-
-    public bool TryGetPlayerId(string name, out int playerId)
-    {
-        return _namesToPlayerIds.TryGetValue(name, out playerId);
-    }
-
-    public bool TryGetInput(int playerId, out ControllerInput controllerInput)
-    {
-        return _controllerInputs.TryGetValue(playerId, out controllerInput);
-    }
-
-    public bool TryGetWebsocketId(int playerId, out string websocketId)
-    {
-        return _playerIdToWebsocketId.TryGetValue(playerId, out websocketId);
-    }
-
-    public ControllerInput NewClient(string name, int connectionId, string websocketId, Func<int, ControllerInput> initializer)
-    {
-        var playerId = _nextPlayerId++;
-        var input = initializer(playerId);
-
-        _playerIdToWebsocketId[playerId] = websocketId;
-        _namesToPlayerIds[name] = playerId;
-        _connectionIdToPlayerId[connectionId] = playerId;
-        _controllerInputs[playerId] = input;
-
-        return input;
-    }
-
-    public bool TryGetInputByConnectionId(int connectionId, out ControllerInput input)
-    {
-        int playerId;
-        if (_connectionIdToPlayerId.TryGetValue(connectionId, out playerId))
-        {
-            return _controllerInputs.TryGetValue(playerId, out input);
-        }
-
-        else
-        {
-            input = null;
-            return false;
-        }
-    }
-
-    public int ClientCount()
-    {
-        return _namesToPlayerIds.Count;
-    }
-
-    public void DeleteConnectionInfo(int playerId, int connectionId)
-    {
-        _playerIdToWebsocketId.Remove(playerId);
-        _connectionIdToPlayerId.Remove(connectionId);
-    }
-
-    public void SetNewConnectionInfo(int playerId, int connectionId, string websocketId)
-    {
-        _playerIdToWebsocketId[playerId] = websocketId;
-        _connectionIdToPlayerId[connectionId] = playerId;
-    }
-}
-
-/**
- * This class allows to receive inputs from remote controllers over the network
- * and also share some data with the controllers (e.g. assign them a color).
- * Its usage is similar to the `Input` class of Unity, though much simpler.
- *
- * Right now, only one remote controller is supported.
- *
- * To use this class, create a game object and assign this script to it.
- * You can then give your character control script a reference to this game
- * object. That's it :).
- * (You also should ensure that the Update function of this script is
- *  executed before all other ones in the Script Execution Order project
- *  settings, but this has already been done.)
+ * This class accepts (websocket) connections of game controllers and
+ * manages these connections.
+ * For every fully connected controller, a `ControllerInput` instance is
+ * emitted by the `OnNewController` event of this class.
+ * You should listen to the event and use the produced input instances in your
+ * game logic since they give access to the individual game controllers
+ * on a high-level.
  * 
- * You can then for example check whether the `Attack` button is pressed like
- * this:
- * `controllerInput.GetButton(Button.Attack)`
- *
- * And you can retrieve the values of the horizontal or vertical joystick
- * axes like this:
- * `controllerInput.Vertical()`
- *
- * You can assign a player color like this:
- * `controllerInputCo.SetColor("#c0ffee");`
- *
  * Internally, this class uses a websocket connection to the controller over
  * which JSON messages are exchanged. For the format of the JSON messages,
  * see the `Message` class hierarchy.
@@ -116,17 +20,24 @@ class ClientCollection
  * servers (a compatible HTTPListener implementation) do not ship with .NET
  * runtime of the current version of Unity (at least not on Linux), we use
  * the MIT licensed library websocket-sharp for this.
+ * 
+ * You should ensure that the Update function of this script is
+ * executed before all other ones in the Script Execution Order project
+ * settings, but should have already been done.
  */
 public class ControllerServer : MonoBehaviour
 {
+    // The maximum number of players/controllers we allow to connect
     [SerializeField] private int _maxNumPlayers = 2;
     
     // Accepts websocket connections
     private WebSocketServer _wss;
     // Keeps track of all connections
     private WebSocketSessionManager _wssm;
+    // Every connection gets a numeric id. This is the next free id
     private int _nextNumericConnectionId = 0;
 
+    // Meta-data for each connection is stored using this helper class
     private ClientCollection _clients = new ClientCollection();
     
     // Since the websocket server runs on its own thread, it acts like a
@@ -139,16 +50,19 @@ public class ControllerServer : MonoBehaviour
     // Port the game will listen on for connections from controllers
     private const short _port = 4242;
 
-    public delegate void NewControllerAction(ControllerInput input);
+    /**
+     * As soon as a new controller fully connects, this event will emit a `ControllerInput` instance.
+     */
     public event NewControllerAction OnNewController;
+    public delegate void NewControllerAction(ControllerInput input);
     
     /**
      * Starts listening for websocket connections of controllers, as soon as
-     * this game object is enabled.
+     * this game object is awakened.
      */
     void Awake()
     {
-        Log($"Starting HTTP server on port {_port}...");
+        Log($"Starting websocket server on port {_port}...");
         
         // Bind to all local addresses (0.0.0.0)
         _wss = new WebSocketServer($"ws://0.0.0.0:{_port}");
@@ -162,9 +76,8 @@ public class ControllerServer : MonoBehaviour
                 // we use this initialization function to pass the message queue
                 // to the connection worker and remember the id of the connection
                 connection.Initialize(_nextNumericConnectionId++, _incomingConnectionUpdates);
-                // ^ NOTICE: As far as I understand it, reference assignment should be
-                //           thread-safe. However, if strange things happen, we should look
-                //           here first.
+                // ^ NOTICE: As far as I understand it, reference assignments as performed by this method  should be
+                //           thread-safe. However, if strange things happen, we should look here first.
                 Log("A new connection has been established.");
             });
         
@@ -184,7 +97,103 @@ public class ControllerServer : MonoBehaviour
         
         _wss.Start();
     }
+    
+    /**
+     * Checks every frame, whether controller inputs or other updates regarding a controller connection arrived and
+     * uses them to properly set up connections and relay inputs to `ControllerInput` instances.
+     */
+    void Update()
+    {
+        ConnectionUpdate updateBuffer; // buffer to store an inter-thread connection update message
+        
+        // For every update that has been received until this frame...
+        while (_incomingConnectionUpdates.TryDequeue(out updateBuffer))
+        {
+            // Perform a different action depending on the type of connection update...
+            updateBuffer.Match(new ConnectionUpdate.Matcher() {
+                // If a controller sets its player name, this means the connection still needs to be set up
+                NameUpdate = update => HandleConnectionSetup(update.name, update.connectionId, update.websocketId),
+                
+                // If a regular message arrived from a controller, forward it to the corresponding `ControllerInput` instance
+                MessageUpdate = update =>
+                {
+                    ControllerInput input;
+                    if (_clients.TryGetInputByConnectionId(update.connectionId, out input))
+                    {
+                        input.HandleMessage(update.message);
+                    }
 
+                    else if (!(update.message is Message.NameMessage))
+                    {
+                        LogError("Got a message from a connection which is not associated with any input. This should never happen and is a programming error.");
+                    }
+                },
+                
+                // If a controller connection disconnects / fails, reset the meta-data of this connection until we have
+                // a new one and set the state of the `ControllerInput` instance to NotConnected.
+                DisconnectUpdate = update =>
+                {
+                    ControllerInput input;
+                    if (_clients.TryGetInputByConnectionId(update.connectionId, out input))
+                    {
+                        _clients.DeleteConnectionInfo(input.PlayerId, update.connectionId);
+                        input.SetStatus(ConnectionStatus.NotConnected);
+                    }
+                }
+            });
+        }
+    }
+    
+    /**
+     * `ControllerInput` class instances use this method to send messages to their controllers over the network.
+     * You should NOT call this method yourself.
+     *
+     * @throws ApplicationException if currently there is no connection to the controller of that player.
+     */
+    public void SendTo(int playerId, Message msg)
+    {
+        string websocketId;
+        if (_clients.TryGetWebsocketId(playerId, out websocketId))
+        {
+            SendToByWebsocketId(websocketId, msg);
+        }
+
+        else
+        {
+            throw new ApplicationException("Tried to send to player who is not connected.");
+        }
+    }
+
+    /**
+     * Internally used to send a message using a specific websocket.
+     */
+    private void SendToByWebsocketId(string websocketId, Message msg)
+    {
+        this._wssm.SendTo(
+            msg.ToJson(), websocketId
+        ); // synchronous sending! See also note below 
+        
+        // NOTE: There is also a method SendToAsync, however, if I understand the source code of websocket-sharp
+        //       correctly, while there is a lock for thread-safety for sending in the WebSocket implementation, there
+        //       is no guarantee of order for the Async method.
+        //       (Since the asynchronicity is implemented on top of BeginInvoke:
+        //        https://docs.microsoft.com/en-us/dotnet/standard/asynchronous-programming-patterns/calling-synchronous-methods-asynchronously
+        //       )
+        //       Hence, we use the synchronous send method here. This could result in a drop of frame rate when called
+        //       often, however, SendTo is probably called only a few times per game session for every player to set up
+        //       the connection. Most of the time we are only receiving data.
+        //       If in the future, we want to send some data frequently, we could use a dedicated worker thread for this
+        //       which ensures sending order by consuming a queue.
+        //
+        //       By the way, since WebSocket is implemented on top of TcpClient which is implemented on top of
+        //       NetworkStream, reading and writing at the same time should be thread-safe.
+        //       However, no two threads should send at the same time and no two threads should be receiving at the same
+        //       time: https://docs.microsoft.com/en-us/dotnet/api/system.net.sockets.networkstream?view=netcore-3.1
+    }
+    
+    /**
+     * Sets up new controller connections or reconnects controllers which lost their connection.
+     */
     private void HandleConnectionSetup(string name, int connectionId, string websocketId)
     {
         int playerId;
@@ -234,8 +243,6 @@ public class ControllerServer : MonoBehaviour
                     }
                 );
                 
-                // FIXME: Announce new player over event
-                
                 Log($"Accepted new player of name {name}");
                 SendToByWebsocketId(websocketId, new Message.NameOkMessage());
                 
@@ -252,84 +259,8 @@ public class ControllerServer : MonoBehaviour
     }
 
     /**
-     * Checks every frame, whether inputs arrived and remembers them in case
-     * some game object asks for them.
+     * Stops the websocket server when this game object is destroyed
      */
-    void Update()
-    {
-        ConnectionUpdate updateBuffer; // buffer to store an update
-        
-        // For every update that has been received until this frame
-        while (_incomingConnectionUpdates.TryDequeue(out updateBuffer))
-        {
-            updateBuffer.Match(new ConnectionUpdate.Matcher() {
-                NameUpdate = update => HandleConnectionSetup(update.name, update.connectionId, update.websocketId),
-                
-                MessageUpdate = update =>
-                {
-                    ControllerInput input;
-                    if (_clients.TryGetInputByConnectionId(update.connectionId, out input))
-                    {
-                        input.HandleMessage(update.message);
-                    }
-
-                    else if (!(update.message is Message.NameMessage))
-                    {
-                        LogError("Got a message from a connection which is not associated with any input. This should never happen and is a programming error.");
-                    }
-                },
-                
-                DisconnectUpdate = update =>
-                {
-                    ControllerInput input;
-                    if (_clients.TryGetInputByConnectionId(update.connectionId, out input))
-                    {
-                        _clients.DeleteConnectionInfo(input.PlayerId, update.connectionId);
-                        input.SetStatus(ConnectionStatus.NotConnected);
-                    }
-                }
-            });
-        }
-    }
-    
-    // FIXME: Find a way to only make this accessible to the ControllerInput class
-    public void SendTo(int playerId, Message msg)
-    {
-        string websocketId;
-        if (_clients.TryGetWebsocketId(playerId, out websocketId))
-        {
-            SendToByWebsocketId(websocketId, msg);
-        }
-
-        else
-        {
-            throw new ApplicationException("Tried to send to player who is not connected.");
-        }
-    }
-
-    private void SendToByWebsocketId(string websocketId, Message msg)
-    {
-        this._wssm.SendTo(
-            msg.ToJson(), websocketId
-        ); // synchronous sending! See also note below 
-        
-        // NOTE: There is also a method SendToAsync, however, if I understand the source code of websocket-sharp
-        //       correctly, while there is a lock for thread-safety for sending in the WebSocket implementation, there
-        //       is no guarantee of order for the Async method.
-        //       (Since the asynchronicity is implemented on top of BeginInvoke:
-        //        https://docs.microsoft.com/en-us/dotnet/standard/asynchronous-programming-patterns/calling-synchronous-methods-asynchronously
-        //       )
-        //       Hence, we use the synchronous send method here. This could result in a drop of frame rate when called
-        //       often, however, SendTo is probably called only once per game session for every player to set a color.
-        //       If in the future, we want to send some data frequently, we could use a dedicated worker thread for this
-        //       which ensures sending order by consuming a queue.
-        //
-        //       By the way, since WebSocket is implemented on top of TcpClient which is implemented on top of
-        //       NetworkStream, reading and writing at the same time should be thread-safe.
-        //       However, no two threads should send at the same time and no two threads should be receiving at the same
-        //       time: https://docs.microsoft.com/en-us/dotnet/api/system.net.sockets.networkstream?view=netcore-3.1
-    }
-
     private void OnDestroy()
     {
         _wss.Stop();

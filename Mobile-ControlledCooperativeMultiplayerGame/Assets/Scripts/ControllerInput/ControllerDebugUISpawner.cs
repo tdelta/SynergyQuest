@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/**
+ * Creates instances of `ControllerDebugUI` game objects when new controllers connect.
+ * They are only intended to display some debug information about the state of a controller connection and sent inputs.
+ */
 public class ControllerDebugUISpawner : MonoBehaviour
 {
     [SerializeField] private ControllerServer _controllerServer;
@@ -27,6 +31,7 @@ public class ControllerDebugUISpawner : MonoBehaviour
         var DebugUi = DebugUiObject.GetComponent<ControllerDebugUI>();
         DebugUi.SetInput(input);
         
+        // Move the next spawning position to the right by the width of the last debug ui game object.
         Vector3[] worldCorners = new Vector3[4];
         DebugUiObject.GetComponent<RectTransform>().GetWorldCorners(worldCorners);
         var width = worldCorners[2].x - worldCorners[1].x;

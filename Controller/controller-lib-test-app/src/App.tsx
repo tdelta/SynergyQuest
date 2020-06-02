@@ -222,7 +222,7 @@ class App extends React.Component<{}, AppState> {
 
     let failureDisplay: React.ReactNode;
     if (this.state.failureMessage != null) {
-      failureDisplay = <span style={{fontWeight: "bold", color: "red", paddingBottom: "2em"}}>{this.state.failureMessage}</span>;
+      failureDisplay = <div style={{fontWeight: "bold", color: "red", paddingBottom: "2em"}}>{this.state.failureMessage}</div>;
     }
     else {
       failureDisplay = <span></span>;

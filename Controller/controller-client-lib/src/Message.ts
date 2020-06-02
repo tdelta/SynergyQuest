@@ -31,7 +31,7 @@ export namespace MessageFormat {
    * The base interface only carries an identifier which determines the type of the
    * message. See also the `MessageType` enum.
    *
-   * Messages can be used a bit like an ADT, see the `matchMessage` function
+   * The Message Types can be used a bit like an ADT, see the `matchMessage` function
    * down below.
    */
   export interface Message {

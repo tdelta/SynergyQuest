@@ -1,97 +1,88 @@
 ﻿using System;
-using UnityEngine;
 
 /**
- * Simulated ADT representing the current status of the connection to a controller.
- * (If we get tired of simulating ADTs in C#, I maybe could use F# instead: https://www.davideaversa.it/blog/quick-look-at-f-in-unity/)
- *
- * FIXME: Transfer this description
+ * Identifiers of the different buttons supported by the controller.
+ * See the `GetButton` method of the `ControllerInput` class.
+ */
+public enum Button
+{
+    Attack,
+    Pull
+}
+
+/**
+ * Documents the current state of the connection of a controller to the game.
  */
 public enum ConnectionStatus
 {
-    NotConnected,
-    Connected
+    NotConnected, // the controller has disconnected
+    Connected     // the controller is connected
 }
 
+/**
+ * While the `ControllerServer` class accepts and manages websocket connections,
+ * it produces instances of this class for every fully connected controller.
+ * 
+ * This class allows to receive inputs from remote controllers over the network
+ * and also share some data with the controllers (e.g. assign them a color).
+ * Its usage is similar to the `Input` class of Unity, though much simpler.
+ *
+ * To use this class, listen to the `OnNewController` event of a game object
+ * implementing the `ControllerServer` component.
+ * You can then give your character control script a reference to the
+ * `ControllerInput` instance emitted by this event.
+ * That's it :).
+ * 
+ * You can then for example check whether the `Attack` button is pressed like
+ * this:
+ * `controllerInput.GetButton(Button.Attack)`
+ *
+ * And you can retrieve the values of the horizontal or vertical joystick
+ * axes like this:
+ * `controllerInput.Vertical()`
+ *
+ * You can assign a player color like this:
+ * `controllerInputCo.SetColor("#c0ffee");`
+ *
+ * `ControllerInput` allows to access inputs pressed on the controller without having to
+ * know about the low-level details on how the connection is managed.
+ * There is one exception to this: A controller might at some point in time lose its connection to the game. If this
+ * happens, the `OnDisconnect` event is emitted and the game should be paused until the `OnReconnect` event is emitted.
+ * 
+ * See also `ControllerDebugUISpawner` and `ControllerDebugUI` for a more complete usage example.
+ */
 public class ControllerInput
 {
-    private int _playerId;
-    private ControllerServer _controllerServer;
+    // Every player gets assigned an ID. Their controller is assigned the same ID which is stored here so that this
+    // class may communicate with `ControllerServer` to send messages to the specific controller controller associated
+    // with this player
+    // `ControllerServer` is used for the underlying network communication
+    private readonly ControllerServer _controllerServer;
     private ConnectionStatus _connectionStatus = ConnectionStatus.NotConnected;
 
     public ConnectionStatus ConnectionStatus => _connectionStatus;
 
-    public int PlayerId => _playerId;
+    public int PlayerId { get; }
 
-    private float _vertical = 0.0f;    // vertical joystick position
+    // We cache the last inputs reported by a controller here
+    private float _vertical   = 0.0f;  // vertical joystick position
     private float _horizontal = 0.0f;  // horizontal joystick position
-    private bool _attackDown = false; // whether the Attack button is pressed
-    private bool _pullDown = false;   // whether the Pull button is pressed
+    private bool _attackDown  = false; // whether the Attack button is pressed
+    private bool _pullDown    = false; // whether the Pull button is pressed
 
-    public delegate void ReconnectAction();
-    public delegate void DisconnectAction();
-
-    public event ReconnectAction OnReconnect;
+    /**
+     * This event is emitted when the underlying controller loses its connection to the game. The game should be paused
+     * when this is emitted until `OnReconnect` is emitted.
+     */
     public event DisconnectAction OnDisconnect;
+    public delegate void DisconnectAction();
     
-    // FIXME: Find a way to only let the server access this method
-    public void SetStatus(ConnectionStatus status)
-    {
-        var previousStatus = _connectionStatus;
-        _connectionStatus = status;
-
-        switch (status)
-        {
-            case ConnectionStatus.Connected:
-                OnReconnect?.Invoke();
-                break;
-            
-            case ConnectionStatus.NotConnected:
-                if (previousStatus == ConnectionStatus.Connected)
-                {
-                    OnDisconnect?.Invoke();
-                }
-                break;
-        }
-    }
-
-    public ControllerInput(int playerId, ControllerServer server)
-    {
-        this._playerId = playerId;
-        this._controllerServer = server;
-    }
-    
-    public bool IsConnected()
-    {
-        return _connectionStatus is ConnectionStatus.Connected;
-    }
-
-    public void HandleMessage(Message baseMsg)
-    {
-        // determine what kind of message it is and change the state
-        // accordingly
-        baseMsg.Match(new Message.Matcher()
-        {
-            ButtonMessage = msg =>
-            {
-                switch (msg.button)
-                {
-                    case Button.Attack:
-                        _attackDown = msg.onOff;
-                        break;
-                    case Button.Pull:
-                        _pullDown = msg.onOff;
-                        break;
-                }
-            },
-            
-            JoystickMessage = msg =>
-            {
-                _vertical = msg.vertical;
-                _horizontal = msg.horizontal;
-            }
-        });
-    }
+    /**
+     * This event is emitted when the underlying controller reconnects to the game after the connection has been lost
+     * temporarily. The game should be paused when `OnDisconnect` is emitted and resumed when `OnReconnect` is emitted.
+     */
+    public event ReconnectAction OnReconnect;
+    public delegate void ReconnectAction();
     
     /**
      * Returns the value of the Joystick position on the vertical axis.
@@ -132,19 +123,108 @@ public class ControllerInput
         return false;
     }
 
+    /**
+     * Tells the controller, which color has been assigned to its player.
+     *
+     * @throws ApplicationError if the controller is currently not connected
+     */
     public void SetColor(string color)
     {
         var msg = new Message.PlayerColorMessage(color);
         
         SendMessage(msg);
     }
+    
+    /**
+     * Creates an instance of this class. **This should only be called by `ControllerServer` internally.**
+     * 
+     * Use the `OnNewController` event of the `ControllerServer` class instead to gain a `ControllerInput` instance.
+     */
+    public ControllerInput(int playerId, ControllerServer server)
+    {
+        this.PlayerId = playerId;
+        this._controllerServer = server;
+    }
+    
+    /**
+     * `ControllerServer` calls this method to inform this class, whether the underlying network connection is currently
+     * established or not. Do NOT call it yourself.
+     */
+    public void SetStatus(ConnectionStatus status)
+    {
+        var previousStatus = _connectionStatus;
+        _connectionStatus = status;
 
+        switch (status)
+        {
+            case ConnectionStatus.Connected:
+                OnReconnect?.Invoke();
+                break;
+            
+            case ConnectionStatus.NotConnected:
+                if (previousStatus == ConnectionStatus.Connected)
+                {
+                    OnDisconnect?.Invoke();
+                }
+                break;
+        }
+    }
+    
+    /**
+     * Allows to check whether the controller underlying this input is currently checked.
+     * You should usually NOT use this method, use the `OnDisconnect` / `OnReconnect` events instead.
+     *
+     * This method is internally used by `ControllerServer`.
+     */
+    public bool IsConnected()
+    {
+        return _connectionStatus is ConnectionStatus.Connected;
+    }
+    
+    /**
+     * This method is called by `ControllerServer` to relay network messages of the controller to this class.
+     * You should NOT call it yourself.
+     *
+     * It caches the inputs received from a controller.
+     */
+    public void HandleMessage(Message baseMsg)
+    {
+        // determine what kind of message it is and change the state
+        // accordingly
+        baseMsg.Match(new Message.Matcher()
+        {
+            ButtonMessage = msg =>
+            {
+                switch (msg.button)
+                {
+                    case Button.Attack:
+                        _attackDown = msg.onOff;
+                        break;
+                    case Button.Pull:
+                        _pullDown = msg.onOff;
+                        break;
+                }
+            },
+            
+            JoystickMessage = msg =>
+            {
+                _vertical = msg.vertical;
+                _horizontal = msg.horizontal;
+            }
+        });
+    }
+
+    /**
+     * Sends a network message to the underlying controller.
+     *
+     * @throws ApplicationException if the controller is currently not connected
+     */
     private void SendMessage(Message msg)
     {
         switch (_connectionStatus)
         {
             case ConnectionStatus.Connected:
-                _controllerServer.SendTo(_playerId, msg);
+                _controllerServer.SendTo(PlayerId, msg);
                 break;
             
             default:
