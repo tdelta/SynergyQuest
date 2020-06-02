@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : EntityController
 {
 
     public float speed;
@@ -37,11 +37,9 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void OnCollisionEnter2D(Collision2D collision)  {
-        if (collision.collider.gameObject.tag == "Enemy"){
-            int damage = collision.collider.gameObject.GetComponent<EnemyController>().getDamage();
-            healthPoints -= damage;
-        }
+    public override void putDamage(int amount)  {
+        healthPoints -= amount;
+
         if (healthPoints <= 0) {
             Destroy(this.gameObject);
         }
@@ -50,11 +48,6 @@ public class PlayerController : MonoBehaviour
     public Vector2 getPosition()
     {
         return transform.position;
-    }
-
-    public int getDamage()
-    {
-        return 1; //TODO :)
     }
 
     private void attack()

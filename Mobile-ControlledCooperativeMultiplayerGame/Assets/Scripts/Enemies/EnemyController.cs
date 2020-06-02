@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-abstract public class EnemyController : MonoBehaviour {
+abstract public class EnemyController : EntityController {
     public float timeInvincible = 1;
     public int   healthPoints = 1;
     public float directionSpeed = 1;
@@ -43,35 +43,14 @@ abstract public class EnemyController : MonoBehaviour {
     }
 
     void OnCollisionEnter2D(Collision2D other) {
-        var player = other.gameObject.GetComponent<PlayerController>();
-        if (player == null) {
+        if (other.gameObject.tag == "Player") {
+            var player = other.gameObject.GetComponent<EntityController>();
+            player.putDamage(damageFactor); 
+        } else
             direction = -direction;
-            return;
-        } 
-        
-        /*
-        To be disscussed (Marc): Von wo kommt der Damage. putDamage durch den 
-        Player oder hier.
-
-
-        else if (isInvincible)
-                return;
-
-        invincibleTimer = timeInvincible;
-        isInvincible = true;
-        animator.SetTrigger("Hit");
-        healthPoints -= player.getDamage();
-
-        if (healthPoints == 0) {
-            isDead = true;
-            animator.SetTrigger("Dead");
-            Destroy(gameObject, 1);
-        }
-        */
-
     }
 
-    public void putDamage(int amount){
+    public override void putDamage(int amount){
         if(isInvincible) {
             return;
         }
@@ -95,9 +74,5 @@ abstract public class EnemyController : MonoBehaviour {
             position += computeNewOffset();
             rigidbody2D.MovePosition(position);
         }
-    }
-
-    public int getDamage() {
-        return damageFactor;
     }
 }
