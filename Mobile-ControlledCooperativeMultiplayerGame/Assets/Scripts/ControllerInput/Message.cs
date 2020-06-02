@@ -1,4 +1,5 @@
 using System;
+using System.Security.Permissions;
 using UnityEngine;
 
 /**
@@ -7,9 +8,14 @@ using UnityEngine;
  */
 public enum MessageType
 {
-    Button = 0,     // sent by controller
-    Joystick = 1,   // sent by controller
-    PlayerColor = 2 // sent by game
+    Button = 0,            // sent by controller
+    Joystick = 1,          // sent by controller
+    PlayerColor = 2,       // sent by game
+    Name = 3,              // sent by controller
+    NameTaken = 4,         // sent by game
+    NameOk = 5,            // sent by game
+    MaxPlayersReached = 6, // sent by game
+    None = 7               // placeholder type for base class
 }
 
 /**
@@ -24,6 +30,11 @@ public enum MessageType
 public class Message
 {
     public MessageType type;
+
+    public Message(MessageType type)
+    {
+        this.type = type;
+    }
 
     /**
      * Parses a message from a JSON string.
@@ -52,6 +63,18 @@ public class Message
             
             case MessageType.PlayerColor:
                 return JsonUtility.FromJson<PlayerColorMessage>(str);
+            
+            case MessageType.Name:
+                return JsonUtility.FromJson<NameMessage>(str);
+            
+            case MessageType.NameTaken:
+                return JsonUtility.FromJson<NameTakenMessage>(str);
+            
+            case MessageType.NameOk:
+                return JsonUtility.FromJson<NameOkMessage>(str);
+            
+            case MessageType.MaxPlayersReached:
+                return JsonUtility.FromJson<MaxPlayersReachedMessage>(str);
         }
 
         return null;
@@ -65,30 +88,139 @@ public class Message
     {
         return JsonUtility.ToJson(this);
     }
-}
 
-[Serializable]
-public class ButtonMessage : Message
-{
-    public Button button;
-    public bool onOff;
-}
-
-[Serializable]
-public class JoystickMessage : Message
-{
-    public float horizontal;
-    public float vertical;
-}
-
-[Serializable]
-public class PlayerColorMessage : Message
-{
-    // Hexadecimal color value with leading '#'
-    public string color;
-
-    public PlayerColorMessage(string color)
+    public class Matcher
     {
-        this.color = color;
+        public Action<ButtonMessage> ButtonMessage = _ => { };
+        public Action<JoystickMessage> JoystickMessage = _ => { };
+        public Action<PlayerColorMessage> PlayerColorMessage = _ => { };
+        public Action<NameMessage> NameMessage = _ => {};
+        public Action<NameTakenMessage> NameTakenMessage = _ => {};
+        public Action<NameOkMessage> NameOkMessage = _ => {};
+        public Action<MaxPlayersReachedMessage> MaxPlayersReachedMessage = _ => {};
+    }
+
+    public virtual void Match(Matcher matcher)
+    {
+        throw new ApplicationException("You can not match on the message base class.");
+    }
+
+    [Serializable]
+    public sealed class ButtonMessage : Message
+    {
+        public Button button;
+        public bool onOff;
+        
+        public ButtonMessage(Button button, bool onOff)
+            : base(MessageType.Button)
+        {
+            this.button = button;
+            this.onOff = onOff;
+        }
+
+        public override void Match( Matcher matcher )
+        {
+            matcher.ButtonMessage(this);
+        }
+    }
+
+    [Serializable]
+    public sealed class JoystickMessage : Message
+    {
+        public float vertical;
+        public float horizontal;
+        
+        public JoystickMessage(float vertical, float horizontal)
+            : base(MessageType.Joystick)
+        {
+            this.vertical = vertical;
+            this.horizontal = horizontal;
+        }
+        
+        public override void Match( Matcher matcher )
+        {
+            matcher.JoystickMessage(this);
+        }
+    }
+
+    [Serializable]
+    public sealed class PlayerColorMessage : Message
+    {
+        // Hexadecimal color value with leading '#'
+        public string color;
+
+        public PlayerColorMessage(string color)
+            : base(MessageType.PlayerColor)
+        {
+            this.color = color;
+        }
+        
+        public override void Match( Matcher matcher )
+        {
+            matcher.PlayerColorMessage(this);
+        }
+    }
+
+    [Serializable]
+    public sealed class NameMessage : Message
+    {
+        // Human-readable name
+        public string name;
+
+        public NameMessage(string name)
+            : base(MessageType.Name)
+        {
+            this.name = name;
+        }
+        
+        public override void Match( Matcher matcher )
+        {
+            matcher.NameMessage(this);
+        }
+    }
+
+    [Serializable]
+    public sealed class NameTakenMessage : Message
+    {
+        // Human-readable name
+        public string name;
+
+        public NameTakenMessage(string name)
+            : base(MessageType.NameTaken)
+        {
+            this.name = name;
+        }
+        
+        public override void Match( Matcher matcher )
+        {
+            matcher.NameTakenMessage(this);
+        }
+    }
+
+    [Serializable]
+    public sealed class NameOkMessage : Message
+    {
+        public NameOkMessage()
+            : base(MessageType.NameOk)
+        { }
+        
+        public override void Match( Matcher matcher )
+        {
+            matcher.NameOkMessage(this);
+        }
+    }
+    
+    [Serializable]
+    public sealed class MaxPlayersReachedMessage : Message
+    {
+        public MaxPlayersReachedMessage()
+            : base(MessageType.MaxPlayersReached)
+        { }
+        
+        public override void Match( Matcher matcher )
+        {
+            matcher.MaxPlayersReachedMessage(this);
+        }
     }
 }
+

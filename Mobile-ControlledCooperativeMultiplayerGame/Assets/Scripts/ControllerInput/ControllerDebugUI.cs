@@ -8,22 +8,22 @@ using UnityEngine;
  */
 public class ControllerDebugUI : MonoBehaviour
 {
-    [SerializeField] private ControllerInput input;
+    [SerializeField] private ControllerInput _input;
 
-    [SerializeField] TextMeshProUGUI verticalValLabel;
+    [SerializeField] private TextMeshProUGUI _verticalValLabel;
     
-    [SerializeField] TextMeshProUGUI horizontalValLabel;
+    [SerializeField] private TextMeshProUGUI _horizontalValLabel;
     
-    [SerializeField] TextMeshProUGUI attackValLabel;
+    [SerializeField] private TextMeshProUGUI _attackValLabel;
     
-    [SerializeField] TextMeshProUGUI pullValLabel;
+    [SerializeField] private TextMeshProUGUI _pullValLabel;
 
     // Update is called once per frame
     void Update()
     {
-        attackValLabel.SetText(input.GetButton(Button.Attack).ToString());
-        pullValLabel.SetText(input.GetButton(Button.Pull).ToString());
-        verticalValLabel.SetText((Math.Truncate(input.Vertical() * 100)/100).ToString());
-        horizontalValLabel.SetText((Math.Truncate(input.Horizontal() * 100)/100).ToString());
+        _attackValLabel.SetText(_input.GetButton(Button.Attack).ToString());
+        _pullValLabel.SetText(_input.GetButton(Button.Pull).ToString());
+        _verticalValLabel.SetText((Math.Truncate(_input.Vertical() * 100)/100).ToString());
+        _horizontalValLabel.SetText((Math.Truncate(_input.Horizontal() * 100)/100).ToString());
     }
 }
