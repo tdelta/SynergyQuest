@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using Boo.Lang.Runtime;
-using UnityEngine;
-
-using WebSocketSharp.Server;
 
 /**
  * Identifiers of the different buttons supported by the controller.
@@ -16,18 +11,27 @@ public enum Button
 }
 
 /**
+ * Documents the current state of the connection of a controller to the game.
+ */
+public enum ConnectionStatus
+{
+    NotConnected, // the controller has disconnected
+    Connected     // the controller is connected
+}
+
+/**
+ * While the `ControllerServer` class accepts and manages websocket connections,
+ * it produces instances of this class for every fully connected controller.
+ * 
  * This class allows to receive inputs from remote controllers over the network
  * and also share some data with the controllers (e.g. assign them a color).
  * Its usage is similar to the `Input` class of Unity, though much simpler.
  *
- * Right now, only one remote controller is supported.
- *
- * To use this class, create a game object and assign this script to it.
- * You can then give your character control script a reference to this game
- * object. That's it :).
- * (You also should ensure that the Update function of this script is
- *  executed before all other ones in the Script Execution Order project
- *  settings, but this has already been done.)
+ * To use this class, listen to the `OnNewController` event of a game object
+ * implementing the `ControllerServer` component.
+ * You can then give your character control script a reference to the
+ * `ControllerInput` instance emitted by this event.
+ * That's it :).
  * 
  * You can then for example check whether the `Attack` button is pressed like
  * this:
@@ -38,132 +42,48 @@ public enum Button
  * `controllerInput.Vertical()`
  *
  * You can assign a player color like this:
- * `controllerInput.SetColor("#c0ffee");`
+ * `controllerInputCo.SetColor("#c0ffee");`
  *
- * Internally, this class uses a websocket connection to the controller over
- * which JSON messages are exchanged. For the format of the JSON messages,
- * see the `Message` class hierarchy.
- * Since the native C# WebSocket functionalities which are required for
- * servers (a compatible HTTPListener implementation) do not ship with .NET
- * runtime of the current version of Unity (at least not on Linux), we use
- * the MIT licensed library websocket-sharp for this.
+ * `ControllerInput` allows to access inputs pressed on the controller without having to
+ * know about the low-level details on how the connection is managed.
+ * There is one exception to this: A controller might at some point in time lose its connection to the game. If this
+ * happens, the `OnDisconnect` event is emitted and the game should be paused until the `OnReconnect` event is emitted.
+ * 
+ * See also `ControllerDebugUISpawner` and `ControllerDebugUI` for a more complete usage example.
  */
-public class ControllerInput : MonoBehaviour
+public class ControllerInput
 {
-    // Accepts websocket connections
-    private WebSocketServer _wss;
-    // Keeps track of all connections
-    private WebSocketSessionManager _wssm;
-    
-    // Since the websocket server runs on its own thread, it acts like a
-    // producer which puts received messages in this thread-safe queue.
-    //
-    // Then, the main thread of Unity acts as a consumer in the `Update`
-    // function.
-    private ConcurrentQueue<Message> _incomingMsgs = new ConcurrentQueue<Message>();
+    // Every player gets assigned an ID. Their controller is assigned the same ID which is stored here so that this
+    // class may communicate with `ControllerServer` to send messages to the specific controller controller associated
+    // with this player
+    // `ControllerServer` is used for the underlying network communication
+    private readonly ControllerServer _controllerServer;
+    private ConnectionStatus _connectionStatus = ConnectionStatus.NotConnected;
 
-    // Right now, we have only one player and few inputs, so we keep track
-    // of their state right here for now.
-    private Connection _connection;    // websocket connection to the client. Needed for sending data to a specific connection
-    private float _vertical = 0.0f;    // vertical joystick position
+    public ConnectionStatus ConnectionStatus => _connectionStatus;
+
+    public int PlayerId { get; }
+
+    // We cache the last inputs reported by a controller here
+    private float _vertical   = 0.0f;  // vertical joystick position
     private float _horizontal = 0.0f;  // horizontal joystick position
-    private bool _attack_down = false; // whether the Attack button is pressed
-    private bool _pull_down = false;   // whether the Pull button is pressed
+    private bool _attackDown  = false; // whether the Attack button is pressed
+    private bool _pullDown    = false; // whether the Pull button is pressed
+
+    /**
+     * This event is emitted when the underlying controller loses its connection to the game. The game should be paused
+     * when this is emitted until `OnReconnect` is emitted.
+     */
+    public event DisconnectAction OnDisconnect;
+    public delegate void DisconnectAction();
     
-    // Port the game will listen on for connections from controllers
-    private const short _port = 4242;
+    /**
+     * This event is emitted when the underlying controller reconnects to the game after the connection has been lost
+     * temporarily. The game should be paused when `OnDisconnect` is emitted and resumed when `OnReconnect` is emitted.
+     */
+    public event ReconnectAction OnReconnect;
+    public delegate void ReconnectAction();
     
-    /**
-     * Starts listening for websocket connections of controllers, as soon as
-     * this game object is enabled.
-     */
-    void OnEnable()
-    {
-        Log($"Starting HTTP server on port {_port}...");
-        
-        // Bind to all local addresses (0.0.0.0)
-        _wss = new WebSocketServer($"ws://0.0.0.0:{_port}");
-        
-        // The connection class will handle the connection on a different
-        // thread.
-        _wss.AddWebSocketService<Connection>(
-            "/sockets",      // we expect connections on the /sockets path
-            connection =>
-            {
-                // we use this initialization function to pass the message queue
-                // to the connection worker and remember the id of the connection
-                connection.SetMessageQueue(_incomingMsgs);
-                Log("Got id: " + connection);
-                this._connection = connection;
-                // ^ NOTICE: As far as I understand it, reference assignment should be
-                //           thread-safe. However, if strange things happen, we should look
-                //           here first.
-                Log("A new controller connection has been established.");
-            });
-        
-        // Now we need to get a handle to the session manager which
-        // keeps track of all connections, so that we can use it later
-        // to send data
-        WebSocketServiceHost serviceHost;
-        if (_wss.WebSocketServices.TryGetServiceHost("/sockets", out serviceHost))
-        {
-            _wssm = serviceHost.Sessions;
-        }
-
-        else
-        {
-            Log("Could not get a hold of the websocket service host. This means we can not send any messages.");
-        }
-        
-        _wss.Start();
-    }
-
-    /**
-     * Checks every frame, whether inputs arrived and remembers them in case
-     * some game object asks for them.
-     */
-    void Update()
-    {
-        Message msg; // buffer to store a message
-        
-        // For every message that has been received until this frame
-        while (_incomingMsgs.TryDequeue(out msg))
-        {
-            // determine what kind of message it is and change the state
-            // accordingly
-            switch (msg.type)
-            {
-                case MessageType.Button:
-                    var buttonMsg = (ButtonMessage) msg;
-                    switch (buttonMsg.button)
-                    {
-                        case Button.Attack:
-                            _attack_down = buttonMsg.onOff;
-                            break;
-                        case Button.Pull:
-                            _pull_down = buttonMsg.onOff;
-                            break;
-                    }
-                    break;
-                case MessageType.Joystick:
-                    var joystickMsg = (JoystickMessage) msg;
-                    _vertical = joystickMsg.vertical;
-                    _horizontal = joystickMsg.horizontal;
-                    break;
-            }
-        }
-    }
-
-    /**
-     * When disabling the game object, stop receiving messages and clear
-     * all buffered messages.
-     */
-    void OnDisable()
-    {
-        _wss.Stop();
-        ClearMsgQueue();
-    }
-
     /**
      * Returns the value of the Joystick position on the vertical axis.
      * 
@@ -195,61 +115,120 @@ public class ControllerInput : MonoBehaviour
         switch (b)
         {
             case Button.Attack:
-                return _attack_down;
+                return _attackDown;
             case Button.Pull:
-                return _pull_down;
+                return _pullDown;
         }
 
         return false;
     }
 
+    /**
+     * Tells the controller, which color has been assigned to its player.
+     *
+     * @throws ApplicationError if the controller is currently not connected
+     */
     public void SetColor(string color)
     {
-        if (_connection != null)
-        {
-            var msg = new PlayerColorMessage(color);
-            
-            this._wssm.SendTo(
-                msg.ToJson(), _connection.ID
-            ); // synchronous sending! See also note below 
-        }
-
-        else
-        {
-            throw new ApplicationException("Can not set color if no controller is connected.");
-        }
-
-        // NOTE: There is also a method SendToAsync, however, if I understand the source code of websocket-sharp
-        //       correctly, while there is a lock for thread-safety for sending in the WebSocket implementation, there
-        //       is no guarantee of order for the Async method.
-        //       (Since the asynchronicity is implemented on top of BeginInvoke:
-        //        https://docs.microsoft.com/en-us/dotnet/standard/asynchronous-programming-patterns/calling-synchronous-methods-asynchronously
-        //       )
-        //       Hence, we use the synchronous send method here. This could result in a drop of frame rate when called
-        //       often, however, SetColor is probably called only once per game session for every player.
-        //       If in the future, we want to send some data frequently, we could use a dedicated worker thread for this
-        //       which ensures sending order by consuming a queue.
-        //
-        //       By the way, since WebSocket is implemented on top of TcpClient which is implemented on top of
-        //       NetworkStream, reading and writing at the same time should be thread-safe.
-        //       However, no two threads should send at the same time and no two threads should be receiving at the same
-        //       time: https://docs.microsoft.com/en-us/dotnet/api/system.net.sockets.networkstream?view=netcore-3.1
+        var msg = new Message.PlayerColorMessage(color);
+        
+        SendMessage(msg);
     }
     
-    private void Log(String str) {
-        Debug.Log("ControllerInput: " + str);
+    /**
+     * Creates an instance of this class. **This should only be called by `ControllerServer` internally.**
+     * 
+     * Use the `OnNewController` event of the `ControllerServer` class instead to gain a `ControllerInput` instance.
+     */
+    public ControllerInput(int playerId, ControllerServer server)
+    {
+        this.PlayerId = playerId;
+        this._controllerServer = server;
+    }
+    
+    /**
+     * `ControllerServer` calls this method to inform this class, whether the underlying network connection is currently
+     * established or not. Do NOT call it yourself.
+     */
+    public void SetStatus(ConnectionStatus status)
+    {
+        var previousStatus = _connectionStatus;
+        _connectionStatus = status;
+
+        switch (status)
+        {
+            case ConnectionStatus.Connected:
+                OnReconnect?.Invoke();
+                break;
+            
+            case ConnectionStatus.NotConnected:
+                if (previousStatus == ConnectionStatus.Connected)
+                {
+                    OnDisconnect?.Invoke();
+                }
+                break;
+        }
+    }
+    
+    /**
+     * Allows to check whether the controller underlying this input is currently checked.
+     * You should usually NOT use this method, use the `OnDisconnect` / `OnReconnect` events instead.
+     *
+     * This method is internally used by `ControllerServer`.
+     */
+    public bool IsConnected()
+    {
+        return _connectionStatus is ConnectionStatus.Connected;
+    }
+    
+    /**
+     * This method is called by `ControllerServer` to relay network messages of the controller to this class.
+     * You should NOT call it yourself.
+     *
+     * It caches the inputs received from a controller.
+     */
+    public void HandleMessage(Message baseMsg)
+    {
+        // determine what kind of message it is and change the state
+        // accordingly
+        baseMsg.Match(new Message.Matcher()
+        {
+            ButtonMessage = msg =>
+            {
+                switch (msg.button)
+                {
+                    case Button.Attack:
+                        _attackDown = msg.onOff;
+                        break;
+                    case Button.Pull:
+                        _pullDown = msg.onOff;
+                        break;
+                }
+            },
+            
+            JoystickMessage = msg =>
+            {
+                _vertical = msg.vertical;
+                _horizontal = msg.horizontal;
+            }
+        });
     }
 
     /**
-     * Removes all remaining received messages from the buffer and throws
-     * them away.
+     * Sends a network message to the underlying controller.
+     *
+     * @throws ApplicationException if the controller is currently not connected
      */
-    private void ClearMsgQueue()
+    private void SendMessage(Message msg)
     {
-        Message msg;
-        while (!_incomingMsgs.IsEmpty)
+        switch (_connectionStatus)
         {
-            _incomingMsgs.TryDequeue(out msg);
+            case ConnectionStatus.Connected:
+                _controllerServer.SendTo(PlayerId, msg);
+                break;
+            
+            default:
+                throw new ApplicationException("Can not set color if no controller is connected.");
         }
     }
 }
