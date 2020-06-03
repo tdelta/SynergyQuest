@@ -12,6 +12,8 @@ public class SwitchController : MonoBehaviour
 
     private Collider2D[] colliders;
 
+    public objectColor color;
+
     public void Start()
     {
         pressed = false;
@@ -26,10 +28,14 @@ public class SwitchController : MonoBehaviour
         foreach (var collider in colliders)
         {
             if (collider.gameObject.tag == "Box"){
-                pressed = true;
+                BoxController box = collider.gameObject.GetComponent<BoxController>();
+                if(box.getColor() == this.GetColor()) {
+                    pressed = true;
+                }
             }
         }
     }
+
     void OnDrawGizmosSelected()
     {
         //Gizmos.DrawSphere(collisionPointCenter.position, collisionPointRadius);
@@ -37,5 +43,9 @@ public class SwitchController : MonoBehaviour
 
     public bool isPressed(){
         return pressed;
+    }
+
+    public objectColor GetColor(){
+        return color;
     }
 }
