@@ -1,1 +1,1 @@
-export { ControllerClient, Button, ConnectFailureReason } from './ControllerClient'
+export { ControllerClient, Button, MenuAction, ConnectFailureReason } from './ControllerClient'

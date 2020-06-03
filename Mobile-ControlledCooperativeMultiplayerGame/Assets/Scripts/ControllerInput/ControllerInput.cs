@@ -6,8 +6,16 @@
  */
 public enum Button
 {
-    Attack,
-    Pull
+    Attack = 0,
+    Pull = 1
+}
+
+/**
+ * Identifiers of the different "menu actions" which can be enabled/disabled for controllers
+ */
+public enum MenuAction
+{
+    StartGame = 0
 }
 
 /**
@@ -63,6 +71,7 @@ public class ControllerInput
     public ConnectionStatus ConnectionStatus => _connectionStatus;
 
     public int PlayerId { get; }
+    public string PlayerName { get; }
 
     // We cache the last inputs reported by a controller here
     private float _vertical   = 0.0f;  // vertical joystick position
@@ -76,6 +85,12 @@ public class ControllerInput
      */
     public event DisconnectAction OnDisconnect;
     public delegate void DisconnectAction();
+
+    /**
+     * This event is emitted when a certain menu action is selected on the controller.
+     */
+    public event MenuActionTriggeredAction OnMenuActionTriggered;
+    public delegate void MenuActionTriggeredAction(MenuAction action);
     
     /**
      * This event is emitted when the underlying controller reconnects to the game after the connection has been lost
@@ -134,15 +149,26 @@ public class ControllerInput
         
         SendMessage(msg);
     }
+
+    public void EnableMenuAction(MenuAction action, bool enable = true)
+    {
+        var msg = new Message.SetMenuActionMessage(
+            action,
+            enable
+        );
+        
+        SendMessage(msg);
+    }
     
     /**
      * Creates an instance of this class. **This should only be called by `ControllerServer` internally.**
      * 
      * Use the `OnNewController` event of the `ControllerServer` class instead to gain a `ControllerInput` instance.
      */
-    public ControllerInput(int playerId, ControllerServer server)
+    public ControllerInput(int playerId, string playerName, ControllerServer server)
     {
         this.PlayerId = playerId;
+        this.PlayerName = playerName;
         this._controllerServer = server;
     }
     
@@ -158,6 +184,7 @@ public class ControllerInput
         switch (status)
         {
             case ConnectionStatus.Connected:
+                // FIXME: Cache whole state and send the state on reconnect. This way, activated menu actions stay active etc.
                 OnReconnect?.Invoke();
                 break;
             
@@ -210,6 +237,11 @@ public class ControllerInput
             {
                 _vertical = msg.vertical;
                 _horizontal = msg.horizontal;
+            },
+            
+            MenuActionTriggeredMessage = msg =>
+            {
+                OnMenuActionTriggered?.Invoke(msg.menuAction);
             }
         });
     }

@@ -11,6 +11,14 @@ export enum Button {
 }
 
 /**
+ * Identifiers of the different "menu actions" which can be enabled/disabled for controllers
+ */
+export enum MenuAction
+{
+  StartGame = 0
+}
+
+/**
  * Different reasons why the game rejected a connection
  */
 export enum ConnectFailureReason {
@@ -65,6 +73,11 @@ export class ControllerClient {
   private color?: string;
 
   /**
+   * Set of all currently enabled menu actions.
+   */
+  private enabledMenuActions: Set<MenuAction> = new Set<MenuAction>();
+
+  /**
    * Callback which can be set by users and which is called if the server
    * refused to establish a connection for the given reason.
    */
@@ -93,6 +106,12 @@ export class ControllerClient {
    * assigns this client a color.
    */
   public onSetPlayerColor: (color: string) => any;
+
+  /**
+   * Callback which can be set by users and which is called whenever the game
+   * enables or disables some menu action for the controller
+   */
+  public onSetMenuAction: (action: MenuAction, enabled: boolean) => any;
 
   /**
    * Creates a ControllerClient instance.
@@ -186,6 +205,33 @@ export class ControllerClient {
   }
 
   /**
+   * Informs the game that a menu action has been triggered.
+   *
+   * @throws Error if the menu action has not been enabled by the game or if the connection to the game is currently not ready
+   */
+  public triggerMenuAction(action: MenuAction) {
+    if (!this.enabledMenuActions.has(action)) {
+      throw Error("Can not trigger menu option which the game has not enabled.");
+    }
+
+    else {
+      this.ensureReady();
+      var msg = MessageFormat.createMenuActionTriggeredMessage(action);
+
+      this.sendMessage(msg);
+    }
+  }
+
+  /**
+   * Returns all menu actions which are currently enabled by the game.
+   * Use the `onSetMenuAction` event to keep track of when actions are enabled
+   * or disabled.
+   */
+  public getEnabledMenuActions(): Set<MenuAction> {
+    return this.enabledMenuActions;
+  }
+
+  /**
    * Returns whether the client is fully connected to a game and can send
    * inputs.
    *
@@ -268,6 +314,18 @@ export class ControllerClient {
         this.color = msg.color;
         this.onSetPlayerColor?.(msg.color);
       },
+
+      SetMenuActionMessage: msg => {
+        if (msg.enabled) {
+          this.enabledMenuActions.add(msg.menuAction);
+        }
+
+        else if (this.enabledMenuActions.has(msg.menuAction)) {
+          this.enabledMenuActions.delete(msg.menuAction);
+        }
+
+        this.onSetMenuAction?.(msg.menuAction, msg.enabled);
+      }
     });
   }
 

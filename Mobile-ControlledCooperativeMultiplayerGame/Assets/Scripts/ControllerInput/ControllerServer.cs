@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using UnityEngine;
 
 using WebSocketSharp.Server;
@@ -25,7 +26,7 @@ using WebSocketSharp.Server;
  * executed before all other ones in the Script Execution Order project
  * settings, but should have already been done.
  */
-public class ControllerServer : MonoBehaviour
+public class ControllerServer : Singleton<ControllerServer>
 {
     // The maximum number of players/controllers we allow to connect
     [SerializeField] private int _maxNumPlayers = 2;
@@ -143,6 +144,15 @@ public class ControllerServer : MonoBehaviour
             });
         }
     }
+
+    /**
+     * Returns the controller input objects of all controllers which have connected so far.
+     * Use the `OnNewController` event to get notified about new controllers.
+     */
+    public List<ControllerInput> GetInputs()
+    {
+        return _clients.GetInputs();
+    }
     
     /**
      * `ControllerInput` class instances use this method to send messages to their controllers over the network.
@@ -236,7 +246,7 @@ public class ControllerServer : MonoBehaviour
                     websocketId,
                     newPlayerId =>
                     {
-                        var input = new ControllerInput(newPlayerId, this);
+                        var input = new ControllerInput(newPlayerId, name, this);
                         input.SetStatus(ConnectionStatus.Connected);
 
                         return input;

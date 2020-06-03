@@ -8,7 +8,6 @@ using UnityEngine;
  */
 public class ControllerDebugUISpawner : MonoBehaviour
 {
-    [SerializeField] private ControllerServer _controllerServer;
     [SerializeField] private GameObject _controllerDebugUiPrefab;
     
     [SerializeField] private Vector3 _nextSpawnLocation = Vector3.zero;
@@ -16,12 +15,16 @@ public class ControllerDebugUISpawner : MonoBehaviour
     // Start is called before the first frame update
     void OnEnable()
     {
-        _controllerServer.OnNewController += OnNewController;
+        ControllerServer.Instance.OnNewController += OnNewController;
+        foreach (var input in ControllerServer.Instance.GetInputs())
+        {
+            OnNewController(input);
+        }
     }
     
     void OnDisable()
     {
-        _controllerServer.OnNewController -= OnNewController;
+        ControllerServer.Instance.OnNewController -= OnNewController;
     }
     
     void OnNewController(ControllerInput input)

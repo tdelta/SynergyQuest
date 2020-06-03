@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 /**
  * To keep track of the multitude of metadata for every controller network connection, the `ControllerServer` class
@@ -91,6 +92,14 @@ class ClientCollection
             input = null;
             return false;
         }
+    }
+
+    /**
+     * Returns all ControllerInput instances
+     */
+    public List<ControllerInput> GetInputs()
+    {
+        return _playerIdsToInputs.Values.ToList();
     }
 
     /**

@@ -17,14 +17,16 @@ using UnityEngine;
  */
 public enum MessageType
 {
-    None = 0,              // Placeholder type for base class
-    Name = 1,              // Name of the player, sent by controller upon establishing a connection
-    NameTaken = 2,         // Game rejects player name since it is already used by another controller, sent by game
-    NameOk = 3,            // Game accepts player name, sent by game
-    MaxPlayersReached = 4, // Game rejects connection since the maximum number of controllers is already connected to it, sent by game
-    Button = 5,            // Button input, sent by controller
-    Joystick = 6,          // Joystick input, sent by controller
-    PlayerColor = 7,       // Color assigned to a player, sent by the game
+    None = 0,               // Placeholder type for base class
+    Name = 1,               // Name of the player, sent by controller upon establishing a connection
+    NameTaken = 2,          // Game rejects player name since it is already used by another controller, sent by game
+    NameOk = 3,             // Game accepts player name, sent by game
+    MaxPlayersReached = 4,  // Game rejects connection since the maximum number of controllers is already connected to it, sent by game
+    Button = 5,             // Button input, sent by controller
+    Joystick = 6,           // Joystick input, sent by controller
+    PlayerColor = 7,        // Color assigned to a player, sent by the game
+    SetMenuAction = 8,      // Enable / disable a menu action, sent by game
+    MenuActionTriggered = 9 // A menu action has been selected on the controller
 }
 
 /**
@@ -92,6 +94,12 @@ public class Message
             
             case MessageType.MaxPlayersReached:
                 return JsonUtility.FromJson<MaxPlayersReachedMessage>(str);
+            
+            case MessageType.SetMenuAction:
+                return JsonUtility.FromJson<SetMenuActionMessage>(str);
+            
+            case MessageType.MenuActionTriggered:
+                return JsonUtility.FromJson<MenuActionTriggeredMessage>(str);
         }
 
         return null;
@@ -245,6 +253,48 @@ public class Message
         }
     }
     
+    [Serializable]
+    public sealed class SetMenuActionMessage : Message
+    {
+        public MenuAction menuAction;
+        public bool enabled;
+        
+        public SetMenuActionMessage(MenuAction action, bool enabled)
+            : base(MessageType.SetMenuAction)
+        {
+            this.menuAction = action;
+            this.enabled = enabled;
+        }
+
+        /**
+         * See base class method for an explanation.
+         */
+        public override void Match( Matcher matcher )
+        {
+            matcher.SetMenuActionMessage(this);
+        }
+    }
+    
+    [Serializable]
+    public sealed class MenuActionTriggeredMessage : Message
+    {
+        public MenuAction menuAction;
+        
+        public MenuActionTriggeredMessage(MenuAction action)
+            : base(MessageType.MenuActionTriggered)
+        {
+            this.menuAction = action;
+        }
+
+        /**
+         * See base class method for an explanation.
+         */
+        public override void Match( Matcher matcher )
+        {
+            matcher.MenuActionTriggeredMessage(this);
+        }
+    }
+    
     /**
      * See `Match` method for an explanation.
      */
@@ -257,6 +307,8 @@ public class Message
         public Action<NameTakenMessage> NameTakenMessage = _ => {};
         public Action<NameOkMessage> NameOkMessage = _ => {};
         public Action<MaxPlayersReachedMessage> MaxPlayersReachedMessage = _ => {};
+        public Action<SetMenuActionMessage> SetMenuActionMessage = _ => {};
+        public Action<MenuActionTriggeredMessage> MenuActionTriggeredMessage = _ => {};
     }
 
     /**

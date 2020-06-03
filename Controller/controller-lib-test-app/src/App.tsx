@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, ControllerClient, ConnectFailureReason } from 'controller-client-lib';
+import { Button, MenuAction, ControllerClient, ConnectFailureReason } from 'controller-client-lib';
 
 /**
  * The following interfaces form an ADT to track the state of the connection
@@ -42,7 +42,14 @@ export interface AppState {
   pullChecked: boolean;
   horizontalSliderVal: number;
   verticalSliderVal: number;
+  enabledMenuActions: Set<MenuAction>;
 }
+
+/**
+ * Assign a human readable name to every menu action
+ */
+let menuActionStrings  = new Map<MenuAction, string>();
+menuActionStrings.set(MenuAction.StartGame, "Start Game");
 
 /**
  * Main UI class
@@ -59,7 +66,8 @@ class App extends React.Component<{}, AppState> {
       attackChecked: false,
       pullChecked: false,
       horizontalSliderVal: 0,
-      verticalSliderVal: 0
+      verticalSliderVal: 0,
+      enabledMenuActions: new Set<MenuAction>()
   };
 
   constructor(props: {}) {
@@ -133,6 +141,11 @@ class App extends React.Component<{}, AppState> {
       color: color, // <- set new color
     });
 
+    client.onSetMenuAction = (action: MenuAction, enabled: boolean) => this.setState({
+      ...this.state,
+      enabledMenuActions: client.getEnabledMenuActions()
+    });
+
     client.connect(
       data.get('name') as string,
       data.get('address') as string,
@@ -188,6 +201,8 @@ class App extends React.Component<{}, AppState> {
    * or not.
    */
   render() {
+    let menuActionDisplay: React.ReactNode = <span></span>;
+
     let body: React.ReactNode;
     switch (this.state.connectionStatus.kind) {
       case "NotConnected":
@@ -217,6 +232,21 @@ class App extends React.Component<{}, AppState> {
           Joystick Vertical:    <input name="vertical" type="range" min="-1" max="1" value={this.state.verticalSliderVal} step="0.05" ref={this.vertRef} onChange={this.handleInputChange}/><br/>
           Joystick Horizontal:  <input name="horizontal" type="range" min="-1" max="1" value={this.state.horizontalSliderVal} step="0.05" ref={this.horRef} onChange={this.handleInputChange}/>
         </p>;
+
+        if (this.state.enabledMenuActions.size > 0) {
+          var client = this.state.connectionStatus.client;
+
+          menuActionDisplay = <div>
+            <h3>Menu Actions</h3>
+              {Array.from(this.state.enabledMenuActions.values()).map(
+                menuAction =>
+                  <button onClick={_ => client.triggerMenuAction(menuAction)}>
+                    {menuActionStrings.get(menuAction)}
+                  </button>
+            )}
+          </div>;
+        }
+
         break;
     }
 
@@ -232,6 +262,7 @@ class App extends React.Component<{}, AppState> {
       <div className="App">
         {failureDisplay}
         {body}
+        {menuActionDisplay}
       </div>
     );
   }

@@ -1,4 +1,4 @@
-import { Button } from './ControllerClient';
+import { Button, MenuAction } from './ControllerClient';
 
 /**
  * This namespace describes the format of messages sent between controller and
@@ -14,14 +14,16 @@ export namespace MessageFormat {
    * The different kinds of messages
    */
   export enum MessageType {
-    None = 0,              // Placeholder type for base class
-    Name = 1,              // Name of the player, sent by controller upon establishing a connection
-    NameTaken = 2,         // Game rejects player name since it is already used by another controller, sent by game
-    NameOk = 3,            // Game accepts player name, sent by game
-    MaxPlayersReached = 4, // Game rejects connection since the maximum number of controllers is already connected to it, sent by game
-    Button = 5,            // Button input, sent by controller
-    Joystick = 6,          // Joystick input, sent by controller
-    PlayerColor = 7,       // Color assigned to a player, sent by the game
+    None = 0,               // Placeholder type for base class
+    Name = 1,               // Name of the player, sent by controller upon establishing a connection
+    NameTaken = 2,          // Game rejects player name since it is already used by another controller, sent by game
+    NameOk = 3,             // Game accepts player name, sent by game
+    MaxPlayersReached = 4,  // Game rejects connection since the maximum number of controllers is already connected to it, sent by game
+    Button = 5,             // Button input, sent by controller
+    Joystick = 6,           // Joystick input, sent by controller
+    PlayerColor = 7,        // Color assigned to a player, sent by the game
+    SetMenuAction = 8,      // Enable / disable a menu action, sent by game
+    MenuActionTriggered = 9 // A menu action has been selected on the controller
   }
 
   /**
@@ -93,6 +95,22 @@ export namespace MessageFormat {
   export interface MaxPlayersReachedMessage extends Message {
   }
 
+  export interface SetMenuActionMessage extends Message {
+    readonly menuAction: MenuAction;
+    readonly enabled: boolean;
+  }
+
+  export interface MenuActionTriggeredMessage extends Message {
+    readonly menuAction: MenuAction;
+  }
+
+  export function createMenuActionTriggeredMessage(menuAction: MenuAction): MenuActionTriggeredMessage {
+    return {
+      type: MessageType.MenuActionTriggered,
+      menuAction: menuAction,
+    };
+  }
+
   /**
    * Creates an object conforming to the message interfaces from a JSON encoded
    * string representation of it.
@@ -126,13 +144,15 @@ export namespace MessageFormat {
    */
   export function matchMessage(msg: Message, matcher: Matcher) {
     switch (msg.type) {
-      case MessageType.Button:            matcher.ButtonMessage(msg as ButtonMessage); break;
-      case MessageType.Joystick:          matcher.JoystickMessage(msg as JoystickMessage); break;
-      case MessageType.PlayerColor:       matcher.PlayerColorMessage(msg as PlayerColorMessage); break;
-      case MessageType.Name:              matcher.NameMessage(msg as NameMessage); break;
-      case MessageType.NameTaken:         matcher.NameTakenMessage(msg as NameTakenMessage); break;
-      case MessageType.NameOk:            matcher.NameOkMessage(msg as NameOkMessage); break;
-      case MessageType.MaxPlayersReached: matcher.MaxPlayersReachedMessage(msg as MaxPlayersReachedMessage); break;
+      case MessageType.Button:              matcher.ButtonMessage(msg as ButtonMessage); break;
+      case MessageType.Joystick:            matcher.JoystickMessage(msg as JoystickMessage); break;
+      case MessageType.PlayerColor:         matcher.PlayerColorMessage(msg as PlayerColorMessage); break;
+      case MessageType.Name:                matcher.NameMessage(msg as NameMessage); break;
+      case MessageType.NameTaken:           matcher.NameTakenMessage(msg as NameTakenMessage); break;
+      case MessageType.NameOk:              matcher.NameOkMessage(msg as NameOkMessage); break;
+      case MessageType.MaxPlayersReached:   matcher.MaxPlayersReachedMessage(msg as MaxPlayersReachedMessage); break;
+      case MessageType.SetMenuAction:       matcher.SetMenuActionMessage(msg as SetMenuActionMessage); break;
+      case MessageType.MenuActionTriggered: matcher.MenuActionTriggeredMessage(msg as MenuActionTriggeredMessage); break;
     }
   }
 
@@ -140,13 +160,15 @@ export namespace MessageFormat {
    * See `matchMessage` function for an explanation.
    */
   export interface Matcher {
-    readonly ButtonMessage:            (_: ButtonMessage) => any           ;
-    readonly JoystickMessage:          (_: JoystickMessage) => any         ;
-    readonly PlayerColorMessage:       (_: PlayerColorMessage) => any      ;
-    readonly NameMessage:              (_: NameMessage) => any             ;
-    readonly NameTakenMessage:         (_: NameTakenMessage) => any        ;
-    readonly NameOkMessage:            (_: NameOkMessage) => any           ;
-    readonly MaxPlayersReachedMessage: (_: MaxPlayersReachedMessage) => any;
+    readonly ButtonMessage:              (_: ButtonMessage) => any           ;
+    readonly JoystickMessage:            (_: JoystickMessage) => any         ;
+    readonly PlayerColorMessage:         (_: PlayerColorMessage) => any      ;
+    readonly NameMessage:                (_: NameMessage) => any             ;
+    readonly NameTakenMessage:           (_: NameTakenMessage) => any        ;
+    readonly NameOkMessage:              (_: NameOkMessage) => any           ;
+    readonly MaxPlayersReachedMessage:   (_: MaxPlayersReachedMessage) => any;
+    readonly SetMenuActionMessage:       (_: SetMenuActionMessage) => any;
+    readonly MenuActionTriggeredMessage: (_: MenuActionTriggeredMessage) => any;
   }
 
   /**
@@ -156,12 +178,14 @@ export namespace MessageFormat {
    * See the `handleMessage` method of `ControllerClient` for an usage example.
    */
   export let defaultMatcher: Matcher = {
-    ButtonMessage:            _ => {},
-    JoystickMessage:          _ => {},
-    PlayerColorMessage:       _ => {},
-    NameMessage:              _ => {},
-    NameTakenMessage:         _ => {},
-    NameOkMessage:            _ => {},
-    MaxPlayersReachedMessage: _ => {}
+    ButtonMessage:              _ => {},
+    JoystickMessage:            _ => {},
+    PlayerColorMessage:         _ => {},
+    NameMessage:                _ => {},
+    NameTakenMessage:           _ => {},
+    NameOkMessage:              _ => {},
+    MaxPlayersReachedMessage:   _ => {},
+    SetMenuActionMessage:       _ => {},
+    MenuActionTriggeredMessage: _ => {}
   };
 }
