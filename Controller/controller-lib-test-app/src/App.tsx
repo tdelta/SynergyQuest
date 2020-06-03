@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, ControllerClient } from 'controller-client-lib';
+import { Button, MenuAction, ControllerClient, ConnectFailureReason } from 'controller-client-lib';
 
 /**
  * The following interfaces form an ADT to track the state of the connection
@@ -36,12 +36,20 @@ type ConnectionStatus = NotConnected | Connecting | Connected;
 export interface AppState {
   connectionStatus: ConnectionStatus;
 
+  failureMessage?: string;
   color?: string;
   attackChecked: boolean;
   pullChecked: boolean;
   horizontalSliderVal: number;
   verticalSliderVal: number;
+  enabledMenuActions: Set<MenuAction>;
 }
+
+/**
+ * Assign a human readable name to every menu action
+ */
+let menuActionStrings  = new Map<MenuAction, string>();
+menuActionStrings.set(MenuAction.StartGame, "Start Game");
 
 /**
  * Main UI class
@@ -53,11 +61,13 @@ class App extends React.Component<{}, AppState> {
 
   private static readonly initialState: AppState = {
       connectionStatus: NotConnectedC,
+      failureMessage: undefined,
       color: undefined,
       attackChecked: false,
       pullChecked: false,
       horizontalSliderVal: 0,
-      verticalSliderVal: 0
+      verticalSliderVal: 0,
+      enabledMenuActions: new Set<MenuAction>()
   };
 
   constructor(props: {}) {
@@ -83,30 +93,62 @@ class App extends React.Component<{}, AppState> {
     // Get a map from input names to their values in the form
     let data = new FormData(e.target as HTMLFormElement)
 
-    let onConnect = () => {
+
+    let client = new ControllerClient();
+
+    client.onReady = () => {
       this.setState({
         ...this.state,
-        connectionStatus: ConnectedC(client)
+        connectionStatus: ConnectedC(client),
+        failureMessage: undefined
       });
     };
 
-    let onDisconnect = () => {
-      this.setState(App.initialState)
+    client.onConnectFailure = (reason: ConnectFailureReason) => {
+      let failMessage: string;
+      switch(reason) {
+        case ConnectFailureReason.NameAlreadyTaken:
+          failMessage = "Could not connect, since someone with that name is already connected.";
+          break;
+
+        case ConnectFailureReason.MaxPlayersReached:
+          failMessage = "Could not connect, since the game is already full and no more players can join.";
+          break;
+      }
+
+      this.setState({
+        ...App.initialState,
+        failureMessage: failMessage
+      });
     };
 
-    let onError = onDisconnect;
+    client.onDisconnect = () => {
+      this.setState({
+        ...App.initialState,
+        failureMessage: this.state.failureMessage
+      });
+    };
 
-    let onSetPlayerColor = (color: string) => this.setState({
+    client.onError = () => {
+      this.setState({
+        ...this.state,
+        failureMessage: "Some sort of connection error occured."
+      });
+    };
+
+    client.onSetPlayerColor = (color: string) => this.setState({
       ...this.state,
       color: color, // <- set new color
     });
 
-    let client = new ControllerClient(
+    client.onSetMenuAction = (action: MenuAction, enabled: boolean) => this.setState({
+      ...this.state,
+      enabledMenuActions: client.getEnabledMenuActions()
+    });
+
+    client.connect(
+      data.get('name') as string,
       data.get('address') as string,
-      onConnect,
-      onDisconnect,
-      onError,
-      onSetPlayerColor,
       +data.get('port')!
     );
 
@@ -159,13 +201,18 @@ class App extends React.Component<{}, AppState> {
    * or not.
    */
   render() {
+    let menuActionDisplay: React.ReactNode = <span></span>;
+
     let body: React.ReactNode;
     switch (this.state.connectionStatus.kind) {
       case "NotConnected":
         body = <form onSubmit={this.connect}>
           <label>
+            Player Name: <input name="name" defaultValue="Link"/>
+          </label><br/>
+          <label>
             Address: <input name="address" defaultValue={window.location.hostname}/>
-              </label><br/>
+          </label><br/>
           <label>
             Port:    <input name="port" type="number" defaultValue="4242"/>
           </label><br/>
@@ -185,12 +232,37 @@ class App extends React.Component<{}, AppState> {
           Joystick Vertical:    <input name="vertical" type="range" min="-1" max="1" value={this.state.verticalSliderVal} step="0.05" ref={this.vertRef} onChange={this.handleInputChange}/><br/>
           Joystick Horizontal:  <input name="horizontal" type="range" min="-1" max="1" value={this.state.horizontalSliderVal} step="0.05" ref={this.horRef} onChange={this.handleInputChange}/>
         </p>;
+
+        if (this.state.enabledMenuActions.size > 0) {
+          var client = this.state.connectionStatus.client;
+
+          menuActionDisplay = <div>
+            <h3>Menu Actions</h3>
+              {Array.from(this.state.enabledMenuActions.values()).map(
+                menuAction =>
+                  <button onClick={_ => client.triggerMenuAction(menuAction)}>
+                    {menuActionStrings.get(menuAction)}
+                  </button>
+            )}
+          </div>;
+        }
+
         break;
+    }
+
+    let failureDisplay: React.ReactNode;
+    if (this.state.failureMessage != null) {
+      failureDisplay = <div style={{fontWeight: "bold", color: "red", paddingBottom: "2em"}}>{this.state.failureMessage}</div>;
+    }
+    else {
+      failureDisplay = <span></span>;
     }
 
     return (
       <div className="App">
+        {failureDisplay}
         {body}
+        {menuActionDisplay}
       </div>
     );
   }

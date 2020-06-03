@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-abstract public class EnemyController : MonoBehaviour {
+abstract public class EnemyController : EntityController {
     public float timeInvincible = 1;
     public int   healthPoints = 1;
     public float directionSpeed = 1;
@@ -43,42 +43,23 @@ abstract public class EnemyController : MonoBehaviour {
     }
 
     void OnCollisionEnter2D(Collision2D other) {
-        var player = other.gameObject.GetComponent<PlayerController>();
-        if (player == null) {
+        if (other.gameObject.tag == "Player") {
+            var player = other.gameObject.GetComponent<EntityController>();
+            player.putDamage(damageFactor, (other.transform.position - transform.position).normalized); 
+        } else
             direction = -direction;
-            return;
-        } 
-        
-        /*
-        To be disscussed (Marc): Von wo kommt der Damage. putDamage durch den 
-        Player oder hier.
-
-
-        else if (isInvincible)
-                return;
-
-        invincibleTimer = timeInvincible;
-        isInvincible = true;
-        animator.SetTrigger("Hit");
-        healthPoints -= player.getDamage();
-
-        if (healthPoints == 0) {
-            isDead = true;
-            animator.SetTrigger("Dead");
-            Destroy(gameObject, 1);
-        }
-        */
-
     }
 
-    public void putDamage(int amount){
-        if(isInvincible) {
+    public override void putDamage(int amount, Vector2 knockbackDirection){
+        if (isInvincible) {
             return;
         }
         invincibleTimer = timeInvincible;
         isInvincible = true;
         animator.SetTrigger("Hit");
         healthPoints -= amount;
+        var stopForce = -rigidbody2D.velocity * rigidbody2D.mass;
+        rigidbody2D.AddForce(stopForce + knockbackFactor * amount * knockbackDirection, ForceMode2D.Impulse);
 
         if (healthPoints == 0) {
             isDead = true;
@@ -87,17 +68,11 @@ abstract public class EnemyController : MonoBehaviour {
         }
     }
 
-    protected abstract Vector2 computeNewOffset();
+    protected abstract Vector2 computeForce();
     
     void FixedUpdate() {
         if (!isDead) {
-            Vector2 position = rigidbody2D.position;
-            position += computeNewOffset();
-            rigidbody2D.MovePosition(position);
+            rigidbody2D.AddForce(computeForce());
         }
-    }
-
-    public int getDamage() {
-        return damageFactor;
     }
 }

@@ -26,11 +26,10 @@ public class BatController : EnemyController {
         }
     }
 
-    protected override Vector2 computeNewOffset() {
+    protected override Vector2 computeForce() {
         var flightMotion = flightMotions[currentMotion];
-        var offset = Time.deltaTime * directionSpeed * direction;
-        offset += flightSpeed * Time.deltaTime * flightMotion;
+        rigidbody2D.position += Time.fixedDeltaTime * flightSpeed * flightMotion;
         animator.SetFloat("Move Y", flightMotion.y);
-        return offset;
+        return directionSpeed * direction;
     }
 }
