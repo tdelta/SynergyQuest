@@ -399,7 +399,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fad7292b03eb81d43964fdc5d3fcfe1e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 3
+  knockbackFactor: 3
+  speed: 40
   healthPoints: 5
 --- !u!95 &4270148256400962754
 Animator:
@@ -433,7 +434,7 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDrag: 5
+  m_LinearDrag: 10
   m_AngularDrag: 0.05
   m_GravityScale: 0
   m_Material: {fileID: 0}

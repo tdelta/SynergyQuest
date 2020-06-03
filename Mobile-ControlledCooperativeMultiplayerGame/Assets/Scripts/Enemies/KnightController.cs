@@ -26,13 +26,13 @@ public class KnightController : EnemyController {
         return (playerAngle, playerVector.normalized);
     }
 
-    protected override Vector2 computeNewOffset() {
+    protected override Vector2 computeForce() {
         (var angle, var vector) = findNearestPlayer();
 
         if (offset != Vector2.zero && angle <= viewCone / 2)
-            offset = Time.deltaTime * directionSpeed * vector;
+            offset = directionSpeed * vector;
         else
-            offset = Time.deltaTime * directionSpeed * direction;
+            offset = directionSpeed * direction;
 
         animator.SetFloat("Move X", offset.x);
         return offset;

@@ -5,10 +5,12 @@ using UnityEngine;
 public class PlayerController : EntityController
 {
 
-    public float speed;
+    public float speed = 3.0f;
     public int healthPoints;
 
     Animator animator;
+    new Rigidbody2D rigidbody2D;
+
 
     float vertical;
     float horizontal;
@@ -18,8 +20,8 @@ public class PlayerController : EntityController
     // Start is called before the first frame update
     void Start()
     {
-        speed = 3.0f;
         animator = GetComponent<Animator>();
+        rigidbody2D = GetComponent<Rigidbody2D>();
     }
 
     // Update is called once per frame
@@ -37,7 +39,9 @@ public class PlayerController : EntityController
         }
     }
 
-    public override void putDamage(int amount)  {
+    public override void putDamage(int amount, Vector2 knockbackDirection)  {
+        var stopForce = -rigidbody2D.velocity * rigidbody2D.mass;
+        rigidbody2D.AddForce(stopForce + knockbackFactor * amount * knockbackDirection, ForceMode2D.Impulse);
         healthPoints -= amount;
 
         if (healthPoints <= 0) {
@@ -47,7 +51,7 @@ public class PlayerController : EntityController
 
     public Vector2 getPosition()
     {
-        return transform.position;
+        return rigidbody2D.position;
     }
 
     private void attack()
@@ -80,10 +84,10 @@ public class PlayerController : EntityController
         animator.SetFloat("Speed", move.magnitude);
 
 
-        Vector2 newPosition = transform.position;
-        newPosition.x = newPosition.x + horizontal * speed * Time.deltaTime;
-        newPosition.y = newPosition.y + vertical * speed * Time.deltaTime;
+        Vector2 newPosition = rigidbody2D.position;
+        newPosition.x = horizontal * speed;
+        newPosition.y = vertical * speed;
 
-        transform.position = newPosition;
+        rigidbody2D.AddForce(newPosition);
     }
 }
