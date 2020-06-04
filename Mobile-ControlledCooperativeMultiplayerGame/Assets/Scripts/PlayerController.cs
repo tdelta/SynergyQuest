@@ -4,9 +4,11 @@ using UnityEngine;
 
 public class PlayerController : EntityController
 {
+    [SerializeField] private GameObject lifeGauge;
+    [SerializeField] private int maxHealthPoints = 5;
 
     public float speed = 3.0f;
-    public int healthPoints;
+    private int _healthPoints;
 
     Animator animator;
     new Rigidbody2D rigidbody2D;
@@ -16,6 +18,11 @@ public class PlayerController : EntityController
     float horizontal;
     Vector2 lookDirection = new Vector2(1,0);
     bool attacking = false;
+
+    void Awake()
+    {
+        _healthPoints = maxHealthPoints;
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -42,11 +49,34 @@ public class PlayerController : EntityController
     public override void putDamage(int amount, Vector2 knockbackDirection)  {
         var stopForce = -rigidbody2D.velocity * rigidbody2D.mass;
         rigidbody2D.AddForce(stopForce + knockbackFactor * amount * knockbackDirection, ForceMode2D.Impulse);
-        healthPoints -= amount;
+        ChangeHealth(-amount);
+    }
 
-        if (healthPoints <= 0) {
+    private void ChangeHealth(int delta)
+    {
+        _healthPoints += delta;
+
+        if (delta != 0)
+        {
+            DisplayLifeGauge();
+        }
+        
+        if (_healthPoints <= 0) {
             Destroy(this.gameObject);
         }
+    }
+
+    private void DisplayLifeGauge()
+    {
+        var spriteBounds = this.GetComponent<SpriteRenderer>().bounds.size;
+        this.lifeGauge.transform.localPosition =
+            new Vector3(
+                0,
+                spriteBounds.y * 0.7f,
+                0
+            );
+        
+        this.lifeGauge.GetComponent<LifeGauge>().DrawLifeGauge(_healthPoints, maxHealthPoints);
     }
 
     public Vector2 getPosition()

@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 0
+  m_UseShadowmask: 1
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -2033,7 +2033,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d51bd9f9050e8a27ab6acd669f628d2a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _controllerServer: {fileID: 0}
   _controllerDebugUiPrefab: {fileID: 1004154467507645108, guid: c3feebedb21ef771cbe9f44a42d72010,
     type: 3}
   _nextSpawnLocation: {x: -5.1, y: -3.38, z: 0}
@@ -2225,7 +2224,7 @@ PrefabInstance:
     - target: {fileID: 4270148256400962755, guid: 13eca49289d50674d8f5a3616579a440,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.66
+      value: 1.55
       objectReference: {fileID: 0}
     - target: {fileID: 4270148256400962755, guid: 13eca49289d50674d8f5a3616579a440,
         type: 3}
@@ -2271,6 +2270,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4270148256400962765, guid: 13eca49289d50674d8f5a3616579a440,
+        type: 3}
+      propertyPath: maxHealthPoints
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4270148256400962766, guid: 13eca49289d50674d8f5a3616579a440,
         type: 3}
