@@ -311,7 +311,7 @@ GameObject:
   - component: {fileID: 4270148256400962754}
   - component: {fileID: 4270148256400962752}
   - component: {fileID: 4270148256400962753}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -404,6 +404,8 @@ MonoBehaviour:
   lifeGauge: {fileID: 9057244208906412714}
   maxHealthPoints: 3
   speed: 30
+  boxPullRange: 0.5
+  viewDirection: 0
 --- !u!95 &4270148256400962754
 Animator:
   serializedVersion: 3

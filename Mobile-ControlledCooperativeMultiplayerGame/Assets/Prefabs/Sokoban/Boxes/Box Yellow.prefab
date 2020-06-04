@@ -13,7 +13,8 @@ GameObject:
   - component: {fileID: 4186060766436619059}
   - component: {fileID: 861698547}
   - component: {fileID: 9205084942856396360}
-  m_Layer: 0
+  - component: {fileID: 2029635708}
+  m_Layer: 9
   m_Name: Box Yellow
   m_TagString: Box
   m_Icon: {fileID: 0}
@@ -145,3 +146,21 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.8, y: 1.3}
   m_EdgeRadius: 0
+--- !u!255 &2029635708
+FixedJoint2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4186060766436619060}
+  m_Enabled: 1
+  serializedVersion: 4
+  m_EnableCollision: 0
+  m_ConnectedRigidBody: {fileID: 0}
+  m_BreakForce: Infinity
+  m_BreakTorque: Infinity
+  m_AutoConfigureConnectedAnchor: 1
+  m_Anchor: {x: 0, y: 0}
+  m_ConnectedAnchor: {x: 0.78999996, y: -2.09}
+  m_DampingRatio: 0
+  m_Frequency: 0

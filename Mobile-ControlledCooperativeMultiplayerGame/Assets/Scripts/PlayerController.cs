@@ -2,6 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum ViewDirection{
+    top, 
+    bottom,
+    left,
+    right
+}
+
+public enum PlayerState{
+    walking,
+    attacking,
+    // The pulling state also models the pushing of objects. TODO: better name?
+    pulling
+}
+
 public class PlayerController : EntityController
 {
     [SerializeField] private GameObject lifeGauge;
@@ -16,8 +30,27 @@ public class PlayerController : EntityController
 
     float vertical;
     float horizontal;
+
+    public float boxPullRange;
+    BoxController boxToPull;
+
+    /*
+    To be discussed (from Marc) : Do we need this variable as an class attribute?
+    */
     Vector2 lookDirection = new Vector2(1,0);
-    bool attacking = false;
+    
+    /*
+    Set by the animator, makes it easier to implement logic which depends on viewDirection
+
+    Additional note (from Marc) : Technically we could calculate the viewDirection by the variable above (lookDirection),
+    but this is a tideous task and can be done within the animator. Maybe remove attribute above (Or keep for debug purpose?).
+    */
+    public ViewDirection viewDirection;
+
+    /*
+    Modeling the current action of the player
+    */
+    PlayerState playerState;
 
     void Awake()
     {
@@ -29,20 +62,52 @@ public class PlayerController : EntityController
     {
         animator = GetComponent<Animator>();
         rigidbody2D = GetComponent<Rigidbody2D>();
+        playerState = PlayerState.walking;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space)) {
+        // Check whether the player released the pull key
+        if (!Input.GetKey(KeyCode.P) && playerState == PlayerState.pulling){
+            releasePull();
+        }
+
+        // Attacking
+        if (Input.GetKeyDown(KeyCode.Space) && playerState != PlayerState.pulling) {
+            playerState = PlayerState.attacking;
             attack();
         }   
+        // Pulling / Pushing
+        else if (Input.GetKey(KeyCode.P) && playerState == PlayerState.walking){
+            BoxController nearBox = isMatchingBoxNear();
+            // Check whether there is something to pull
+            if(nearBox != null) {
+                playerState = PlayerState.pulling;
+                pull(nearBox);
+            }
+        }
     }
 
     void FixedUpdate ()
     {
-        if(attacking == false) {
-            move();
+        // If the player is walking normally, he is able to move vertically and horizontally
+        if(this.playerState == PlayerState.walking) {
+            move(true, true);
+        } 
+        // If the player is pulling a box, he is only able to walking vertically or horizontally
+        // depending on is viewDirection
+        else if (this.playerState == PlayerState.pulling) {
+            switch(viewDirection) {
+                case ViewDirection.top:
+                case ViewDirection.bottom:
+                    move(true, false);
+                    break;
+                case ViewDirection.left:
+                case ViewDirection.right:
+                    move(false, true);
+                    break;
+            }
         }
     }
 
@@ -92,15 +157,18 @@ public class PlayerController : EntityController
 
     private IEnumerator attackCoroutine()
     {
-        attacking = true;
         yield return new WaitForSeconds(0.3f);
-        attacking = false;
+        // After attack aninmation is done (0.3 seconds), the playerstate changes back to walking
+        playerState = PlayerState.walking;
     }
 
-    private void move()
+    /*
+    Implements the moving logic
+    */
+    private void move(bool enableVertical, bool enableHorizontal)
     {
-        vertical = Input.GetAxis("Vertical");
-        horizontal = Input.GetAxis("Horizontal");
+        vertical = (enableVertical) ? Input.GetAxis("Vertical") : 0;
+        horizontal = (enableHorizontal) ? Input.GetAxis("Horizontal") : 0;
 
         Vector2 move = new Vector2(horizontal, vertical);
 
@@ -119,5 +187,51 @@ public class PlayerController : EntityController
         newPosition.y = vertical * speed;
 
         rigidbody2D.AddForce(newPosition);
+    }
+
+    /*
+    Checks whether there is a pullable box near to the player and returns 
+    it if there.
+
+    TODO: Ignores color currently, due to having only one player
+    */
+    private BoxController isMatchingBoxNear()
+    {
+        Vector2 v;        
+        switch (viewDirection) {
+            case ViewDirection.top:
+                v = new Vector2(0,1);
+                break;
+            case ViewDirection.bottom:
+                v = new Vector2(0,-1);
+                break;
+            case ViewDirection.left:
+                v = new Vector2(-1,0);
+                break;
+            //case ViewDirection.left:
+            default:
+                v = new Vector2(1,0);
+                break;
+        }
+        RaycastHit2D hit = Physics2D.Raycast(gameObject.transform.position, v, boxPullRange, LayerMask.GetMask("Box"));
+
+        if (hit.collider != null) {
+            return hit.collider.gameObject.GetComponent<BoxController>();
+        } else {
+            return null;
+        }
+    }
+
+    private void pull(BoxController box)
+    {
+        box.GetComponent<FixedJoint2D>().connectedBody = this.GetComponent<Rigidbody2D>();
+        boxToPull = box;
+    }
+
+    private void releasePull()
+    {
+        boxToPull.GetComponent<FixedJoint2D>().connectedBody = null;
+        boxToPull = null;
+        playerState = PlayerState.walking; 
     }
 }
