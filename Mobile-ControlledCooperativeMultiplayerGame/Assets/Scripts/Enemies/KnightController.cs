@@ -13,7 +13,7 @@ public class KnightController : EnemyController {
         float playerAngle = 180;
 
         foreach (var player in players) {
-            Vector2 position = player.getPosition();
+            Vector2 position = player.GetPosition();
             Vector2 target = position - rigidbody2D.position;
             float angle = Vector2.Angle(target, offset);
 

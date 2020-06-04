@@ -45,12 +45,12 @@ abstract public class EnemyController : EntityController {
     void OnCollisionEnter2D(Collision2D other) {
         if (other.gameObject.tag == "Player") {
             var player = other.gameObject.GetComponent<EntityController>();
-            player.putDamage(damageFactor, (other.transform.position - transform.position).normalized); 
+            player.PutDamage(damageFactor, (other.transform.position - transform.position).normalized); 
         } else
             direction = -direction;
     }
 
-    public override void putDamage(int amount, Vector2 knockbackDirection){
+    public override void PutDamage(int amount, Vector2 knockbackDirection){
         if (isInvincible) {
             return;
         }

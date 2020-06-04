@@ -19,38 +19,43 @@ public enum PlayerState{
 public class PlayerController : EntityController
 {
     [SerializeField] private GameObject lifeGauge;
+    [SerializeField] private float speed = 3.0f; // units per second
     [SerializeField] private int maxHealthPoints = 5;
-
-    public float speed = 3.0f;
+    [SerializeField] private float boxPullRange;
+    
     private int _healthPoints;
 
     Animator animator;
-    new Rigidbody2D rigidbody2D;
-
-
-    float vertical;
-    float horizontal;
-
-    public float boxPullRange;
-    BoxController boxToPull;
-
-    /*
-    To be discussed (from Marc) : Do we need this variable as an class attribute?
-    */
-    Vector2 lookDirection = new Vector2(1,0);
+    Rigidbody2D rigidbody2D;
     
-    /*
-    Set by the animator, makes it easier to implement logic which depends on viewDirection
+    private BoxController _boxToPull;
+    private float _vertical;
+    private float _horizontal;
+    /**
+     *Modeling the current action of the player
+     */
+    private PlayerState _playerState;
+    
+    /**
+     * TODO: To be discussed (from Marc) : Do we need this variable as an class attribute?
+     */
+    private Vector2 _lookDirection = new Vector2(1,0);
+    
+    /**
+     * Set by the animator, makes it easier to implement logic which depends on viewDirection
 
-    Additional note (from Marc) : Technically we could calculate the viewDirection by the variable above (lookDirection),
-    but this is a tideous task and can be done within the animator. Maybe remove attribute above (Or keep for debug purpose?).
-    */
+     * Additional note (from Marc) : Technically we could calculate the viewDirection by the variable above (lookDirection),
+     * but this is a tideous task and can be done within the animator. Maybe remove attribute above (Or keep for debug purpose?).
+     */
     public ViewDirection viewDirection;
-
-    /*
-    Modeling the current action of the player
-    */
-    PlayerState playerState;
+    
+    /**
+     * Caching animation property identifiers and triggers as hashes for better performance
+     */
+    private static readonly int LookXProperty = Animator.StringToHash("Look x");
+    private static readonly int LookYProperty = Animator.StringToHash("Look y");
+    private static readonly int SpeedProperty = Animator.StringToHash("Speed");
+    private static readonly int AttackTrigger = Animator.StringToHash("Attack");
 
     void Awake()
     {
@@ -62,29 +67,30 @@ public class PlayerController : EntityController
     {
         animator = GetComponent<Animator>();
         rigidbody2D = GetComponent<Rigidbody2D>();
-        playerState = PlayerState.walking;
+        _playerState = PlayerState.walking;
     }
 
     // Update is called once per frame
     void Update()
     {
         // Check whether the player released the pull key
-        if (!Input.GetKey(KeyCode.P) && playerState == PlayerState.pulling){
-            releasePull();
+        if (!Input.GetKey(KeyCode.P) && _playerState == PlayerState.pulling){
+            ReleasePull();
         }
 
         // Attacking
-        if (Input.GetKeyDown(KeyCode.Space) && playerState != PlayerState.pulling) {
-            playerState = PlayerState.attacking;
-            attack();
+        if (Input.GetKeyDown(KeyCode.Space) && _playerState != PlayerState.pulling) {
+            _playerState = PlayerState.attacking;
+            Attack();
         }   
+        
         // Pulling / Pushing
-        else if (Input.GetKey(KeyCode.P) && playerState == PlayerState.walking){
-            BoxController nearBox = isMatchingBoxNear();
+        else if (Input.GetKey(KeyCode.P) && _playerState == PlayerState.walking){
+            BoxController nearBox = IsMatchingBoxNear();
             // Check whether there is something to pull
             if(nearBox != null) {
-                playerState = PlayerState.pulling;
-                pull(nearBox);
+                _playerState = PlayerState.pulling;
+                Pull(nearBox);
             }
         }
     }
@@ -92,26 +98,26 @@ public class PlayerController : EntityController
     void FixedUpdate ()
     {
         // If the player is walking normally, he is able to move vertically and horizontally
-        if(this.playerState == PlayerState.walking) {
-            move(true, true);
+        if(this._playerState == PlayerState.walking) {
+            Move(true, true);
         } 
         // If the player is pulling a box, he is only able to walking vertically or horizontally
         // depending on is viewDirection
-        else if (this.playerState == PlayerState.pulling) {
+        else if (this._playerState == PlayerState.pulling) {
             switch(viewDirection) {
                 case ViewDirection.top:
                 case ViewDirection.bottom:
-                    move(true, false);
+                    Move(true, false);
                     break;
                 case ViewDirection.left:
                 case ViewDirection.right:
-                    move(false, true);
+                    Move(false, true);
                     break;
             }
         }
     }
 
-    public override void putDamage(int amount, Vector2 knockbackDirection)  {
+    public override void PutDamage(int amount, Vector2 knockbackDirection)  {
         var stopForce = -rigidbody2D.velocity * rigidbody2D.mass;
         rigidbody2D.AddForce(stopForce + knockbackFactor * amount * knockbackDirection, ForceMode2D.Impulse);
         ChangeHealth(-amount);
@@ -131,9 +137,13 @@ public class PlayerController : EntityController
         }
     }
 
+    /**
+     * Displays a bar of hearts (life gauge) relative to the player avatar
+     */
     private void DisplayLifeGauge()
     {
         var spriteBounds = this.GetComponent<SpriteRenderer>().bounds.size;
+        // Set relative position of the life gauge so that it appears slightly above the player character
         this.lifeGauge.transform.localPosition =
             new Vector3(
                 0,
@@ -144,58 +154,59 @@ public class PlayerController : EntityController
         this.lifeGauge.GetComponent<LifeGauge>().DrawLifeGauge(_healthPoints, maxHealthPoints);
     }
 
-    public Vector2 getPosition()
+    public Vector2 GetPosition()
     {
         return rigidbody2D.position;
     }
 
-    private void attack()
+    private void Attack()
     {
-        animator.SetTrigger("Attack");
-        StartCoroutine(attackCoroutine());
+        animator.SetTrigger(AttackTrigger);
+        StartCoroutine(AttackCoroutine());
     }
 
-    private IEnumerator attackCoroutine()
+    private IEnumerator AttackCoroutine()
     {
         yield return new WaitForSeconds(0.3f);
         // After attack aninmation is done (0.3 seconds), the playerstate changes back to walking
-        playerState = PlayerState.walking;
+        _playerState = PlayerState.walking;
     }
 
     /*
     Implements the moving logic
     */
-    private void move(bool enableVertical, bool enableHorizontal)
+    private void Move(bool enableVertical, bool enableHorizontal)
     {
-        vertical = (enableVertical) ? Input.GetAxis("Vertical") : 0;
-        horizontal = (enableHorizontal) ? Input.GetAxis("Horizontal") : 0;
+        _vertical = (enableVertical) ? Input.GetAxis("Vertical") : 0;
+        _horizontal = (enableHorizontal) ? Input.GetAxis("Horizontal") : 0;
 
-        Vector2 move = new Vector2(horizontal, vertical);
+        // Scale movement speed by the input axis value and the passed time to get a delta which must be applied to the current position
+        Vector2 deltaPosition = new Vector2(
+            _horizontal,
+            _vertical
+        ) * (speed * Time.deltaTime);
 
-        if (!Mathf.Approximately(move.x, 0.0f) || !Mathf.Approximately(move.y, 0.0f)) {
-            lookDirection.Set(move.x, move.y);
-            lookDirection.Normalize();
+        if (!Mathf.Approximately(deltaPosition.x, 0.0f) || !Mathf.Approximately(deltaPosition.y, 0.0f)) {
+            _lookDirection.Set(deltaPosition.x, deltaPosition.y);
+            _lookDirection.Normalize();
         }
 
-        animator.SetFloat("Look x", lookDirection.x);
-        animator.SetFloat("Look y", lookDirection.y);
-        animator.SetFloat("Speed", move.magnitude);
-
-
-        Vector2 newPosition = rigidbody2D.position;
-        newPosition.x = horizontal * speed;
-        newPosition.y = vertical * speed;
-
-        rigidbody2D.AddForce(newPosition);
+        animator.SetFloat(LookXProperty, _lookDirection.x);
+        animator.SetFloat(LookYProperty, _lookDirection.y);
+        animator.SetFloat(SpeedProperty, deltaPosition.magnitude);
+        
+        rigidbody2D.MovePosition(
+            rigidbody2D.position + deltaPosition
+        );
     }
 
-    /*
-    Checks whether there is a pullable box near to the player and returns 
-    it if there.
-
-    TODO: Ignores color currently, due to having only one player
-    */
-    private BoxController isMatchingBoxNear()
+    /**
+     *Checks whether there is a pullable box near to the player and returns 
+     *it if there.
+     *
+     *TODO: Ignores color currently, due to having only one player
+     */
+    private BoxController IsMatchingBoxNear()
     {
         Vector2 v;        
         switch (viewDirection) {
@@ -222,16 +233,16 @@ public class PlayerController : EntityController
         }
     }
 
-    private void pull(BoxController box)
+    private void Pull(BoxController box)
     {
         box.GetComponent<FixedJoint2D>().connectedBody = this.GetComponent<Rigidbody2D>();
-        boxToPull = box;
+        _boxToPull = box;
     }
 
-    private void releasePull()
+    private void ReleasePull()
     {
-        boxToPull.GetComponent<FixedJoint2D>().connectedBody = null;
-        boxToPull = null;
-        playerState = PlayerState.walking; 
+        _boxToPull.GetComponent<FixedJoint2D>().connectedBody = null;
+        _boxToPull = null;
+        _playerState = PlayerState.walking; 
     }
 }
