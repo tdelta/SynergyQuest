@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -25,8 +26,8 @@ public class PlayerController : EntityController
     
     private int _healthPoints;
 
-    Animator animator;
-    Rigidbody2D rigidbody2D;
+    private Animator _animator;
+    private Rigidbody2D _rigidbody2D;
     
     private BoxController _boxToPull;
     private float _vertical;
@@ -65,8 +66,8 @@ public class PlayerController : EntityController
     // Start is called before the first frame update
     void Start()
     {
-        animator = GetComponent<Animator>();
-        rigidbody2D = GetComponent<Rigidbody2D>();
+        _animator = GetComponent<Animator>();
+        _rigidbody2D = GetComponent<Rigidbody2D>();
         _playerState = PlayerState.walking;
     }
 
@@ -118,8 +119,8 @@ public class PlayerController : EntityController
     }
 
     public override void PutDamage(int amount, Vector2 knockbackDirection)  {
-        var stopForce = -rigidbody2D.velocity * rigidbody2D.mass;
-        rigidbody2D.AddForce(stopForce + knockbackFactor * amount * knockbackDirection, ForceMode2D.Impulse);
+        var stopForce = -_rigidbody2D.velocity * _rigidbody2D.mass;
+        _rigidbody2D.AddForce(stopForce + knockbackFactor * amount * knockbackDirection, ForceMode2D.Impulse);
         ChangeHealth(-amount);
     }
 
@@ -156,12 +157,12 @@ public class PlayerController : EntityController
 
     public Vector2 GetPosition()
     {
-        return rigidbody2D.position;
+        return _rigidbody2D.position;
     }
 
     private void Attack()
     {
-        animator.SetTrigger(AttackTrigger);
+        _animator.SetTrigger(AttackTrigger);
         StartCoroutine(AttackCoroutine());
     }
 
@@ -191,12 +192,12 @@ public class PlayerController : EntityController
             _lookDirection.Normalize();
         }
 
-        animator.SetFloat(LookXProperty, _lookDirection.x);
-        animator.SetFloat(LookYProperty, _lookDirection.y);
-        animator.SetFloat(SpeedProperty, deltaPosition.magnitude);
+        _animator.SetFloat(LookXProperty, _lookDirection.x);
+        _animator.SetFloat(LookYProperty, _lookDirection.y);
+        _animator.SetFloat(SpeedProperty, deltaPosition.magnitude);
         
-        rigidbody2D.MovePosition(
-            rigidbody2D.position + deltaPosition
+        _rigidbody2D.MovePosition(
+            _rigidbody2D.position + deltaPosition
         );
     }
 
