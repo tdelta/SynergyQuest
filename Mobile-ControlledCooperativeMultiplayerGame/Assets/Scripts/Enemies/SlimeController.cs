@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class SlimeController : EnemyController {
 
-    protected override Vector2 computeForce() {
-        var offset = directionSpeed * direction;
+    protected override Vector2 ComputeOffset() {
+        var offset = Time.deltaTime * directionSpeed * direction;
         return offset;
     }
 

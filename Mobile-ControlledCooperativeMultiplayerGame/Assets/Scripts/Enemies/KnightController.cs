@@ -7,7 +7,7 @@ public class KnightController : EnemyController {
 
     Vector2 offset = new Vector2(0, 0);
 
-    (float, Vector2) findNearestPlayer() {
+    (float, Vector2) FindNearestPlayer() {
         var players = (PlayerController[]) GameObject.FindObjectsOfType(typeof(PlayerController));
         Vector2 playerVector = new Vector2(0, 0);
         float playerAngle = 180;
@@ -26,13 +26,13 @@ public class KnightController : EnemyController {
         return (playerAngle, playerVector.normalized);
     }
 
-    protected override Vector2 computeForce() {
-        (var angle, var vector) = findNearestPlayer();
+    protected override Vector2 ComputeOffset() {
+        (var angle, var vector) = FindNearestPlayer();
 
         if (offset != Vector2.zero && angle <= viewCone / 2)
-            offset = directionSpeed * vector;
+            offset = Time.deltaTime * directionSpeed * vector;
         else
-            offset = directionSpeed * direction;
+            offset = Time.deltaTime * directionSpeed * direction;
 
         animator.SetFloat("Move X", offset.x);
         return offset;

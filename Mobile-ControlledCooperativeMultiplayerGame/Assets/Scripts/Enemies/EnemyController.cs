@@ -57,22 +57,28 @@ abstract public class EnemyController : EntityController {
         invincibleTimer = timeInvincible;
         isInvincible = true;
         animator.SetTrigger("Hit");
-        healthPoints -= amount;
         var stopForce = -rigidbody2D.velocity * rigidbody2D.mass;
         rigidbody2D.AddForce(stopForce + knockbackFactor * amount * knockbackDirection, ForceMode2D.Impulse);
+        ChangeHealth(-amount);
+    }
 
-        if (healthPoints == 0) {
+    void ChangeHealth(int amount) {
+        healthPoints += amount;
+
+        if (healthPoints <= 0) {
             isDead = true;
             animator.SetTrigger("Dead");
             Destroy(gameObject, 1);
         }
     }
 
-    protected abstract Vector2 computeForce();
+    protected abstract Vector2 ComputeOffset();
     
     void FixedUpdate() {
         if (!isDead) {
-            rigidbody2D.AddForce(computeForce());
+            Vector2 position = rigidbody2D.position;
+            position += ComputeOffset();
+            rigidbody2D.MovePosition(position);
         }
     }
 }
