@@ -12,33 +12,44 @@ public class EnemySpawn : MonoBehaviour {
     public int numberOfBats = 1;
     public int numberOfKnights = 1;
 
-    int emptyRadius = 2;
+    int emptyRadius = 1;
+    float totalSpawnTime = 1;
+    float spawnTime;
+    System.Random rand = new System.Random();
+    Tilemap tilemap;
 
     // Start is called before the first frame update
     void Start() {
-        var tilemap = GetComponent<Tilemap>();
-        var rand = new System.Random();
-        var spawnPositions = getValidSpawnPositions(tilemap, emptyRadius);
-
-        spawnPositions = spawnRandomly(slime, numberOfSlimes, spawnPositions, rand);
-        spawnPositions = spawnRandomly(bat, numberOfBats, spawnPositions, rand);
-        spawnPositions = spawnRandomly(knight, numberOfKnights, spawnPositions, rand);
+        tilemap = GetComponent<Tilemap>();
+        spawnTime = totalSpawnTime / (numberOfSlimes + numberOfBats + numberOfKnights);
+        Invoke("SpawnEnemies", spawnTime);
     }
 
-    List<Vector3Int> spawnRandomly(EnemyController obj, int amount, List<Vector3Int> spawnPositions, System.Random rand) {
-        for (int i = 0; i < amount; i++) {
+    void SpawnEnemies() {
+        if (numberOfSlimes-- > 0)
+            SpawnWithRandomPosition(slime);
+        else if (numberOfBats-- > 0)
+            SpawnWithRandomPosition(bat);
+        else if (numberOfKnights-- > 0)
+            SpawnWithRandomPosition(knight);
+        else    
+            return;
+        Invoke("SpawnEnemies", spawnTime);
+    }
+
+    void SpawnWithRandomPosition(EnemyController obj) {
+        var spawnPositions = GetValidSpawnPositions();
+        if (spawnPositions.Count > 0) { // if no spawn position with no collider inside radius exists
             int index = rand.Next(spawnPositions.Count);
             var instance = Instantiate(obj, spawnPositions[index], Quaternion.identity);
             instance.ShowParticles();
-            spawnPositions.RemoveAt(index);
         }
-        return spawnPositions;
     }
 
-    List<Vector3Int> getValidSpawnPositions(Tilemap tilemap, int radius) {
+    List<Vector3Int> GetValidSpawnPositions() {
         var spawnPositions = new List<Vector3Int>();
         foreach (var position in tilemap.cellBounds.allPositionsWithin) {
-            var collider = Physics2D.OverlapCircle((Vector3) position, radius);
+            var collider = Physics2D.OverlapCircle((Vector3) position, emptyRadius);
             if (tilemap.HasTile(position) && collider == null)
                 spawnPositions.Add(position);
         }
