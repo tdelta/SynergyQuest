@@ -8,6 +8,7 @@ abstract public class EnemyController : EntityController {
     public float directionSpeed = 1;
     public float directionChangeTime = 1;
     public int damageFactor = 1;
+    public ParticleSystem smokeEffect;
 
     protected new Rigidbody2D rigidbody2D;
     protected Animator animator;
@@ -80,5 +81,9 @@ abstract public class EnemyController : EntityController {
             position += ComputeOffset();
             rigidbody2D.MovePosition(position);
         }
+    }
+
+    public void ShowParticles() {
+        smokeEffect.Play();
     }
 }
