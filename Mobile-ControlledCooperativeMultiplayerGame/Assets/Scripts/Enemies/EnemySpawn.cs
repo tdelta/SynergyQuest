@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -15,14 +16,26 @@ public class EnemySpawn : MonoBehaviour {
     int emptyRadius = 1;
     float totalSpawnTime = 1;
     float spawnTime;
-    System.Random rand = new System.Random();
     Tilemap tilemap;
+    System.Random rand = new System.Random();
+    List<EnemyController> gameObjects = new List<EnemyController>();
+    
 
     // Start is called before the first frame update
     void Start() {
         tilemap = GetComponent<Tilemap>();
         spawnTime = totalSpawnTime / (numberOfSlimes + numberOfBats + numberOfKnights);
         Invoke("SpawnEnemies", spawnTime);
+    }
+
+    void Update() {
+        CheckExit();
+    }
+
+    void CheckExit() {
+        if (gameObjects.All(e => e == null)) {
+            // open door, activate teleporter, whatever...
+        }
     }
 
     void SpawnEnemies() {
@@ -43,6 +56,7 @@ public class EnemySpawn : MonoBehaviour {
             int index = rand.Next(spawnPositions.Count);
             var instance = Instantiate(obj, spawnPositions[index], Quaternion.identity);
             instance.ShowParticles();
+            gameObjects.Add(instance);
         }
     }
 
