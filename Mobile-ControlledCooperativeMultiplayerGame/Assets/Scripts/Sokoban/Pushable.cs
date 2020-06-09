@@ -168,7 +168,6 @@ public class Pushable : MonoBehaviour
 
         else
         {
-            Debug.Log("Not Resting");
             return false;
         }
     }
