@@ -21,7 +21,6 @@ public class PlayerController : EntityController
     private Rigidbody2D _rigidbody2D;
     private BoxCollider2D _collider;
     
-    private BoxController _boxToPull;
     private float _vertical;
     private float _horizontal;
     
@@ -86,36 +85,34 @@ public class PlayerController : EntityController
         {
             if (GetNearPushable(out var pushable))
             {
-                Pull(pushable);
-            }
-
-            else
-            {
-                BoxController nearBox = IsMatchingBoxNear();
-                // Check whether there is something to pull
-                if (nearBox != null)
-                {
-                    _playerState = PlayerState.pulling;
-                    Pull(nearBox);
-                }
+                EnablePulling(pushable);
             }
         }
     }
 
+    /**
+     * Checks whether there is a pullable object near to the player in viewing direction.
+     *
+     * @param pushable    if a pullabls object has been found, it will be stored here, otherwise, null is stored
+     * @returns true iff a pullable object has been found.
+     * 
+     * FIXME: Check color of box
+     */
     bool GetNearPushable(out Pushable pushable)
     {
+        // We want to search in viewing direction
         var searchDirection = viewDirection.ToVector();
         var hit = Physics2D.Raycast(
-            (Vector2) transform.position + _collider.offset, 
+            (Vector2) transform.position + _collider.offset,  // Search from middle point of our collider
             searchDirection,
             boxPullRange,
             LayerMask.GetMask("Box")
         );
 
-        if (hit.collider != null)
+        if (!ReferenceEquals(hit.collider, null)) // !ReferenceEquals is supposed to be faster than != null
         {
             pushable = hit.collider.gameObject.GetComponent<Pushable>();
-            return pushable != null;
+            return !ReferenceEquals(pushable, null);
         }
         
         else
@@ -127,13 +124,16 @@ public class PlayerController : EntityController
 
     void FixedUpdate ()
     {
-        // If the player is walking normally, he is able to move vertically and horizontally
-        if(this._playerState == PlayerState.walking) {
+        // If the player is walking normally, they are able to move vertically and horizontally
+        if (_playerState == PlayerState.walking)
+        {
             Move(true, true);
         } 
-        // If the player is pulling a box, he is only able to walking vertically or horizontally
-        // depending on is viewDirection
-        else if (this._playerState == PlayerState.pulling) {
+        
+        // If the player is pulling a box, they are only able to walk vertically or horizontally
+        // depending on the viewDirection
+        else if (_playerState == PlayerState.pulling)
+        {
             switch(viewDirection) {
                 case Direction.Up:
                 case Direction.Down:
@@ -202,6 +202,10 @@ public class PlayerController : EntityController
         _playerState = PlayerState.walking;
     }
 
+    /**
+     * Assuming we are pulling a box, this method determines whether the inputs letting the player move in the direction
+     * of pulling.
+     */
     private bool DoesMoveInPullDirection()
     {
         switch (viewDirection)
@@ -219,19 +223,21 @@ public class PlayerController : EntityController
         return false;
     }
 
-    /*
-    Implements the moving logic
-    */
+    /**
+     * Implements the moving logic
+     */
     private void Move(bool enableVertical, bool enableHorizontal)
     {
         _vertical = (enableVertical) ? Input.GetAxis("Vertical") : 0;
         _horizontal = (enableHorizontal) ? Input.GetAxis("Horizontal") : 0;
 
-        if (_playerState == PlayerState.pulling && DoesMoveInPullDirection() && _pushableToPull != null)
+        // If we are pulling a box and trying to move in the pulling direction, we instruct the box to pull
+        if (_playerState == PlayerState.pulling && DoesMoveInPullDirection())
         {
             _pushableToPull.Pull(viewDirection.Inverse(), this.gameObject);
         }
 
+        // Otherwise, move normally
         else
         {
             // Scale movement speed by the input axis value and the passed time to get a delta which must be applied to the current position
@@ -255,31 +261,8 @@ public class PlayerController : EntityController
         }
     }
 
-    /**
-     *Checks whether there is a pullable box near to the player and returns 
-     *it if there.
-     *
-     *TODO: Ignores color currently, due to having only one player
-     */
-    private BoxController IsMatchingBoxNear()
-    {
-        var v = viewDirection.ToVector();
-        RaycastHit2D hit = Physics2D.Raycast(gameObject.transform.position, v, boxPullRange, LayerMask.GetMask("Box"));
-
-        if (hit.collider != null) {
-            return hit.collider.gameObject.GetComponent<BoxController>();
-        } else {
-            return null;
-        }
-    }
-
-    private void Pull(BoxController box)
-    {
-        box.GetComponent<FixedJoint2D>().connectedBody = this.GetComponent<Rigidbody2D>();
-        _boxToPull = box;
-    }
     
-    private void Pull(Pushable pushable)
+    private void EnablePulling(Pushable pushable)
     {
         _playerState = PlayerState.pulling;
         _pushableToPull = pushable;
@@ -287,14 +270,7 @@ public class PlayerController : EntityController
 
     private void ReleasePull()
     {
-        if (_boxToPull != null)
-        {
-            _boxToPull.GetComponent<FixedJoint2D>().connectedBody = null;
-            _boxToPull = null;
-        }
-
-        _pushableToPull = null;
-        
         _playerState = PlayerState.walking;
+        _pushableToPull = null;
     }
 }
