@@ -23,6 +23,7 @@ public class SwitchController : MonoBehaviour
     public void Update()
     {
         pressed = false;
+        // FIXME: Physics calculation in every graphics frame??? Why not instead us onCollisionEnter?
         colliders = Physics2D.OverlapCircleAll(collisionPointCenter.position, collisionPointRadius);
 
         foreach (var collider in colliders)

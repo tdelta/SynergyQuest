@@ -1,14 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 using UnityEngine;
-
-public enum ViewDirection{
-    top, 
-    bottom,
-    left,
-    right
-}
 
 public enum PlayerState{
     walking,
@@ -28,10 +19,14 @@ public class PlayerController : EntityController
 
     private Animator _animator;
     private Rigidbody2D _rigidbody2D;
+    private BoxCollider2D _collider;
     
     private BoxController _boxToPull;
     private float _vertical;
     private float _horizontal;
+    
+    private Pushable _pushableToPull;
+    
     /**
      *Modeling the current action of the player
      */
@@ -46,9 +41,9 @@ public class PlayerController : EntityController
      * Set by the animator, makes it easier to implement logic which depends on viewDirection
 
      * Additional note (from Marc) : Technically we could calculate the viewDirection by the variable above (lookDirection),
-     * but this is a tideous task and can be done within the animator. Maybe remove attribute above (Or keep for debug purpose?).
+     * but this is a tedious task and can be done within the animator. Maybe remove attribute above (Or keep for debug purpose?).
      */
-    public ViewDirection viewDirection;
+    public Direction viewDirection;
     
     /**
      * Caching animation property identifiers and triggers as hashes for better performance
@@ -69,6 +64,7 @@ public class PlayerController : EntityController
         _animator = GetComponent<Animator>();
         _rigidbody2D = GetComponent<Rigidbody2D>();
         _playerState = PlayerState.walking;
+        _collider = GetComponent<BoxCollider2D>();
     }
 
     // Update is called once per frame
@@ -86,13 +82,46 @@ public class PlayerController : EntityController
         }   
         
         // Pulling / Pushing
-        else if (Input.GetKey(KeyCode.P) && _playerState == PlayerState.walking){
-            BoxController nearBox = IsMatchingBoxNear();
-            // Check whether there is something to pull
-            if(nearBox != null) {
-                _playerState = PlayerState.pulling;
-                Pull(nearBox);
+        else if (Input.GetKeyDown(KeyCode.P) && _playerState == PlayerState.walking)
+        {
+            if (GetNearPushable(out var pushable))
+            {
+                Pull(pushable);
             }
+
+            else
+            {
+                BoxController nearBox = IsMatchingBoxNear();
+                // Check whether there is something to pull
+                if (nearBox != null)
+                {
+                    _playerState = PlayerState.pulling;
+                    Pull(nearBox);
+                }
+            }
+        }
+    }
+
+    bool GetNearPushable(out Pushable pushable)
+    {
+        var searchDirection = viewDirection.ToVector();
+        var hit = Physics2D.Raycast(
+            (Vector2) transform.position + _collider.offset, 
+            searchDirection,
+            boxPullRange,
+            LayerMask.GetMask("Box")
+        );
+
+        if (hit.collider != null)
+        {
+            pushable = hit.collider.gameObject.GetComponent<Pushable>();
+            return pushable != null;
+        }
+        
+        else
+        {
+            pushable = null;
+            return false;
         }
     }
 
@@ -106,12 +135,12 @@ public class PlayerController : EntityController
         // depending on is viewDirection
         else if (this._playerState == PlayerState.pulling) {
             switch(viewDirection) {
-                case ViewDirection.top:
-                case ViewDirection.bottom:
+                case Direction.Up:
+                case Direction.Down:
                     Move(true, false);
                     break;
-                case ViewDirection.left:
-                case ViewDirection.right:
+                case Direction.Left:
+                case Direction.Right:
                     Move(false, true);
                     break;
             }
@@ -173,6 +202,23 @@ public class PlayerController : EntityController
         _playerState = PlayerState.walking;
     }
 
+    private bool DoesMoveInPullDirection()
+    {
+        switch (viewDirection)
+        {
+            case Direction.Left:
+                return _horizontal > 0;
+            case Direction.Right:
+                return _horizontal < 0;
+            case Direction.Down:
+                return _vertical > 0;
+            case Direction.Up:
+                return _vertical < 0;
+        }
+
+        return false;
+    }
+
     /*
     Implements the moving logic
     */
@@ -181,24 +227,32 @@ public class PlayerController : EntityController
         _vertical = (enableVertical) ? Input.GetAxis("Vertical") : 0;
         _horizontal = (enableHorizontal) ? Input.GetAxis("Horizontal") : 0;
 
-        // Scale movement speed by the input axis value and the passed time to get a delta which must be applied to the current position
-        Vector2 deltaPosition = new Vector2(
-            _horizontal,
-            _vertical
-        ) * (speed * Time.deltaTime);
-
-        if (!Mathf.Approximately(deltaPosition.x, 0.0f) || !Mathf.Approximately(deltaPosition.y, 0.0f)) {
-            _lookDirection.Set(deltaPosition.x, deltaPosition.y);
-            _lookDirection.Normalize();
+        if (_playerState == PlayerState.pulling && DoesMoveInPullDirection() && _pushableToPull != null)
+        {
+            _pushableToPull.Pull(viewDirection.Inverse(), this.gameObject);
         }
 
-        _animator.SetFloat(LookXProperty, _lookDirection.x);
-        _animator.SetFloat(LookYProperty, _lookDirection.y);
-        _animator.SetFloat(SpeedProperty, deltaPosition.magnitude);
-        
-        _rigidbody2D.MovePosition(
-            _rigidbody2D.position + deltaPosition
-        );
+        else
+        {
+            // Scale movement speed by the input axis value and the passed time to get a delta which must be applied to the current position
+            Vector2 deltaPosition = new Vector2(
+                _horizontal,
+                _vertical
+            ) * (speed * Time.deltaTime);
+
+            if (!Mathf.Approximately(deltaPosition.x, 0.0f) || !Mathf.Approximately(deltaPosition.y, 0.0f)) {
+                _lookDirection.Set(deltaPosition.x, deltaPosition.y);
+                _lookDirection.Normalize();
+            }
+
+            _animator.SetFloat(LookXProperty, _lookDirection.x);
+            _animator.SetFloat(LookYProperty, _lookDirection.y);
+            _animator.SetFloat(SpeedProperty, deltaPosition.magnitude);
+            
+            _rigidbody2D.MovePosition(
+                _rigidbody2D.position + deltaPosition
+            );
+        }
     }
 
     /**
@@ -209,22 +263,7 @@ public class PlayerController : EntityController
      */
     private BoxController IsMatchingBoxNear()
     {
-        Vector2 v;        
-        switch (viewDirection) {
-            case ViewDirection.top:
-                v = new Vector2(0,1);
-                break;
-            case ViewDirection.bottom:
-                v = new Vector2(0,-1);
-                break;
-            case ViewDirection.left:
-                v = new Vector2(-1,0);
-                break;
-            //case ViewDirection.left:
-            default:
-                v = new Vector2(1,0);
-                break;
-        }
+        var v = viewDirection.ToVector();
         RaycastHit2D hit = Physics2D.Raycast(gameObject.transform.position, v, boxPullRange, LayerMask.GetMask("Box"));
 
         if (hit.collider != null) {
@@ -239,11 +278,23 @@ public class PlayerController : EntityController
         box.GetComponent<FixedJoint2D>().connectedBody = this.GetComponent<Rigidbody2D>();
         _boxToPull = box;
     }
+    
+    private void Pull(Pushable pushable)
+    {
+        _playerState = PlayerState.pulling;
+        _pushableToPull = pushable;
+    }
 
     private void ReleasePull()
     {
-        _boxToPull.GetComponent<FixedJoint2D>().connectedBody = null;
-        _boxToPull = null;
-        _playerState = PlayerState.walking; 
+        if (_boxToPull != null)
+        {
+            _boxToPull.GetComponent<FixedJoint2D>().connectedBody = null;
+            _boxToPull = null;
+        }
+
+        _pushableToPull = null;
+        
+        _playerState = PlayerState.walking;
     }
 }
