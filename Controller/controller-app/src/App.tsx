@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button, MenuAction, PlayerColor, ControllerClient, ConnectFailureReason } from 'controller-client-lib';
 import { ConnectScreen } from './ConnectScreen';
+import { LobbyScreen } from './LobbyScreen';
 import * as consts from './consts';
 import { Controller } from './Controller';
 import './App.css'
@@ -35,7 +36,18 @@ function ConnectedC(c: ControllerClient): Connected {
   };
 };
 
-type ConnectionStatus = NotConnected | Connecting | Connected;
+interface GameStarted {
+  kind: "GameStarted",
+  client: ControllerClient
+};
+function GameStartedC(c: ControllerClient): GameStarted {
+  return {
+    kind: "GameStarted",
+    client: c
+  };
+};
+
+type ConnectionStatus = NotConnected | Connecting | Connected | GameStarted;
 
 export interface AppState {
   connectionStatus: ConnectionStatus;
@@ -72,6 +84,7 @@ class App extends React.Component<{}, AppState> {
     super(props);
 
     this.connect = this.connect.bind(this);
+    this.startGame = this.startGame.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
 
     // Initialize as not connected
@@ -188,6 +201,18 @@ class App extends React.Component<{}, AppState> {
     }
   }
 
+  startGame() {
+    if (this.state.connectionStatus.kind == "Connected") {
+      const client = this.state.connectionStatus.client;
+
+      client.triggerMenuAction(MenuAction.StartGame);
+      this.setState({
+        ...this.state,
+        connectionStatus: GameStartedC(client)
+      });
+    }
+  }
+
   /**
    * Display different HTML, depending on whether we are connected to a game
    * or not.
@@ -196,12 +221,15 @@ class App extends React.Component<{}, AppState> {
     let body: React.ReactNode;
     switch (this.state.connectionStatus.kind) {
       case "NotConnected":
-        body = <ConnectScreen startGame={this.connect} canStartGame={MenuAction.StartGame in this.state.enabledMenuActions}/>
+        body = <ConnectScreen connect={this.connect}/>
         break;
       case "Connecting":
         body = <span>Connecting...</span>
         break;
       case "Connected":
+        body = <LobbyScreen enabledMenuActions={this.state.enabledMenuActions} startGame={this.startGame} />
+        break;
+      case "GameStarted":
         body = <Controller client={this.state.connectionStatus.client} />
         break;
     }
