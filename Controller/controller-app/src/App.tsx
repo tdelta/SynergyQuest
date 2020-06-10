@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, MenuAction, ControllerClient, ConnectFailureReason } from 'controller-client-lib';
+import { Button, MenuAction, PlayerColor, ControllerClient, ConnectFailureReason } from 'controller-client-lib';
 import { ConnectScreen } from './ConnectScreen';
 import * as consts from './consts';
 import { Controller } from './Controller';
@@ -41,7 +41,7 @@ export interface AppState {
   connectionStatus: ConnectionStatus;
 
   failureMessage?: string;
-  color?: string;
+  color?: PlayerColor;
   attackChecked: boolean;
   pullChecked: boolean;
   horizontalSliderVal: number;
@@ -127,7 +127,7 @@ class App extends React.Component<{}, AppState> {
       });
     };
 
-    client.onSetPlayerColor = (color: string) => this.setState({
+    client.onSetPlayerColor = (color: PlayerColor) => this.setState({
       ...this.state,
       color: color, // <- set new color
     });
