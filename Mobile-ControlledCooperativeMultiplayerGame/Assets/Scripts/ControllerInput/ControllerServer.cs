@@ -26,7 +26,7 @@ using WebSocketSharp.Server;
  * executed before all other ones in the Script Execution Order project
  * settings, but should have already been done.
  */
-public class ControllerServer : Singleton<ControllerServer>
+public class ControllerServer : BehaviourSingleton<ControllerServer>
 {
     // The maximum number of players/controllers we allow to connect
     [SerializeField] private int _maxNumPlayers = 2;

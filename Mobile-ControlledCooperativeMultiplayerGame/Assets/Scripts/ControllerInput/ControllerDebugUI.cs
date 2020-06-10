@@ -38,7 +38,7 @@ public class ControllerDebugUI : MonoBehaviour
 
     public void OnSetColorButton()
     {
-        _input.SetColor("#ff0000");
+        _input.SetColor(PlayerColor.Red);
     }
 
     private void OnEnable()
@@ -67,8 +67,8 @@ public class ControllerDebugUI : MonoBehaviour
     {
         _attackValLabel.SetText(_input.GetButton(Button.Attack).ToString());
         _pullValLabel.SetText(_input.GetButton(Button.Pull).ToString());
-        _verticalValLabel.SetText((Math.Truncate(_input.Vertical() * 100)/100).ToString());
-        _horizontalValLabel.SetText((Math.Truncate(_input.Horizontal() * 100)/100).ToString());
+        _verticalValLabel.SetText((Math.Truncate(_input.GetVertical() * 100)/100).ToString());
+        _horizontalValLabel.SetText((Math.Truncate(_input.GetHorizontal() * 100)/100).ToString());
     }
 
     private void SetConnectionStatusMsg()

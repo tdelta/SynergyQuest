@@ -161,10 +161,9 @@ public class Message
     [Serializable]
     public sealed class PlayerColorMessage : Message
     {
-        // Hexadecimal color value with leading '#'
-        public string color;
+        public PlayerColor color;
 
-        public PlayerColorMessage(string color)
+        public PlayerColorMessage(PlayerColor color)
             : base(MessageType.PlayerColor)
         {
             this.color = color;

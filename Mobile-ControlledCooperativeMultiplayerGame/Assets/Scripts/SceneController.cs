@@ -9,7 +9,7 @@ using UnityEngine.SceneManagement;
  *
  * For more info on the usage of such singleton classes, see the `Singleton` base class.
  */
-public class SceneController : Singleton<SceneController>
+public class SceneController : BehaviourSingleton<SceneController>
 {
     // Some scenes want some data passed to them on load.
     // Since this can not be done directly, we use these fields to cache the date in between loads:
@@ -41,6 +41,11 @@ public class SceneController : Singleton<SceneController>
         SceneManager.LoadScene("TestRoom");
     }
 
+    public void LoadEndOfGame()
+    {
+        SceneManager.LoadScene("EndOfGame");
+    }
+
     public void QuitGame()
     {
         #if UNITY_EDITOR
@@ -50,6 +55,14 @@ public class SceneController : Singleton<SceneController>
         #endif
     }
 
+    /**
+     * Loads any scene by its name. Note however that this bypasses passing any required parameters to scenes.
+     */
+    public void LoadSceneByName(string sceneName)
+    {
+        SceneManager.LoadScene(sceneName);
+    }
+    
     private void OnSceneLoaded(Scene scene, LoadSceneMode _)
     {
         if (scene.name == "LobbyMenu")

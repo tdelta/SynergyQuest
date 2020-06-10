@@ -1,31 +1,6 @@
 ﻿using System;
+using UnityEngine;
 
-/**
- * Identifiers of the different buttons supported by the controller.
- * See the `GetButton` method of the `ControllerInput` class.
- */
-public enum Button
-{
-    Attack = 0,
-    Pull = 1
-}
-
-/**
- * Identifiers of the different "menu actions" which can be enabled/disabled for controllers
- */
-public enum MenuAction
-{
-    StartGame = 0
-}
-
-/**
- * Documents the current state of the connection of a controller to the game.
- */
-public enum ConnectionStatus
-{
-    NotConnected, // the controller has disconnected
-    Connected     // the controller is connected
-}
 
 /**
  * While the `ControllerServer` class accepts and manages websocket connections,
@@ -38,7 +13,8 @@ public enum ConnectionStatus
  * To use this class, listen to the `OnNewController` event of a game object
  * implementing the `ControllerServer` component.
  * You can then give your character control script a reference to the
- * `ControllerInput` instance emitted by this event.
+ * `ControllerInput` instance emitted by this event. See also the `Input` interface
+ * which is implemented by this class.
  * That's it :).
  * 
  * You can then for example check whether the `Attack` button is pressed like
@@ -47,10 +23,10 @@ public enum ConnectionStatus
  *
  * And you can retrieve the values of the horizontal or vertical joystick
  * axes like this:
- * `controllerInput.Vertical()`
+ * `controllerInput.GetVertical()`
  *
  * You can assign a player color like this:
- * `controllerInputCo.SetColor("#c0ffee");`
+ * `controllerInputCo.SetColor(PlayerColor.Red);`
  *
  * `ControllerInput` allows to access inputs pressed on the controller without having to
  * know about the low-level details on how the connection is managed.
@@ -59,7 +35,7 @@ public enum ConnectionStatus
  * 
  * See also `ControllerDebugUISpawner` and `ControllerDebugUI` for a more complete usage example.
  */
-public class ControllerInput
+public class ControllerInput: Input
 {
     // Every player gets assigned an ID. Their controller is assigned the same ID which is stored here so that this
     // class may communicate with `ControllerServer` to send messages to the specific controller controller associated
@@ -72,12 +48,18 @@ public class ControllerInput
 
     public int PlayerId { get; }
     public string PlayerName { get; }
+    public PlayerColor Color => _playerColor;
 
     // We cache the last inputs reported by a controller here
     private float _vertical   = 0.0f;  // vertical joystick position
     private float _horizontal = 0.0f;  // horizontal joystick position
-    private bool _attackDown  = false; // whether the Attack button is pressed
-    private bool _pullDown    = false; // whether the Pull button is pressed
+    private ButtonPressState _attackButtonState = new ButtonPressState(); // whether the Attack button is pressed
+    private ButtonPressState _pullButtonState   = new ButtonPressState(); // whether the Pull button is pressed
+    
+    // We also cache the last special values set by the game
+    // FIXME: We must resend this stuff to the client on reconnect if the client temporarily disconnects.
+    //        We should also cache and resend the menu actions
+    private PlayerColor _playerColor;
 
     /**
      * This event is emitted when the underlying controller loses its connection to the game. The game should be paused
@@ -105,7 +87,7 @@ public class ControllerInput
      * The value is in [-1; 1], at least clients are required to only send
      * such values.
      */
-    public float Vertical()
+    public float GetVertical()
     {
         return _vertical;
     }
@@ -116,7 +98,7 @@ public class ControllerInput
      * The value is in [-1; 1], at least clients are required to only send
      * such values.
      */
-    public float Horizontal()
+    public float GetHorizontal()
     {
         return _horizontal;
     }
@@ -130,9 +112,47 @@ public class ControllerInput
         switch (b)
         {
             case Button.Attack:
-                return _attackDown;
+                return _attackButtonState.GetValue();
             case Button.Pull:
-                return _pullDown;
+                return _pullButtonState.GetValue();
+        }
+
+        return false;
+    }
+    
+    /**
+     * Returns whether a specific button has been pressed during the current frame.
+     * It will not return true during the next frames until the button has been pressed again.
+     * 
+     * For the different button ids, see the `Button` enum.
+     */
+    public bool GetButtonDown(Button b)
+    {
+        switch (b)
+        {
+            case Button.Attack:
+                return _attackButtonState.GetValueDown();
+            case Button.Pull:
+                return _pullButtonState.GetValueDown();
+        }
+
+        return false;
+    }
+    
+    /**
+     * Returns whether a specific button has been released during the current frame.
+     * It will not return true during the next frames until the button has been pressed and released again.
+     * 
+     * For the different button ids, see the `Button` enum.
+     */
+    public bool GetButtonUp(Button b)
+    {
+        switch (b)
+        {
+            case Button.Attack:
+                return _attackButtonState.GetValueUp();
+            case Button.Pull:
+                return _pullButtonState.GetValueUp();
         }
 
         return false;
@@ -143,10 +163,11 @@ public class ControllerInput
      *
      * @throws ApplicationError if the controller is currently not connected
      */
-    public void SetColor(string color)
+    public void SetColor(PlayerColor color)
     {
-        var msg = new Message.PlayerColorMessage(color);
+        _playerColor = color;
         
+        var msg = new Message.PlayerColorMessage(color);
         SendMessage(msg);
     }
 
@@ -225,10 +246,10 @@ public class ControllerInput
                 switch (msg.button)
                 {
                     case Button.Attack:
-                        _attackDown = msg.onOff;
+                        _attackButtonState.ProcessRawInput(msg.onOff);
                         break;
                     case Button.Pull:
-                        _pullDown = msg.onOff;
+                        _attackButtonState.ProcessRawInput(msg.onOff);
                         break;
                 }
             },
@@ -261,6 +282,100 @@ public class ControllerInput
             
             default:
                 throw new ApplicationException("Can not set color if no controller is connected.");
+        }
+    }
+}
+
+/**
+ * Documents the current state of the connection of a controller to the game.
+ */
+public enum ConnectionStatus
+{
+    NotConnected, // the controller has disconnected
+    Connected     // the controller is connected
+}
+
+enum ButtonValue
+{
+    Inactive,
+    ButtonDown,
+    ButtonHeld,
+    ButtonUp
+}
+
+class ButtonPressState
+{
+    private ButtonValue _value = ButtonValue.Inactive;
+    private int _lastRecalculation = -1;
+
+    private void CheckForFrameUpdate()
+    {
+        // Only change something, if the current frame changed
+        if (_lastRecalculation != Time.frameCount)
+        {
+            switch (_value)
+            {
+                case ButtonValue.ButtonDown:
+                    _value = ButtonValue.ButtonHeld;
+                    break;
+                case ButtonValue.ButtonUp:
+                    _value = ButtonValue.Inactive;
+                    break;
+            }
+            
+            _lastRecalculation = Time.frameCount;
+        }
+    }
+
+    public bool GetValue()
+    {
+        CheckForFrameUpdate();
+
+        return _value == ButtonValue.ButtonDown || _value == ButtonValue.ButtonHeld;
+    }
+
+    public bool GetValueDown()
+    {
+        CheckForFrameUpdate();
+
+        return _value == ButtonValue.ButtonDown;
+    }
+
+    public bool GetValueUp()
+    {
+        CheckForFrameUpdate();
+
+        return _value == ButtonValue.ButtonUp;
+    }
+    
+    public void ProcessRawInput(bool rawInputOnOff)
+    {
+        CheckForFrameUpdate();
+        
+        if (rawInputOnOff)
+        {
+            switch (_value)
+            {
+                case ButtonValue.Inactive:
+                    _value = ButtonValue.ButtonDown;
+                    break;
+                case ButtonValue.ButtonUp:
+                    _value = ButtonValue.ButtonDown;
+                    break;
+            }
+        }
+
+        else
+        {
+            switch (_value)
+            {
+                case ButtonValue.ButtonDown:
+                    _value = ButtonValue.ButtonUp;
+                    break;
+                case ButtonValue.ButtonHeld:
+                    _value = ButtonValue.ButtonUp;
+                    break;
+            }
         }
     }
 }

@@ -1,22 +1,50 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+
+public enum PlayerState{
+    walking,
+    attacking,
+    // The pulling state also models the pushing of objects. TODO: better name?
+    pulling
+}
 
 public class PlayerController : EntityController
 {
     [SerializeField] private GameObject lifeGauge;
     [SerializeField] private float speed = 3.0f; // units per second
     [SerializeField] private int maxHealthPoints = 5;
+    [SerializeField] private float boxPullRange;
     
     private int _healthPoints;
 
-    Animator animator;
-    Rigidbody2D rigidbody2D;
+    private Animator _animator;
+    private Rigidbody2D _rigidbody2D;
+    private BoxCollider2D _collider;
 
+    private Input _input = LocalInput.Instance;
+    
     private float _vertical;
     private float _horizontal;
+    
+    private Pushable _pushableToPull;
+    
+    /**
+     *Modeling the current action of the player
+     */
+    private PlayerState _playerState;
+    
+    /**
+     * TODO: To be discussed (from Marc) : Do we need this variable as an class attribute?
+     */
     private Vector2 _lookDirection = new Vector2(1,0);
-    private bool _attacking = false;
+    
+    /**
+     * Set by the animator, makes it easier to implement logic which depends on viewDirection
+
+     * Additional note (from Marc) : Technically we could calculate the viewDirection by the variable above (lookDirection),
+     * but this is a tedious task and can be done within the animator. Maybe remove attribute above (Or keep for debug purpose?).
+     */
+    public Direction viewDirection;
     
     /**
      * Caching animation property identifiers and triggers as hashes for better performance
@@ -26,36 +54,110 @@ public class PlayerController : EntityController
     private static readonly int SpeedProperty = Animator.StringToHash("Speed");
     private static readonly int AttackTrigger = Animator.StringToHash("Attack");
 
+    public void Init(Input input)
+    {
+        _input = input;
+    }
+
     void Awake()
     {
+        _animator = GetComponent<Animator>();
+        _rigidbody2D = GetComponent<Rigidbody2D>();
+        _collider = GetComponent<BoxCollider2D>();
+        
         _healthPoints = maxHealthPoints;
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        animator = GetComponent<Animator>();
-        rigidbody2D = GetComponent<Rigidbody2D>();
+        _playerState = PlayerState.walking;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space)) {
+        // Check whether the player released the pull key
+        if (!_input.GetButton(Button.Pull) && _playerState == PlayerState.pulling){
+            ReleasePull();
+        }
+
+        // Attacking
+        if (_input.GetButtonDown(Button.Attack) && _playerState != PlayerState.pulling) {
+            _playerState = PlayerState.attacking;
             Attack();
         }   
+        
+        // Pulling / Pushing
+        else if (_input.GetButtonDown(Button.Pull) && _playerState == PlayerState.walking)
+        {
+            if (GetNearPushable(out var pushable))
+            {
+                EnablePulling(pushable);
+            }
+        }
+    }
+
+    /**
+     * Checks whether there is a pullable object near to the player in viewing direction.
+     *
+     * @param pushable    if a pullabls object has been found, it will be stored here, otherwise, null is stored
+     * @returns true iff a pullable object has been found.
+     * 
+     * FIXME: Check color of box
+     */
+    bool GetNearPushable(out Pushable pushable)
+    {
+        // We want to search in viewing direction
+        var searchDirection = viewDirection.ToVector();
+        var hit = Physics2D.Raycast(
+            (Vector2) transform.position + _collider.offset,  // Search from middle point of our collider
+            searchDirection,
+            boxPullRange,
+            LayerMask.GetMask("Box")
+        );
+
+        if (!ReferenceEquals(hit.collider, null)) // !ReferenceEquals is supposed to be faster than != null
+        {
+            pushable = hit.collider.gameObject.GetComponent<Pushable>();
+            return !ReferenceEquals(pushable, null);
+        }
+        
+        else
+        {
+            pushable = null;
+            return false;
+        }
     }
 
     void FixedUpdate ()
     {
-        if(_attacking == false) {
-            Move();
+        // If the player is walking normally, they are able to move vertically and horizontally
+        if (_playerState == PlayerState.walking)
+        {
+            Move(true, true);
+        } 
+        
+        // If the player is pulling a box, they are only able to walk vertically or horizontally
+        // depending on the viewDirection
+        else if (_playerState == PlayerState.pulling)
+        {
+            switch(viewDirection) {
+                case Direction.Up:
+                case Direction.Down:
+                    Move(true, false);
+                    break;
+                case Direction.Left:
+                case Direction.Right:
+                    Move(false, true);
+                    break;
+            }
         }
     }
 
     public override void PutDamage(int amount, Vector2 knockbackDirection)  {
-        var stopForce = -rigidbody2D.velocity * rigidbody2D.mass;
-        rigidbody2D.AddForce(stopForce + knockbackFactor * amount * knockbackDirection, ForceMode2D.Impulse);
+        var stopForce = -_rigidbody2D.velocity * _rigidbody2D.mass;
+        _rigidbody2D.AddForce(stopForce + knockbackFactor * amount * knockbackDirection, ForceMode2D.Impulse);
         ChangeHealth(-amount);
     }
 
@@ -92,44 +194,91 @@ public class PlayerController : EntityController
 
     public Vector2 GetPosition()
     {
-        return rigidbody2D.position;
+        return _rigidbody2D.position;
     }
 
     private void Attack()
     {
-        animator.SetTrigger(AttackTrigger);
+        _animator.SetTrigger(AttackTrigger);
         StartCoroutine(AttackCoroutine());
     }
 
     private IEnumerator AttackCoroutine()
     {
-        _attacking = true;
         yield return new WaitForSeconds(0.3f);
-        _attacking = false;
+        // After attack aninmation is done (0.3 seconds), the playerstate changes back to walking
+        _playerState = PlayerState.walking;
     }
 
-    private void Move()
+    /**
+     * Assuming we are pulling a box, this method determines whether the inputs letting the player move in the direction
+     * of pulling.
+     */
+    private bool DoesMoveInPullDirection()
     {
-        _vertical = Input.GetAxis("Vertical");
-        _horizontal = Input.GetAxis("Horizontal");
-
-        // Scale movement speed by the input axis value and the passed time to get a delta which must be applied to the current position
-        Vector2 deltaPosition = new Vector2(
-            _horizontal,
-            _vertical
-        ) * (speed * Time.deltaTime);
-
-        if (!Mathf.Approximately(deltaPosition.x, 0.0f) || !Mathf.Approximately(deltaPosition.y, 0.0f)) {
-            _lookDirection.Set(deltaPosition.x, deltaPosition.y);
-            _lookDirection.Normalize();
+        switch (viewDirection)
+        {
+            case Direction.Left:
+                return _horizontal > 0;
+            case Direction.Right:
+                return _horizontal < 0;
+            case Direction.Down:
+                return _vertical > 0;
+            case Direction.Up:
+                return _vertical < 0;
         }
 
-        animator.SetFloat(LookXProperty, _lookDirection.x);
-        animator.SetFloat(LookYProperty, _lookDirection.y);
-        animator.SetFloat(SpeedProperty, deltaPosition.magnitude);
-        
-        rigidbody2D.MovePosition(
-            rigidbody2D.position + deltaPosition
-        );
+        return false;
+    }
+
+    /**
+     * Implements the moving logic
+     */
+    private void Move(bool enableVertical, bool enableHorizontal)
+    {
+        _vertical = (enableVertical) ? _input.GetVertical() : 0;
+        _horizontal = (enableHorizontal) ? _input.GetHorizontal() : 0;
+
+        // If we are pulling a box and trying to move in the pulling direction, we instruct the box to pull
+        if (_playerState == PlayerState.pulling && DoesMoveInPullDirection())
+        {
+            _pushableToPull.Pull(viewDirection.Inverse(), this.gameObject);
+        }
+
+        // Otherwise, move normally
+        else
+        {
+            // Scale movement speed by the input axis value and the passed time to get a delta which must be applied to the current position
+            Vector2 deltaPosition = new Vector2(
+                _horizontal,
+                _vertical
+            ) * (speed * Time.deltaTime);
+
+            if (!Mathf.Approximately(deltaPosition.x, 0.0f) || !Mathf.Approximately(deltaPosition.y, 0.0f)) {
+                _lookDirection.Set(deltaPosition.x, deltaPosition.y);
+                _lookDirection.Normalize();
+            }
+
+            _animator.SetFloat(LookXProperty, _lookDirection.x);
+            _animator.SetFloat(LookYProperty, _lookDirection.y);
+            _animator.SetFloat(SpeedProperty, deltaPosition.magnitude);
+            
+            _rigidbody2D.MovePosition(
+                _rigidbody2D.position + deltaPosition
+            );
+        }
+    }
+
+    
+    private void EnablePulling(Pushable pushable)
+    {
+        _playerState = PlayerState.pulling;
+        _pushableToPull = pushable;
+    }
+
+    private void ReleasePull()
+    {
+        _playerState = PlayerState.walking;
+        _pushableToPull = null;
     }
 }
