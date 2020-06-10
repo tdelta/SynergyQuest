@@ -15,7 +15,8 @@ export enum Button {
  */
 export enum MenuAction
 {
-  StartGame = 0
+  StartGame = 0,
+  QuitGame = 1
 }
 
 /**

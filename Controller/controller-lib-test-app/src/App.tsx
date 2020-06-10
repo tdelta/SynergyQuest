@@ -50,6 +50,7 @@ export interface AppState {
  */
 let menuActionStrings  = new Map<MenuAction, string>();
 menuActionStrings.set(MenuAction.StartGame, "Start Game");
+menuActionStrings.set(MenuAction.QuitGame, "Quit Game");
 
 /**
  * Main UI class

@@ -1,33 +1,6 @@
 ﻿using System;
 
 /**
- * Identifiers of the different buttons supported by the controller.
- * See the `GetButton` method of the `ControllerInput` class.
- */
-public enum Button
-{
-    Attack = 0,
-    Pull = 1
-}
-
-/**
- * Identifiers of the different "menu actions" which can be enabled/disabled for controllers
- */
-public enum MenuAction
-{
-    StartGame = 0
-}
-
-/**
- * Documents the current state of the connection of a controller to the game.
- */
-public enum ConnectionStatus
-{
-    NotConnected, // the controller has disconnected
-    Connected     // the controller is connected
-}
-
-/**
  * While the `ControllerServer` class accepts and manages websocket connections,
  * it produces instances of this class for every fully connected controller.
  * 
@@ -263,4 +236,13 @@ public class ControllerInput
                 throw new ApplicationException("Can not set color if no controller is connected.");
         }
     }
+}
+
+/**
+ * Documents the current state of the connection of a controller to the game.
+ */
+public enum ConnectionStatus
+{
+    NotConnected, // the controller has disconnected
+    Connected     // the controller is connected
 }
