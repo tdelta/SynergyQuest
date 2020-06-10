@@ -1,49 +1,52 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class SwitchController : MonoBehaviour
 {
+    [SerializeField] private PlayerColor color;
+    
+    private bool _pressed;
 
-    bool pressed;
-
-    public Transform collisionPointCenter;
-    public float collisionPointRadius;
-
-    private Collider2D[] colliders;
-
-    public PlayerColor color;
+    public delegate void SwitchChangedAction();
+    public event SwitchChangedAction OnSwitchChanged;
 
     public void Start()
     {
-        pressed = false;
-
+        _pressed = false;
     }
 
-    public void Update()
+    private void SetPressed(bool pressed)
     {
-        pressed = false;
-        // FIXME: Physics calculation in every graphics frame??? Why not instead us onCollisionEnter?
-        colliders = Physics2D.OverlapCircleAll(collisionPointCenter.position, collisionPointRadius);
+        _pressed = pressed;
+        OnSwitchChanged?.Invoke();
+    }
 
-        foreach (var collider in colliders)
-        {
-            if (collider.gameObject.tag == "Box"){
-                BoxController box = collider.gameObject.GetComponent<BoxController>();
-                if(box.getColor() == this.GetColor()) {
-                    pressed = true;
-                }
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.CompareTag("Box")){
+            BoxController box = other.gameObject.GetComponent<BoxController>();
+            
+            if(box.getColor() == this.GetColor()) {
+                SetPressed(true);
+            }
+        }
+    }
+    
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.gameObject.CompareTag("Box")){
+            BoxController box = other.gameObject.GetComponent<BoxController>();
+            
+            if(box.getColor() == this.GetColor()) {
+                SetPressed(false);
             }
         }
     }
 
-    void OnDrawGizmosSelected()
-    {
-        //Gizmos.DrawSphere(collisionPointCenter.position, collisionPointRadius);
-    }
-
-    public bool isPressed(){
-        return pressed;
+    public bool IsPressed(){
+        return _pressed;
     }
 
     public PlayerColor GetColor(){

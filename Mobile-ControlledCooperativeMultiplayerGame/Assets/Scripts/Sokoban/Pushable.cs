@@ -39,6 +39,8 @@ public class Pushable : MonoBehaviour
      */
     [SerializeField] private Grid grid;
 
+    [SerializeField] private AudioClip pushSound;
+
     /**
      * A Pushable should be part of an object with a box collider, a rigidbody and a `MovementBinder`.
      * These components are retrieved automatically during `Start`
@@ -46,6 +48,7 @@ public class Pushable : MonoBehaviour
     private BoxCollider2D _boxCollider;
     private Rigidbody2D _body;
     private MovementBinder _movementBinder;
+    private AudioSource _audioSource;
 
     /**
      * Records whether the box is currently moving or resting
@@ -95,6 +98,7 @@ public class Pushable : MonoBehaviour
         _boxCollider = GetComponent<BoxCollider2D>();
         _body = GetComponent<Rigidbody2D>();
         _movementBinder = GetComponent<MovementBinder>();
+        _audioSource = GetComponent<AudioSource>();
 
         // We move by the size of a grid cell and the gaps between them, if present
         _xMoveWidth = grid.cellSize.x + grid.cellGap.x;
@@ -117,8 +121,9 @@ public class Pushable : MonoBehaviour
         if (Mathf.Approximately(_remainingMoveDistance, 0))
         {
             _state = State.Resting;
-            // FIXME: ReSet _inContactObject
             _movementBinder.Unbind(); // If we have been pulled, release the player, so that they are no longer moved along us
+            
+            _audioSource.Stop();
         }
 
         // If we are moving, update our position
@@ -236,6 +241,11 @@ public class Pushable : MonoBehaviour
             _state = State.Moving;
             _remainingMoveDistance = moveDistance;
             _moveDirection = directionVec;
+
+            if (pushSound != null)
+            {
+                _audioSource.PlayOneShot(pushSound);
+            }
 
             return true;
         }

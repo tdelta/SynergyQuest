@@ -1,36 +1,55 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class SokobanDoorController : MonoBehaviour
 {
+    [SerializeField] private Sprite openedDoor;
+    [SerializeField] private Sprite closedDoor;
 
-    public Sprite openedDoor;
-    public Sprite closedDoor;
+    [SerializeField] private SwitchController[] switches;
 
-    public SwitchController[] switches;
-
+    private SpriteRenderer _renderer;
+    private AudioSource _audioSource;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        _renderer = GetComponent<SpriteRenderer>();
+        _audioSource = GetComponent<AudioSource>();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnEnable()
     {
-        if (sokobanSolved()){
-            this.GetComponent<SpriteRenderer>().sprite = openedDoor;
-        } else {
-            this.GetComponent<SpriteRenderer>().sprite = closedDoor;
+        foreach (var switch_controller in switches)
+        {
+            switch_controller.OnSwitchChanged += OnSwitchChanged;
         }
     }
 
-    bool sokobanSolved(){
+    private void OnDisable()
+    {
+        foreach (var switch_controller in switches)
+        {
+            switch_controller.OnSwitchChanged -= OnSwitchChanged;
+        }
+    }
+
+    private void OnSwitchChanged()
+    {
+        if (SokobanSolved()) {
+            _renderer.sprite = openedDoor;
+            _audioSource.Play();
+        } else {
+            _renderer.sprite = closedDoor;
+        }
+    }
+
+    private bool SokobanSolved(){
         foreach (var s in switches)
         {
-            if(!s.isPressed()) {
+            if(!s.IsPressed()) {
                 return false;
             }
         }
