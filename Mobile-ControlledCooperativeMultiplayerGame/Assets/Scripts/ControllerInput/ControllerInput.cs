@@ -249,7 +249,7 @@ public class ControllerInput: Input
                         _attackButtonState.ProcessRawInput(msg.onOff);
                         break;
                     case Button.Pull:
-                        _attackButtonState.ProcessRawInput(msg.onOff);
+                        _pullButtonState.ProcessRawInput(msg.onOff);
                         break;
                 }
             },

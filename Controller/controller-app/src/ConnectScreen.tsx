@@ -28,15 +28,19 @@ export class ConnectScreen extends React.Component<ConnectScreenProbs, ConnectSc
   }
 
   render () {
+    const connectAction = () => this.props.connect(this.state.playerName);
+
     const canJoin = this.state.playerName != '';
 
     const scrollContent1: React.ReactNode = // Displayed, when the name has not been entered yet 
         <>
           <p> Welcome to Co-Op Dungeon! Please enter your name: </p>
+          <form onSubmit={canJoin ? e => connectAction() : undefined}>
           <input
             value={this.state.playerName}
             onChange={this.onNameChange}
           />
+          </form>
           {canJoin &&
             <p> Now press the button below to join the game :) </p>
           }
@@ -53,7 +57,7 @@ export class ConnectScreen extends React.Component<ConnectScreenProbs, ConnectSc
           {scrollContent1}
         </div>
         {canJoin &&
-          <button className='pixelbutton' onClick={() => this.props.connect(this.state.playerName)}>
+          <button className='pixelbutton' onClick={connectAction}>
             Join The Game!
           </button>
         }

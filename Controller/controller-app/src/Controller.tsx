@@ -4,13 +4,14 @@ import nipplejs, { JoystickManager, JoystickManagerOptions, EventData, JoystickO
 import './Controller.css';
 
 
-export class Controller extends React.Component<ControllerProbs, {}> {
+export class Controller extends React.Component<ControllerProbs, ControllerState> {
 
   private boob: React.RefObject<HTMLDivElement>;
   private client: ControllerClient;
   
   constructor(probs: ControllerProbs){
     super(probs);
+
     this.boob = React.createRef();
     
     this.client = probs.client;
@@ -20,24 +21,13 @@ export class Controller extends React.Component<ControllerProbs, {}> {
     this.onButtonChanged = this.onButtonChanged.bind(this);
   }
 
-  onButtonChanged(e: React.MouseEvent, pressed: boolean) {
-    let button: Button = Button.Attack;
-    let target: HTMLButtonElement = e.target as HTMLButtonElement;
-    switch(target.id) {
-      case 'attack':
-        button = Button.Attack;
-        break;
-      case 'pull':
-        button = Button.Pull;
-        break;
-    }
-
+  onButtonChanged(button: Button, pressed: boolean) {
     this.props.client.setButton(button, pressed);
   }
 
-  onJoystickMoved(evt: EventData, data: JoystickOutputData) {
-    console.log(evt.type);
+  onJoystickMoved(_evt: EventData, data: JoystickOutputData) {
     var threshold: number = 0.2;
+
     if (data.force > threshold) {
       var angle: number = data.angle.radian;
       var horizontal: number = Math.cos(angle);
@@ -46,10 +36,11 @@ export class Controller extends React.Component<ControllerProbs, {}> {
       var horizontal: number = 0;
       var vertical: number = 0;
     }
+
     this.client.setJoystickPosition(vertical, horizontal);
   }
 
-  onJoystickReleased(evt: EventData, data: JoystickOutputData) {
+  onJoystickReleased(_evt: EventData, _data: JoystickOutputData) {
     var horizontal: number = 0;
     var vertical: number = 0;
     this.client.setJoystickPosition(vertical, horizontal);
@@ -64,28 +55,43 @@ export class Controller extends React.Component<ControllerProbs, {}> {
     var manager: JoystickManager = nipplejs.create(options);
     manager.on('move',this.onJoystickMoved);
     manager.on('end',this.onJoystickReleased);
+
+    // The titlebar is annoying on mobile, so we get rid of it
+    document.documentElement.requestFullscreen();
   }
 
   render() {
     // Define button with colors and events for readability
-    let button = (text: string, id: string, col1: string, col2: string) =>
-    <button className='pixelButton text' id={id} style={{'backgroundColor': col1, 'borderColor': col2}} onMouseDown={e => this.onButtonChanged(e, true)} onMouseUp={e => this.onButtonChanged(e, false)}> {text} </button>
+    let button = (text: string, button: Button, col1: string, col2: string) =>
+      <button
+        className='pixelButton text'
+        style={{'backgroundColor': col1, 'borderColor': col2}}
+        onMouseDown={_ => this.onButtonChanged(button, true)}
+        onMouseUp={_ => this.onButtonChanged(button, false)}
+        onTouchStart={_ => this.onButtonChanged(button, true)}
+        onTouchEnd={_ => this.onButtonChanged(button, false)}
+      >
+        {text}
+      </button>
 
     // Return DOM elements
     return(
       <div className='container'>
-      <div className='rowContainer'>
+      <div className='rowContainer' style={{userSelect: 'none'}}>
         <div id='boob' className='text' ref={this.boob}> 
           <p id='boobText'> tap and drag to move </p>
         </div>
         <div className='columnContainer'>
-          {button('Attack','attack','#E53935','#EF5350')}
-          {button('Pull','pull','#039BE5', '#29B6F6')}
+          {button('Attack', Button.Attack, '#E53935', '#EF5350')}
+          {button('Pull', Button.Pull, '#039BE5', '#29B6F6')}
         </div>
       </div>
       </div>
     );
   }
+}
+
+interface ControllerState {
 }
 
 interface ControllerProbs {
