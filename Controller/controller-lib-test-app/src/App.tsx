@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, MenuAction, ControllerClient, ConnectFailureReason } from 'controller-client-lib';
+import { Button, MenuAction, PlayerColor, ControllerClient, ConnectFailureReason } from 'controller-client-lib';
 
 /**
  * The following interfaces form an ADT to track the state of the connection
@@ -37,7 +37,7 @@ export interface AppState {
   connectionStatus: ConnectionStatus;
 
   failureMessage?: string;
-  color?: string;
+  color?: PlayerColor;
   attackChecked: boolean;
   pullChecked: boolean;
   horizontalSliderVal: number;
@@ -51,6 +51,15 @@ export interface AppState {
 let menuActionStrings  = new Map<MenuAction, string>();
 menuActionStrings.set(MenuAction.StartGame, "Start Game");
 menuActionStrings.set(MenuAction.QuitGame, "Quit Game");
+
+/**
+ * Assign a hexadecimal representation to every player color
+ */
+let colorStrings  = new Map<PlayerColor, string>();
+colorStrings.set(PlayerColor.Red, "#d32f2f");
+colorStrings.set(PlayerColor.Blue, "#1976d2");
+colorStrings.set(PlayerColor.Green, "#388e3c");
+colorStrings.set(PlayerColor.Yellow, "#ffb300");
 
 /**
  * Main UI class
@@ -137,7 +146,7 @@ class App extends React.Component<{}, AppState> {
       });
     };
 
-    client.onSetPlayerColor = (color: string) => this.setState({
+    client.onSetPlayerColor = (color: PlayerColor) => this.setState({
       ...this.state,
       color: color, // <- set new color
     });
@@ -224,10 +233,11 @@ class App extends React.Component<{}, AppState> {
         body = <span>Connecting...</span>
         break;
       case "Connected":
-        let color = this.state.color == null ? 'undefined' : this.state.color;
+        let colorText = this.state.color == null ? 'undefined' : PlayerColor[this.state.color];
+        let color = this.state.color == null ? 'black' : colorStrings.get(this.state.color);
 
         body = <p>
-          Assigned Color:       <div style={{fontWeight: "bold", display: "inline", color: color}}>{color}</div><br/>
+          Assigned Color:       <div style={{fontWeight: "bold", display: "inline", color: 'white', backgroundColor: color}}>{colorText}</div><br/>
           Attack:               <input name="attack" type="checkbox" checked={this.state.attackChecked} onChange={this.handleInputChange}/><br/>
           Pull:                 <input name="pull" type="checkbox" checked={this.state.pullChecked} onChange={this.handleInputChange}/><br/>
           Joystick Vertical:    <input name="vertical" type="range" min="-1" max="1" value={this.state.verticalSliderVal} step="0.05" ref={this.vertRef} onChange={this.handleInputChange}/><br/>

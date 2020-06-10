@@ -19,6 +19,14 @@ export enum MenuAction
   QuitGame = 1
 }
 
+export enum PlayerColor
+{
+    Blue = 0,
+    Yellow = 1,
+    Red = 2,
+    Green = 3
+}
+
 /**
  * Different reasons why the game rejected a connection
  */
@@ -71,7 +79,7 @@ export class ControllerClient {
    * Player color assigned by the game. May be undefined until the server
    * sends a colour.
    */
-  private color?: string;
+  private color?: PlayerColor;
 
   /**
    * Set of all currently enabled menu actions.
@@ -106,7 +114,7 @@ export class ControllerClient {
    * Callback which can be set by users and which is called whenever the server
    * assigns this client a color.
    */
-  public onSetPlayerColor: (color: string) => any;
+  public onSetPlayerColor: (color: PlayerColor) => any;
 
   /**
    * Callback which can be set by users and which is called whenever the game
@@ -198,10 +206,8 @@ export class ControllerClient {
    *
    * To be notified when a color is assigned, set the callback
    * `onSetPlayerColor`.
-   *
-   * @returns hexadecimal color value with leading '#' or undefined. E.g. "#c0ffee".
    */
-  public getColor(): string | undefined {
+  public getColor(): PlayerColor | undefined {
     return this.color;
   }
 

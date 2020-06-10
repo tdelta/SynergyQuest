@@ -38,7 +38,7 @@ public class ControllerDebugUI : MonoBehaviour
 
     public void OnSetColorButton()
     {
-        _input.SetColor("#ff0000");
+        _input.SetColor(PlayerColor.Red);
     }
 
     private void OnEnable()

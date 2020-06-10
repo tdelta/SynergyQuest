@@ -12,7 +12,7 @@ public class SwitchController : MonoBehaviour
 
     private Collider2D[] colliders;
 
-    public objectColor color;
+    public PlayerColor color;
 
     public void Start()
     {
@@ -46,7 +46,7 @@ public class SwitchController : MonoBehaviour
         return pressed;
     }
 
-    public objectColor GetColor(){
+    public PlayerColor GetColor(){
         return color;
     }
 }

@@ -5,9 +5,9 @@ using UnityEngine;
 public class BoxController : MonoBehaviour
 {
 
-    public objectColor color;
+    public PlayerColor color;
 
-    public objectColor getColor(){
+    public PlayerColor getColor(){
         return color;
     }
 

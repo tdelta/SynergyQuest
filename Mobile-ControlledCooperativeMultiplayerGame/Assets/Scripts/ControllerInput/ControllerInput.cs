@@ -45,12 +45,18 @@ public class ControllerInput
 
     public int PlayerId { get; }
     public string PlayerName { get; }
+    public PlayerColor Color => _playerColor;
 
     // We cache the last inputs reported by a controller here
     private float _vertical   = 0.0f;  // vertical joystick position
     private float _horizontal = 0.0f;  // horizontal joystick position
     private bool _attackDown  = false; // whether the Attack button is pressed
     private bool _pullDown    = false; // whether the Pull button is pressed
+    
+    // We also cache the last special values set by the game
+    // FIXME: We must resend this stuff to the client on reconnect if the client temporarily disconnects.
+    //        We should also cache and resend the menu actions
+    private PlayerColor _playerColor;
 
     /**
      * This event is emitted when the underlying controller loses its connection to the game. The game should be paused
@@ -116,10 +122,11 @@ public class ControllerInput
      *
      * @throws ApplicationError if the controller is currently not connected
      */
-    public void SetColor(string color)
+    public void SetColor(PlayerColor color)
     {
-        var msg = new Message.PlayerColorMessage(color);
+        _playerColor = color;
         
+        var msg = new Message.PlayerColorMessage(color);
         SendMessage(msg);
     }
 

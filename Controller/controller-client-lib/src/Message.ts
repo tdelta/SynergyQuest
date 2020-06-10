@@ -1,4 +1,4 @@
-import { Button, MenuAction } from './ControllerClient';
+import { Button, MenuAction, PlayerColor } from './ControllerClient';
 
 /**
  * This namespace describes the format of messages sent between controller and
@@ -71,7 +71,7 @@ export namespace MessageFormat {
   }
 
   export interface PlayerColorMessage extends Message {
-    readonly color: string; // hexadecimal number with leading #, e.g. "#c0ffee"
+    readonly color: PlayerColor; // hexadecimal number with leading #, e.g. "#c0ffee"
   }
 
   export interface NameMessage extends Message {
