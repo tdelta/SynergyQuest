@@ -9,7 +9,7 @@ using UnityEngine.SceneManagement;
  *
  * For more info on the usage of such singleton classes, see the `Singleton` base class.
  */
-public class SceneController : Singleton<SceneController>
+public class SceneController : BehaviourSingleton<SceneController>
 {
     // Some scenes want some data passed to them on load.
     // Since this can not be done directly, we use these fields to cache the date in between loads:

@@ -20,6 +20,8 @@ public class PlayerController : EntityController
     private Animator _animator;
     private Rigidbody2D _rigidbody2D;
     private BoxCollider2D _collider;
+
+    private Input _input = LocalInput.Instance;
     
     private float _vertical;
     private float _horizontal;
@@ -52,6 +54,11 @@ public class PlayerController : EntityController
     private static readonly int SpeedProperty = Animator.StringToHash("Speed");
     private static readonly int AttackTrigger = Animator.StringToHash("Attack");
 
+    public void Init(Input input)
+    {
+        _input = input;
+    }
+
     void Awake()
     {
         _healthPoints = maxHealthPoints;
@@ -70,18 +77,18 @@ public class PlayerController : EntityController
     void Update()
     {
         // Check whether the player released the pull key
-        if (!Input.GetKey(KeyCode.P) && _playerState == PlayerState.pulling){
+        if (!_input.GetButton(Button.Pull) && _playerState == PlayerState.pulling){
             ReleasePull();
         }
 
         // Attacking
-        if (Input.GetKeyDown(KeyCode.Space) && _playerState != PlayerState.pulling) {
+        if (_input.GetButtonDown(Button.Attack) && _playerState != PlayerState.pulling) {
             _playerState = PlayerState.attacking;
             Attack();
         }   
         
         // Pulling / Pushing
-        else if (Input.GetKeyDown(KeyCode.P) && _playerState == PlayerState.walking)
+        else if (_input.GetButtonDown(Button.Pull) && _playerState == PlayerState.walking)
         {
             if (GetNearPushable(out var pushable))
             {
@@ -228,8 +235,8 @@ public class PlayerController : EntityController
      */
     private void Move(bool enableVertical, bool enableHorizontal)
     {
-        _vertical = (enableVertical) ? Input.GetAxis("Vertical") : 0;
-        _horizontal = (enableHorizontal) ? Input.GetAxis("Horizontal") : 0;
+        _vertical = (enableVertical) ? _input.GetVertical() : 0;
+        _horizontal = (enableHorizontal) ? _input.GetHorizontal() : 0;
 
         // If we are pulling a box and trying to move in the pulling direction, we instruct the box to pull
         if (_playerState == PlayerState.pulling && DoesMoveInPullDirection())
