@@ -61,16 +61,17 @@ public class PlayerController : EntityController
 
     void Awake()
     {
+        _animator = GetComponent<Animator>();
+        _rigidbody2D = GetComponent<Rigidbody2D>();
+        _collider = GetComponent<BoxCollider2D>();
+        
         _healthPoints = maxHealthPoints;
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        _animator = GetComponent<Animator>();
-        _rigidbody2D = GetComponent<Rigidbody2D>();
         _playerState = PlayerState.walking;
-        _collider = GetComponent<BoxCollider2D>();
     }
 
     // Update is called once per frame
