@@ -34,6 +34,9 @@ public class LobbyMenuUi : MonoBehaviour
 
     // if true, all local addresses are shown. See also `OnNotWorkingButton`
     private bool _displayAllAddresses = false;
+    
+    // color to be assigned to the next new player
+    private PlayerColor _nextPlayerColor = PlayerColor.Red;
 
     // Start is called before the first frame update
     void Start()
@@ -42,7 +45,7 @@ public class LobbyMenuUi : MonoBehaviour
         if (IPs != null && IPs.Any())
         {
             // For every already connected controller, bind to its events
-            ControllerServer.Instance.GetInputs().ForEach(BindInput);
+            ControllerServer.Instance.GetInputs().ForEach(InitializeInput);
             // And register a callback, should new controllers connect
             ControllerServer.Instance.OnNewController += OnNewController;
             // Allow controllers to display the "Start Game" menu action, if the game can already be started
@@ -88,7 +91,18 @@ public class LobbyMenuUi : MonoBehaviour
     }
 
     /**
-     * Binds callbacks to an input object to this object
+     * Binds callbacks of a new controller and assigns it a color.
+     */
+    private void InitializeInput(ControllerInput input)
+    {
+        BindInput(input);
+        
+        input.SetColor(_nextPlayerColor);
+        _nextPlayerColor = _nextPlayerColor.NextValue();
+    }
+
+    /**
+     * Binds callbacks to an input object to this object.
      */
     private void BindInput(ControllerInput input)
     {
@@ -118,7 +132,7 @@ public class LobbyMenuUi : MonoBehaviour
      */
     private void OnNewController(ControllerInput input)
     {
-        BindInput(input);
+        InitializeInput(input);
         DisplayStatus();
         SetStartGameAction(CanStartGame());
     }
