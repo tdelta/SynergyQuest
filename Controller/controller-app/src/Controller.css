@@ -1,0 +1,25 @@
+.pixelButton {
+  width: 100%;
+  height: 50%;
+  border-width: 10pt;
+  outline: none;
+  margin: 10pt;
+}
+.pixelButton::-moz-focus-inner{
+  border: 0;
+}
+.text {
+  display: flex;
+  font-family: "m6x11";
+  font-weight: bold;
+  font-size: 5vh;
+  color: #fff;
+  align-items: center;
+  justify-content: center;
+}
+#boob {
+  height: 100vh;
+  width: 50%;
+  background: #43A047;
+  margin: 10pt
+}

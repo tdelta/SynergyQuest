@@ -1,38 +1,36 @@
-.App {
-  text-align: center;
+@font-face {
+  font-family: "m6x11";
+  src: url("fonts/m6x11.ttf");
 }
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+html {
+  image-rendering: pixelated;
+  margin: 0;
+  padding: 0;
 }
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.rowContainer {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: stretch;
 }
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.columnContainer {
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  align-items: center;
 }
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.container{
+  background-image: url('gfx/wall128x128.png'); /* Source: https://opengameart.org/content/seamless-wall */
+  background-size: auto;
+  background-position: center center;
+  background-repeat: repeat;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }

@@ -1,7 +1,54 @@
-.container{
-          background-image: url(https://opengameart.org/sites/default/files/styles/medium/public/wall128x128.png);
-          background-size: auto;
-          background-position: center center;
-          background-repeat: repeat;
-          height: 100vh;
+#contentContainer {
+  height: 60%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  align-content: center;
+}
+.scroll {
+  font-family: "m6x11";
+  font-size: 3.5vh;
+  color: white;
+  image-rendering: crisp-edges;
+  color: #454545;
+  border-image: url('gfx/scroll.png');
+  border-width: 1.1em 0.4em 1.1em 0.4em;
+  border-image-slice: 11 4 11 4 fill;
+  border-style: solid;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+  width: 80%;
+}
+#logo {
+  height: 20%;
+  width: 90%;
+  margin-top: 2%;
+  margin-bottom: 2%;
+}
+input {
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #8d5943;
+  font-family: "m6x11";
+  font-weight: bold;
+  font-size: 3.5vh;
+  border-bottom: 0.2ex solid #8d5943;
+}
+.pixelbutton {
+  padding-top: 0.6ex;
+  padding-bottom: 0.6ex;
+  padding-left: 0.8em;
+  padding-right: 0.8em;
+  border-width: 0.2em;
+  border-style: solid;
+  font-family: "m6x11";
+  font-size: 4vh;
+  background-color: #888;
+  border-color: #aaa;
+  color: #ffffff
+}
+.pixelbutton:disabled {
+  color: #999;
 }
