@@ -86,12 +86,16 @@ export class Controller extends React.Component<ControllerProbs, ControllerState
     return(
       <div className='container'>
       <div className='rowContainer' style={{userSelect: 'none'}}>
-        <div id='boob' className='text' ref={this.boob}> 
-          <p id='boobText'> tap and drag to move </p>
-        </div>
         <div className='columnContainer'>
-          {button('Attack', Button.Attack, '#E53935', '#EF5350')}
-          {button('Pull', Button.Pull, '#039BE5', '#29B6F6')}
+          <div className='gameControls'>
+            <div id='boob' className='text' ref={this.boob}> 
+              <p id='boobText'> tap and drag to move </p>
+            </div>
+            <div className='buttonColumn'>
+              {button('Attack', Button.Attack, '#E53935', '#EF5350')}
+              {button('Pull', Button.Pull, '#039BE5', '#29B6F6')}
+            </div>
+          </div>
         </div>
       </div>
       </div>
