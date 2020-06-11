@@ -6,7 +6,15 @@ The app was bootstrapped with [Create React App](https://github.com/facebook/cre
 
 ## Usage
 
-### `npm start`
+Install dependencies:
+
+```bash
+npm install
+```
+
+Run:
+
+`npm start`
 
 Runs the app in the development mode.<br />
 You should also run the Unity game at the same time.

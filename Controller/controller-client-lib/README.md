@@ -18,6 +18,12 @@ Furthermore, a react testing app which uses this app can be found at
 
 # Usage
 
+Install dependencies:
+
+```bash
+npm install
+```
+
 To build the library
 
 ```bash

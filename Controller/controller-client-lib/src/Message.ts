@@ -1,4 +1,4 @@
-import { Button, MenuAction, PlayerColor } from './ControllerClient';
+import { Button, MenuAction, PlayerColor, GameState } from './ControllerClient';
 
 /**
  * This namespace describes the format of messages sent between controller and
@@ -14,16 +14,17 @@ export namespace MessageFormat {
    * The different kinds of messages
    */
   export enum MessageType {
-    None = 0,               // Placeholder type for base class
-    Name = 1,               // Name of the player, sent by controller upon establishing a connection
-    NameTaken = 2,          // Game rejects player name since it is already used by another controller, sent by game
-    NameOk = 3,             // Game accepts player name, sent by game
-    MaxPlayersReached = 4,  // Game rejects connection since the maximum number of controllers is already connected to it, sent by game
-    Button = 5,             // Button input, sent by controller
-    Joystick = 6,           // Joystick input, sent by controller
-    PlayerColor = 7,        // Color assigned to a player, sent by the game
-    SetMenuAction = 8,      // Enable / disable a menu action, sent by game
-    MenuActionTriggered = 9 // A menu action has been selected on the controller
+    None = 0,                // Placeholder type for base class
+    Name = 1,                // Name of the player, sent by controller upon establishing a connection
+    NameTaken = 2,           // Game rejects player name since it is already used by another controller, sent by game
+    NameOk = 3,              // Game accepts player name, sent by game
+    MaxPlayersReached = 4,   // Game rejects connection since the maximum number of controllers is already connected to it, sent by game
+    Button = 5,              // Button input, sent by controller
+    Joystick = 6,            // Joystick input, sent by controller
+    PlayerColor = 7,         // Color assigned to a player, sent by the game
+    SetMenuAction = 8,       // Enable / disable a menu action, sent by game
+    MenuActionTriggered = 9, // A menu action has been selected on the controller
+    GameStateChanged = 10    // The state of the game changed, e.g. Lobby -> Game started. Sent by the game
   }
 
   /**
@@ -111,6 +112,10 @@ export namespace MessageFormat {
     };
   }
 
+  export interface GameStateChangedMessage extends Message {
+    readonly gameState: GameState;
+  }
+
   /**
    * Creates an object conforming to the message interfaces from a JSON encoded
    * string representation of it.
@@ -153,6 +158,7 @@ export namespace MessageFormat {
       case MessageType.MaxPlayersReached:   matcher.MaxPlayersReachedMessage(msg as MaxPlayersReachedMessage); break;
       case MessageType.SetMenuAction:       matcher.SetMenuActionMessage(msg as SetMenuActionMessage); break;
       case MessageType.MenuActionTriggered: matcher.MenuActionTriggeredMessage(msg as MenuActionTriggeredMessage); break;
+      case MessageType.GameStateChanged:    matcher.GameStateChangedMessage(msg as GameStateChangedMessage); break;
     }
   }
 
@@ -169,6 +175,7 @@ export namespace MessageFormat {
     readonly MaxPlayersReachedMessage:   (_: MaxPlayersReachedMessage) => any;
     readonly SetMenuActionMessage:       (_: SetMenuActionMessage) => any;
     readonly MenuActionTriggeredMessage: (_: MenuActionTriggeredMessage) => any;
+    readonly GameStateChangedMessage:    (_: GameStateChangedMessage) => any;
   }
 
   /**
@@ -186,6 +193,7 @@ export namespace MessageFormat {
     NameOkMessage:              _ => {},
     MaxPlayersReachedMessage:   _ => {},
     SetMenuActionMessage:       _ => {},
-    MenuActionTriggeredMessage: _ => {}
+    MenuActionTriggeredMessage: _ => {},
+    GameStateChangedMessage:    _ => {},
   };
 }

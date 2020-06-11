@@ -53,6 +53,7 @@ public class PlayerSpawner : MonoBehaviour
             _nextPlayerColor = _nextPlayerColor.NextValue();
             
             SpawnPlayer(input);
+            input.SetGameState(GameState.Started);
         }
     }
 

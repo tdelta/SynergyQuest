@@ -60,6 +60,7 @@ public class ControllerInput: Input
     // FIXME: We must resend this stuff to the client on reconnect if the client temporarily disconnects.
     //        We should also cache and resend the menu actions
     private PlayerColor _playerColor;
+    private GameState _gameState = GameState.Lobby;
 
     /**
      * This event is emitted when the underlying controller loses its connection to the game. The game should be paused
@@ -178,6 +179,21 @@ public class ControllerInput: Input
             enable
         );
         
+        SendMessage(msg);
+    }
+    
+    /**
+     * Tells the controller, in which state the game currently is.
+     * For example, if the game is displaying the lobby and then starts, it should tell the controllers here
+     * that the game is now in the state `GameState.Started`.
+     *
+     * @throws ApplicationError if the controller is currently not connected
+     */
+    public void SetGameState(GameState state)
+    {
+        _gameState = state;
+        
+        var msg = new Message.GameStateChangedMessage(state);
         SendMessage(msg);
     }
     

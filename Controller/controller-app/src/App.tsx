@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, MenuAction, PlayerColor, ControllerClient, ConnectFailureReason } from 'controller-client-lib';
+import { GameState, Button, MenuAction, PlayerColor, ControllerClient, ConnectFailureReason } from 'controller-client-lib';
 import { ConnectScreen } from './ConnectScreen';
 import { LobbyScreen } from './LobbyScreen';
 import * as consts from './consts';
@@ -27,27 +27,16 @@ function ConnectingC(c: ControllerClient): Connecting {
 
 interface Connected {
   kind: "Connected",
-  client: ControllerClient
+  client: ControllerClient,
 };
 function ConnectedC(c: ControllerClient): Connected {
   return {
     kind: "Connected",
-    client: c
+    client: c,
   };
 };
 
-interface GameStarted {
-  kind: "GameStarted",
-  client: ControllerClient
-};
-function GameStartedC(c: ControllerClient): GameStarted {
-  return {
-    kind: "GameStarted",
-    client: c
-  };
-};
-
-type ConnectionStatus = NotConnected | Connecting | Connected | GameStarted;
+type ConnectionStatus = NotConnected | Connecting | Connected;
 
 export interface AppState {
   connectionStatus: ConnectionStatus;
@@ -59,6 +48,7 @@ export interface AppState {
   horizontalSliderVal: number;
   verticalSliderVal: number;
   enabledMenuActions: Set<MenuAction>;
+  gameState: GameState;
 }
 
 /**
@@ -77,7 +67,8 @@ class App extends React.Component<{}, AppState> {
       pullChecked: false,
       horizontalSliderVal: 0,
       verticalSliderVal: 0,
-      enabledMenuActions: new Set<MenuAction>()
+      enabledMenuActions: new Set<MenuAction>(),
+      gameState: GameState.Lobby,
   };
 
   constructor(props: {}) {
@@ -104,7 +95,8 @@ class App extends React.Component<{}, AppState> {
       this.setState({
         ...this.state,
         connectionStatus: ConnectedC(client),
-        failureMessage: undefined
+        failureMessage: undefined,
+        gameState: client.getGameState()
       });
     };
 
@@ -148,6 +140,11 @@ class App extends React.Component<{}, AppState> {
     client.onSetMenuAction = (action: MenuAction, enabled: boolean) => this.setState({
       ...this.state,
       enabledMenuActions: client.getEnabledMenuActions()
+    });
+
+    client.onGameStateChanged = (state: GameState) => this.setState({
+      ...this.state,
+      gameState: state
     });
 
     client.connect(
@@ -206,10 +203,6 @@ class App extends React.Component<{}, AppState> {
       const client = this.state.connectionStatus.client;
 
       client.triggerMenuAction(MenuAction.StartGame);
-      this.setState({
-        ...this.state,
-        connectionStatus: GameStartedC(client)
-      });
     }
   }
 
@@ -227,11 +220,14 @@ class App extends React.Component<{}, AppState> {
         body = <span>Connecting...</span>
         break;
       case "Connected":
-        body = <LobbyScreen enabledMenuActions={this.state.enabledMenuActions} startGame={this.startGame} />
-        break;
-      case "GameStarted":
-        body = <Controller client={this.state.connectionStatus.client} />
-        break;
+        switch (this.state.gameState) {
+          case GameState.Lobby:
+            body = <LobbyScreen enabledMenuActions={this.state.enabledMenuActions} startGame={this.startGame} />
+            break;
+          case GameState.Started:
+            body = <Controller client={this.state.connectionStatus.client} />
+            break;
+        }
     }
 
     return body;

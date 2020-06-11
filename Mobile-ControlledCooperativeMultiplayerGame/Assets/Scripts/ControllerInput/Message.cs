@@ -17,16 +17,17 @@ using UnityEngine;
  */
 public enum MessageType
 {
-    None = 0,               // Placeholder type for base class
-    Name = 1,               // Name of the player, sent by controller upon establishing a connection
-    NameTaken = 2,          // Game rejects player name since it is already used by another controller, sent by game
-    NameOk = 3,             // Game accepts player name, sent by game
-    MaxPlayersReached = 4,  // Game rejects connection since the maximum number of controllers is already connected to it, sent by game
-    Button = 5,             // Button input, sent by controller
-    Joystick = 6,           // Joystick input, sent by controller
-    PlayerColor = 7,        // Color assigned to a player, sent by the game
-    SetMenuAction = 8,      // Enable / disable a menu action, sent by game
-    MenuActionTriggered = 9 // A menu action has been selected on the controller
+    None = 0,                // Placeholder type for base class
+    Name = 1,                // Name of the player, sent by controller upon establishing a connection
+    NameTaken = 2,           // Game rejects player name since it is already used by another controller, sent by game
+    NameOk = 3,              // Game accepts player name, sent by game
+    MaxPlayersReached = 4,   // Game rejects connection since the maximum number of controllers is already connected to it, sent by game
+    Button = 5,              // Button input, sent by controller
+    Joystick = 6,            // Joystick input, sent by controller
+    PlayerColor = 7,         // Color assigned to a player, sent by the game
+    SetMenuAction = 8,       // Enable / disable a menu action, sent by game
+    MenuActionTriggered = 9, // A menu action has been selected on the controller
+    GameStateChanged = 10    // The state of the game changed, e.g. Lobby -> Game started. Sent by the game 
 }
 
 /**
@@ -294,6 +295,26 @@ public class Message
         }
     }
     
+    [Serializable]
+    public sealed class GameStateChangedMessage : Message
+    {
+        public GameState gameState;
+        
+        public GameStateChangedMessage(GameState state)
+            : base(MessageType.GameStateChanged)
+        {
+            this.gameState = state;
+        }
+
+        /**
+         * See base class method for an explanation.
+         */
+        public override void Match( Matcher matcher )
+        {
+            matcher.GameStateChangedMessage(this);
+        }
+    }
+    
     /**
      * See `Match` method for an explanation.
      */
@@ -308,6 +329,7 @@ public class Message
         public Action<MaxPlayersReachedMessage> MaxPlayersReachedMessage = _ => {};
         public Action<SetMenuActionMessage> SetMenuActionMessage = _ => {};
         public Action<MenuActionTriggeredMessage> MenuActionTriggeredMessage = _ => {};
+        public Action<GameStateChangedMessage> GameStateChangedMessage = _ => {};
     }
 
     /**

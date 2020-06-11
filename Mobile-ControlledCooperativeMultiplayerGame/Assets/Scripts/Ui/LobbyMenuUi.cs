@@ -145,8 +145,14 @@ public class LobbyMenuUi : MonoBehaviour
     {
         if (action == MenuAction.StartGame && CanStartGame())
         {
-            ControllerServer.Instance.GetInputs().ForEach(UnbindInput);
-            SetStartGameAction(false);
+            var inputs = ControllerServer.Instance.GetInputs();
+            
+            foreach (var input in inputs)
+            {
+                UnbindInput(input);
+                input.EnableMenuAction(MenuAction.StartGame, false);
+                input.SetGameState(GameState.Started);
+            }
             
             SceneController.Instance.LoadTestRoom();
         }

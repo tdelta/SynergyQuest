@@ -28,6 +28,16 @@ export enum PlayerColor
 }
 
 /**
+ * Models current state of the game.
+ * For example, the game may still be displaying the lobby or be already running.
+ */
+export enum GameState
+{
+    Lobby = 0,
+    Started = 1,
+}
+
+/**
  * Different reasons why the game rejected a connection
  */
 export enum ConnectFailureReason {
@@ -87,6 +97,11 @@ export class ControllerClient {
   private enabledMenuActions: Set<MenuAction> = new Set<MenuAction>();
 
   /**
+   * Current state of the game. E.g. Lobby or Started
+   */
+  private gameState: GameState = GameState.Lobby;
+
+  /**
    * Callback which can be set by users and which is called if the server
    * refused to establish a connection for the given reason.
    */
@@ -121,6 +136,12 @@ export class ControllerClient {
    * enables or disables some menu action for the controller
    */
   public onSetMenuAction: (action: MenuAction, enabled: boolean) => any;
+
+  /**
+   * Callback which can be set by users and which is called whenever the game
+   * changes its state, e.g. from "Lobby" to "Started"
+   */
+  public onGameStateChanged: (state: GameState) => any;
 
   /**
    * Creates a ControllerClient instance.
@@ -239,6 +260,14 @@ export class ControllerClient {
   }
 
   /**
+   * Returns the current state of the game. E.g. "Lobby" or "Started".
+   * Use the `onGameStateChanged` event to keep track of when the state changes.
+   */
+  public getGameState(): GameState {
+    return this.gameState;
+  }
+
+  /**
    * Returns whether the client is fully connected to a game and can send
    * inputs.
    *
@@ -332,7 +361,13 @@ export class ControllerClient {
         }
 
         this.onSetMenuAction?.(msg.menuAction, msg.enabled);
-      }
+      },
+
+      GameStateChangedMessage: msg => {
+        this.gameState = msg.gameState;
+
+        this.onGameStateChanged?.(msg.gameState);
+      },
     });
   }
 

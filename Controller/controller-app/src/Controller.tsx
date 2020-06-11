@@ -57,7 +57,15 @@ export class Controller extends React.Component<ControllerProbs, ControllerState
     manager.on('end',this.onJoystickReleased);
 
     // The titlebar is annoying on mobile, so we get rid of it
-    document.documentElement.requestFullscreen();
+    document.documentElement.requestFullscreen().catch(err => {
+      console.error(`Error when trying to go full screen: ${err.message} (${err.name})`);
+    });
+  }
+
+  componentWillUnmount() {
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+    }
   }
 
   render() {
