@@ -158,14 +158,20 @@ public class Pushable : MonoBehaviour
         {
             // We now do a raycast to check for obstacles in the way of the move.
             var boxCenter = (Vector2) transform.position + _boxCollider.offset;
+            var boxCastSize = _boxCollider.size - new Vector2(
+                0.1f, // Allow for small tolerance, as floating point computations are not always that accurate
+                0.1f
+            );
+            
             var hit = Physics2D.BoxCast(
                 boxCenter,
-                _boxCollider.size, // Raycast in the shape of the collider of this object.
+                boxCastSize, // Raycast in the shape of the collider of this object.
                 0,           // Don't rotate
                 directionVec,
                 moveDistance + additionalRaycastDistance,
                  _raycastLayerMask
             );
+            Debug.Log("Hit: " + hit.collider?.name ?? "");
             var isSomethingInMoveDirection = !ReferenceEquals(hit.collider, null);
 
             return !isSomethingInMoveDirection;
