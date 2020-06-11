@@ -14,6 +14,7 @@ public class PlayerController : EntityController
     [SerializeField] private float speed = 3.0f; // units per second
     [SerializeField] private int maxHealthPoints = 5;
     [SerializeField] private float boxPullRange;
+    [SerializeField] private MultiSound fightingSounds;
     
     private int _healthPoints;
 
@@ -200,6 +201,7 @@ public class PlayerController : EntityController
     private void Attack()
     {
         _animator.SetTrigger(AttackTrigger);
+        fightingSounds.PlayOneShot();
         StartCoroutine(AttackCoroutine());
     }
 
