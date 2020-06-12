@@ -1,40 +1,37 @@
 import WebSocket from 'isomorphic-ws';
 
-import {MessageFormat} from './Message';
+import { MessageFormat } from './Message';
 
 /**
  * Stores the ids of the different controller buttons
  */
 export enum Button {
   Attack = 0,
-  Pull = 1
+  Pull = 1,
 }
 
 /**
  * Identifiers of the different "menu actions" which can be enabled/disabled for controllers
  */
-export enum MenuAction
-{
+export enum MenuAction {
   StartGame = 0,
-  QuitGame = 1
+  QuitGame = 1,
 }
 
-export enum PlayerColor
-{
-    Blue = 0,
-    Yellow = 1,
-    Red = 2,
-    Green = 3
+export enum PlayerColor {
+  Blue = 0,
+  Yellow = 1,
+  Red = 2,
+  Green = 3,
 }
 
 /**
  * Models current state of the game.
  * For example, the game may still be displaying the lobby or be already running.
  */
-export enum GameState
-{
-    Lobby = 0,
-    Started = 1,
+export enum GameState {
+  Lobby = 0,
+  Started = 1,
 }
 
 /**
@@ -42,7 +39,7 @@ export enum GameState
  */
 export enum ConnectFailureReason {
   NameAlreadyTaken, // A controller is already connected with the same player name
-  MaxPlayersReached // The maximum amount of players is already connected to the game
+  MaxPlayersReached, // The maximum amount of players is already connected to the game
 }
 
 /**
@@ -83,7 +80,7 @@ export class ControllerClient {
    *
    * This is set after the game accepted the player name etc.
    */
-  private ready: boolean = false;
+  private ready = false;
 
   /**
    * Player color assigned by the game. May be undefined until the server
@@ -174,7 +171,7 @@ export class ControllerClient {
    **/
   public connect(name: string, address: string, port: number = 4242) {
     // if the there is already a socket which is not closed or closing...
-    if (this.socket?.readyState != 2 && this.socket?.readyState != 3) {
+    if (this.socket?.readyState !== 2 && this.socket?.readyState !== 3) {
       // then close it first
       this.socket?.close();
     }
@@ -199,11 +196,13 @@ export class ControllerClient {
    */
   public setJoystickPosition(vertical: number, horizontal: number) {
     if (vertical < -1 || vertical > 1 || horizontal < -1 || horizontal > 1) {
-      throw Error("Only joystick positions in the interval [-1; 1] are allowed.");
+      throw Error(
+        'Only joystick positions in the interval [-1; 1] are allowed.'
+      );
     }
 
     this.ensureReady();
-    let msg = MessageFormat.createJoystickMessage(vertical, horizontal);
+    const msg = MessageFormat.createJoystickMessage(vertical, horizontal);
 
     this.sendMessage(msg);
   }
@@ -216,7 +215,7 @@ export class ControllerClient {
    */
   public setButton(button: Button, onOff: boolean) {
     this.ensureReady();
-    let msg = MessageFormat.createButtonMessage(button, onOff);
+    const msg = MessageFormat.createButtonMessage(button, onOff);
 
     this.sendMessage(msg);
   }
@@ -239,10 +238,10 @@ export class ControllerClient {
    */
   public triggerMenuAction(action: MenuAction) {
     if (!this.enabledMenuActions.has(action)) {
-      throw Error("Can not trigger menu option which the game has not enabled.");
-    }
-
-    else {
+      throw Error(
+        'Can not trigger menu option which the game has not enabled.'
+      );
+    } else {
       this.ensureReady();
       var msg = MessageFormat.createMenuActionTriggeredMessage(action);
 
@@ -288,9 +287,7 @@ export class ControllerClient {
   private handleSocketOpen(name: string) {
     // A client must first send a player name before anything else.
     // We do this, as soon as a raw websocket connection has been established.
-    this.sendMessage(
-      MessageFormat.createNameMessage(name)
-    );
+    this.sendMessage(MessageFormat.createNameMessage(name));
   }
 
   /**
@@ -305,7 +302,7 @@ export class ControllerClient {
    * Called if some sort of error happened with the websocket connection.
    */
   private handleSocketError() {
-    console.error("ControllerClient: Connection to game experienced an error.");
+    console.error('ControllerClient: Connection to game experienced an error.');
     this.onError?.();
   }
 
@@ -316,7 +313,7 @@ export class ControllerClient {
    */
   private handleMessage(msgEvent: MessageEvent) {
     // deserialize the message from JSON
-    let msg = MessageFormat.messageFromJSON(msgEvent.data);
+    const msg = MessageFormat.messageFromJSON(msgEvent.data);
 
     // For each kind of message do something different:
     // (This simulates ADT match functions as known from Haskell or Scala)
@@ -354,9 +351,7 @@ export class ControllerClient {
       SetMenuActionMessage: msg => {
         if (msg.enabled) {
           this.enabledMenuActions.add(msg.menuAction);
-        }
-
-        else if (this.enabledMenuActions.has(msg.menuAction)) {
+        } else if (this.enabledMenuActions.has(msg.menuAction)) {
           this.enabledMenuActions.delete(msg.menuAction);
         }
 
@@ -379,13 +374,9 @@ export class ControllerClient {
    */
   private sendMessage(msg: MessageFormat.Message) {
     if (this.isConnected()) {
-      this.socket.send(
-        JSON.stringify(msg)
-      );
-    }
-
-    else {
-      throw new Error("Can not send message if client is not connected.");
+      this.socket.send(JSON.stringify(msg));
+    } else {
+      throw new Error('Can not send message if client is not connected.');
     }
   }
 
@@ -398,7 +389,9 @@ export class ControllerClient {
    */
   private ensureReady() {
     if (!this.ready) {
-      throw Error("Can not interact with game since the connection is not ready yet.");
+      throw Error(
+        'Can not interact with game since the connection is not ready yet.'
+      );
     }
   }
 }

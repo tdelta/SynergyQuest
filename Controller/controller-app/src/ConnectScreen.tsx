@@ -1,20 +1,22 @@
 import React from 'react';
-//import { Button as ControllerButton} from 'controller-client-lib';
 import './ConnectScreen.css';
-import {ReactComponent as Logo} from './gfx/logo_web.svg';
+import { ReactComponent as Logo } from './gfx/logo_web.svg';
 
-export class ConnectScreen extends React.Component<ConnectScreenProbs, ConnectScreenState> {
-  constructor(props: ConnectScreenProbs){
+export class ConnectScreen extends React.Component<
+  ConnectScreenProbs,
+  ConnectScreenState
+> {
+  constructor(props: ConnectScreenProbs) {
     super(props);
     this.state = {
-      playerName: ''
-    }
+      playerName: '',
+    };
 
     this.joinGame = this.joinGame.bind(this);
     this.onNameChange = this.onNameChange.bind(this);
   }
 
-  joinGame(e: React.MouseEvent){
+  joinGame(e: React.MouseEvent) {
     e.preventDefault();
 
     this.props.connect(this.state.playerName);
@@ -23,46 +25,38 @@ export class ConnectScreen extends React.Component<ConnectScreenProbs, ConnectSc
   onNameChange(e: React.FormEvent<HTMLInputElement>) {
     this.setState({
       ...this.state,
-      playerName: e.currentTarget.value
+      playerName: e.currentTarget.value,
     });
   }
 
-  render () {
+  render() {
     const connectAction = () => this.props.connect(this.state.playerName);
 
-    const canJoin = this.state.playerName != '';
+    const canJoin = this.state.playerName !== '';
 
-    const scrollContent1: React.ReactNode = // Displayed, when the name has not been entered yet 
-        <>
-          <p> Welcome to Co-Op Dungeon! Please enter your name: </p>
-          <form onSubmit={canJoin ? e => connectAction() : undefined}>
-          <input
-            value={this.state.playerName}
-            onChange={this.onNameChange}
-          />
-          </form>
-          {canJoin &&
-            <p> Now press the button below to join the game :) </p>
-          }
-        </>;
+    const scrollContent1: React.ReactNode = ( // Displayed, when the name has not been entered yet
+      <>
+        <p> Welcome to Co-Op Dungeon! Please enter your name: </p>
+        <form onSubmit={canJoin ? _ => connectAction() : undefined}>
+          <input value={this.state.playerName} onChange={this.onNameChange} />
+        </form>
+        {canJoin && <p> Now press the button below to join the game :) </p>}
+      </>
+    );
 
     return (
-      <div
-        className='container'
-      >
-      <div className='columnContainer'>
-      <Logo id='logo' />
-      <div id='contentContainer'>
-        <div className='scroll'>
-          {scrollContent1}
+      <div className='container'>
+        <div className='columnContainer'>
+          <Logo id='logo' />
+          <div id='contentContainer'>
+            <div className='scroll'>{scrollContent1}</div>
+            {canJoin && (
+              <button className='pixelbutton' onClick={connectAction}>
+                Join The Game!
+              </button>
+            )}
+          </div>
         </div>
-        {canJoin &&
-          <button className='pixelbutton' onClick={connectAction}>
-            Join The Game!
-          </button>
-        }
-      </div>
-      </div>
       </div>
     );
   }
@@ -73,5 +67,5 @@ interface ConnectScreenState {
 }
 
 interface ConnectScreenProbs {
-  connect: (name: string) => void
+  connect: (name: string) => void;
 }

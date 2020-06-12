@@ -32,6 +32,9 @@
     "react/prop-types": 0,
     "react/jsx-handler-names": 0,
     "react/jsx-fragments": 0,
+    "react/jsx-no-bind": [2, {
+      "allowArrowFunctions": true
+    }],
     "react/no-unused-prop-types": 0,
     "import/export": 0,
     "no-unused-vars": 0,
