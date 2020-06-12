@@ -18,9 +18,20 @@
     "react-scripts": "3.4.1",
     "typescript": "^3.7.5"
   },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^3.2.0",
+    "@typescript-eslint/parser": "^3.2.0",
+    "eslint": "^6.6.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-prettier": "^3.1.3",
+    "prettier": "^2.0.5",
+    "standard-react": "^4.0.0",
+    "standardx": "^3.0.0"
+  },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "start": "npm run lint ; react-scripts start",
+    "build": "npm run lint && react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

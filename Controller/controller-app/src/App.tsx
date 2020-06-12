@@ -1,40 +1,47 @@
 import React from 'react';
-import { GameState, Button, MenuAction, PlayerColor, ControllerClient, ConnectFailureReason } from 'controller-client-lib';
+import {
+  GameState,
+  Button,
+  MenuAction,
+  PlayerColor,
+  ControllerClient,
+  ConnectFailureReason,
+} from 'controller-client-lib';
 import { ConnectScreen } from './ConnectScreen';
 import { LobbyScreen } from './LobbyScreen';
 import * as consts from './consts';
 import { Controller } from './Controller';
-import './App.css'
+import './App.css';
 
 /**
  * The following interfaces form an ADT to track the state of the connection
  */
 interface NotConnected {
-  kind: "NotConnected"
-};
-const NotConnectedC: NotConnected = {kind: "NotConnected"};
+  kind: 'NotConnected';
+}
+const NotConnectedC: NotConnected = { kind: 'NotConnected' };
 
 interface Connecting {
-  kind: "Connecting",
-  client: ControllerClient
-};
+  kind: 'Connecting';
+  client: ControllerClient;
+}
 function ConnectingC(c: ControllerClient): Connecting {
   return {
-    kind: "Connecting",
-    client: c
-  };
-};
-
-interface Connected {
-  kind: "Connected",
-  client: ControllerClient,
-};
-function ConnectedC(c: ControllerClient): Connected {
-  return {
-    kind: "Connected",
+    kind: 'Connecting',
     client: c,
   };
-};
+}
+
+interface Connected {
+  kind: 'Connected';
+  client: ControllerClient;
+}
+function ConnectedC(c: ControllerClient): Connected {
+  return {
+    kind: 'Connected',
+    client: c,
+  };
+}
 
 type ConnectionStatus = NotConnected | Connecting | Connected;
 
@@ -60,15 +67,15 @@ class App extends React.Component<{}, AppState> {
   private horRef = React.createRef<HTMLInputElement>();
 
   private static readonly initialState: AppState = {
-      connectionStatus: NotConnectedC,
-      failureMessage: undefined,
-      color: undefined,
-      attackChecked: false,
-      pullChecked: false,
-      horizontalSliderVal: 0,
-      verticalSliderVal: 0,
-      enabledMenuActions: new Set<MenuAction>(),
-      gameState: GameState.Lobby,
+    connectionStatus: NotConnectedC,
+    failureMessage: undefined,
+    color: undefined,
+    attackChecked: false,
+    pullChecked: false,
+    horizontalSliderVal: 0,
+    verticalSliderVal: 0,
+    enabledMenuActions: new Set<MenuAction>(),
+    gameState: GameState.Lobby,
   };
 
   constructor(props: {}) {
@@ -89,117 +96,126 @@ class App extends React.Component<{}, AppState> {
    * Is called when the Connect button is pressed.
    */
   connect(playerName: string) {
-    let client = new ControllerClient();
+    const client = new ControllerClient();
 
     client.onReady = () => {
       this.setState({
         ...this.state,
         connectionStatus: ConnectedC(client),
         failureMessage: undefined,
-        gameState: client.getGameState()
+        gameState: client.getGameState(),
       });
     };
 
     client.onConnectFailure = (reason: ConnectFailureReason) => {
       let failMessage: string;
-      switch(reason) {
+      switch (reason) {
         case ConnectFailureReason.NameAlreadyTaken:
-          failMessage = "Could not connect, since someone with that name is already connected.";
+          failMessage =
+            'Could not connect, since someone with that name is already connected.';
           break;
 
         case ConnectFailureReason.MaxPlayersReached:
-          failMessage = "Could not connect, since the game is already full and no more players can join.";
+          failMessage =
+            'Could not connect, since the game is already full and no more players can join.';
           break;
       }
 
       this.setState({
         ...App.initialState,
-        failureMessage: failMessage
+        failureMessage: failMessage,
       });
     };
 
     client.onDisconnect = () => {
       this.setState({
         ...App.initialState,
-        failureMessage: this.state.failureMessage
+        failureMessage: this.state.failureMessage,
       });
     };
 
     client.onError = () => {
       this.setState({
         ...this.state,
-        failureMessage: "Some sort of connection error occured."
+        failureMessage: 'Some sort of connection error occured.',
       });
     };
 
-    client.onSetPlayerColor = (color: PlayerColor) => this.setState({
-      ...this.state,
-      color: color, // <- set new color
-    });
+    client.onSetPlayerColor = (color: PlayerColor) =>
+      this.setState({
+        ...this.state,
+        color: color, // <- set new color
+      });
 
-    client.onSetMenuAction = (action: MenuAction, enabled: boolean) => this.setState({
-      ...this.state,
-      enabledMenuActions: client.getEnabledMenuActions()
-    });
+    client.onSetMenuAction = (action: MenuAction, enabled: boolean) =>
+      this.setState({
+        ...this.state,
+        enabledMenuActions: client.getEnabledMenuActions(),
+      });
 
-    client.onGameStateChanged = (state: GameState) => this.setState({
-      ...this.state,
-      gameState: state
-    });
+    client.onGameStateChanged = (state: GameState) =>
+      this.setState({
+        ...this.state,
+        gameState: state,
+      });
 
-    client.connect(
-      playerName,
-      window.location.hostname,
-      consts.port
-    );
+    client.connect(playerName, window.location.hostname, consts.port);
 
     // Update the state to "Connecting"
     this.setState({
-      connectionStatus: ConnectingC(client)
+      connectionStatus: ConnectingC(client),
     });
   }
-
 
   /**
    * Called whenever one of the inputs changes (Attack, Pull, ...)
    */
-  handleInputChange(e:  React.ChangeEvent) {
-    if (this.state.connectionStatus.kind === "Connected") {
-      let sender = this.state.connectionStatus.client;
-      let node = e.target as any;
-      let name = node.name;
+  handleInputChange(e: React.ChangeEvent) {
+    if (this.state.connectionStatus.kind === 'Connected') {
+      const sender = this.state.connectionStatus.client;
+      const node = e.target as any;
+      const name = node.name;
 
-      switch(name) {
-        case "attack":
-          this.setState({...this.state, attackChecked: !this.state.attackChecked});
+      switch (name) {
+        case 'attack':
+          this.setState({
+            ...this.state,
+            attackChecked: !this.state.attackChecked,
+          });
 
           sender.setButton(Button.Attack, node.checked);
           break;
-        case "pull":
-          this.setState({...this.state, pullChecked: !this.state.pullChecked});
+        case 'pull':
+          this.setState({
+            ...this.state,
+            pullChecked: !this.state.pullChecked,
+          });
 
           sender.setButton(Button.Pull, node.checked);
           break;
-        case "vertical":
-        case "horizontal":
-          let vertVal = this.vertRef.current?.value as number | undefined;
-          let horVal = this.horRef.current?.value as number | undefined;
+        case 'vertical':
+        case 'horizontal':
+          {
+            const vertVal = this.vertRef.current?.value as number | undefined;
+            const horVal = this.horRef.current?.value as number | undefined;
 
-          if (vertVal != null && horVal != null) {
-            this.setState({
-              ...this.state,
-              horizontalSliderVal: horVal,
-              verticalSliderVal: vertVal,
-            });
+            if (vertVal != null && horVal != null) {
+              this.setState({
+                ...this.state,
+                horizontalSliderVal: horVal,
+                verticalSliderVal: vertVal,
+              });
 
-            sender.setJoystickPosition(vertVal, horVal);
+              sender.setJoystickPosition(vertVal, horVal);
+            }
           }
+          break;
       }
     }
   }
 
   startGame() {
-    if (this.state.connectionStatus.kind == "Connected") {
+    if (this.state.connectionStatus.kind === 'Connected') {
       const client = this.state.connectionStatus.client;
 
       client.triggerMenuAction(MenuAction.StartGame);
@@ -213,19 +229,24 @@ class App extends React.Component<{}, AppState> {
   render() {
     let body: React.ReactNode;
     switch (this.state.connectionStatus.kind) {
-      case "NotConnected":
-        body = <ConnectScreen connect={this.connect}/>
+      case 'NotConnected':
+        body = <ConnectScreen connect={this.connect} />;
         break;
-      case "Connecting":
-        body = <span>Connecting...</span>
+      case 'Connecting':
+        body = <span>Connecting...</span>;
         break;
-      case "Connected":
+      case 'Connected':
         switch (this.state.gameState) {
           case GameState.Lobby:
-            body = <LobbyScreen enabledMenuActions={this.state.enabledMenuActions} startGame={this.startGame} />
+            body = (
+              <LobbyScreen
+                enabledMenuActions={this.state.enabledMenuActions}
+                startGame={this.startGame}
+              />
+            );
             break;
           case GameState.Started:
-            body = <Controller client={this.state.connectionStatus.client} />
+            body = <Controller client={this.state.connectionStatus.client} />;
             break;
         }
     }

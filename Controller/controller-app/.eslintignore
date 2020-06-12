@@ -1,0 +1,9 @@
+build/
+dist/
+node_modules/
+.snapshots/
+*.min.js
+coverage
+jest.config.js
+src/serviceWorker.ts
+src/react-app-env.d.ts

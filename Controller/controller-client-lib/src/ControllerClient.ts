@@ -173,7 +173,7 @@ export class ControllerClient {
     // if the there is already a socket which is not closed or closing...
     if (this.socket?.readyState !== 2 && this.socket?.readyState !== 3) {
       // then close it first
-      this.socket.close();
+      this.socket?.close();
     }
 
     // Create a new websocket and connect to the game
