@@ -8,6 +8,7 @@ public class BatController : EnemyController {
 
     float flightTimer;
     int currentMotion = 0;
+    readonly int moveYProperty = Animator.StringToHash("Move Y");
     Vector2[] flightMotions = new []{new Vector2(-1, 1), new Vector2(-1, -1),
         new Vector2(1, 1), new Vector2(1, -1)};
 
@@ -30,7 +31,7 @@ public class BatController : EnemyController {
         var flightMotion = flightMotions[currentMotion];
         var offset = Time.deltaTime * directionSpeed * direction;
         offset += flightSpeed * Time.deltaTime * flightMotion;
-        animator.SetFloat("Move Y", flightMotion.y);
+        animator.SetFloat(moveYProperty, flightMotion.y);
         return offset;
     }
 }

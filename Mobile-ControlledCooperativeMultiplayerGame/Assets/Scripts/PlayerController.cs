@@ -18,8 +18,6 @@ public class PlayerController : EntityController
     
     private int _healthPoints;
 
-    private Animator _animator;
-    private Rigidbody2D _rigidbody2D;
     private BoxCollider2D _collider;
 
     private Input _input = LocalInput.Instance;
@@ -60,24 +58,20 @@ public class PlayerController : EntityController
         _input = input;
     }
 
-    void Awake()
-    {
-        _animator = GetComponent<Animator>();
-        _rigidbody2D = GetComponent<Rigidbody2D>();
-        _collider = GetComponent<BoxCollider2D>();
-        
-        _healthPoints = maxHealthPoints;
-    }
-
     // Start is called before the first frame update
     void Start()
     {
+        base.Start();
+        _collider = GetComponent<BoxCollider2D>();
+        
+        _healthPoints = maxHealthPoints;
         _playerState = PlayerState.walking;
     }
 
     // Update is called once per frame
     void Update()
     {
+        base.Update();
         // Check whether the player released the pull key
         if (!_input.GetButton(Button.Pull) && _playerState == PlayerState.pulling){
             ReleasePull();
@@ -156,13 +150,7 @@ public class PlayerController : EntityController
         }
     }
 
-    public override void PutDamage(int amount, Vector2 knockbackDirection)  {
-        var stopForce = -_rigidbody2D.velocity * _rigidbody2D.mass;
-        _rigidbody2D.AddForce(stopForce + knockbackFactor * amount * knockbackDirection, ForceMode2D.Impulse);
-        ChangeHealth(-amount);
-    }
-
-    private void ChangeHealth(int delta)
+    protected override void ChangeHealth(int delta)
     {
         _healthPoints += delta;
 
@@ -195,12 +183,12 @@ public class PlayerController : EntityController
 
     public Vector2 GetPosition()
     {
-        return _rigidbody2D.position;
+        return rigidbody2D.position;
     }
 
     private void Attack()
     {
-        _animator.SetTrigger(AttackTrigger);
+        animator.SetTrigger(AttackTrigger);
         fightingSounds.PlayOneShot();
         StartCoroutine(AttackCoroutine());
     }
@@ -261,12 +249,12 @@ public class PlayerController : EntityController
                 _lookDirection.Normalize();
             }
 
-            _animator.SetFloat(LookXProperty, _lookDirection.x);
-            _animator.SetFloat(LookYProperty, _lookDirection.y);
-            _animator.SetFloat(SpeedProperty, deltaPosition.magnitude);
+            animator.SetFloat(LookXProperty, _lookDirection.x);
+            animator.SetFloat(LookYProperty, _lookDirection.y);
+            animator.SetFloat(SpeedProperty, deltaPosition.magnitude);
             
-            _rigidbody2D.MovePosition(
-                _rigidbody2D.position + deltaPosition
+            rigidbody2D.MovePosition(
+                rigidbody2D.position + deltaPosition
             );
         }
     }

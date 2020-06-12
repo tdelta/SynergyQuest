@@ -5,6 +5,7 @@ using UnityEngine;
 public class KnightController : EnemyController {
     public float viewCone = 1;
 
+    readonly int moveXProperty = Animator.StringToHash("Move X");
     Vector2 offset = new Vector2(0, 0);
 
     (float, Vector2) FindNearestPlayer() {
@@ -34,7 +35,7 @@ public class KnightController : EnemyController {
         else
             offset = Time.deltaTime * directionSpeed * direction;
 
-        animator.SetFloat("Move X", offset.x);
+        animator.SetFloat(moveXProperty, offset.x);
         return offset;
     }
 }
