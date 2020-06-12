@@ -14,17 +14,28 @@ export namespace MessageFormat {
    * The different kinds of messages
    */
   export enum MessageType {
-    None = 0,                // Placeholder type for base class
-    Name = 1,                // Name of the player, sent by controller upon establishing a connection
-    NameTaken = 2,           // Game rejects player name since it is already used by another controller, sent by game
-    NameOk = 3,              // Game accepts player name, sent by game
-    MaxPlayersReached = 4,   // Game rejects connection since the maximum number of controllers is already connected to it, sent by game
-    Button = 5,              // Button input, sent by controller
-    Joystick = 6,            // Joystick input, sent by controller
-    PlayerColor = 7,         // Color assigned to a player, sent by the game
-    SetMenuAction = 8,       // Enable / disable a menu action, sent by game
-    MenuActionTriggered = 9, // A menu action has been selected on the controller
-    GameStateChanged = 10    // The state of the game changed, e.g. Lobby -> Game started. Sent by the game
+    // Placeholder type for base class
+    None = 0,
+    // Name of the player, sent by controller upon establishing a connection
+    Name = 1,
+    // Game rejects player name since it is already used by another controller, sent by game
+    NameTaken = 2,
+    // Game accepts player name, sent by game
+    NameOk = 3,
+    // Game rejects connection since the maximum number of controllers is already connected to it, sent by game
+    MaxPlayersReached = 4,
+    // Button input, sent by controller
+    Button = 5,
+    // Joystick input, sent by controller
+    Joystick = 6,
+    // Color assigned to a player, sent by the game
+    PlayerColor = 7,
+    // Enable / disable a menu action, sent by game
+    SetMenuAction = 8,
+    // A menu action has been selected on the controller
+    MenuActionTriggered = 9,
+    // The state of the game changed, e.g. Lobby -> Game started. Sent by the game
+    GameStateChanged = 10,
   }
 
   /**
@@ -38,7 +49,7 @@ export namespace MessageFormat {
    * down below.
    */
   export interface Message {
-    readonly type: MessageType
+    readonly type: MessageType;
   }
 
   export function isMessage(obj: any): obj is Message {
@@ -50,11 +61,14 @@ export namespace MessageFormat {
     readonly onOff: boolean;
   }
 
-  export function createButtonMessage(button: Button, onOff: boolean): ButtonMessage {
+  export function createButtonMessage(
+    button: Button,
+    onOff: boolean
+  ): ButtonMessage {
     return {
       type: MessageType.Button,
       button: button,
-      onOff: onOff
+      onOff: onOff,
     };
   }
 
@@ -63,11 +77,14 @@ export namespace MessageFormat {
     readonly horizontal: number;
   }
 
-  export function createJoystickMessage(vertical: number, horizontal: number): JoystickMessage {
+  export function createJoystickMessage(
+    vertical: number,
+    horizontal: number
+  ): JoystickMessage {
     return {
       type: MessageType.Joystick,
       vertical: vertical,
-      horizontal: horizontal
+      horizontal: horizontal,
     };
   }
 
@@ -90,11 +107,9 @@ export namespace MessageFormat {
     readonly name: string;
   }
 
-  export interface NameOkMessage extends Message {
-  }
+  export interface NameOkMessage extends Message {}
 
-  export interface MaxPlayersReachedMessage extends Message {
-  }
+  export interface MaxPlayersReachedMessage extends Message {}
 
   export interface SetMenuActionMessage extends Message {
     readonly menuAction: MenuAction;
@@ -105,7 +120,9 @@ export namespace MessageFormat {
     readonly menuAction: MenuAction;
   }
 
-  export function createMenuActionTriggeredMessage(menuAction: MenuAction): MenuActionTriggeredMessage {
+  export function createMenuActionTriggeredMessage(
+    menuAction: MenuAction
+  ): MenuActionTriggeredMessage {
     return {
       type: MessageType.MenuActionTriggered,
       menuAction: menuAction,
@@ -123,10 +140,10 @@ export namespace MessageFormat {
    * This function is used to deserialize messages sent from the game.
    */
   export function messageFromJSON(str: string): Message {
-    let msgObj = JSON.parse(str);
+    const msgObj = JSON.parse(str);
 
     if (!isMessage(msgObj)) {
-      throw Error("Invalid message format.");
+      throw Error('Invalid message format.');
     }
 
     // TODO: We should do some more checks here, whether its a valid message, but
@@ -149,16 +166,36 @@ export namespace MessageFormat {
    */
   export function matchMessage(msg: Message, matcher: Matcher) {
     switch (msg.type) {
-      case MessageType.Button:              matcher.ButtonMessage(msg as ButtonMessage); break;
-      case MessageType.Joystick:            matcher.JoystickMessage(msg as JoystickMessage); break;
-      case MessageType.PlayerColor:         matcher.PlayerColorMessage(msg as PlayerColorMessage); break;
-      case MessageType.Name:                matcher.NameMessage(msg as NameMessage); break;
-      case MessageType.NameTaken:           matcher.NameTakenMessage(msg as NameTakenMessage); break;
-      case MessageType.NameOk:              matcher.NameOkMessage(msg as NameOkMessage); break;
-      case MessageType.MaxPlayersReached:   matcher.MaxPlayersReachedMessage(msg as MaxPlayersReachedMessage); break;
-      case MessageType.SetMenuAction:       matcher.SetMenuActionMessage(msg as SetMenuActionMessage); break;
-      case MessageType.MenuActionTriggered: matcher.MenuActionTriggeredMessage(msg as MenuActionTriggeredMessage); break;
-      case MessageType.GameStateChanged:    matcher.GameStateChangedMessage(msg as GameStateChangedMessage); break;
+      case MessageType.Button:
+        matcher.ButtonMessage(msg as ButtonMessage);
+        break;
+      case MessageType.Joystick:
+        matcher.JoystickMessage(msg as JoystickMessage);
+        break;
+      case MessageType.PlayerColor:
+        matcher.PlayerColorMessage(msg as PlayerColorMessage);
+        break;
+      case MessageType.Name:
+        matcher.NameMessage(msg as NameMessage);
+        break;
+      case MessageType.NameTaken:
+        matcher.NameTakenMessage(msg as NameTakenMessage);
+        break;
+      case MessageType.NameOk:
+        matcher.NameOkMessage(msg as NameOkMessage);
+        break;
+      case MessageType.MaxPlayersReached:
+        matcher.MaxPlayersReachedMessage(msg as MaxPlayersReachedMessage);
+        break;
+      case MessageType.SetMenuAction:
+        matcher.SetMenuActionMessage(msg as SetMenuActionMessage);
+        break;
+      case MessageType.MenuActionTriggered:
+        matcher.MenuActionTriggeredMessage(msg as MenuActionTriggeredMessage);
+        break;
+      case MessageType.GameStateChanged:
+        matcher.GameStateChangedMessage(msg as GameStateChangedMessage);
+        break;
     }
   }
 
@@ -166,16 +203,16 @@ export namespace MessageFormat {
    * See `matchMessage` function for an explanation.
    */
   export interface Matcher {
-    readonly ButtonMessage:              (_: ButtonMessage) => any           ;
-    readonly JoystickMessage:            (_: JoystickMessage) => any         ;
-    readonly PlayerColorMessage:         (_: PlayerColorMessage) => any      ;
-    readonly NameMessage:                (_: NameMessage) => any             ;
-    readonly NameTakenMessage:           (_: NameTakenMessage) => any        ;
-    readonly NameOkMessage:              (_: NameOkMessage) => any           ;
-    readonly MaxPlayersReachedMessage:   (_: MaxPlayersReachedMessage) => any;
-    readonly SetMenuActionMessage:       (_: SetMenuActionMessage) => any;
+    readonly ButtonMessage: (_: ButtonMessage) => any;
+    readonly JoystickMessage: (_: JoystickMessage) => any;
+    readonly PlayerColorMessage: (_: PlayerColorMessage) => any;
+    readonly NameMessage: (_: NameMessage) => any;
+    readonly NameTakenMessage: (_: NameTakenMessage) => any;
+    readonly NameOkMessage: (_: NameOkMessage) => any;
+    readonly MaxPlayersReachedMessage: (_: MaxPlayersReachedMessage) => any;
+    readonly SetMenuActionMessage: (_: SetMenuActionMessage) => any;
     readonly MenuActionTriggeredMessage: (_: MenuActionTriggeredMessage) => any;
-    readonly GameStateChangedMessage:    (_: GameStateChangedMessage) => any;
+    readonly GameStateChangedMessage: (_: GameStateChangedMessage) => any;
   }
 
   /**
@@ -184,16 +221,16 @@ export namespace MessageFormat {
    *
    * See the `handleMessage` method of `ControllerClient` for an usage example.
    */
-  export let defaultMatcher: Matcher = {
-    ButtonMessage:              _ => {},
-    JoystickMessage:            _ => {},
-    PlayerColorMessage:         _ => {},
-    NameMessage:                _ => {},
-    NameTakenMessage:           _ => {},
-    NameOkMessage:              _ => {},
-    MaxPlayersReachedMessage:   _ => {},
-    SetMenuActionMessage:       _ => {},
+  export const defaultMatcher: Matcher = {
+    ButtonMessage: _ => {},
+    JoystickMessage: _ => {},
+    PlayerColorMessage: _ => {},
+    NameMessage: _ => {},
+    NameTakenMessage: _ => {},
+    NameOkMessage: _ => {},
+    MaxPlayersReachedMessage: _ => {},
+    SetMenuActionMessage: _ => {},
     MenuActionTriggeredMessage: _ => {},
-    GameStateChangedMessage:    _ => {},
+    GameStateChangedMessage: _ => {},
   };
 }

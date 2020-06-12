@@ -1,11 +1,15 @@
 {
   "parser": "@typescript-eslint/parser",
+  "plugins": [
+      "@typescript-eslint",
+  ],
   "extends": [
     "standard",
     "standard-react",
     "plugin:prettier/recommended",
     "prettier/standard",
     "prettier/react",
+    "eslint:recommended",
     "plugin:@typescript-eslint/eslint-recommended"
   ],
   "env": {
@@ -29,6 +33,9 @@
     "react/jsx-handler-names": 0,
     "react/jsx-fragments": 0,
     "react/no-unused-prop-types": 0,
-    "import/export": 0
+    "import/export": 0,
+    "no-unused-vars": 0,
+    "no-unused-expressions": 0,
+    "no-inner-declarations": 0
   }
 }
