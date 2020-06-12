@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 abstract public class EnemyController : EntityController {
-    public int   healthPoints = 1;
-    public float directionSpeed = 1;
-    public float directionChangeTime = 1;
-    public int damageFactor = 1;
-    public ParticleSystem smokeEffect;
+    [SerializeField] protected int   healthPoints = 1;
+    [SerializeField] protected float directionSpeed = 1;
+    [SerializeField] protected float directionChangeTime = 1;
+    [SerializeField] protected int damageFactor = 1;
+    [SerializeField] ParticleSystem smokeEffect;
 
     protected float directionTimer;
     protected Vector2 direction;

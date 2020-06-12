@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class BatController : EnemyController {
-    public float flightSpeed = 1;
-    public float flightChangeTime = 1;
+    [SerializeField] float flightSpeed = 1;
+    [SerializeField] float flightChangeTime = 1;
 
     float flightTimer;
     int currentMotion = 0;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class KnightController : EnemyController {
-    public float viewCone = 1;
+    [SerializeField] float viewCone = 1;
 
     readonly int moveXProperty = Animator.StringToHash("Move X");
     Vector2 offset = new Vector2(0, 0);
