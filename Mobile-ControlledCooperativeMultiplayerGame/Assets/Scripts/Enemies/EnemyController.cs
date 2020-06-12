@@ -16,7 +16,7 @@ abstract public class EnemyController : EntityController {
     readonly int deadTrigger = Animator.StringToHash("Dead");
 
 
-    protected virtual void Start() {
+    protected override void Start() {
         base.Start();
         directionTimer = directionChangeTime;
         direction = Random.insideUnitCircle.normalized;

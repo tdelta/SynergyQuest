@@ -59,7 +59,7 @@ public class PlayerController : EntityController
     }
 
     // Start is called before the first frame update
-    void Start()
+    protected override void Start()
     {
         base.Start();
         _collider = GetComponent<BoxCollider2D>();
@@ -69,7 +69,7 @@ public class PlayerController : EntityController
     }
 
     // Update is called once per frame
-    void Update()
+    protected override void Update()
     {
         base.Update();
         // Check whether the player released the pull key
