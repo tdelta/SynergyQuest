@@ -23,6 +23,7 @@ export enum PlayerColor {
   Yellow = 1,
   Red = 2,
   Green = 3,
+  Any = 4, // May interact with any object.
 }
 
 /**
@@ -83,10 +84,10 @@ export class ControllerClient {
   private ready = false;
 
   /**
-   * Player color assigned by the game. May be undefined until the server
+   * Player color assigned by the game. Set to "Any" until the server
    * sends a colour.
    */
-  private color?: PlayerColor;
+  private color = PlayerColor.Any;
 
   /**
    * Set of all currently enabled menu actions.
@@ -222,12 +223,12 @@ export class ControllerClient {
 
   /**
    * Returns the color assigned to this controller by the game.
-   * May be undefined, if the game has not sent a color yet.
+   * May be `Any`, if the game has not sent a color yet.
    *
    * To be notified when a color is assigned, set the callback
    * `onSetPlayerColor`.
    */
-  public getColor(): PlayerColor | undefined {
+  public getColor(): PlayerColor {
     return this.color;
   }
 

@@ -44,7 +44,7 @@ export interface AppState {
   connectionStatus: ConnectionStatus;
 
   failureMessage?: string;
-  color?: PlayerColor;
+  color: PlayerColor;
   attackChecked: boolean;
   pullChecked: boolean;
   horizontalSliderVal: number;
@@ -68,6 +68,7 @@ colorStrings.set(PlayerColor.Red, '#d32f2f');
 colorStrings.set(PlayerColor.Blue, '#1976d2');
 colorStrings.set(PlayerColor.Green, '#388e3c');
 colorStrings.set(PlayerColor.Yellow, '#ffb300');
+colorStrings.set(PlayerColor.Any, '#7c6f64');
 
 /**
  * Main UI class
@@ -80,7 +81,7 @@ class App extends React.Component<{}, AppState> {
   private static readonly initialState: AppState = {
     connectionStatus: NotConnectedC,
     failureMessage: undefined,
-    color: undefined,
+    color: PlayerColor.Any,
     attackChecked: false,
     pullChecked: false,
     horizontalSliderVal: 0,
@@ -268,14 +269,8 @@ class App extends React.Component<{}, AppState> {
         break;
       case 'Connected':
         {
-          const colorText =
-            this.state.color == null
-              ? 'undefined'
-              : PlayerColor[this.state.color];
-          const color =
-            this.state.color == null
-              ? 'black'
-              : colorStrings.get(this.state.color);
+          const colorText = PlayerColor[this.state.color];
+          const color = colorStrings.get(this.state.color);
 
           const gameStateText = GameState[this.state.gameState];
 

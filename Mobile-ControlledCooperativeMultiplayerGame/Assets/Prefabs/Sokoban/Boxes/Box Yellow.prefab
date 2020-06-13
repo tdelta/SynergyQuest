@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 9112173875489999673}
   - component: {fileID: 129467634112654466}
   - component: {fileID: 4927801977239634425}
-  - component: {fileID: 4927801977239634427}
   - component: {fileID: 546161748042274506}
   - component: {fileID: 5083304452024350111}
   m_Layer: 9
@@ -126,7 +125,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.64, y: 1.12}
+    oldSize: {x: 0.8, y: 1.4}
     newSize: {x: 0.8, y: 1.4}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -153,18 +152,6 @@ MonoBehaviour:
   minInteractionOverlap: 0.3
   grid: {fileID: 0}
   pushSound: {fileID: 8300000, guid: 0e7b927626a6536338fc6fc87aac6b41, type: 3}
---- !u!114 &4927801977239634427
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4927801977239634430}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c75e80143adac4b46a6611088d928fe6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
   color: 1
 --- !u!114 &546161748042274506
 MonoBehaviour:

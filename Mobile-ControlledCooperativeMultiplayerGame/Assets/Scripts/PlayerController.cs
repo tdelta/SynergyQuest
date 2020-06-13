@@ -15,12 +15,28 @@ public class PlayerController : EntityController
     [SerializeField] private int maxHealthPoints = 5;
     [SerializeField] private float boxPullRange;
     [SerializeField] private MultiSound fightingSounds;
+    /**
+     * If local controls will be used for this character instead of a remote controller, which color should be assigned
+     * to this player?
+     * Has no effect if remote controls are used.
+     */
+    [SerializeField] private PlayerColor localControlsInitColor = PlayerColor.Any;
+    /**
+     * If local controls will be used for this character instead of a remote controller, which keyboard layout shall
+     * be used for them?
+     * Has no effect if remote controls are used.
+     */
+    [SerializeField] private LocalKeyboardLayout localDefaultLayout = LocalKeyboardLayout.WASD;
     
     private int _healthPoints;
 
     private BoxCollider2D _collider;
 
-    private Input _input = LocalInput.Instance;
+    /**
+     * Initialize input to local. However, it may be reassigned in the Init method to a remote controller, see
+     * also `ControllerInput`.
+     */
+    private Input _input;
     
     private float _vertical;
     private float _horizontal;
@@ -53,6 +69,14 @@ public class PlayerController : EntityController
     private static readonly int SpeedProperty = Animator.StringToHash("Speed");
     private static readonly int AttackTrigger = Animator.StringToHash("Attack");
 
+    public PlayerColor Color => _input.GetColor();
+
+    /**
+     * Should be used to assign a remote controller to this player after creating the game object instance from a
+     * prefab using `Instantiate`.
+     *
+     * If this method is not called before the first frame, local input will be used instead.
+     */
     public void Init(Input input)
     {
         _input = input;
@@ -62,6 +86,14 @@ public class PlayerController : EntityController
     protected override void Start()
     {
         base.Start();
+        
+        // If `Init` has not been called and no remote input has been assigned, we assign a local input controller
+        // instead
+        if (_input == null)
+        {
+            _input = new LocalInput(localDefaultLayout, localControlsInitColor);
+        }
+        
         _collider = GetComponent<BoxCollider2D>();
         
         _healthPoints = maxHealthPoints;
@@ -115,14 +147,16 @@ public class PlayerController : EntityController
         if (!ReferenceEquals(hit.collider, null)) // !ReferenceEquals is supposed to be faster than != null
         {
             pushable = hit.collider.gameObject.GetComponent<Pushable>();
-            return !ReferenceEquals(pushable, null);
+
+            if (!ReferenceEquals(pushable, null))
+            {
+                // We can only interact with boxes where the color matches our own
+                return pushable.Color.IsCompatibleWith(this.Color);
+            }            
         }
-        
-        else
-        {
-            pushable = null;
-            return false;
-        }
+    
+        pushable = null;
+        return false;
     }
 
     void FixedUpdate ()

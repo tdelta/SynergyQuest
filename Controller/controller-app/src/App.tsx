@@ -49,7 +49,7 @@ export interface AppState {
   connectionStatus: ConnectionStatus;
 
   failureMessage?: string;
-  color?: PlayerColor;
+  color: PlayerColor;
   attackChecked: boolean;
   pullChecked: boolean;
   horizontalSliderVal: number;
@@ -69,7 +69,7 @@ class App extends React.Component<{}, AppState> {
   private static readonly initialState: AppState = {
     connectionStatus: NotConnectedC,
     failureMessage: undefined,
-    color: undefined,
+    color: PlayerColor.Any,
     attackChecked: false,
     pullChecked: false,
     horizontalSliderVal: 0,

@@ -48,7 +48,6 @@ public class ControllerInput: Input
 
     public int PlayerId { get; }
     public string PlayerName { get; }
-    public PlayerColor Color => _playerColor;
 
     // We cache the last inputs reported by a controller here
     private float _vertical   = 0.0f;  // vertical joystick position
@@ -59,7 +58,7 @@ public class ControllerInput: Input
     // We also cache the last special values set by the game
     // FIXME: We must resend this stuff to the client on reconnect if the client temporarily disconnects.
     //        We should also cache and resend the menu actions
-    private PlayerColor _playerColor;
+    private PlayerColor _playerColor = PlayerColor.Any;
     private GameState _gameState = GameState.Lobby;
 
     /**
@@ -170,6 +169,14 @@ public class ControllerInput: Input
         
         var msg = new Message.PlayerColorMessage(color);
         SendMessage(msg);
+    }
+
+    /**
+     * Retrieve the color that has been assigned to this controller.
+     */
+    public PlayerColor GetColor()
+    {
+        return _playerColor;
     }
 
     public void EnableMenuAction(MenuAction action, bool enable = true)
