@@ -13,6 +13,7 @@ abstract public class EntityController : MonoBehaviour {
     readonly int vulnerableTrigger = Animator.StringToHash("Vulnerable");
     readonly int hitTrigger = Animator.StringToHash("Hit");
 
+    protected float TimeInvincible => timeInvincible;
 
     protected virtual void Start() {
         animator = GetComponent<Animator>();

@@ -16,11 +16,17 @@ abstract public class EnemyController : EntityController {
     bool isDead;
     readonly int deadTrigger = Animator.StringToHash("Dead");
 
+    /**
+     * Used to briefly flash an enemy in a certain color. For example red when it is hit.
+     */
+    private TintFlashController _tintFlashController;
 
     protected override void Start() {
         base.Start();
         directionTimer = directionChangeTime;
         direction = Random.insideUnitCircle.normalized;
+        
+        _tintFlashController = GetComponent<TintFlashController>();
     }
 
     protected override void Update() {
@@ -46,7 +52,7 @@ abstract public class EnemyController : EntityController {
 
         if (amount <= 0)
         {
-            PlayHitSound();
+            PlayDamageEffects();
         }
 
         if (healthPoints <= 0) {
@@ -74,8 +80,20 @@ abstract public class EnemyController : EntityController {
         smokeEffect.Play();
     }
 
-    private void PlayHitSound()
+    /**
+     * Plays some effects to give feedback that the enemy has taken damage.
+     *
+     * Currently, it flashes the enemy red for the duration of its invincibility after being hit.
+     * It also plays a hit sound, when present
+     */
+    private void PlayDamageEffects()
     {
+        // Flash enemy red for the duration of its temporary invincibility
+        _tintFlashController.FlashTint(
+            Color.red, TimeInvincible
+        );
+        
+        // Play sound
         if (!ReferenceEquals(hitSounds, null))
         {
             hitSounds.PlayOneShot();

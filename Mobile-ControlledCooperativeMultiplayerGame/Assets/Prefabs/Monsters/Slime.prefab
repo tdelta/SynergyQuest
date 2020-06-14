@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4379324440833947347}
   - component: {fileID: 4379324440833947344}
   - component: {fileID: 4379324440833947345}
+  - component: {fileID: 2038427830744242232}
   - component: {fileID: 4379324440833947342}
   - component: {fileID: 4379324440833947343}
   - component: {fileID: 4379324440833947340}
@@ -55,7 +56,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 9f2d42538972bab74ae8ab6c18f38af8, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -106,6 +107,18 @@ MonoBehaviour:
   damageFactor: 1
   smokeEffect: {fileID: 6204671756597931383}
   hitSounds: {fileID: 6792248209785877500}
+--- !u!114 &2038427830744242232
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4379324440833947341}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93bb8f5ddb2f5c5d3bb1691f37e9eea3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!61 &4379324440833947342
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -208,6 +221,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: HitSounds
+      objectReference: {fileID: 0}
+    - target: {fileID: 5901695804182231811, guid: 37e72f8d85c3e48ff94a706cf9f4acd0,
+        type: 3}
+      propertyPath: m_Volume
+      value: 0.8
       objectReference: {fileID: 0}
     - target: {fileID: 8238955357890096599, guid: 37e72f8d85c3e48ff94a706cf9f4acd0,
         type: 3}

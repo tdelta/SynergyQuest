@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6235775845409623572}
   - component: {fileID: 6235775845409623573}
+  - component: {fileID: 5907530198393131452}
   - component: {fileID: 6235775845409623579}
   - component: {fileID: 6235775845409623578}
   - component: {fileID: 6235775845409623577}
@@ -57,6 +58,18 @@ MonoBehaviour:
   smokeEffect: {fileID: 24872979894827348}
   hitSounds: {fileID: 2591332168760939140}
   viewCone: 60
+--- !u!114 &5907530198393131452
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6235775845409623576}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93bb8f5ddb2f5c5d3bb1691f37e9eea3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!212 &6235775845409623579
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -75,7 +88,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 9f2d42538972bab74ae8ab6c18f38af8, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -210,6 +223,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: HitSounds
+      objectReference: {fileID: 0}
+    - target: {fileID: 5901695804182231811, guid: 37e72f8d85c3e48ff94a706cf9f4acd0,
+        type: 3}
+      propertyPath: m_Volume
+      value: 0.8
       objectReference: {fileID: 0}
     - target: {fileID: 8238955357890096599, guid: 37e72f8d85c3e48ff94a706cf9f4acd0,
         type: 3}
