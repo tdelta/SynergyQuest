@@ -42,8 +42,8 @@ abstract public class EntityController : MonoBehaviour {
         isInvincible = true;
         
         // TODO: implement a working knockback mechanism
-        var stopForce = -rigidbody2D.velocity * rigidbody2D.mass;
-        rigidbody2D.AddForce(stopForce + amount * knockbackDirection, ForceMode2D.Impulse);
+        //var stopForce = -rigidbody2D.velocity * rigidbody2D.mass;
+        //rigidbody2D.AddForce(stopForce + amount * knockbackDirection, ForceMode2D.Impulse);
 
         ChangeHealth(-amount);
     }
