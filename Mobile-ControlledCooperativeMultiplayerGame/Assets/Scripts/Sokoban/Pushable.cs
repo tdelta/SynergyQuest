@@ -42,6 +42,13 @@ public class Pushable : MonoBehaviour
     [SerializeField] private AudioClip pushSound;
 
     /**
+     * Every pushable object can be assigned a specific color so that only players with the right color can
+     * interact with it and only switches with the right color accept it.
+     */
+    [SerializeField] private PlayerColor color = PlayerColor.Any;
+    public PlayerColor Color => color;
+
+    /**
      * A Pushable should be part of an object with a box collider, a rigidbody and a `MovementBinder`.
      * These components are retrieved automatically during `Start`
      */
@@ -350,6 +357,8 @@ public class Pushable : MonoBehaviour
         if (_inContactObject != null) return;
         // We also do not handle collisions with non-player objects
         if (!other.collider.CompareTag("Player")) return;
+        // The color must also match
+        if (!other.collider.GetComponent<PlayerController>().Color.IsCompatibleWith(this.color)) return;
 
         // A player collided with us!
         // We now need to track, how long it stays in contact with us.

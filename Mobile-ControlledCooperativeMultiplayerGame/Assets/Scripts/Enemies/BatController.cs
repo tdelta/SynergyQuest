@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class BatController : EnemyController {
-    public float flightSpeed = 1;
-    public float flightChangeTime = 1;
+    [SerializeField] float flightSpeed = 1;
+    [SerializeField] float flightChangeTime = 1;
 
     float flightTimer;
     int currentMotion = 0;
+    readonly int moveYProperty = Animator.StringToHash("Move Y");
     Vector2[] flightMotions = new []{new Vector2(-1, 1), new Vector2(-1, -1),
         new Vector2(1, 1), new Vector2(1, -1)};
 
@@ -30,7 +31,7 @@ public class BatController : EnemyController {
         var flightMotion = flightMotions[currentMotion];
         var offset = Time.deltaTime * directionSpeed * direction;
         offset += flightSpeed * Time.deltaTime * flightMotion;
-        animator.SetFloat("Move Y", flightMotion.y);
+        animator.SetFloat(moveYProperty, flightMotion.y);
         return offset;
     }
 }

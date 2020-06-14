@@ -62,6 +62,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4927801977239634425, guid: 6ed7971d71a18372790f27df003fd03d,
+        type: 3}
+      propertyPath: color
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 4927801977239634427, guid: 6ed7971d71a18372790f27df003fd03d,
         type: 3}
       propertyPath: color
@@ -70,7 +75,7 @@ PrefabInstance:
     - target: {fileID: 4927801977239634430, guid: 6ed7971d71a18372790f27df003fd03d,
         type: 3}
       propertyPath: m_Name
-      value: Red Box
+      value: Red Box Variant
       objectReference: {fileID: 0}
     - target: {fileID: 4927801977239634431, guid: 6ed7971d71a18372790f27df003fd03d,
         type: 3}

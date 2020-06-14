@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class SwitchController : MonoBehaviour
 {
-    [SerializeField] private PlayerColor color;
+    [SerializeField] private PlayerColor color = PlayerColor.Any;
     
     private bool _pressed;
 
@@ -26,9 +26,9 @@ public class SwitchController : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.CompareTag("Box")){
-            BoxController box = other.gameObject.GetComponent<BoxController>();
+            Pushable box = other.gameObject.GetComponent<Pushable>();
             
-            if(box.getColor() == this.GetColor()) {
+            if(box.Color.IsCompatibleWith(this.GetColor())) {
                 SetPressed(true);
             }
         }
@@ -37,9 +37,9 @@ public class SwitchController : MonoBehaviour
     private void OnTriggerExit2D(Collider2D other)
     {
         if (other.gameObject.CompareTag("Box")){
-            BoxController box = other.gameObject.GetComponent<BoxController>();
+            Pushable box = other.gameObject.GetComponent<Pushable>();
             
-            if(box.getColor() == this.GetColor()) {
+            if(box.Color.IsCompatibleWith(this.GetColor())) {
                 SetPressed(false);
             }
         }

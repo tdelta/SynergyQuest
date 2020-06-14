@@ -46,4 +46,9 @@ public interface Input
      * such values.
      */
     float GetHorizontal();
+
+    /**
+     * Returns the color that has been assigned to this input.
+     */
+    PlayerColor GetColor();
 }

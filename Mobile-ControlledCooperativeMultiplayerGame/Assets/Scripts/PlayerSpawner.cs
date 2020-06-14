@@ -50,7 +50,7 @@ public class PlayerSpawner : MonoBehaviour
         if (_debugMode)
         {
             input.SetColor(_nextPlayerColor);
-            _nextPlayerColor = _nextPlayerColor.NextValue();
+            _nextPlayerColor = _nextPlayerColor.NextColor();
             
             SpawnPlayer(input);
             input.SetGameState(GameState.Started);

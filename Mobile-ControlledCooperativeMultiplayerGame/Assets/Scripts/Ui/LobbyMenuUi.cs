@@ -98,7 +98,7 @@ public class LobbyMenuUi : MonoBehaviour
         BindInput(input);
         
         input.SetColor(_nextPlayerColor);
-        _nextPlayerColor = _nextPlayerColor.NextValue();
+        _nextPlayerColor = _nextPlayerColor.NextColor();
     }
 
     /**

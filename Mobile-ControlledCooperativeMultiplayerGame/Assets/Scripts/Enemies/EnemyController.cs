@@ -3,47 +3,36 @@ using System.Collections.Generic;
 using UnityEngine;
 
 abstract public class EnemyController : EntityController {
-    public float timeInvincible = 1;
-    public int   healthPoints = 1;
-    public float directionSpeed = 1;
-    public float directionChangeTime = 1;
-    public int damageFactor = 1;
-    public ParticleSystem smokeEffect;
+    [SerializeField] protected int   healthPoints = 1;
+    [SerializeField] protected float directionSpeed = 1;
+    [SerializeField] protected float directionChangeTime = 1;
+    [SerializeField] protected int damageFactor = 1;
+    [SerializeField] ParticleSystem smokeEffect;
 
-    protected new Rigidbody2D rigidbody2D;
-    protected Animator animator;
     protected float directionTimer;
     protected Vector2 direction;
     
     bool isDead;
-    bool isInvincible;
-    float invincibleTimer;
+    readonly int deadTrigger = Animator.StringToHash("Dead");
 
-    protected virtual void Start() {
-        rigidbody2D = GetComponent<Rigidbody2D>();
-        animator = GetComponent<Animator>();
+
+    protected override void Start() {
+        base.Start();
         directionTimer = directionChangeTime;
         direction = Random.insideUnitCircle.normalized;
     }
 
-    protected virtual void Update() {
+    protected override void Update() {
+        base.Update();
         directionTimer -= Time.deltaTime;
 
         if (directionTimer < 0) {
             direction = Random.insideUnitCircle.normalized;
             directionTimer = directionChangeTime;
         }
-
-        if (isInvincible) {
-            invincibleTimer -= Time.deltaTime;
-            if (invincibleTimer < 0) {
-                isInvincible = false;
-                animator.SetTrigger("Vulnerable");
-            }
-        }
     }
 
-    void OnCollisionEnter2D(Collision2D other) {
+    void OnCollisionStay2D(Collision2D other) {
         if (other.gameObject.tag == "Player") {
             var player = other.gameObject.GetComponent<EntityController>();
             player.PutDamage(damageFactor, (other.transform.position - transform.position).normalized); 
@@ -51,28 +40,20 @@ abstract public class EnemyController : EntityController {
             direction = -direction;
     }
 
-    public override void PutDamage(int amount, Vector2 knockbackDirection){
-        if (isInvincible) {
-            return;
-        }
-        invincibleTimer = timeInvincible;
-        isInvincible = true;
-        animator.SetTrigger("Hit");
-        var stopForce = -rigidbody2D.velocity * rigidbody2D.mass;
-        rigidbody2D.AddForce(stopForce + knockbackFactor * amount * knockbackDirection, ForceMode2D.Impulse);
-        ChangeHealth(-amount);
-    }
-
-    void ChangeHealth(int amount) {
+    protected override void ChangeHealth(int amount) {
         healthPoints += amount;
 
         if (healthPoints <= 0) {
             isDead = true;
-            animator.SetTrigger("Dead");
+            animator.SetTrigger(deadTrigger);
             Destroy(gameObject, 1);
         }
     }
 
+    /*
+     * Different enemy types only differ in their movements. New enemies should implement this method,
+     * to define their behaviour.
+     */
     protected abstract Vector2 ComputeOffset();
     
     void FixedUpdate() {
