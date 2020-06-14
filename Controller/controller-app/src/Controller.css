@@ -1,7 +1,15 @@
+.colorIndicator {
+  width: 80%;
+  height: 10%;
+  outline: none;
+}
 .pixelButton {
   width: 100%;
   height: 50%;
   outline: none;
+}
+.no-click {
+    pointer-events: none;
 }
 .pixelButton::-moz-focus-inner{
   border: 0;
@@ -25,6 +33,8 @@
 .buttonColumn {
   height: 100vh;
   width: 50%;
+  display: flex;
+  flex-direction: column;
 }
 
 #boob {

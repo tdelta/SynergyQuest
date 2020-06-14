@@ -9,8 +9,10 @@ import {
 } from 'controller-client-lib';
 import { ConnectScreen } from './ConnectScreen';
 import { LobbyScreen } from './LobbyScreen';
-import * as consts from './consts';
+import { LoadingScreen } from './LoadingScreen';
 import { Controller } from './Controller';
+import * as consts from './consts';
+import { ColorData } from './consts';
 import './App.css';
 
 /**
@@ -49,7 +51,7 @@ export interface AppState {
   connectionStatus: ConnectionStatus;
 
   failureMessage?: string;
-  color?: PlayerColor;
+  color: ColorData;
   attackChecked: boolean;
   pullChecked: boolean;
   horizontalSliderVal: number;
@@ -69,7 +71,7 @@ class App extends React.Component<{}, AppState> {
   private static readonly initialState: AppState = {
     connectionStatus: NotConnectedC,
     failureMessage: undefined,
-    color: undefined,
+    color: {name: 'color undefined', light: '', dark: ''},
     attackChecked: false,
     pullChecked: false,
     horizontalSliderVal: 0,
@@ -83,7 +85,6 @@ class App extends React.Component<{}, AppState> {
 
     this.connect = this.connect.bind(this);
     this.startGame = this.startGame.bind(this);
-    this.handleInputChange = this.handleInputChange.bind(this);
 
     // Initialize as not connected
     this.state = App.initialState;
@@ -141,11 +142,13 @@ class App extends React.Component<{}, AppState> {
       });
     };
 
-    client.onSetPlayerColor = (color: PlayerColor) =>
-      this.setState({
-        ...this.state,
-        color: color, // <- set new color
-      });
+    console.log(consts.colors);
+
+    //client.onSetPlayerColor = (color: PlayerColor) =>
+    //  this.setState({
+    //    ...this.state,
+    //    color: consts.colors[color], // <- set new color
+    //  });
 
     client.onSetMenuAction = (action: MenuAction, enabled: boolean) =>
       this.setState({
@@ -167,53 +170,6 @@ class App extends React.Component<{}, AppState> {
     });
   }
 
-  /**
-   * Called whenever one of the inputs changes (Attack, Pull, ...)
-   */
-  handleInputChange(e: React.ChangeEvent) {
-    if (this.state.connectionStatus.kind === 'Connected') {
-      const sender = this.state.connectionStatus.client;
-      const node = e.target as any;
-      const name = node.name;
-
-      switch (name) {
-        case 'attack':
-          this.setState({
-            ...this.state,
-            attackChecked: !this.state.attackChecked,
-          });
-
-          sender.setButton(Button.Attack, node.checked);
-          break;
-        case 'pull':
-          this.setState({
-            ...this.state,
-            pullChecked: !this.state.pullChecked,
-          });
-
-          sender.setButton(Button.Pull, node.checked);
-          break;
-        case 'vertical':
-        case 'horizontal':
-          {
-            const vertVal = this.vertRef.current?.value as number | undefined;
-            const horVal = this.horRef.current?.value as number | undefined;
-
-            if (vertVal != null && horVal != null) {
-              this.setState({
-                ...this.state,
-                horizontalSliderVal: horVal,
-                verticalSliderVal: vertVal,
-              });
-
-              sender.setJoystickPosition(vertVal, horVal);
-            }
-          }
-          break;
-      }
-    }
-  }
-
   startGame() {
     if (this.state.connectionStatus.kind === 'Connected') {
       const client = this.state.connectionStatus.client;
@@ -230,10 +186,10 @@ class App extends React.Component<{}, AppState> {
     let body: React.ReactNode;
     switch (this.state.connectionStatus.kind) {
       case 'NotConnected':
-        body = <ConnectScreen connect={this.connect} />;
+        body = <ConnectScreen connect={this.connect}/>;
         break;
       case 'Connecting':
-        body = <span>Connecting...</span>;
+        body = <LoadingScreen />;
         break;
       case 'Connected':
         switch (this.state.gameState) {
@@ -246,7 +202,7 @@ class App extends React.Component<{}, AppState> {
             );
             break;
           case GameState.Started:
-            body = <Controller client={this.state.connectionStatus.client} />;
+            body = <Controller client={this.state.connectionStatus.client} playerColor={this.state.color}/>;
             break;
         }
     }

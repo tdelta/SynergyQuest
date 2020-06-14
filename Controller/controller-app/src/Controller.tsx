@@ -7,6 +7,7 @@ import nipplejs, {
   JoystickOutputData,
 } from 'nipplejs';
 import './Controller.css';
+import { ColorData } from './consts';
 
 export class Controller extends React.Component<
   ControllerProbs,
@@ -99,6 +100,8 @@ export class Controller extends React.Component<
       </button>
     );
 
+    let playerColor: ColorData = this.props.playerColor;
+
     // Return DOM elements
     return (
       <div className='container'>
@@ -109,6 +112,13 @@ export class Controller extends React.Component<
                 <p id='boobText'> tap and drag to move </p>
               </div>
               <div className='buttonColumn'>
+                <div className='rowContainer'>
+                  <button
+                      className='colorIndicator text no-click'
+                      style={{ backgroundColor: playerColor.dark, borderColor: playerColor.light }} >
+                      {playerColor.name}
+                  </button>
+                </div>
                 {button('Attack', Button.Attack, '#E53935', '#EF5350')}
                 {button('Pull', Button.Pull, '#039BE5', '#29B6F6')}
               </div>
@@ -124,4 +134,5 @@ interface ControllerState {}
 
 interface ControllerProbs {
   client: ControllerClient;
+  playerColor: ColorData;
 }
