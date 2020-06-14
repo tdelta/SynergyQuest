@@ -8,6 +8,7 @@ abstract public class EnemyController : EntityController {
     [SerializeField] protected float directionChangeTime = 1;
     [SerializeField] protected int damageFactor = 1;
     [SerializeField] ParticleSystem smokeEffect;
+    [SerializeField] private MultiSound hitSounds;
 
     protected float directionTimer;
     protected Vector2 direction;
@@ -43,6 +44,11 @@ abstract public class EnemyController : EntityController {
     protected override void ChangeHealth(int amount) {
         healthPoints += amount;
 
+        if (amount <= 0)
+        {
+            PlayHitSound();
+        }
+
         if (healthPoints <= 0) {
             isDead = true;
             animator.SetTrigger(deadTrigger);
@@ -66,5 +72,13 @@ abstract public class EnemyController : EntityController {
 
     public void ShowParticles() {
         smokeEffect.Play();
+    }
+
+    private void PlayHitSound()
+    {
+        if (!ReferenceEquals(hitSounds, null))
+        {
+            hitSounds.PlayOneShot();
+        }
     }
 }
