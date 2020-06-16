@@ -15,6 +15,7 @@ public class PlayerController : EntityController
     [SerializeField] private int maxHealthPoints = 5;
     [SerializeField] private float boxPullRange;
     [SerializeField] private MultiSound fightingSounds;
+    [SerializeField] private MultiSound hitSounds;
     /**
      * If local controls will be used for this character instead of a remote controller, which color should be assigned
      * to this player?
@@ -31,6 +32,11 @@ public class PlayerController : EntityController
     private int _healthPoints;
 
     private BoxCollider2D _collider;
+    
+    /**
+     * Used to briefly flash the player in a certain color. For example red when they are hit.
+     */
+    private TintFlashController _tintFlashController;
 
     /**
      * Initialize input to local. However, it may be reassigned in the Init method to a remote controller, see
@@ -95,6 +101,7 @@ public class PlayerController : EntityController
         }
         
         _collider = GetComponent<BoxCollider2D>();
+        _tintFlashController = GetComponent<TintFlashController>();
         
         _healthPoints = maxHealthPoints;
         _playerState = PlayerState.walking;
@@ -187,6 +194,13 @@ public class PlayerController : EntityController
     protected override void ChangeHealth(int delta)
     {
         _healthPoints += delta;
+
+        // Display some effects when damaged
+        if (delta < 0)
+        {
+            _tintFlashController.FlashTint(UnityEngine.Color.red, TimeInvincible);
+            hitSounds.PlayOneShot();
+        }
 
         if (delta != 0)
         {
