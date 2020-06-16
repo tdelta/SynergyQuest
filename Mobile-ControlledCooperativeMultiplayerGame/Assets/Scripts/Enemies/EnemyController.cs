@@ -57,6 +57,7 @@ abstract public class EnemyController : EntityController {
 
         if (healthPoints <= 0) {
             isDead = true;
+            this.GetComponent<Collider2D>().enabled = false;
             animator.SetTrigger(deadTrigger);
             Destroy(gameObject, 1);
         }
