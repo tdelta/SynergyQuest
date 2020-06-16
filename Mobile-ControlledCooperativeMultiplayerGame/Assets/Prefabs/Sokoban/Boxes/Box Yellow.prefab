@@ -9,11 +9,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4927801977239634424}
+  - component: {fileID: 4927801977239634425}
+  - component: {fileID: 546161748042274506}
   - component: {fileID: 4927801977239634431}
   - component: {fileID: 9112173875489999673}
   - component: {fileID: 129467634112654466}
-  - component: {fileID: 4927801977239634425}
-  - component: {fileID: 546161748042274506}
   - component: {fileID: 5083304452024350111}
   m_Layer: 9
   m_Name: Box Yellow
@@ -36,6 +36,37 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4927801977239634425
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4927801977239634430}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2dfb9dc4e22db865bbbd9c0410112ed2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  minimumPushVelocity: 0.5
+  speed: 1
+  inContactTime: 0.5
+  minInteractionOverlap: 0.3
+  grid: {fileID: 0}
+  pushSound: {fileID: 8300000, guid: 0e7b927626a6536338fc6fc87aac6b41, type: 3}
+  color: 3
+--- !u!114 &546161748042274506
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4927801977239634430}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ca85242cc514a40bdac6bc41fa32c6a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!212 &4927801977239634431
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -134,37 +165,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.64048576, y: 0.72995317}
   m_EdgeRadius: 0
---- !u!114 &4927801977239634425
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4927801977239634430}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2dfb9dc4e22db865bbbd9c0410112ed2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  minimumPushVelocity: 0.5
-  speed: 1
-  inContactTime: 0.5
-  minInteractionOverlap: 0.3
-  grid: {fileID: 0}
-  pushSound: {fileID: 8300000, guid: 0e7b927626a6536338fc6fc87aac6b41, type: 3}
-  color: 1
---- !u!114 &546161748042274506
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4927801977239634430}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7ca85242cc514a40bdac6bc41fa32c6a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!82 &5083304452024350111
 AudioSource:
   m_ObjectHideFlags: 0

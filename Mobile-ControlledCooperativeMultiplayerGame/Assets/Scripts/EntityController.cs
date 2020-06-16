@@ -13,6 +13,7 @@ abstract public class EntityController : MonoBehaviour {
     readonly int vulnerableTrigger = Animator.StringToHash("Vulnerable");
     readonly int hitTrigger = Animator.StringToHash("Hit");
 
+    protected float TimeInvincible => timeInvincible;
 
     protected virtual void Start() {
         animator = GetComponent<Animator>();
@@ -42,8 +43,8 @@ abstract public class EntityController : MonoBehaviour {
         isInvincible = true;
         
         // TODO: implement a working knockback mechanism
-        var stopForce = -rigidbody2D.velocity * rigidbody2D.mass;
-        rigidbody2D.AddForce(stopForce + amount * knockbackDirection, ForceMode2D.Impulse);
+        //var stopForce = -rigidbody2D.velocity * rigidbody2D.mass;
+        //rigidbody2D.AddForce(stopForce + amount * knockbackDirection, ForceMode2D.Impulse);
 
         ChangeHealth(-amount);
     }

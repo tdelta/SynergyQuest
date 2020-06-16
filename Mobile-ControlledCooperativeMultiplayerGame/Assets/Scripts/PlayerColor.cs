@@ -5,10 +5,10 @@ using UnityEngine;
 public enum PlayerColor: int
 {
     // Do not change the numeric values. The controller clients use the same values.
-    Blue = 0,
-    Yellow = 1,
-    Red = 2,
-    Green = 3,
+    Red = 0,
+    Blue = 1,
+    Green = 2,
+    Yellow = 3,
     Any = 4 // May interact with any object.
 }
 
@@ -31,7 +31,7 @@ public static class PlayerColorMethods
      *
      * Order in which the values are cycled through:
      * 
-     * Blue -> Yellow -> Red -> Green -> Blue
+     * Red -> Blue -> Green -> Yellow -> Red
      * Any -> Any
      */
     public static PlayerColor NextColor(this PlayerColor color)
@@ -40,14 +40,14 @@ public static class PlayerColorMethods
         {
             case PlayerColor.Any:
                 return PlayerColor.Any;
+            case PlayerColor.Red:
+                return PlayerColor.Blue;
             case PlayerColor.Blue:
+                return PlayerColor.Green;
+            case PlayerColor.Green:
                 return PlayerColor.Yellow;
             case PlayerColor.Yellow:
                 return PlayerColor.Red;
-            case PlayerColor.Red:
-                return PlayerColor.Green;
-            case PlayerColor.Green:
-                return PlayerColor.Blue;
         }
 
         return PlayerColor.Any;

@@ -67,7 +67,7 @@ public class PlayerSpawner : MonoBehaviour
 
         if (targetGroup != null)
         {
-            targetGroup.AddMember(instance.transform, 1, 0);
+            targetGroup.AddMember(instance.transform, 1, 1);
         }
 
         var controller = instance.GetComponent<PlayerController>();

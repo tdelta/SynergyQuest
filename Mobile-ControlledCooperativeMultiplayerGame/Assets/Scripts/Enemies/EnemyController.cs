@@ -8,6 +8,7 @@ abstract public class EnemyController : EntityController {
     [SerializeField] protected float directionChangeTime = 1;
     [SerializeField] protected int damageFactor = 1;
     [SerializeField] ParticleSystem smokeEffect;
+    [SerializeField] private MultiSound hitSounds;
 
     protected float directionTimer;
     protected Vector2 direction;
@@ -15,11 +16,17 @@ abstract public class EnemyController : EntityController {
     bool isDead;
     readonly int deadTrigger = Animator.StringToHash("Dead");
 
+    /**
+     * Used to briefly flash an enemy in a certain color. For example red when it is hit.
+     */
+    private TintFlashController _tintFlashController;
 
     protected override void Start() {
         base.Start();
         directionTimer = directionChangeTime;
         direction = Random.insideUnitCircle.normalized;
+        
+        _tintFlashController = GetComponent<TintFlashController>();
     }
 
     protected override void Update() {
@@ -42,6 +49,11 @@ abstract public class EnemyController : EntityController {
 
     protected override void ChangeHealth(int amount) {
         healthPoints += amount;
+
+        if (amount <= 0)
+        {
+            PlayDamageEffects();
+        }
 
         if (healthPoints <= 0) {
             isDead = true;
@@ -66,5 +78,25 @@ abstract public class EnemyController : EntityController {
 
     public void ShowParticles() {
         smokeEffect.Play();
+    }
+
+    /**
+     * Plays some effects to give feedback that the enemy has taken damage.
+     *
+     * Currently, it flashes the enemy red for the duration of its invincibility after being hit.
+     * It also plays a hit sound, when present
+     */
+    private void PlayDamageEffects()
+    {
+        // Flash enemy red for the duration of its temporary invincibility
+        _tintFlashController.FlashTint(
+            Color.red, TimeInvincible
+        );
+        
+        // Play sound
+        if (!ReferenceEquals(hitSounds, null))
+        {
+            hitSounds.PlayOneShot();
+        }
     }
 }

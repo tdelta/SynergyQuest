@@ -19,10 +19,11 @@ export enum MenuAction {
 }
 
 export enum PlayerColor {
-  Blue = 0,
-  Yellow = 1,
-  Red = 2,
-  Green = 3,
+  Red = 0,
+  Blue = 1,
+  Green = 2,
+  Yellow = 3,
+  Any = 4, // May interact with any object.
 }
 
 /**

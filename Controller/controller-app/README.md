@@ -6,7 +6,10 @@ The app was bootstrapped with [Create React App](https://github.com/facebook/cre
 
 ## Usage
 
-Install dependencies:
+First, build the client library (`controller-client-lib` project).
+You might also need to rebuild the library if it has been changed by a commit.
+
+Now you can install dependencies:
 
 ```bash
 npm install
