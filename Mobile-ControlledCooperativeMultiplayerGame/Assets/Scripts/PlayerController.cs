@@ -112,6 +112,9 @@ public class PlayerController : EntityController
         
         _healthPoints = maxHealthPoints;
         _playerState = PlayerState.walking;
+        
+        var material = GetComponent<Renderer>().material;
+        material.SetColor("_ShirtColor", PlayerColorMethods.ColorToRGB(this.Color));
     }
 
     // Update is called once per frame

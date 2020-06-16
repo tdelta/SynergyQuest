@@ -52,4 +52,24 @@ public static class PlayerColorMethods
 
         return PlayerColor.Any;
     }
+
+    /*
+     * Get RGB values for the player colors. Can be displayed in a material
+     */
+    public static Color ColorToRGB(PlayerColor color)
+    {
+        switch (color)
+        {
+            case PlayerColor.Red:
+                return new Color(1.0f,0.52549f,0.48627f);
+            case PlayerColor.Blue:
+                return new Color(0.41569f,0.71765f,1.0f);
+            case PlayerColor.Green:
+                return new Color(0.46275f,0.82353f,0.45882f);
+            case PlayerColor.Yellow:
+                return new Color(1.0f,1.0f,0.41961f);
+        }
+
+        return Color.gray;
+    }
 }
