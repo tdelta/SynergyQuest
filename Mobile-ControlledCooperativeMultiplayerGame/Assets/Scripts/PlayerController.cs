@@ -16,6 +16,7 @@ public class PlayerController : EntityController
     [SerializeField] private float boxPullRange;
     [SerializeField] private MultiSound fightingSounds;
     [SerializeField] private MultiSound hitSounds;
+    [SerializeField] private MultiSound deathSounds;
     /**
      * If local controls will be used for this character instead of a remote controller, which color should be assigned
      * to this player?
@@ -208,7 +209,13 @@ public class PlayerController : EntityController
         }
         
         if (_healthPoints <= 0) {
-            Destroy(this.gameObject);
+            deathSounds.PlayOneShot();
+            
+            // This is only a temporary solution until we have respawn
+            rigidbody2D.simulated = false;
+            lifeGauge.SetActive(false);
+            GetComponent<SpriteRenderer>().enabled = false;
+            Destroy(this.gameObject, 2.0f);
         }
     }
 

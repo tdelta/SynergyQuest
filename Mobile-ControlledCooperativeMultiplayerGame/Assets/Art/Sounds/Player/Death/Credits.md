@@ -1,4 +1,4 @@
-# Grunt* sounds
+# Pained Death* sounds
 
 * Artist: itch.io user konakuma
 * License: Informal:
