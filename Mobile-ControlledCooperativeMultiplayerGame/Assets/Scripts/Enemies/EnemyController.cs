@@ -21,6 +21,13 @@ abstract public class EnemyController : EntityController {
      */
     private TintFlashController _tintFlashController;
 
+    /**
+     * Used to notify other game elements (door) when a monster dies
+     */
+    public delegate void EnemyDied();
+    public static event EnemyDied OnDeath;
+
+
     protected override void Start() {
         base.Start();
         directionTimer = directionChangeTime;
@@ -49,6 +56,7 @@ abstract public class EnemyController : EntityController {
 
     protected override void ChangeHealth(int amount) {
         healthPoints += amount;
+        Debug.Log("Enemy took damage");
 
         if (amount <= 0)
         {
@@ -59,6 +67,9 @@ abstract public class EnemyController : EntityController {
             isDead = true;
             animator.SetTrigger(deadTrigger);
             Destroy(gameObject, 1);
+            if(OnDeath != null){
+                OnDeath();
+            }
         }
     }
 

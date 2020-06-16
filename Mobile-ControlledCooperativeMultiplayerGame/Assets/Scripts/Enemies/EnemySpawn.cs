@@ -19,6 +19,8 @@ public class EnemySpawn : MonoBehaviour {
     Tilemap tilemap;
     System.Random rand = new System.Random();
     List<EnemyController> gameObjects = new List<EnemyController>();
+
+    //private DoorController _door = GameObject.Find("Door").GetComponent<MainScript>();
     
 
     // Start is called before the first frame update
@@ -28,15 +30,15 @@ public class EnemySpawn : MonoBehaviour {
         Invoke("SpawnEnemies", spawnTime);
     }
 
-    void Update() {
-        CheckExit();
-    }
+    //void Update() {
+    //    CheckExit();
+    //}
 
-    void CheckExit() {
-        if (gameObjects.All(e => e == null)) {
-            // open door, activate teleporter, whatever...
-        }
-    }
+    //void CheckExit() {
+    //    if (gameObjects.All(e => e == null)) {
+    //        DoorController.OpenDoor();
+    //    }
+    //}
 
     void SpawnEnemies() {
         if (numberOfSlimes-- > 0)

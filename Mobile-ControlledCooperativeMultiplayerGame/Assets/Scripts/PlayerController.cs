@@ -79,6 +79,12 @@ public class PlayerController : EntityController
     public PlayerColor Color => _input.GetColor();
 
     /**
+     * Delegate function is filled by the script that does the respawning
+     */
+    public delegate void Respawn(PlayerController player);
+    public Respawn respawn;
+
+    /**
      * Should be used to assign a remote controller to this player after creating the game object instance from a
      * prefab using `Instantiate`.
      *
@@ -196,6 +202,14 @@ public class PlayerController : EntityController
     {
         _healthPoints += delta;
 
+        if (_healthPoints <= 0) {
+            deathSounds.PlayOneShot();
+          
+            _healthPoints = maxHealthPoints;
+            respawn(this);
+
+        }
+        
         // Display some effects when damaged
         if (delta < 0)
         {
@@ -206,17 +220,15 @@ public class PlayerController : EntityController
         if (delta != 0)
         {
             DisplayLifeGauge();
-        }
-        
-        if (_healthPoints <= 0) {
-            deathSounds.PlayOneShot();
-            
-            // This is only a temporary solution until we have respawn
-            rigidbody2D.simulated = false;
-            lifeGauge.SetActive(false);
-            GetComponent<SpriteRenderer>().enabled = false;
-            Destroy(this.gameObject, 2.0f);
-        }
+        }    
+    }
+
+    private void Die(){
+        // This is only a temporary solution until we have respawn
+        rigidbody2D.simulated = false;
+        lifeGauge.SetActive(false);
+        GetComponent<SpriteRenderer>().enabled = false;
+        Destroy(this.gameObject, 2.0f);
     }
 
     /**

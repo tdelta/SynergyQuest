@@ -3,22 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SokobanDoorController : MonoBehaviour
+public class SokobanDoorController : DoorController
 {
-    [SerializeField] private Sprite openedDoor;
-    [SerializeField] private Sprite closedDoor;
-
     [SerializeField] private SwitchController[] switches;
-
-    private SpriteRenderer _renderer;
-    private AudioSource _audioSource;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        _renderer = GetComponent<SpriteRenderer>();
-        _audioSource = GetComponent<AudioSource>();
-    }
 
     private void OnEnable()
     {
@@ -39,10 +26,7 @@ public class SokobanDoorController : MonoBehaviour
     private void OnSwitchChanged()
     {
         if (SokobanSolved()) {
-            _renderer.sprite = openedDoor;
-            _audioSource.Play();
-        } else {
-            _renderer.sprite = closedDoor;
+            OpenDoor();
         }
     }
 

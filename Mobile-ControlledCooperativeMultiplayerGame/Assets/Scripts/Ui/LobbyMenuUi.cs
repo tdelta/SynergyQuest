@@ -154,7 +154,7 @@ public class LobbyMenuUi : MonoBehaviour
                 input.SetGameState(GameState.Started);
             }
             
-            SceneController.Instance.LoadTestRoom();
+            DungeonController.Instance.LoadNextRoom();
         }
     }
 

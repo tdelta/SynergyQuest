@@ -57,6 +57,11 @@ public class PlayerSpawner : MonoBehaviour
         }
     }
 
+    private void Respawn(PlayerController player)
+    {
+        player.transform.position = this.transform.position;
+    }
+
     /**
      * Creates a character / player object at the current position and initializes it with the given controller
      */
@@ -71,6 +76,7 @@ public class PlayerSpawner : MonoBehaviour
         }
 
         var controller = instance.GetComponent<PlayerController>();
+        controller.respawn = Respawn;
         controller.Init(input);
     }
 }
