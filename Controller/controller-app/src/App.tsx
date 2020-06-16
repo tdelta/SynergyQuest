@@ -83,7 +83,6 @@ class App extends React.Component<{}, AppState> {
 
     this.connect = this.connect.bind(this);
     this.startGame = this.startGame.bind(this);
-    this.handleInputChange = this.handleInputChange.bind(this);
 
     // Initialize as not connected
     this.state = App.initialState;
@@ -167,53 +166,6 @@ class App extends React.Component<{}, AppState> {
     });
   }
 
-  /**
-   * Called whenever one of the inputs changes (Attack, Pull, ...)
-   */
-  handleInputChange(e: React.ChangeEvent) {
-    if (this.state.connectionStatus.kind === 'Connected') {
-      const sender = this.state.connectionStatus.client;
-      const node = e.target as any;
-      const name = node.name;
-
-      switch (name) {
-        case 'attack':
-          this.setState({
-            ...this.state,
-            attackChecked: !this.state.attackChecked,
-          });
-
-          sender.setButton(Button.Attack, node.checked);
-          break;
-        case 'pull':
-          this.setState({
-            ...this.state,
-            pullChecked: !this.state.pullChecked,
-          });
-
-          sender.setButton(Button.Pull, node.checked);
-          break;
-        case 'vertical':
-        case 'horizontal':
-          {
-            const vertVal = this.vertRef.current?.value as number | undefined;
-            const horVal = this.horRef.current?.value as number | undefined;
-
-            if (vertVal != null && horVal != null) {
-              this.setState({
-                ...this.state,
-                horizontalSliderVal: horVal,
-                verticalSliderVal: vertVal,
-              });
-
-              sender.setJoystickPosition(vertVal, horVal);
-            }
-          }
-          break;
-      }
-    }
-  }
-
   startGame() {
     if (this.state.connectionStatus.kind === 'Connected') {
       const client = this.state.connectionStatus.client;
@@ -221,7 +173,7 @@ class App extends React.Component<{}, AppState> {
       client.triggerMenuAction(MenuAction.StartGame);
     }
   }
-
+  
   /**
    * Display different HTML, depending on whether we are connected to a game
    * or not.
@@ -246,7 +198,7 @@ class App extends React.Component<{}, AppState> {
             );
             break;
           case GameState.Started:
-            body = <Controller client={this.state.connectionStatus.client} />;
+            body = <Controller client={this.state.connectionStatus.client}  playerColor={consts.colors[this.state.color]}/>;
             break;
         }
     }
