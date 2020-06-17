@@ -47,7 +47,7 @@ abstract public class EnemyController : EntityController {
     }
 
     void OnCollisionStay2D(Collision2D other) {
-        if (other.gameObject.tag == "Player") {
+        if (other.gameObject.CompareTag("Player")) {
             var player = other.gameObject.GetComponent<EntityController>();
             player.PutDamage(damageFactor, (other.transform.position - transform.position).normalized); 
         } else
@@ -65,6 +65,7 @@ abstract public class EnemyController : EntityController {
 
         if (healthPoints <= 0) {
             isDead = true;
+            this.GetComponent<Collider2D>().enabled = false;
             animator.SetTrigger(deadTrigger);
             Destroy(gameObject, 1);
             if(OnDeath != null){
@@ -83,7 +84,8 @@ abstract public class EnemyController : EntityController {
         if (!isDead) {
             Vector2 position = rigidbody2D.position;
             position += ComputeOffset();
-            rigidbody2D.MovePosition(position);
+            
+            effects.MoveBody(position);
         }
     }
 

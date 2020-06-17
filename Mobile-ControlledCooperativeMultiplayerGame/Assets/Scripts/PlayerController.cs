@@ -331,7 +331,7 @@ public class PlayerController : EntityController
             animator.SetFloat(LookYProperty, _lookDirection.y);
             animator.SetFloat(SpeedProperty, deltaPosition.magnitude);
             
-            rigidbody2D.MovePosition(
+            effects.MoveBody(
                 rigidbody2D.position + deltaPosition
             );
         }
