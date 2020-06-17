@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -331,7 +331,7 @@ PrefabInstance:
     - target: {fileID: 2891373481997250731, guid: de0a135ec1f08d7b3bc575d6e8e91cfc,
         type: 3}
       propertyPath: m_RootOrder
-      value: 9
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 2891373481997250731, guid: de0a135ec1f08d7b3bc575d6e8e91cfc,
         type: 3}
@@ -514,52 +514,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1221374766
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1221374768}
-  - component: {fileID: 1221374767}
-  m_Layer: 0
-  m_Name: ControllerDebugUISpawner
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1221374767
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1221374766}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d51bd9f9050e8a27ab6acd669f628d2a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _controllerDebugUiPrefab: {fileID: 1004154467507645108, guid: c3feebedb21ef771cbe9f44a42d72010,
-    type: 3}
-  _nextSpawnLocation: {x: -5.1, y: -3.38, z: 0}
---- !u!4 &1221374768
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1221374766}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5.1, y: -3.38, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 6
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1335753343
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -615,7 +569,7 @@ PrefabInstance:
     - target: {fileID: 8359955005476865643, guid: ed2081317d589308599371d3d73694fa,
         type: 3}
       propertyPath: m_RootOrder
-      value: 8
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 8359955005476865643, guid: ed2081317d589308599371d3d73694fa,
         type: 3}
@@ -822,7 +776,7 @@ PrefabInstance:
     - target: {fileID: 4617749517319619690, guid: 2c58bbdc4e81e9489b9c6f8a82ffc23d,
         type: 3}
       propertyPath: m_RootOrder
-      value: 7
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 4617749517319619690, guid: 2c58bbdc4e81e9489b9c6f8a82ffc23d,
         type: 3}
@@ -937,11 +891,16 @@ PrefabInstance:
     - target: {fileID: 4617749517432785704, guid: 2c58bbdc4e81e9489b9c6f8a82ffc23d,
         type: 3}
       propertyPath: numberOfSlimes
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4617749517432785704, guid: 2c58bbdc4e81e9489b9c6f8a82ffc23d,
         type: 3}
       propertyPath: numberOfBats
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4617749517432785704, guid: 2c58bbdc4e81e9489b9c6f8a82ffc23d,
+        type: 3}
+      propertyPath: numberOfKnights
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4617749517432785710, guid: 2c58bbdc4e81e9489b9c6f8a82ffc23d,

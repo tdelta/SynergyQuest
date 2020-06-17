@@ -100,8 +100,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 789e431b151f8848a8c250d0ed404ede, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeInvincible: 1
-  healthPoints: 10
+  timeInvincible: 0.5
+  healthPoints: 5
   directionSpeed: 0.3
   directionChangeTime: 5
   damageFactor: 1
