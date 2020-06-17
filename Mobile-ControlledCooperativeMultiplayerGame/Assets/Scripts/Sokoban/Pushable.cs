@@ -178,7 +178,6 @@ public class Pushable : MonoBehaviour
                 moveDistance + additionalRaycastDistance,
                  _raycastLayerMask
             );
-            Debug.Log("Hit: " + hit.collider?.name ?? "");
             var isSomethingInMoveDirection = !ReferenceEquals(hit.collider, null);
 
             return !isSomethingInMoveDirection;

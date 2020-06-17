@@ -56,7 +56,6 @@ abstract public class EnemyController : EntityController {
 
     protected override void ChangeHealth(int amount) {
         healthPoints += amount;
-        Debug.Log("Enemy took damage");
 
         if (amount <= 0)
         {
