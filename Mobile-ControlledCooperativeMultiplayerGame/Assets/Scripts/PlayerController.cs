@@ -81,8 +81,8 @@ public class PlayerController : EntityController
     /**
      * Delegate function is filled by the script that does the respawning
      */
-    public delegate void Respawn(PlayerController player);
-    public Respawn respawn;
+    public delegate void OnRespawnAction(PlayerController player);
+    public event OnRespawnAction OnRespawn;
 
     /**
      * Should be used to assign a remote controller to this player after creating the game object instance from a
@@ -201,6 +201,11 @@ public class PlayerController : EntityController
         }
     }
 
+    public void Heal()
+    {
+        ChangeHealth(maxHealthPoints);
+    }
+
     protected override void ChangeHealth(int delta)
     {
         _healthPoints += delta;
@@ -208,9 +213,7 @@ public class PlayerController : EntityController
         if (_healthPoints <= 0) {
             deathSounds.PlayOneShot();
           
-            _healthPoints = maxHealthPoints;
-            respawn(this);
-
+            OnRespawn?.Invoke(this);
         }
         
         // Display some effects when damaged
@@ -218,6 +221,11 @@ public class PlayerController : EntityController
         {
             _tintFlashController.FlashTint(UnityEngine.Color.red, TimeInvincible);
             hitSounds.PlayOneShot();
+        }
+
+        if (delta > 0)
+        {
+            _tintFlashController.FlashTint(UnityEngine.Color.green, 0.5f);
         }
 
         if (delta != 0)

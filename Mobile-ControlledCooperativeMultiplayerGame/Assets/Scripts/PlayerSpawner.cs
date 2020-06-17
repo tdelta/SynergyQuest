@@ -23,6 +23,12 @@ public class PlayerSpawner : MonoBehaviour
      * are also accepted.
      */
     [SerializeField] private bool _debugMode = false;
+    
+    /**
+     * There can be player instances pre-created in the scene. Especially local instances for debugging.
+     * Those instances should be added to a spawner in this field, so that they can be respawned
+     */
+    [SerializeField] private PlayerController[] managedPreexistingPlayers = new PlayerController[0];
 
     /**
      * In debug mode, for newly connected controllers, we need to give them a colour, since they didn't join via the
@@ -42,6 +48,12 @@ public class PlayerSpawner : MonoBehaviour
         {
             SpawnPlayer(input);
         }
+        
+        // Register local debugging player instances for respawning
+        foreach (var player in managedPreexistingPlayers)
+        {
+            player.OnRespawn += Respawn;
+        }
     }
 
     void OnNewController(ControllerInput input)
@@ -60,6 +72,7 @@ public class PlayerSpawner : MonoBehaviour
     private void Respawn(PlayerController player)
     {
         player.transform.position = this.transform.position;
+        player.Heal();
     }
 
     /**
@@ -76,7 +89,7 @@ public class PlayerSpawner : MonoBehaviour
         }
 
         var controller = instance.GetComponent<PlayerController>();
-        controller.respawn = Respawn;
+        controller.OnRespawn += Respawn;
         controller.Init(input);
     }
 }

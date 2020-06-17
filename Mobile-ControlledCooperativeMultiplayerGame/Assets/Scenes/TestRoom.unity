@@ -208,6 +208,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6a13ea0bf761f33ce9577e68788b9501, type: 3}
+--- !u!114 &666951356 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4270148256400962765, guid: 13eca49289d50674d8f5a3616579a440,
+    type: 3}
+  m_PrefabInstance: {fileID: 4270148256464369323}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fad7292b03eb81d43964fdc5d3fcfe1e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &714820802
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7837,6 +7849,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1496903331 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4270148256400962765, guid: 13eca49289d50674d8f5a3616579a440,
+    type: 3}
+  m_PrefabInstance: {fileID: 2062465857}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fad7292b03eb81d43964fdc5d3fcfe1e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1996733010
 GameObject:
   m_ObjectHideFlags: 0
@@ -8232,6 +8256,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2891373481997250730, guid: de0a135ec1f08d7b3bc575d6e8e91cfc,
         type: 3}
+      propertyPath: managedPreexistingPlayers.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2891373481997250730, guid: de0a135ec1f08d7b3bc575d6e8e91cfc,
+        type: 3}
       propertyPath: _debugMode
       value: 1
       objectReference: {fileID: 0}
@@ -8240,6 +8269,16 @@ PrefabInstance:
       propertyPath: targetGroup
       value: 
       objectReference: {fileID: 466621523}
+    - target: {fileID: 2891373481997250730, guid: de0a135ec1f08d7b3bc575d6e8e91cfc,
+        type: 3}
+      propertyPath: managedPreexistingPlayers.Array.data[0]
+      value: 
+      objectReference: {fileID: 666951356}
+    - target: {fileID: 2891373481997250730, guid: de0a135ec1f08d7b3bc575d6e8e91cfc,
+        type: 3}
+      propertyPath: managedPreexistingPlayers.Array.data[1]
+      value: 
+      objectReference: {fileID: 1496903331}
     - target: {fileID: 2891373481997250731, guid: de0a135ec1f08d7b3bc575d6e8e91cfc,
         type: 3}
       propertyPath: m_LocalPosition.x
