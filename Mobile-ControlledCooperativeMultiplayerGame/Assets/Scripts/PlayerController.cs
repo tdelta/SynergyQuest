@@ -190,6 +190,10 @@ public class PlayerController : EntityController
                     break;
             }
         }
+        else {
+            // Prevent change of velocity by collision forces
+            Move(false, false);
+        }
     }
 
     protected override void ChangeHealth(int delta)
