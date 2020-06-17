@@ -2,15 +2,12 @@ import React from 'react';
 import { BarLoader } from 'react-spinners';
 
 export class LoadingScreen extends React.Component<{}, {}> {
-
-  render () {
+  render() {
     return (
       <div className='container'>
         <div className='columnContainer'>
-        <p className='text'> Connecting </p>
-        <BarLoader
-          color='#fff'
-        />
+          <p className='text'> Connecting </p>
+          <BarLoader color='#fff' />
         </div>
       </div>
     );

@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   GameState,
-  Button,
   MenuAction,
   PlayerColor,
   ControllerClient,
@@ -62,10 +61,6 @@ export interface AppState {
  * Main UI class
  */
 class App extends React.Component<{}, AppState> {
-  // References to two sliders which serve as joystick input
-  private vertRef = React.createRef<HTMLInputElement>();
-  private horRef = React.createRef<HTMLInputElement>();
-
   private static readonly initialState: AppState = {
     connectionStatus: NotConnectedC,
     failureMessage: undefined,
@@ -146,7 +141,7 @@ class App extends React.Component<{}, AppState> {
         color: color, // <- set new color
       });
 
-    client.onSetMenuAction = (action: MenuAction, enabled: boolean) =>
+    client.onSetMenuAction = (_action: MenuAction, _enabled: boolean) =>
       this.setState({
         ...this.state,
         enabledMenuActions: client.getEnabledMenuActions(),
@@ -173,7 +168,7 @@ class App extends React.Component<{}, AppState> {
       client.triggerMenuAction(MenuAction.StartGame);
     }
   }
-  
+
   /**
    * Display different HTML, depending on whether we are connected to a game
    * or not.
@@ -198,7 +193,12 @@ class App extends React.Component<{}, AppState> {
             );
             break;
           case GameState.Started:
-            body = <Controller client={this.state.connectionStatus.client}  playerColor={consts.colors[this.state.color]}/>;
+            body = (
+              <Controller
+                client={this.state.connectionStatus.client}
+                playerColor={consts.colors[this.state.color]}
+              />
+            );
             break;
         }
     }
