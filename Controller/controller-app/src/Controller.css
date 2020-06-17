@@ -1,8 +1,8 @@
 .colorIndicator {
-  width: 80%;
-  height: 10%;
+  width: 90%;
   outline: none;
 }
+
 .pixelButton {
   width: 100%;
   height: 50%;
@@ -41,4 +41,12 @@
   height: 100vh;
   width: 50%;
   background: #43A047;
+}
+#fullscreenButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 10%;
+  color: white;
+  font-size: 20pt;
 }
