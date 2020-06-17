@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 0
+  m_UseShadowmask: 1
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -15092,6 +15092,18 @@ TilemapCollider2D:
   m_Offset: {x: 0, y: 0}
   m_MaximumTileChangeCount: 1000
   m_ExtrusionFactor: 0.00001
+--- !u!114 &303614712 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 701213108355894850, guid: c8b701aa26abe7e09be6bc9635308d17,
+    type: 3}
+  m_PrefabInstance: {fileID: 2005965033}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5eb80d8e62d9d145bb50fb783c0f731, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &343555516
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -15178,6 +15190,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlayerSpawner
       objectReference: {fileID: 0}
+    - target: {fileID: 2891373481997250730, guid: de0a135ec1f08d7b3bc575d6e8e91cfc,
+        type: 3}
+      propertyPath: targetGroup
+      value: 
+      objectReference: {fileID: 303614712}
     - target: {fileID: 2891373481997250731, guid: de0a135ec1f08d7b3bc575d6e8e91cfc,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -15325,7 +15342,7 @@ PrefabInstance:
     - target: {fileID: 8153043136341992037, guid: f925feb2d83cd4fc6b55ecd04fed0ebb,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.00000035762787
+      value: -0.00000023841858
       objectReference: {fileID: 0}
     - target: {fileID: 8153043136341992037, guid: f925feb2d83cd4fc6b55ecd04fed0ebb,
         type: 3}
@@ -15485,7 +15502,7 @@ PrefabInstance:
     - target: {fileID: 8451649553765607551, guid: 896795d39b1254ea596a70557eeff80c,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.00000035762787
+      value: -0.00000023841858
       objectReference: {fileID: 0}
     - target: {fileID: 8451649553765607551, guid: 896795d39b1254ea596a70557eeff80c,
         type: 3}

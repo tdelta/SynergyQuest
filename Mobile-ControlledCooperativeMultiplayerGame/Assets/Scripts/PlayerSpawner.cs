@@ -19,12 +19,6 @@ public class PlayerSpawner : MonoBehaviour
     [SerializeField] private CinemachineTargetGroup targetGroup;
     
     /**
-     * Whether this spawner runs in debug mode. If yes, newly connected controllers which did not join via the lobby
-     * are also accepted.
-     */
-    [SerializeField] private bool _debugMode = false;
-    
-    /**
      * There can be player instances pre-created in the scene. Especially local instances for debugging.
      * Those instances should be added to a spawner in this field, so that they can be respawned
      */
@@ -49,7 +43,23 @@ public class PlayerSpawner : MonoBehaviour
             SpawnPlayer(input);
         }
         
-        // Register local debugging player instances for respawning
+        // Spawn locally controlled players when this is enabled in the debug settings
+        {
+            var localLayouts = new[]
+            {
+                LocalKeyboardLayout.WASD, LocalKeyboardLayout.Arrow
+            };
+            
+            for (var i = 0; i < DebugSettings.LocalDebugPlayers.Length; ++i)
+            {
+                var layout = localLayouts[i % 2];
+                var input = new LocalInput(layout, DebugSettings.LocalDebugPlayers[i]);
+                
+                SpawnPlayer(input);
+            }
+        }
+        
+        // Register local player instances for respawning
         foreach (var player in managedPreexistingPlayers)
         {
             player.OnRespawn += Respawn;
@@ -58,8 +68,9 @@ public class PlayerSpawner : MonoBehaviour
 
     void OnNewController(ControllerInput input)
     {
-        // Only let new controllers join if we are in debug mode
-        if (_debugMode)
+        // Only let new controllers join if we are in debug mode.
+        // Otherwise they must join via lobby.
+        if (DebugSettings.DebugMode)
         {
             input.SetColor(_nextPlayerColor);
             _nextPlayerColor = _nextPlayerColor.NextColor();
@@ -78,7 +89,7 @@ public class PlayerSpawner : MonoBehaviour
     /**
      * Creates a character / player object at the current position and initializes it with the given controller
      */
-    private void SpawnPlayer(ControllerInput input)
+    private void SpawnPlayer(Input input)
     {
         var instance = Instantiate(playerPrefab);
         instance.transform.position = this.transform.position;
