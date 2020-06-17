@@ -199,6 +199,10 @@ public class PlayerController : EntityController
                     break;
             }
         }
+        else {
+            // Prevent change of velocity by collision forces
+            Move(false, false);
+        }
     }
 
     public void Heal()
