@@ -44,6 +44,9 @@ public class LobbyMenuUi : MonoBehaviour
         // If IP addresses have been passed to this scene then we can continue
         if (IPs != null && IPs.Any())
         {
+            // Make sure the controller software is served
+            HttpServer.EnsureInitialization();
+            
             // For every already connected controller, bind to its events
             ControllerServer.Instance.GetInputs().ForEach(InitializeInput);
             // And register a callback, should new controllers connect

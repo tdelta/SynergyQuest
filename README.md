@@ -2,6 +2,17 @@
 
 Serious Games Lab P09
 
+# How to Build
+
+1. Go to `./Controller/controller-client-lib` and run `npm install` and `npm build`
+2. Go to `./Controller/controller-app` and run `npm install` and `npm build`
+3. Open `./Mobile-ControlledCooperativeMultiplayerGame` in Unity and Build the project for Linux and or Windows
+4. Copy the build files from step 3 into a folder `Build`
+5. Create a folder `Build/controller-app` and copy `./Controller/controller-app/build/*` into there
+6. Done, you can now run the executable produced by Unity
+
+# Important Hints for Development
+
 ## How to setup Git LFS when cloning this project
 
 ```sh
