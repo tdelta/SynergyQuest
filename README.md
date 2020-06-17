@@ -10,6 +10,7 @@ Serious Games Lab P09
 4. Copy the build files from step 3 into a folder `Build`
 5. Create a folder `Build/controller-app` and copy `./Controller/controller-app/build/*` into there
 6. Done, you can now run the executable produced by Unity
+7. (If you want to distribute the game, put `UsageNotes/ReadMe.txt` also into the folder and ZIP it.)
 
 # Important Hints for Development
 

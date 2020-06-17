@@ -20,10 +20,10 @@
     <explicitExcludes>
       <Path>.idea</Path>
       <Path>.vscode</Path>
+      <Path>Build</Path>
       <Path>Library</Path>
       <Path>Logs</Path>
       <Path>Temp</Path>
-      <Path>controller-app</Path>
       <Path>obj</Path>
     </explicitExcludes>
   </component>
