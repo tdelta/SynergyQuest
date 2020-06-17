@@ -15,4 +15,10 @@
 * Artist: Tim Beek
 * License: Free / Custom: "Giving me credit is always appreciated!"
 * Link: https://timbeek.itch.io/free-retro-boss-music
+
+# ./Victory1.mp3
+
+* Artist: Alex Smith / OpenGameArt.Org user cynicmusic
+* License: CC0
+* Link: https://opengameart.org/content/victory-theme-for-rpg
   
