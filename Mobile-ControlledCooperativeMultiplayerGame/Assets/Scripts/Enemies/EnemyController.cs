@@ -65,7 +65,7 @@ abstract public class EnemyController : EntityController {
         if (healthPoints <= 0) {
             isDead = true;
             this.GetComponent<Collider2D>().enabled = false;
-            animator.SetTrigger(deadTrigger);
+            Animator.SetTrigger(deadTrigger);
             Destroy(gameObject, 1);
             if(OnDeath != null){
                 OnDeath();
@@ -82,10 +82,10 @@ abstract public class EnemyController : EntityController {
     
     void FixedUpdate() {
         if (!isDead) {
-            Vector2 position = rigidbody2D.position;
+            Vector2 position = Rigidbody2D.position;
             position += ComputeOffset();
             
-            effects.MoveBody(position);
+            PhysicsEffects.MoveBody(position);
         }
     }
 

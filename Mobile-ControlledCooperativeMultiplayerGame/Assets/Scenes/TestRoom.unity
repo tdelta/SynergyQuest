@@ -12539,6 +12539,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 8560946304368867, guid: 13eca49289d50674d8f5a3616579a440, type: 3}
+      propertyPath: _customOrigin
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 4270148256400962752, guid: 13eca49289d50674d8f5a3616579a440,
         type: 3}
       propertyPath: m_Interpolate
@@ -12624,6 +12628,11 @@ PrefabInstance:
       propertyPath: localControlsInitColor
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 4270148256400962765, guid: 13eca49289d50674d8f5a3616579a440,
+        type: 3}
+      propertyPath: customOrigin
+      value: 
+      objectReference: {fileID: 2062465858}
     - target: {fileID: 4270148256400962766, guid: 13eca49289d50674d8f5a3616579a440,
         type: 3}
       propertyPath: m_Name

@@ -22,6 +22,10 @@ public class PlayerController : EntityController
     [SerializeField] private MultiSound fightingSounds;
     [SerializeField] private MultiSound hitSounds;
     [SerializeField] private MultiSound deathSounds;
+    
+    // FIXME: Remove this, just for testing purposes regarding the custom origin functionality of the `PhysicsEffects` class
+    [SerializeField] private Transform customOrigin;
+    
     /**
      * If local controls will be used for this character instead of a remote controller, which color should be assigned
      * to this player?
@@ -134,6 +138,13 @@ public class PlayerController : EntityController
         
         var material = GetComponent<Renderer>().material;
         material.SetColor("_ShirtColor", PlayerColorMethods.ColorToRGB(this.Color));
+        
+        
+        // FIXME: Remove this, just for testing purposes regarding the custom origin functionality of the `PhysicsEffects` class
+        if (customOrigin != null)
+        {
+            PhysicsEffects.SetCustomOrigin(customOrigin);
+        }
     }
 
     // Update is called once per frame
@@ -345,7 +356,7 @@ public class PlayerController : EntityController
 
     private void Die(){
         // This is only a temporary solution until we have respawn
-        rigidbody2D.simulated = false;
+        Rigidbody2D.simulated = false;
         lifeGauge.SetActive(false);
         GetComponent<SpriteRenderer>().enabled = false;
         Destroy(this.gameObject, 2.0f);
@@ -370,12 +381,12 @@ public class PlayerController : EntityController
 
     public Vector2 GetPosition()
     {
-        return rigidbody2D.position;
+        return Rigidbody2D.position;
     }
 
     private void Attack()
     {
-        animator.SetTrigger(AttackTrigger);
+        Animator.SetTrigger(AttackTrigger);
         fightingSounds.PlayOneShot();
         StartCoroutine(AttackCoroutine());
     }
@@ -436,12 +447,12 @@ public class PlayerController : EntityController
                 _lookDirection.Normalize();
             }
 
-            animator.SetFloat(LookXProperty, _lookDirection.x);
-            animator.SetFloat(LookYProperty, _lookDirection.y);
-            animator.SetFloat(SpeedProperty, deltaPosition.magnitude);
+            Animator.SetFloat(LookXProperty, _lookDirection.x);
+            Animator.SetFloat(LookYProperty, _lookDirection.y);
+            Animator.SetFloat(SpeedProperty, deltaPosition.magnitude);
             
-            effects.MoveBody(
-                rigidbody2D.position + deltaPosition
+            PhysicsEffects.MoveBody(
+                Rigidbody2D.position + deltaPosition
             );
         }
     }

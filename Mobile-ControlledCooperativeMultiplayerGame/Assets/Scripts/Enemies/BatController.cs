@@ -31,7 +31,7 @@ public class BatController : EnemyController {
         var flightMotion = flightMotions[currentMotion];
         var offset = Time.deltaTime * directionSpeed * direction;
         offset += flightSpeed * Time.deltaTime * flightMotion;
-        animator.SetFloat(moveYProperty, flightMotion.y);
+        Animator.SetFloat(moveYProperty, flightMotion.y);
         return offset;
     }
 }

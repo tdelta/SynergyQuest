@@ -5,8 +5,12 @@ using UnityEngine;
 abstract public class EntityController : MonoBehaviour {
     [SerializeField] float timeInvincible = 1;
 
-    protected Animator animator;
-    protected Rigidbody2D rigidbody2D;
+    private Animator _animator;
+    protected Animator Animator => _animator;
+    
+    private Rigidbody2D _rigidbody2D;
+    protected Rigidbody2D Rigidbody2D => _rigidbody2D;
+    
     protected bool isInvincible;
     protected float invincibleTimer;
 
@@ -15,13 +19,13 @@ abstract public class EntityController : MonoBehaviour {
 
     protected float TimeInvincible => timeInvincible;
 
-    protected PhysicsEffects effects;
+    private PhysicsEffects _physicsEffects;
+    public PhysicsEffects PhysicsEffects => _physicsEffects;
 
     protected virtual void Start() {
-        animator = GetComponent<Animator>();
-        rigidbody2D = GetComponent<Rigidbody2D>();
-
-        effects = new PhysicsEffects(rigidbody2D);
+        _animator = GetComponent<Animator>();
+        _rigidbody2D = GetComponent<Rigidbody2D>();
+        _physicsEffects = GetComponent<PhysicsEffects>();
     }
 
     protected virtual void Update() {
@@ -29,7 +33,7 @@ abstract public class EntityController : MonoBehaviour {
             invincibleTimer -= Time.deltaTime;
             if (invincibleTimer < 0) {
                 isInvincible = false;
-                animator.SetTrigger(vulnerableTrigger);
+                _animator.SetTrigger(vulnerableTrigger);
             }
         }
     }
@@ -62,8 +66,8 @@ abstract public class EntityController : MonoBehaviour {
             // * This coroutine implements this simulation for knockback by manipulating the position
             // Remaining explanation TODO
             // 
-            this.rigidbody2D.position =
-                this.rigidbody2D.position + direction * 1 * (Time.deltaTime * speed);
+            this._rigidbody2D.position =
+                this._rigidbody2D.position + direction * 1 * (Time.deltaTime * speed);
 
             yield return null;
         }
@@ -86,7 +90,8 @@ abstract public class EntityController : MonoBehaviour {
             return;
         }
 
-        animator.SetTrigger(hitTrigger);
+        _animator.SetTrigger(hitTrigger);
+
         invincibleTimer = timeInvincible;
         isInvincible = true;
     }

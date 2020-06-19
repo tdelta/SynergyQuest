@@ -319,12 +319,13 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4270148256400962755}
-  - component: {fileID: 4270148256400962764}
   - component: {fileID: 4270148256400962765}
+  - component: {fileID: 8560946304368867}
+  - component: {fileID: 880494710090650051}
+  - component: {fileID: 4270148256400962764}
   - component: {fileID: 4270148256400962754}
   - component: {fileID: 4270148256400962752}
   - component: {fileID: 4270148256400962753}
-  - component: {fileID: 880494710090650051}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -429,6 +430,19 @@ MonoBehaviour:
   localInputPrefab: {fileID: 1573775178793761210, guid: 6172303992b7e6a2c842047a617fdf1b,
     type: 3}
   viewDirection: 0
+--- !u!114 &8560946304368867
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4270148256400962766}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e89ceed4394482f9eade6be87a68d82, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _customOrigin: {fileID: 0}
 --- !u!95 &4270148256400962754
 Animator:
   serializedVersion: 3
