@@ -36,6 +36,8 @@ export namespace MessageFormat {
     MenuActionTriggered = 9,
     // The state of the game changed, e.g. Lobby -> Game started. Sent by the game
     GameStateChanged = 10,
+    // The game wants the controller to vibrate. Sent by the game
+    VibrationSequence = 11,
   }
 
   /**
@@ -133,6 +135,19 @@ export namespace MessageFormat {
     readonly gameState: GameState;
   }
 
+  export interface VibrationSequenceMessage extends Message {
+    /**
+     * Indicates how the controller shall vibrate.
+     * The first number is the number of milliseconds to vibrate,
+     * the next is the number to milliseconds to pause,
+     * the number after that is again a number of milliseconds to vibrate and so on.
+     *
+     * Hence these are numbers of milliseconds to vibrate and pause in
+     * alteration.
+     */
+    readonly vibrationPattern: number[];
+  }
+
   /**
    * Creates an object conforming to the message interfaces from a JSON encoded
    * string representation of it.
@@ -196,6 +211,9 @@ export namespace MessageFormat {
       case MessageType.GameStateChanged:
         matcher.GameStateChangedMessage(msg as GameStateChangedMessage);
         break;
+      case MessageType.VibrationSequence:
+        matcher.VibrationSequenceMessage(msg as VibrationSequenceMessage);
+        break;
     }
   }
 
@@ -213,6 +231,7 @@ export namespace MessageFormat {
     readonly SetMenuActionMessage: (_: SetMenuActionMessage) => any;
     readonly MenuActionTriggeredMessage: (_: MenuActionTriggeredMessage) => any;
     readonly GameStateChangedMessage: (_: GameStateChangedMessage) => any;
+    readonly VibrationSequenceMessage: (_: VibrationSequenceMessage) => any;
   }
 
   /**
@@ -232,5 +251,6 @@ export namespace MessageFormat {
     SetMenuActionMessage: _ => {},
     MenuActionTriggeredMessage: _ => {},
     GameStateChangedMessage: _ => {},
+    VibrationSequenceMessage: _ => {},
   };
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 /**
@@ -27,7 +28,8 @@ public enum MessageType
     PlayerColor = 7,         // Color assigned to a player, sent by the game
     SetMenuAction = 8,       // Enable / disable a menu action, sent by game
     MenuActionTriggered = 9, // A menu action has been selected on the controller
-    GameStateChanged = 10    // The state of the game changed, e.g. Lobby -> Game started. Sent by the game 
+    GameStateChanged = 10,   // The state of the game changed, e.g. Lobby -> Game started. Sent by the game 
+    VibrationSequence = 11   // The game wants the controller to vibrate. Sent by the game
 }
 
 /**
@@ -101,6 +103,9 @@ public class Message
             
             case MessageType.MenuActionTriggered:
                 return JsonUtility.FromJson<MenuActionTriggeredMessage>(str);
+            
+            case MessageType.VibrationSequence:
+                return JsonUtility.FromJson<VibrationSequenceMessage>(str);
         }
 
         return null;
@@ -315,6 +320,35 @@ public class Message
         }
     }
     
+    [Serializable]
+    public sealed class VibrationSequenceMessage : Message
+    {
+        /**
+         * Indicates how the controller shall vibrate.
+         * The first number is the number of milliseconds to vibrate,
+         * the next is the number to milliseconds to pause,
+         * the number after that is again a number of milliseconds to vibrate and so on.
+         *
+         * Hence these are numbers of milliseconds to vibrate and pause in
+         * alteration.
+         */
+        public List<float> vibrationPattern;
+        
+        public VibrationSequenceMessage(List<float> vibrationPattern)
+            : base(MessageType.VibrationSequence)
+        {
+            this.vibrationPattern = vibrationPattern;
+        }
+
+        /**
+         * See base class method for an explanation.
+         */
+        public override void Match( Matcher matcher )
+        {
+            matcher.VibrationSequenceMessage(this);
+        }
+    }
+    
     /**
      * See `Match` method for an explanation.
      */
@@ -330,6 +364,7 @@ public class Message
         public Action<SetMenuActionMessage> SetMenuActionMessage = _ => {};
         public Action<MenuActionTriggeredMessage> MenuActionTriggeredMessage = _ => {};
         public Action<GameStateChangedMessage> GameStateChangedMessage = _ => {};
+        public Action<VibrationSequenceMessage> VibrationSequenceMessage = _ => {};
     }
 
     /**

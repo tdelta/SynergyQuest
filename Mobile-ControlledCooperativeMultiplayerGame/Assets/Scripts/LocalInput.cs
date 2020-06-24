@@ -1,4 +1,5 @@
 
+using System.Collections.Generic;
 using UnityEngine;
 
 /**
@@ -81,6 +82,11 @@ public class LocalInput: Input
     public PlayerColor GetColor()
     {
         return _color;
+    }
+
+    public void PlayVibrationFeedback(List<float> vibrationPattern)
+    {
+        // Vibration is not supported locally, we do nothing
     }
 }
 

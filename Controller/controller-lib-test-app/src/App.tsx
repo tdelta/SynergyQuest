@@ -176,6 +176,9 @@ class App extends React.Component<{}, AppState> {
         gameState: state,
       });
 
+    client.onVibrationRequest = (vibrationPattern: number[]) =>
+      window.navigator.vibrate(vibrationPattern);
+
     client.connect(
       data.get('name') as string,
       data.get('address') as string,

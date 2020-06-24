@@ -1,4 +1,6 @@
 
+using System.Collections.Generic;
+
 /**
  * Models the different inputs for a player character.
  *
@@ -51,4 +53,19 @@ public interface Input
      * Returns the color that has been assigned to this input.
      */
     PlayerColor GetColor();
+
+
+    /**
+     * Tell the controller to vibrate. This will only have an effect if the controller
+     * supports vibration.
+     * 
+     * @param vibrationPattern Indicates how the controller shall vibrate.
+     *   The first number is the number of milliseconds to vibrate,
+     *   the next is the number to milliseconds to pause,
+     *   the number after that is again a number of milliseconds to vibrate and so on.
+     *
+     *   Hence these are numbers of milliseconds to vibrate and pause in
+     *   alteration.
+     */
+    void PlayVibrationFeedback(List<float> vibrationPattern);
 }

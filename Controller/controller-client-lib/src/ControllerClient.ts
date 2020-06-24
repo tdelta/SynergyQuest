@@ -142,6 +142,14 @@ export class ControllerClient {
   public onGameStateChanged: (state: GameState) => any;
 
   /**
+   * Callback which can be set by users and which is called whenever the game
+   * wants the controller to vibrate.
+   *
+   * @param vibrationPattern alternating number of milliseconds to vibrate and pause
+   */
+  public onVibrationRequest: (vibrationPattern: number[]) => any;
+
+  /**
    * Creates a ControllerClient instance.
    *
    * After creating an instance, set the callbacks you want to use and then call
@@ -363,6 +371,10 @@ export class ControllerClient {
         this.gameState = msg.gameState;
 
         this.onGameStateChanged?.(msg.gameState);
+      },
+
+      VibrationSequenceMessage: msg => {
+        this.onVibrationRequest?.(msg.vibrationPattern);
       },
     });
   }

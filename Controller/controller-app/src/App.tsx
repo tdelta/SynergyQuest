@@ -153,6 +153,9 @@ class App extends React.Component<{}, AppState> {
         gameState: state,
       });
 
+    client.onVibrationRequest = (vibrationPattern: number[]) =>
+      window.navigator.vibrate(vibrationPattern);
+
     client.connect(playerName, window.location.hostname, consts.port);
 
     // Update the state to "Connecting"

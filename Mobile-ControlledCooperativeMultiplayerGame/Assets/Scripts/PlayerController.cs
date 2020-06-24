@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public enum PlayerState{
@@ -216,7 +217,6 @@ public class PlayerController : EntityController
 
         if (_healthPoints <= 0) {
             deathSounds.PlayOneShot();
-          
             OnRespawn?.Invoke(this);
         }
         
@@ -225,6 +225,10 @@ public class PlayerController : EntityController
         {
             _tintFlashController.FlashTint(UnityEngine.Color.red, TimeInvincible);
             hitSounds.PlayOneShot();
+            _input.PlayVibrationFeedback(new List<float>
+            {
+                200
+            });
         }
 
         if (delta > 0)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 
@@ -177,6 +178,24 @@ public class ControllerInput: Input
     public PlayerColor GetColor()
     {
         return _playerColor;
+    }
+
+    /**
+     * Tell the controller to vibrate. This will only have an effect if the controller
+     * supports vibration.
+     * 
+     * @param vibrationPattern Indicates how the controller shall vibrate.
+     *   The first number is the number of milliseconds to vibrate,
+     *   the next is the number to milliseconds to pause,
+     *   the number after that is again a number of milliseconds to vibrate and so on.
+     *
+     *   Hence these are numbers of milliseconds to vibrate and pause in
+     *   alteration.
+     */
+    public void PlayVibrationFeedback(List<float> vibrationPattern)
+    {
+        var msg = new Message.VibrationSequenceMessage(vibrationPattern);
+        SendMessage(msg);
     }
 
     public void EnableMenuAction(MenuAction action, bool enable = true)
