@@ -4,5 +4,7 @@
 public enum MenuAction
 {
     StartGame = 0,
-    QuitGame = 1
+    QuitGame = 1,
+    PauseGame = 2,
+    ResumeGame = 3
 }

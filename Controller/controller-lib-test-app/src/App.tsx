@@ -59,6 +59,8 @@ export interface AppState {
 const menuActionStrings = new Map<MenuAction, string>();
 menuActionStrings.set(MenuAction.StartGame, 'Start Game');
 menuActionStrings.set(MenuAction.QuitGame, 'Quit Game');
+menuActionStrings.set(MenuAction.PauseGame, 'Pause Game');
+menuActionStrings.set(MenuAction.ResumeGame, 'Resume Game');
 
 /**
  * Assign a hexadecimal representation to every player color
@@ -164,7 +166,7 @@ class App extends React.Component<{}, AppState> {
         color: color, // <- set new color
       });
 
-    client.onSetMenuAction = (action: MenuAction, enabled: boolean) =>
+    client.onSetEnabledMenuActions = _ =>
       this.setState({
         ...this.state,
         enabledMenuActions: client.getEnabledMenuActions(),

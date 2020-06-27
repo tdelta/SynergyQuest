@@ -14,6 +14,12 @@ public class PlayerSpawner : MonoBehaviour
     [SerializeField] private GameObject playerPrefab;
 
     /**
+     * If players with local controls are spawned for debugging, which local input controls shall be used?
+     * When spawning multiple locally controlled players, we will cycle through this list.
+     */
+    [SerializeField] private LocalInput[] localInputPrefabs;
+
+    /**
      * If you want the new players to be tracked by the camera, assign the camera target group here
      */
     [SerializeField] private CinemachineTargetGroup targetGroup;
@@ -33,6 +39,12 @@ public class PlayerSpawner : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // Ensure game is in started state
+        // (NOTE: This a weird place to set the game state, however, it makes debugging easier. Spawners can only
+        //  be found in game scenes and we want controllers to register the game as started when running those scenes
+        //  in the editor)
+        SharedControllerState.Instance.SetGameState(GameState.Started);
+        
         // Register callback so that we get informed about new controllers
         ControllerServer.Instance.OnNewController += OnNewController;
         
@@ -45,17 +57,14 @@ public class PlayerSpawner : MonoBehaviour
         
         // Spawn locally controlled players when this is enabled in the debug settings
         {
-            var localLayouts = new[]
-            {
-                LocalKeyboardLayout.WASD, LocalKeyboardLayout.Arrow
-            };
-            
             for (var i = 0; i < DebugSettings.LocalDebugPlayers.Length; ++i)
             {
-                var layout = localLayouts[i % 2];
-                var input = new LocalInput(layout, DebugSettings.LocalDebugPlayers[i]);
+                var layout = localInputPrefabs[i % 2];
+                var input = Instantiate(layout);
+                input.SetColor(DebugSettings.LocalDebugPlayers[i]);
                 
-                SpawnPlayer(input);
+                var player = SpawnPlayer(input);
+                input.transform.SetParent(player.gameObject.transform);
             }
         }
         
@@ -76,7 +85,6 @@ public class PlayerSpawner : MonoBehaviour
             _nextPlayerColor = _nextPlayerColor.NextColor();
             
             SpawnPlayer(input);
-            input.SetGameState(GameState.Started);
         }
     }
 
@@ -89,7 +97,7 @@ public class PlayerSpawner : MonoBehaviour
     /**
      * Creates a character / player object at the current position and initializes it with the given controller
      */
-    private void SpawnPlayer(Input input)
+    private PlayerController SpawnPlayer(Input input)
     {
         var instance = Instantiate(playerPrefab);
         instance.transform.position = this.transform.position;
@@ -102,5 +110,7 @@ public class PlayerSpawner : MonoBehaviour
         var controller = instance.GetComponent<PlayerController>();
         controller.OnRespawn += Respawn;
         controller.Init(input);
+
+        return controller;
     }
 }

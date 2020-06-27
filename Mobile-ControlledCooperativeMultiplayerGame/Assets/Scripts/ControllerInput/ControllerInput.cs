@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 
@@ -67,20 +68,19 @@ public class ControllerInput: Input
      * when this is emitted until `OnReconnect` is emitted.
      */
     public event DisconnectAction OnDisconnect;
-    public delegate void DisconnectAction();
+    public delegate void DisconnectAction(ControllerInput input);
 
     /**
      * This event is emitted when a certain menu action is selected on the controller.
      */
     public event MenuActionTriggeredAction OnMenuActionTriggered;
-    public delegate void MenuActionTriggeredAction(MenuAction action);
     
     /**
      * This event is emitted when the underlying controller reconnects to the game after the connection has been lost
      * temporarily. The game should be paused when `OnDisconnect` is emitted and resumed when `OnReconnect` is emitted.
      */
     public event ReconnectAction OnReconnect;
-    public delegate void ReconnectAction();
+    public delegate void ReconnectAction(ControllerInput input);
     
     /**
      * Returns the value of the Joystick position on the vertical axis.
@@ -198,17 +198,28 @@ public class ControllerInput: Input
         SendMessage(msg);
     }
 
-    public void EnableMenuAction(MenuAction action, bool enable = true)
+    /**
+     * DO NOT USE OUTSIDE OF ControllerInput LIBRARY.
+     * USE `SharedControllerState.Instance.EnableMenuActions` INSTEAD.
+     * 
+     * Tells the controller, which menu actions are currently available in the game.
+     * For example, when the game can be paused, MenuAction.PauseGame should be enabled.
+     *
+     * @throws ApplicationError if the controller is currently not connected
+     */
+    public void SetEnabledMenuActions(HashSet<MenuAction> enabledActions)
     {
-        var msg = new Message.SetMenuActionMessage(
-            action,
-            enable
+        var msg = new Message.SetMenuActionsMessage(
+            enabledActions.ToList()
         );
         
         SendMessage(msg);
     }
     
     /**
+     * DO NOT USE OUTSIDE OF ControllerInput LIBRARY.
+     * USE `SharedControllerState.Instance.SetGameState` INSTEAD.
+     * 
      * Tells the controller, in which state the game currently is.
      * For example, if the game is displaying the lobby and then starts, it should tell the controllers here
      * that the game is now in the state `GameState.Started`.
@@ -248,13 +259,13 @@ public class ControllerInput: Input
         {
             case ConnectionStatus.Connected:
                 // FIXME: Cache whole state and send the state on reconnect. This way, activated menu actions stay active etc.
-                OnReconnect?.Invoke();
+                OnReconnect?.Invoke(this);
                 break;
             
             case ConnectionStatus.NotConnected:
                 if (previousStatus == ConnectionStatus.Connected)
                 {
-                    OnDisconnect?.Invoke();
+                    OnDisconnect?.Invoke(this);
                 }
                 break;
         }
@@ -323,7 +334,7 @@ public class ControllerInput: Input
                 break;
             
             default:
-                throw new ApplicationException("Can not set color if no controller is connected.");
+                throw new ApplicationException("Can not send message if controller is not connected.");
         }
     }
 }

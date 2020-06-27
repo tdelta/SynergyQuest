@@ -1,6 +1,11 @@
-.colorIndicator {
+.controllerMenuContainer  {
   width: 90%;
   outline: none;
+  display: flex;
+}
+
+.controllerMenuItem {
+  flex-grow: 1
 }
 
 .pixelButton {

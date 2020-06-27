@@ -125,7 +125,7 @@ public class LobbyMenuUi : MonoBehaviour
      */
     private void SetStartGameAction(bool enable)
     {
-        ControllerServer.Instance.GetInputs().ForEach(input => input.EnableMenuAction(MenuAction.StartGame, enable));
+        SharedControllerState.Instance.EnableMenuActions((MenuAction.StartGame, enable));
     }
 
 
@@ -153,9 +153,9 @@ public class LobbyMenuUi : MonoBehaviour
             foreach (var input in inputs)
             {
                 UnbindInput(input);
-                input.EnableMenuAction(MenuAction.StartGame, false);
-                input.SetGameState(GameState.Started);
             }
+            SharedControllerState.Instance.EnableMenuActions((MenuAction.StartGame, false));
+            SharedControllerState.Instance.SetGameState(GameState.Started);
             
             DungeonController.Instance.LoadNextRoom();
         }

@@ -8,6 +8,7 @@ import {
 } from 'controller-client-lib';
 import { ConnectScreen } from './ConnectScreen';
 import { LobbyScreen } from './LobbyScreen';
+import { MenuScreen } from './MenuScreen';
 import * as consts from './consts';
 import { Controller } from './Controller';
 import './App.css';
@@ -78,6 +79,8 @@ class App extends React.Component<{}, AppState> {
 
     this.connect = this.connect.bind(this);
     this.startGame = this.startGame.bind(this);
+    this.pause = this.pause.bind(this);
+    this.triggerMenuAction = this.triggerMenuAction.bind(this);
 
     // Initialize as not connected
     this.state = App.initialState;
@@ -141,7 +144,7 @@ class App extends React.Component<{}, AppState> {
         color: color, // <- set new color
       });
 
-    client.onSetMenuAction = (_action: MenuAction, _enabled: boolean) =>
+    client.onSetEnabledMenuActions = _ =>
       this.setState({
         ...this.state,
         enabledMenuActions: client.getEnabledMenuActions(),
@@ -165,10 +168,18 @@ class App extends React.Component<{}, AppState> {
   }
 
   startGame() {
+    this.triggerMenuAction(MenuAction.StartGame);
+  }
+
+  pause() {
+    this.triggerMenuAction(MenuAction.PauseGame);
+  }
+
+  triggerMenuAction(action: MenuAction) {
     if (this.state.connectionStatus.kind === 'Connected') {
       const client = this.state.connectionStatus.client;
 
-      client.triggerMenuAction(MenuAction.StartGame);
+      client.triggerMenuAction(action);
     }
   }
 
@@ -200,6 +211,18 @@ class App extends React.Component<{}, AppState> {
               <Controller
                 client={this.state.connectionStatus.client}
                 playerColor={consts.colors[this.state.color]}
+                canPause={this.state.enabledMenuActions.has(
+                  MenuAction.PauseGame
+                )}
+                pause={this.pause}
+              />
+            );
+            break;
+          case GameState.Menu:
+            body = (
+              <MenuScreen
+                enabledMenuActions={this.state.enabledMenuActions}
+                triggerMenuAction={this.triggerMenuAction}
               />
             );
             break;

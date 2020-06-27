@@ -147,15 +147,29 @@ export class Controller extends React.Component<
               </div>
               <div className='buttonColumn'>
                 <div className='rowContainer' style={{ height: '10%' }}>
-                  <button
-                    className='colorIndicator text no-click'
-                    style={{
-                      backgroundColor: playerColor.dark,
-                      borderColor: playerColor.light,
-                    }}
-                  >
-                    {playerColor.name}
-                  </button>
+                  <div className='controllerMenuContainer'>
+                    <button
+                      className='controllerMenuItem text no-click'
+                      style={{
+                        backgroundColor: playerColor.dark,
+                        borderColor: playerColor.light,
+                      }}
+                    >
+                      Your Color: {playerColor.name}
+                    </button>
+                    {this.props.canPause && (
+                      <button
+                        className='controllerMenuItem text'
+                        style={{
+                          backgroundColor: '#c2185b',
+                          borderColor: '#e91e63',
+                        }}
+                        onClick={_ => this.props.pause()}
+                      >
+                        Pause
+                      </button>
+                    )}
+                  </div>
                   <div id='fullscreenButton' onClick={this.toggleFullscreen}>
                     <FontAwesomeIcon
                       icon={this.state.isFullscreen ? faCompress : faExpand}
@@ -180,4 +194,6 @@ interface ControllerState {
 interface ControllerProbs {
   client: ControllerClient;
   playerColor: ColorData;
+  canPause: boolean;
+  pause: () => void;
 }

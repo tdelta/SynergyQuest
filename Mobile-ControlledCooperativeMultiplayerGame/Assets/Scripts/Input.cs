@@ -11,6 +11,12 @@ using System.Collections.Generic;
 public interface Input
 {
     /**
+     * This event is emitted when a certain menu action is selected on the controller.
+     * E.g. if the controller wants to pause the game etc.
+     */
+    event MenuActionTriggeredAction OnMenuActionTriggered;
+ 
+    /**
      * Returns whether a specific button is currently pressed or not.
      * For the different button ids, see the `Button` enum.
      */
@@ -69,3 +75,5 @@ public interface Input
      */
     void PlayVibrationFeedback(List<float> vibrationPattern);
 }
+
+public delegate void MenuActionTriggeredAction(MenuAction action);

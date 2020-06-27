@@ -30,8 +30,8 @@ export namespace MessageFormat {
     Joystick = 6,
     // Color assigned to a player, sent by the game
     PlayerColor = 7,
-    // Enable / disable a menu action, sent by game
-    SetMenuAction = 8,
+    // Set the set of enabled menu actions, sent by game
+    SetMenuActions = 8,
     // A menu action has been selected on the controller
     MenuActionTriggered = 9,
     // The state of the game changed, e.g. Lobby -> Game started. Sent by the game
@@ -113,9 +113,8 @@ export namespace MessageFormat {
 
   export interface MaxPlayersReachedMessage extends Message {}
 
-  export interface SetMenuActionMessage extends Message {
-    readonly menuAction: MenuAction;
-    readonly enabled: boolean;
+  export interface SetMenuActionsMessage extends Message {
+    readonly menuActions: MenuAction[];
   }
 
   export interface MenuActionTriggeredMessage extends Message {
@@ -202,8 +201,8 @@ export namespace MessageFormat {
       case MessageType.MaxPlayersReached:
         matcher.MaxPlayersReachedMessage(msg as MaxPlayersReachedMessage);
         break;
-      case MessageType.SetMenuAction:
-        matcher.SetMenuActionMessage(msg as SetMenuActionMessage);
+      case MessageType.SetMenuActions:
+        matcher.SetMenuActionsMessage(msg as SetMenuActionsMessage);
         break;
       case MessageType.MenuActionTriggered:
         matcher.MenuActionTriggeredMessage(msg as MenuActionTriggeredMessage);
@@ -228,7 +227,7 @@ export namespace MessageFormat {
     readonly NameTakenMessage: (_: NameTakenMessage) => any;
     readonly NameOkMessage: (_: NameOkMessage) => any;
     readonly MaxPlayersReachedMessage: (_: MaxPlayersReachedMessage) => any;
-    readonly SetMenuActionMessage: (_: SetMenuActionMessage) => any;
+    readonly SetMenuActionsMessage: (_: SetMenuActionsMessage) => any;
     readonly MenuActionTriggeredMessage: (_: MenuActionTriggeredMessage) => any;
     readonly GameStateChangedMessage: (_: GameStateChangedMessage) => any;
     readonly VibrationSequenceMessage: (_: VibrationSequenceMessage) => any;
@@ -248,7 +247,7 @@ export namespace MessageFormat {
     NameTakenMessage: _ => {},
     NameOkMessage: _ => {},
     MaxPlayersReachedMessage: _ => {},
-    SetMenuActionMessage: _ => {},
+    SetMenuActionsMessage: _ => {},
     MenuActionTriggeredMessage: _ => {},
     GameStateChangedMessage: _ => {},
     VibrationSequenceMessage: _ => {},

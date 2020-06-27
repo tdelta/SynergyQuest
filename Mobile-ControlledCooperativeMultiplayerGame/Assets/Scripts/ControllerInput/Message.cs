@@ -26,7 +26,7 @@ public enum MessageType
     Button = 5,              // Button input, sent by controller
     Joystick = 6,            // Joystick input, sent by controller
     PlayerColor = 7,         // Color assigned to a player, sent by the game
-    SetMenuAction = 8,       // Enable / disable a menu action, sent by game
+    SetMenuActions = 8,      // Set the set of enabled menu actions, sent by game
     MenuActionTriggered = 9, // A menu action has been selected on the controller
     GameStateChanged = 10,   // The state of the game changed, e.g. Lobby -> Game started. Sent by the game 
     VibrationSequence = 11   // The game wants the controller to vibrate. Sent by the game
@@ -98,8 +98,8 @@ public class Message
             case MessageType.MaxPlayersReached:
                 return JsonUtility.FromJson<MaxPlayersReachedMessage>(str);
             
-            case MessageType.SetMenuAction:
-                return JsonUtility.FromJson<SetMenuActionMessage>(str);
+            case MessageType.SetMenuActions:
+                return JsonUtility.FromJson<SetMenuActionsMessage>(str);
             
             case MessageType.MenuActionTriggered:
                 return JsonUtility.FromJson<MenuActionTriggeredMessage>(str);
@@ -259,16 +259,14 @@ public class Message
     }
     
     [Serializable]
-    public sealed class SetMenuActionMessage : Message
+    public sealed class SetMenuActionsMessage : Message
     {
-        public MenuAction menuAction;
-        public bool enabled;
+        public List<MenuAction> menuActions;
         
-        public SetMenuActionMessage(MenuAction action, bool enabled)
-            : base(MessageType.SetMenuAction)
+        public SetMenuActionsMessage(List<MenuAction> actions)
+            : base(MessageType.SetMenuActions)
         {
-            this.menuAction = action;
-            this.enabled = enabled;
+            this.menuActions = actions;
         }
 
         /**
@@ -276,7 +274,7 @@ public class Message
          */
         public override void Match( Matcher matcher )
         {
-            matcher.SetMenuActionMessage(this);
+            matcher.SetMenuActionsMessage(this);
         }
     }
     
@@ -361,7 +359,7 @@ public class Message
         public Action<NameTakenMessage> NameTakenMessage = _ => {};
         public Action<NameOkMessage> NameOkMessage = _ => {};
         public Action<MaxPlayersReachedMessage> MaxPlayersReachedMessage = _ => {};
-        public Action<SetMenuActionMessage> SetMenuActionMessage = _ => {};
+        public Action<SetMenuActionsMessage> SetMenuActionsMessage = _ => {};
         public Action<MenuActionTriggeredMessage> MenuActionTriggeredMessage = _ => {};
         public Action<GameStateChangedMessage> GameStateChangedMessage = _ => {};
         public Action<VibrationSequenceMessage> VibrationSequenceMessage = _ => {};

@@ -7,24 +7,39 @@ using UnityEngine;
  * 
  * See also `Input` interface.
  */
-public class LocalInput: Input
+public class LocalInput: MonoBehaviour, Input
 {
-    private LocalKeyboardLayout _mode;
-    private PlayerColor _color;
-    
     /**
-     * Constructor
-     * 
-     * @param keyboardLayout what layout to use. Use different `LocalInput` instances with different layouts for multiple players
-     * @param color          what color these controls shall report. It emulates the color assignment remote controllers undergo
+     * What keymap to use. Use different `LocalInput` instances with different layouts for multiple players
      */
-    public LocalInput(
-        LocalKeyboardLayout keyboardLayout,
-        PlayerColor color
-    )
+    [SerializeField] private LocalKeymap keymap;
+    /**
+     * What color these controls shall report. It emulates the color assignment remote controllers undergo
+     */
+    [SerializeField] private PlayerColor color;
+    
+    public event MenuActionTriggeredAction OnMenuActionTriggered;
+
+    void Update()
     {
-        _mode = keyboardLayout;
-        _color = color;
+        if (UnityEngine.Input.GetKeyDown(keymap.PauseKey()))
+        {
+            OnMenuActionTriggered?.Invoke(
+                PauseGameLogic.Instance.IsPaused?
+                      MenuAction.ResumeGame
+                    : MenuAction.PauseGame
+            );
+        }
+    }
+    
+    public void SetKeymap(LocalKeymap keymap)
+    {
+        this.keymap = keymap;
+    }
+    
+    public void SetColor(PlayerColor color)
+    {
+        this.color = color;
     }
     
     public bool GetButton(Button button)
@@ -32,9 +47,9 @@ public class LocalInput: Input
         switch (button)
         {
             case Button.Attack:
-                return UnityEngine.Input.GetKey(_mode.AttackKey());
+                return UnityEngine.Input.GetKey(keymap.AttackKey());
             case Button.Pull:
-                return UnityEngine.Input.GetKey(_mode.PullKey());
+                return UnityEngine.Input.GetKey(keymap.PullKey());
         }
 
         return false;
@@ -45,9 +60,9 @@ public class LocalInput: Input
         switch (button)
         {
             case Button.Attack:
-                return UnityEngine.Input.GetKeyDown(_mode.AttackKey());
+                return UnityEngine.Input.GetKeyDown(keymap.AttackKey());
             case Button.Pull:
-                return UnityEngine.Input.GetKeyDown(_mode.PullKey());
+                return UnityEngine.Input.GetKeyDown(keymap.PullKey());
         }
 
         return false;
@@ -58,9 +73,9 @@ public class LocalInput: Input
         switch (button)
         {
             case Button.Attack:
-                return UnityEngine.Input.GetKeyUp(_mode.AttackKey());
+                return UnityEngine.Input.GetKeyUp(keymap.AttackKey());
             case Button.Pull:
-                return UnityEngine.Input.GetKeyUp(_mode.PullKey());
+                return UnityEngine.Input.GetKeyUp(keymap.PullKey());
         }
 
         return false;
@@ -68,12 +83,12 @@ public class LocalInput: Input
 
     public float GetVertical()
     {
-        return UnityEngine.Input.GetAxis(_mode.VerticalAxis());
+        return UnityEngine.Input.GetAxis(keymap.VerticalAxis());
     }
 
     public float GetHorizontal()
     {
-        return UnityEngine.Input.GetAxis(_mode.HorizontalAxis());
+        return UnityEngine.Input.GetAxis(keymap.HorizontalAxis());
     }
     
     /**
@@ -81,7 +96,7 @@ public class LocalInput: Input
      */
     public PlayerColor GetColor()
     {
-        return _color;
+        return color;
     }
 
     public void PlayVibrationFeedback(List<float> vibrationPattern)
@@ -94,7 +109,7 @@ public class LocalInput: Input
  * The local keyboard allows for up to two players.
  * This enum encodes the different layouts that can be used.
  */
-public enum LocalKeyboardLayout
+public enum LocalKeymap
 {
     /**
      * * WASD movement
@@ -116,55 +131,68 @@ public enum LocalKeyboardLayout
  */
 static class LocalControlModeMethods
 {
-    public static string HorizontalAxis(this LocalKeyboardLayout mode)
+    public static string HorizontalAxis(this LocalKeymap mode)
     {
         switch (mode)
         {
-            case LocalKeyboardLayout.WASD:
+            case LocalKeymap.WASD:
                 return "Horizontal";
-            case LocalKeyboardLayout.Arrow:
+            case LocalKeymap.Arrow:
                 return "HorizontalArrows";
         }
 
         return "Horizontal";
     }
 
-    public static string VerticalAxis(this LocalKeyboardLayout mode)
+    public static string VerticalAxis(this LocalKeymap mode)
     {
         switch (mode)
         {
-            case LocalKeyboardLayout.WASD:
+            case LocalKeymap.WASD:
                 return "Vertical";
-            case LocalKeyboardLayout.Arrow:
+            case LocalKeymap.Arrow:
                 return "VerticalArrows";
         }
 
         return "Vertical";
     }
     
-    public static KeyCode AttackKey(this LocalKeyboardLayout mode)
+    public static KeyCode AttackKey(this LocalKeymap mode)
     {
         switch (mode)
         {
-            case LocalKeyboardLayout.WASD:
+            case LocalKeymap.WASD:
                 return KeyCode.Space;
-            case LocalKeyboardLayout.Arrow:
+            case LocalKeymap.Arrow:
                 return KeyCode.J;
         }
 
         return KeyCode.Space;
     }
     
-    public static KeyCode PullKey(this LocalKeyboardLayout mode)
+    public static KeyCode PullKey(this LocalKeymap mode)
     {
         switch (mode)
         {
-            case LocalKeyboardLayout.WASD:
+            case LocalKeymap.WASD:
                 return KeyCode.C;
-            case LocalKeyboardLayout.Arrow:
+            case LocalKeymap.Arrow:
                 return KeyCode.K;
         }
 
         return KeyCode.C;
+    }
+
+    public static KeyCode PauseKey(this LocalKeymap keymap)
+    {
+        switch (keymap)
+        {
+            case LocalKeymap.WASD:
+                return KeyCode.R;
+            case LocalKeymap.Arrow:
+                return KeyCode.P;
+        }
+
+        return KeyCode.P;
     }
 }

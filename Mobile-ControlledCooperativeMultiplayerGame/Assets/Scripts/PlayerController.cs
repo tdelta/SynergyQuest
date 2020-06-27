@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -24,12 +25,13 @@ public class PlayerController : EntityController
      * Has no effect if remote controls are used.
      */
     [SerializeField] private PlayerColor localControlsInitColor = PlayerColor.Any;
+
     /**
-     * If local controls will be used for this character instead of a remote controller, which keyboard layout shall
-     * be used for them?
+     * If local controls will be used for this character instead of a remote controller, which local keyboard layout
+     * shall be used for them?
      * Has no effect if remote controls are used.
      */
-    [SerializeField] private LocalKeyboardLayout localDefaultLayout = LocalKeyboardLayout.WASD;
+    [SerializeField] private LocalInput localInputPrefab;
     
     private int _healthPoints;
 
@@ -105,8 +107,12 @@ public class PlayerController : EntityController
         // instead
         if (_input == null)
         {
-            _input = new LocalInput(localDefaultLayout, localControlsInitColor);
+            var localInput = Instantiate(localInputPrefab, this.transform);
+            localInput.SetColor(localControlsInitColor);
+
+            _input = localInput;
         }
+        _input.OnMenuActionTriggered += OnMenuActionTriggered;
         
         _collider = GetComponent<BoxCollider2D>();
         _tintFlashController = GetComponent<TintFlashController>();
@@ -140,6 +146,34 @@ public class PlayerController : EntityController
             {
                 EnablePulling(pushable);
             }
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (_input != null)
+        {
+            // Unregister callbacks when destroyed
+            _input.OnMenuActionTriggered -= OnMenuActionTriggered;
+        }
+    }
+
+    /**
+     * Callback, which is called, should a remote controller send a menu action, e.g MenuAction.PauseGame etc.
+     *
+     * Note, that some menu actions are handled by other behaviors, e.g. `MenuAction.StartGame` is handled by
+     * `LobbyMenuUi`.
+     */
+    private void OnMenuActionTriggered(MenuAction action)
+    {
+        switch (action)
+        {
+            case MenuAction.PauseGame:
+                PauseGameLogic.Instance.Pause();
+                break;
+            case MenuAction.ResumeGame:
+                PauseGameLogic.Instance.Resume();
+                break;
         }
     }
 

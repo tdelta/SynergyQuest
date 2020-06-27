@@ -5,5 +5,6 @@
 public enum GameState
 {
     Lobby = 0,
-    Started = 1
+    Started = 1,
+    Menu = 2
 }

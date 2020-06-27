@@ -21,8 +21,8 @@ public class EndOfGameUi : MonoBehaviour
         foreach (var input in inputs)
         {
             input.OnMenuActionTriggered += OnMenuActionTriggered;
-            input.EnableMenuAction(MenuAction.QuitGame);
         }
+        SharedControllerState.Instance.EnableMenuActions((MenuAction.QuitGame, true));
     }
 
     private void OnDestroy()
