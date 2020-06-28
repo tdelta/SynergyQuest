@@ -54,7 +54,7 @@ abstract public class EnemyController : EntityController {
             direction = -direction;
     }
 
-    protected override void ChangeHealth(int amount) {
+    protected override bool ChangeHealth(int amount) {
         healthPoints += amount;
 
         if (amount <= 0)
@@ -71,6 +71,7 @@ abstract public class EnemyController : EntityController {
                 OnDeath();
             }
         }
+        return true;
     }
 
     /*

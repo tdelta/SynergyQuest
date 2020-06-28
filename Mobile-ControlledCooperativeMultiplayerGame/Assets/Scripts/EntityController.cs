@@ -73,25 +73,28 @@ abstract public class EntityController : MonoBehaviour {
      * This method can be used to damage an entity (player, enemy) on collision.
      */
     public void PutDamage(int amount, Vector2 knockbackDirection) {
-        if (isInvincible) {
+        // if invincible or entitiy doesn't accept change in health do nothing
+        if (isInvincible)
+            return;
+        
+
+        if (ChangeHealth(-amount))
+            effects.ApplyImpulse(knockbackDirection * 4);
+        // if the entity doesn't accept change in health (e.g. flying player) only apply (reduced) knockback
+        else {
+            effects.ApplyImpulse(knockbackDirection * 2);
             return;
         }
+
         animator.SetTrigger(hitTrigger);
         invincibleTimer = timeInvincible;
         isInvincible = true;
-        
-        // TODO: implement a working knockback mechanism
-        //var stopForce = -rigidbody2D.velocity * rigidbody2D.mass;
-        //rigidbody2D.AddForce(stopForce + amount * knockbackDirection, ForceMode2D.Impulse);
-        //StartCoroutine(KnockbackCoroutine(knockbackDirection));
-        effects.ApplyImpulse(knockbackDirection*4);
-
-        ChangeHealth(-amount);
     }
 
     /*
      * Each entity (player, enemy) should implement this method to control how it
      * is affected by health changes.
+     * The return value should indicate if the change in health actually happened
      */
-    protected abstract void ChangeHealth(int amount);
+    protected abstract bool ChangeHealth(int amount);
 }

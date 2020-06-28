@@ -104,4 +104,9 @@ public class PhysicsEffects
 
         _rigidbody2D.MovePosition(nextMovementPosition);
     }
+
+    public Vector2 GetImpulse()
+    {
+        return _currentSpeed;
+    }
 }

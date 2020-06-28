@@ -83,7 +83,7 @@ public class PlayerSpawner : MonoBehaviour
     private void Respawn(PlayerController player)
     {
         player.transform.position = this.transform.position;
-        player.Heal();
+        player.Reset();
     }
 
     /**

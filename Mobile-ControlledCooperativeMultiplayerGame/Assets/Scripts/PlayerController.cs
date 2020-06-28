@@ -8,7 +8,8 @@ public enum PlayerState{
     // The pulling state also models the pushing of objects. TODO: better name?
     pulling,
     carrying,
-    carried
+    carried,
+    thrown
 }
 
 public class PlayerController : EntityController
@@ -58,7 +59,10 @@ public class PlayerController : EntityController
      *Modeling the current action of the player
      */
     private PlayerState _playerState;
-    private PlayerController _carried;
+    /**
+     * Reference to the other player during carrying
+     */
+    private PlayerController _otherPlayer;
     
     /**
      * TODO: To be discussed (from Marc) : Do we need this variable as an class attribute?
@@ -134,8 +138,9 @@ public class PlayerController : EntityController
         if (!_input.GetButton(Button.Pull)){
             if (_playerState == PlayerState.pulling)
                 ReleasePull();
-            else if (_playerState == PlayerState.carrying)
-                Drop(_carried);
+            else if (_playerState == PlayerState.carrying) {
+                ThrowPlayer(new Vector2(_input.GetHorizontal(), _input.GetVertical()));
+            }
         }
 
         // Attacking
@@ -152,9 +157,9 @@ public class PlayerController : EntityController
             {
                 EnablePulling(pushable);
             }
-            else if (GetNearCarryable(out _carried))
+            else if (GetNearPlayer(out var otherPlayer))
             {
-                Carry(_carried);
+                PickUpPlayer(otherPlayer);
             }
         }
     }
@@ -185,16 +190,16 @@ public class PlayerController : EntityController
         return false;
     }
 
-    bool GetNearCarryable(out PlayerController pushable)
+    bool GetNearPlayer(out PlayerController player)
     {
         var hit = Search("Player");
-        if (!ReferenceEquals(hit.collider, null)) // !ReferenceEquals is supposed to be faster than != null
+        if (hit.collider?.gameObject.GetComponent<PlayerController>() is PlayerController candidate && !candidate.CarriesSomeone())
         {
-            pushable = hit.collider.gameObject.GetComponent<PlayerController>();
+            player = candidate;
             return true;
         }
     
-        pushable = null;
+        player = null;
         return false;
     }
 
@@ -211,40 +216,62 @@ public class PlayerController : EntityController
 
     void FixedUpdate ()
     {
-        // If the player is walking normally, they are able to move vertically and horizontally
-        if (_playerState == PlayerState.walking || _playerState == PlayerState.carrying)
-        {
-            Move(true, true);
-        } 
-        
-        // If the player is pulling a box, they are only able to walk vertically or horizontally
-        // depending on the viewDirection
-        else if (_playerState == PlayerState.pulling)
-        {
-            switch(viewDirection) {
-                case Direction.Up:
-                case Direction.Down:
-                    Move(true, false);
-                    break;
-                case Direction.Left:
-                case Direction.Right:
-                    Move(false, true);
-                    break;
-            }
-        }
-        else if (_playerState != PlayerState.carried) {
+        switch (_playerState) {
+            // If the player is walking normally, they are able to move vertically and horizontally
+            case PlayerState.walking:
+            case PlayerState.carrying:   
+                Move(true, true);
+                break;
+            // If the player is pulling a box, they are only able to walk vertically or horizontally
+            // depending on the viewDirection
+            case PlayerState.pulling:
+                switch(viewDirection) {
+                    case Direction.Up:
+                    case Direction.Down:
+                        Move(true, false);
+                        break;
+                    case Direction.Left:
+                    case Direction.Right:
+                        Move(false, true);
+                        break;
+                }
+                break;
+            // because of joint carried player shouldn't call Move
+            case PlayerState.carried: 
+                break;
+            // according to unity manual equality checks on vectors take floating point inaccuracies into account
+            // https://docs.unity3d.com/ScriptReference/Vector2-operator_eq.html
+            case PlayerState.thrown when effects.GetImpulse() == Vector2.zero:
+                animator.SetBool(CarriedState, false);
+                _playerState = PlayerState.walking;
+                break;
             // Prevent change of velocity by collision forces
-            Move(false, false);
-        }
+            default:
+                Move(false, false);
+                break;
+            }
     }
 
-    public void Heal()
+    public void Reset()
     {
+        // if the player carries another player, release
+        if (CarriesSomeone())
+            ThrowPlayer(Vector2.zero);
+        // if the player is carried by another player, release 
+        else if (_otherPlayer?.CarriesSomeone() ?? false) {
+            _otherPlayer.ThrowPlayer(Vector2.zero);
+            animator.SetBool(CarriedState, false);
+            _playerState = PlayerState.walking;
+        }
         ChangeHealth(maxHealthPoints);
     }
 
-    protected override void ChangeHealth(int delta)
+    protected override bool ChangeHealth(int delta)
     {
+        // if the player is thrown he shouldn't get any damage
+        if (_playerState == PlayerState.thrown)
+            return false;
+
         _healthPoints += delta;
 
         if (_healthPoints <= 0) {
@@ -271,7 +298,8 @@ public class PlayerController : EntityController
         if (delta != 0)
         {
             DisplayLifeGauge();
-        }    
+        }
+        return true;
     }
 
     private void Die(){
@@ -390,8 +418,20 @@ public class PlayerController : EntityController
         _pushableToPull = null;
     }
 
-    void Carry(PlayerController player) 
+    /**
+     * Returns true if the player currently carries someone else
+     */
+    public bool CarriesSomeone()
     {
+        return gameObject.GetComponent("HingeJoint2D");
+    }
+
+    /**
+     * Call this method to pickup another player
+     */
+    void PickUpPlayer(PlayerController otherPlayer) 
+    {
+        _otherPlayer = otherPlayer;
         // glue to players together
         HingeJoint2D joint = gameObject.AddComponent<HingeJoint2D>();
         // Stops objects from continuing to collide and creating more joints
@@ -399,37 +439,70 @@ public class PlayerController : EntityController
         joint.enabled = false;
 
         var ontop = new Vector2(rigidbody2D.position.x, _renderer.bounds.max.y);
-        StartCoroutine(player.PickUp(ontop, joint));
+        StartCoroutine(_otherPlayer.PickUpCoroutine(ontop, joint, _collider, this));
         _playerState = PlayerState.carrying;
         animator.SetBool(CarryingState, true);
     }
 
-    void Drop(PlayerController player)
+    /**
+     * Call this method to throw the carried player into direction (or drop if direction is zero vector)
+     */
+    void ThrowPlayer(Vector2 direction)
     {
         _playerState = PlayerState.walking;
         animator.SetBool(CarryingState, false);
-        player.PutDown();
+
         Destroy(gameObject.GetComponent("HingeJoint2D"));
+        StartCoroutine(_otherPlayer.ThrowCoroutine(direction, _collider));
+        _otherPlayer = null;
     }
 
-    public IEnumerator PickUp(Vector2 ontop, HingeJoint2D joint)
+    /**
+     * This coroutine is called on the player that is being carried
+     */
+    public IEnumerator PickUpCoroutine(Vector2 ontop, HingeJoint2D joint, BoxCollider2D collider, PlayerController other)
     {
+        _otherPlayer = other;
         joint.connectedBody = rigidbody2D;
-        effects.MoveBody(ontop);
         _playerState = PlayerState.carried;
+
         animator.SetBool(CarriedState, true);
+        Physics2D.IgnoreCollision(collider, _collider);
         // temporally change sorting order to draw carried gameobject on top
         _renderer.sortingOrder++;
+        effects.MoveBody(ontop);
+
         // the joint should be disabled until the carried player moved ontop of the carrying player,
-        // because this joint disallows such movement
+        // because a joint disallows such movements
         yield return new WaitForFixedUpdate(); 
         joint.enabled = true;
     }
 
-    public void PutDown() {
-        _playerState = PlayerState.walking;
+    /**
+     * This coroutine is called when a carried player is dropped or thrown
+     */
+    public IEnumerator ThrowCoroutine(Vector2 direction, BoxCollider2D collider)
+    {
+        _otherPlayer = null;
+        _playerState = PlayerState.thrown;
+        effects.ApplyImpulse(10 * direction);
+
+        // restore sorting order & collision between the two players, when player leaves state thrown
+        yield return new WaitUntil(() => _playerState == PlayerState.walking);
+        Physics2D.IgnoreCollision(collider, _collider, false);
         _renderer.sortingOrder--;
-        animator.SetBool(CarriedState, false);
+    }
+
+    /**
+     * A flying player should damage enemies
+     */
+    void OnCollisionEnter2D(Collision2D other)
+    {
+        if (other.gameObject.CompareTag("Enemy") && _playerState == PlayerState.thrown)
+        {
+            var enemy = other.gameObject.GetComponent<EntityController>();
+            enemy.PutDamage(1, (other.transform.position - transform.position).normalized); 
+        }
     }
 
 }
