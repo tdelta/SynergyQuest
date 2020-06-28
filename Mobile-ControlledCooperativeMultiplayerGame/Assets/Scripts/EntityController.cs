@@ -22,10 +22,14 @@ abstract public class EntityController : MonoBehaviour {
     private PhysicsEffects _physicsEffects;
     public PhysicsEffects PhysicsEffects => _physicsEffects;
 
-    protected virtual void Start() {
+
+    protected virtual void Awake() {
         _animator = GetComponent<Animator>();
         _rigidbody2D = GetComponent<Rigidbody2D>();
         _physicsEffects = GetComponent<PhysicsEffects>();
+    }
+
+    protected virtual void Start() {
     }
 
     protected virtual void Update() {
