@@ -135,13 +135,11 @@ public class PlayerController : EntityController
     {
         base.Update();
         // Check whether the player released the pull key
-        if (!_input.GetButton(Button.Pull)){
-            if (_playerState == PlayerState.pulling)
-                ReleasePull();
-            else if (_playerState == PlayerState.carrying) {
-                ThrowPlayer(new Vector2(_input.GetHorizontal(), _input.GetVertical()));
-            }
-        }
+        if (!_input.GetButton(Button.Pull) && _playerState == PlayerState.pulling)
+            ReleasePull();
+        // Check whether the player released the carry key
+        else if (!_input.GetButton(Button.Carry) && _playerState == PlayerState.carrying)
+            ThrowPlayer(new Vector2(_input.GetHorizontal(), _input.GetVertical()));
 
         // Attacking
         if (_input.GetButtonDown(Button.Attack) && _playerState != PlayerState.pulling && 
@@ -149,19 +147,14 @@ public class PlayerController : EntityController
             _playerState = PlayerState.attacking;
             Attack();
         }   
-        
-        // Pulling / Pushing / Carrying
-        else if (_input.GetButtonDown(Button.Pull) && _playerState == PlayerState.walking)
-        {
-            if (GetNearPushable(out var pushable))
-            {
-                EnablePulling(pushable);
-            }
-            else if (GetNearPlayer(out var otherPlayer))
-            {
+        // Pulling / Pushing
+        else if (_input.GetButtonDown(Button.Pull) && _playerState == PlayerState.walking &&
+        GetNearPushable(out var pushable))
+            EnablePulling(pushable);
+        // Carrying
+        else if (_input.GetButtonDown(Button.Carry) && _playerState == PlayerState.walking &&
+        GetNearPlayer(out var otherPlayer))
                 PickUpPlayer(otherPlayer);
-            }
-        }
     }
 
     /**
