@@ -7,7 +7,10 @@ public enum PlayerState{
     walking,
     attacking,
     // The pulling state also models the pushing of objects. TODO: better name?
-    pulling
+    pulling,
+    carrying,
+    carried,
+    thrown
 }
 
 public class PlayerController : EntityController
@@ -36,6 +39,7 @@ public class PlayerController : EntityController
     private int _healthPoints;
 
     private BoxCollider2D _collider;
+    private Renderer _renderer;
     
     /**
      * Used to briefly flash the player in a certain color. For example red when they are hit.
@@ -57,6 +61,10 @@ public class PlayerController : EntityController
      *Modeling the current action of the player
      */
     private PlayerState _playerState;
+    /**
+     * Reference to the other player during carrying
+     */
+    private PlayerController _otherPlayer;
     
     /**
      * TODO: To be discussed (from Marc) : Do we need this variable as an class attribute?
@@ -78,6 +86,9 @@ public class PlayerController : EntityController
     private static readonly int LookYProperty = Animator.StringToHash("Look y");
     private static readonly int SpeedProperty = Animator.StringToHash("Speed");
     private static readonly int AttackTrigger = Animator.StringToHash("Attack");
+    private static readonly int CarryingState = Animator.StringToHash("Carrying");
+    private static readonly int CarriedState  = Animator.StringToHash("Carried");
+
 
     public PlayerColor Color => _input.GetColor();
 
@@ -116,6 +127,7 @@ public class PlayerController : EntityController
         
         _collider = GetComponent<BoxCollider2D>();
         _tintFlashController = GetComponent<TintFlashController>();
+        _renderer = GetComponent<Renderer>();
         
         _healthPoints = maxHealthPoints;
         _playerState = PlayerState.walking;
@@ -129,24 +141,26 @@ public class PlayerController : EntityController
     {
         base.Update();
         // Check whether the player released the pull key
-        if (!_input.GetButton(Button.Pull) && _playerState == PlayerState.pulling){
+        if (!_input.GetButton(Button.Pull) && _playerState == PlayerState.pulling)
             ReleasePull();
-        }
+        // Check whether the player released the carry key
+        else if (!_input.GetButton(Button.Carry) && _playerState == PlayerState.carrying)
+            ThrowPlayer(new Vector2(_input.GetHorizontal(), _input.GetVertical()));
 
         // Attacking
-        if (_input.GetButtonDown(Button.Attack) && _playerState != PlayerState.pulling) {
+        if (_input.GetButtonDown(Button.Attack) && _playerState != PlayerState.pulling && 
+        _playerState != PlayerState.carrying && _playerState != PlayerState.carried) {
             _playerState = PlayerState.attacking;
             Attack();
         }   
-        
         // Pulling / Pushing
-        else if (_input.GetButtonDown(Button.Pull) && _playerState == PlayerState.walking)
-        {
-            if (GetNearPushable(out var pushable))
-            {
-                EnablePulling(pushable);
-            }
-        }
+        else if (_input.GetButtonDown(Button.Pull) && _playerState == PlayerState.walking &&
+        GetNearPushable(out var pushable))
+            EnablePulling(pushable);
+        // Carrying
+        else if (_input.GetButtonDown(Button.Carry) && _playerState == PlayerState.walking &&
+        GetNearPlayer(out var otherPlayer))
+                PickUpPlayer(otherPlayer);
     }
 
     private void OnDestroy()
@@ -180,22 +194,14 @@ public class PlayerController : EntityController
     /**
      * Checks whether there is a pullable object near to the player in viewing direction.
      *
-     * @param pushable    if a pullabls object has been found, it will be stored here, otherwise, null is stored
+     * @param pushable    if a pullable object has been found, it will be stored here, otherwise, null is stored
      * @returns true iff a pullable object has been found.
      * 
      * FIXME: Check color of box
      */
     bool GetNearPushable(out Pushable pushable)
     {
-        // We want to search in viewing direction
-        var searchDirection = viewDirection.ToVector();
-        var hit = Physics2D.Raycast(
-            (Vector2) transform.position + _collider.offset,  // Search from middle point of our collider
-            searchDirection,
-            boxPullRange,
-            LayerMask.GetMask("Box")
-        );
-
+        var hit = Search("Box");
         if (!ReferenceEquals(hit.collider, null)) // !ReferenceEquals is supposed to be faster than != null
         {
             pushable = hit.collider.gameObject.GetComponent<Pushable>();
@@ -211,42 +217,88 @@ public class PlayerController : EntityController
         return false;
     }
 
-    void FixedUpdate ()
+    bool GetNearPlayer(out PlayerController player)
     {
-        // If the player is walking normally, they are able to move vertically and horizontally
-        if (_playerState == PlayerState.walking)
+        var hit = Search("Player");
+        if (hit.collider?.gameObject.GetComponent<PlayerController>() is PlayerController candidate && !candidate.CarriesSomeone())
         {
-            Move(true, true);
-        } 
-        
-        // If the player is pulling a box, they are only able to walk vertically or horizontally
-        // depending on the viewDirection
-        else if (_playerState == PlayerState.pulling)
-        {
-            switch(viewDirection) {
-                case Direction.Up:
-                case Direction.Down:
-                    Move(true, false);
-                    break;
-                case Direction.Left:
-                case Direction.Right:
-                    Move(false, true);
-                    break;
-            }
+            player = candidate;
+            return true;
         }
-        else {
-            // Prevent change of velocity by collision forces
-            Move(false, false);
-        }
+    
+        player = null;
+        return false;
     }
 
-    public void Heal()
+    RaycastHit2D Search(string layer)
     {
+        // We want to search in viewing direction
+        var searchDirection = viewDirection.ToVector();
+        return Physics2D.Raycast(
+            (Vector2) transform.position + _collider.offset,  // Search from middle point of our collider
+            searchDirection,
+            boxPullRange,
+            LayerMask.GetMask(layer));
+    }
+
+    void FixedUpdate ()
+    {
+        switch (_playerState) {
+            // If the player is walking normally, they are able to move vertically and horizontally
+            case PlayerState.walking:
+            case PlayerState.carrying:   
+                Move(true, true);
+                break;
+            // If the player is pulling a box, they are only able to walk vertically or horizontally
+            // depending on the viewDirection
+            case PlayerState.pulling:
+                switch(viewDirection) {
+                    case Direction.Up:
+                    case Direction.Down:
+                        Move(true, false);
+                        break;
+                    case Direction.Left:
+                    case Direction.Right:
+                        Move(false, true);
+                        break;
+                }
+                break;
+            // because of joint carried player shouldn't call Move
+            case PlayerState.carried: 
+                break;
+            // according to unity manual equality checks on vectors take floating point inaccuracies into account
+            // https://docs.unity3d.com/ScriptReference/Vector2-operator_eq.html
+            case PlayerState.thrown when effects.GetImpulse() == Vector2.zero:
+                animator.SetBool(CarriedState, false);
+                _playerState = PlayerState.walking;
+                break;
+            // Prevent change of velocity by collision forces
+            default:
+                Move(false, false);
+                break;
+            }
+    }
+
+    public void Reset()
+    {
+        // if the player carries another player, release
+        if (CarriesSomeone())
+            ThrowPlayer(Vector2.zero);
+        // if the player is carried by another player, release 
+        else if (_otherPlayer?.CarriesSomeone() ?? false) {
+            _otherPlayer.ThrowPlayer(Vector2.zero);
+            animator.SetBool(CarriedState, false);
+            _playerState = PlayerState.walking;
+        }
         ChangeHealth(maxHealthPoints);
     }
 
-    protected override void ChangeHealth(int delta)
+    protected override bool ChangeHealth(int delta)
     {
+        // if the player is thrown he shouldn't get any damage
+        if (_playerState == PlayerState.thrown)
+            return false;
+
         _healthPoints += delta;
 
         if (_healthPoints <= 0) {
@@ -273,7 +325,8 @@ public class PlayerController : EntityController
         if (delta != 0)
         {
             DisplayLifeGauge();
-        }    
+        }
+        return true;
     }
 
     private void Die(){
@@ -391,4 +444,92 @@ public class PlayerController : EntityController
         _playerState = PlayerState.walking;
         _pushableToPull = null;
     }
+
+    /**
+     * Returns true if the player currently carries someone else
+     */
+    public bool CarriesSomeone()
+    {
+        return gameObject.GetComponent("HingeJoint2D");
+    }
+
+    /**
+     * Call this method to pickup another player
+     */
+    void PickUpPlayer(PlayerController otherPlayer) 
+    {
+        _otherPlayer = otherPlayer;
+        // glue to players together
+        HingeJoint2D joint = gameObject.AddComponent<HingeJoint2D>();
+        // Stops objects from continuing to collide and creating more joints
+        joint.enableCollision = false; 
+        joint.enabled = false;
+
+        var ontop = new Vector2(rigidbody2D.position.x, _renderer.bounds.max.y);
+        StartCoroutine(_otherPlayer.PickUpCoroutine(ontop, joint, _collider, this));
+        _playerState = PlayerState.carrying;
+        animator.SetBool(CarryingState, true);
+    }
+
+    /**
+     * Call this method to throw the carried player into direction (or drop if direction is zero vector)
+     */
+    void ThrowPlayer(Vector2 direction)
+    {
+        _playerState = PlayerState.walking;
+        animator.SetBool(CarryingState, false);
+
+        Destroy(gameObject.GetComponent("HingeJoint2D"));
+        StartCoroutine(_otherPlayer.ThrowCoroutine(direction, _collider));
+        _otherPlayer = null;
+    }
+
+    /**
+     * This coroutine is called on the player that is being carried
+     */
+    public IEnumerator PickUpCoroutine(Vector2 ontop, HingeJoint2D joint, BoxCollider2D collider, PlayerController other)
+    {
+        _otherPlayer = other;
+        joint.connectedBody = rigidbody2D;
+        _playerState = PlayerState.carried;
+
+        animator.SetBool(CarriedState, true);
+        Physics2D.IgnoreCollision(collider, _collider);
+        // temporally change sorting order to draw carried gameobject on top
+        _renderer.sortingOrder++;
+        effects.MoveBody(ontop);
+
+        // the joint should be disabled until the carried player moved ontop of the carrying player,
+        // because a joint disallows such movements
+        yield return new WaitForFixedUpdate(); 
+        joint.enabled = true;
+    }
+
+    /**
+     * This coroutine is called when a carried player is dropped or thrown
+     */
+    public IEnumerator ThrowCoroutine(Vector2 direction, BoxCollider2D collider)
+    {
+        _otherPlayer = null;
+        _playerState = PlayerState.thrown;
+        effects.ApplyImpulse(10 * direction);
+
+        // restore sorting order & collision between the two players, when player leaves state thrown
+        yield return new WaitUntil(() => _playerState == PlayerState.walking);
+        Physics2D.IgnoreCollision(collider, _collider, false);
+        _renderer.sortingOrder--;
+    }
+
+    /**
+     * A flying player should damage enemies
+     */
+    void OnCollisionEnter2D(Collision2D other)
+    {
+        if (other.gameObject.CompareTag("Enemy") && _playerState == PlayerState.thrown)
+        {
+            var enemy = other.gameObject.GetComponent<EntityController>();
+            enemy.PutDamage(1, (other.transform.position - transform.position).normalized); 
+        }
+    }
+
 }

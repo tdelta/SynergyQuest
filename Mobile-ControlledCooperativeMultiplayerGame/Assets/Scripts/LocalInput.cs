@@ -50,6 +50,8 @@ public class LocalInput: MonoBehaviour, Input
                 return UnityEngine.Input.GetKey(keymap.AttackKey());
             case Button.Pull:
                 return UnityEngine.Input.GetKey(keymap.PullKey());
+            case Button.Carry:
+                return UnityEngine.Input.GetKey(keymap.CarryKey());
         }
 
         return false;
@@ -63,6 +65,8 @@ public class LocalInput: MonoBehaviour, Input
                 return UnityEngine.Input.GetKeyDown(keymap.AttackKey());
             case Button.Pull:
                 return UnityEngine.Input.GetKeyDown(keymap.PullKey());
+            case Button.Carry:
+                return UnityEngine.Input.GetKeyDown(keymap.CarryKey());
         }
 
         return false;
@@ -76,6 +80,8 @@ public class LocalInput: MonoBehaviour, Input
                 return UnityEngine.Input.GetKeyUp(keymap.AttackKey());
             case Button.Pull:
                 return UnityEngine.Input.GetKeyUp(keymap.PullKey());
+            case Button.Carry:
+                return UnityEngine.Input.GetKeyUp(keymap.CarryKey());
         }
 
         return false;
@@ -115,12 +121,14 @@ public enum LocalKeymap
      * * WASD movement
      * * Space attack
      * * c pull
+     * * v carry
      */
     WASD,
     /**
      * * arrow key movement
      * * j attack
      * * k pull
+     * * l carry
      */
     Arrow
 }
@@ -194,5 +202,18 @@ static class LocalControlModeMethods
         }
 
         return KeyCode.P;
+    }
+
+    public static KeyCode CarryKey(this LocalKeymap mode)
+    {
+        switch (mode)
+        {
+            case LocalKeymap.WASD:
+                return KeyCode.V;
+            case LocalKeymap.Arrow:
+                return KeyCode.L;
+        }
+
+        return KeyCode.V;
     }
 }
