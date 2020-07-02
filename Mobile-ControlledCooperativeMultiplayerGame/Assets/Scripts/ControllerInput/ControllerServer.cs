@@ -18,13 +18,13 @@ using WebSocketSharp.Server;
  * which JSON messages are exchanged. For the format of the JSON messages,
  * see the `Message` class hierarchy.
  * Since the native C# WebSocket functionalities which are required for
- * servers (a compatible HTTPListener implementation) do not ship with .NET
+ * servers (a compatible HTTPListener implementation) do not ship with the .NET
  * runtime of the current version of Unity (at least not on Linux), we use
  * the MIT licensed library websocket-sharp for this.
  * 
  * You should ensure that the Update function of this script is
  * executed before all other ones in the Script Execution Order project
- * settings, but should have already been done.
+ * settings, but that should have already been done.
  */
 public class ControllerServer : BehaviourSingleton<ControllerServer>
 {

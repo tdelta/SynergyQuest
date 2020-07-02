@@ -1,28 +1,34 @@
 ﻿using UnityEngine;
 
 /**
- * Manages the UI which is displayed when the game is paused.
- * It does not handle the actual logic for pausing the game. See the `PauseGameLogic` class for that purpose
+ * Controls the UI of the pause screen.
+ * To actually launch the pause screen and pause the game, see the `PauseScreenLauncher` singleton.
+ *
+ * See also the `MenuUi` interface for a description of its methods.
  */
-public class PauseScreenUi : MonoBehaviour
+public class PauseScreenUi : MonoBehaviour, MenuUi
 {
-    private PauseGameLogic _pauseGameLogic;
-
-    public void Init(PauseGameLogic pauseGameLogic)
-    {
-        _pauseGameLogic = pauseGameLogic;
-    }
-
-    public void SetVisible(bool visibility)
-    {
-        gameObject.SetActive(visibility);
-    }
-
     /**
      * Callback which is invoked when the resume button on the screen is pressed
      */
     public void OnResumePressed()
     {
-        _pauseGameLogic.Resume();
+        PauseScreenLauncher.Instance.Close();
+    }
+    
+    public void OnLaunch()
+    {
+        // When the pause screen UI is opened, give remote controllers the capability to close the pause screen and resume the game
+        SharedControllerState.Instance.EnableMenuActions(
+            (MenuAction.ResumeGame, true)
+        );
+    }
+    
+    public void OnClose()
+    {
+        // When the pause screen UI is closed and destroyed, remove the "Resume" capability from remote controllers
+        SharedControllerState.Instance.EnableMenuActions(
+            (MenuAction.ResumeGame, false)
+        );
     }
 }

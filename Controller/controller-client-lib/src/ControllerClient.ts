@@ -18,6 +18,8 @@ export enum MenuAction {
   QuitGame = 1,
   PauseGame = 2,
   ResumeGame = 3,
+  Next = 4, // Info screens can have multiple pages, which can be browsed with this menu action
+  Back = 5,
 }
 
 export enum PlayerColor {

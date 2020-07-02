@@ -25,7 +25,7 @@ public class LocalInput: MonoBehaviour, Input
         if (UnityEngine.Input.GetKeyDown(keymap.PauseKey()))
         {
             OnMenuActionTriggered?.Invoke(
-                PauseGameLogic.Instance.IsPaused?
+                PauseScreenLauncher.Instance.IsPaused?
                       MenuAction.ResumeGame
                     : MenuAction.PauseGame
             );

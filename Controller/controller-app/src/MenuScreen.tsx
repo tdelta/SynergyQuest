@@ -11,20 +11,28 @@ export class MenuScreen extends React.Component<
   render() {
     let scrollContent = <>Please follow the instructions on the game screen</>;
     if (this.props.enabledMenuActions.size > 0) {
-      const buttonList = Array.from(this.props.enabledMenuActions).map(
-        action => {
-          const click = (_: any) => this.props.triggerMenuAction(action);
+      const menuActions = Array.from(this.props.enabledMenuActions);
+      menuActions.sort();
 
-          return (
-            <>
-              <button className='pixelbutton' onClick={click}>
-                {menuActionStrings.get(action)}
-              </button>
-              <br />
-            </>
-          );
-        }
-      );
+      const buttonList = Array.from(menuActions).map(action => {
+        const click = (_: any) => this.props.triggerMenuAction(action);
+
+        return (
+          <>
+            <button
+              style={{
+                marginTop: '10px',
+                marginBottom: '10px',
+              }}
+              className='pixelbutton'
+              onClick={click}
+            >
+              {menuActionStrings.get(action)}
+            </button>
+            <br />
+          </>
+        );
+      });
 
       scrollContent = (
         <div style={{ padding: '2em', textAlign: 'center' }}>{buttonList}</div>

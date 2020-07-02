@@ -183,10 +183,24 @@ public class PlayerController : EntityController
         switch (action)
         {
             case MenuAction.PauseGame:
-                PauseGameLogic.Instance.Pause();
+                PauseScreenLauncher.Instance.Launch();
                 break;
             case MenuAction.ResumeGame:
-                PauseGameLogic.Instance.Resume();
+                if (PauseScreenLauncher.Instance.IsPaused)
+                {
+                    PauseScreenLauncher.Instance.Close();
+                }
+
+                else if (InfoScreenLauncher.Instance.IsShowingInfoScreen)
+                {
+                    InfoScreenLauncher.Instance.Close();
+                }
+                break;
+            case MenuAction.Next:
+                InfoScreenLauncher.Instance.NextPage();
+                break;
+            case MenuAction.Back:
+                InfoScreenLauncher.Instance.PreviousPage();
                 break;
         }
     }
