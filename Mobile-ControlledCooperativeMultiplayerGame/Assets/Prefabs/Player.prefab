@@ -322,6 +322,7 @@ GameObject:
   - component: {fileID: 4270148256400962765}
   - component: {fileID: 8560946304368867}
   - component: {fileID: 880494710090650051}
+  - component: {fileID: 3679214792177754562}
   - component: {fileID: 4270148256400962764}
   - component: {fileID: 4270148256400962754}
   - component: {fileID: 4270148256400962752}
@@ -355,6 +356,67 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4270148256400962765
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4270148256400962766}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fad7292b03eb81d43964fdc5d3fcfe1e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  timeInvincible: 1
+  lifeGauge: {fileID: 9057244208906412714}
+  speed: 4
+  maxHealthPoints: 3
+  boxPullRange: 0.5
+  fightingSounds: {fileID: 7104318054709804874}
+  hitSounds: {fileID: 2065851212643451053}
+  deathSounds: {fileID: 7435980175288186188}
+  customOrigin: {fileID: 0}
+  localControlsInitColor: 4
+  localInputPrefab: {fileID: 1573775178793761210, guid: 6172303992b7e6a2c842047a617fdf1b,
+    type: 3}
+  viewDirection: 0
+--- !u!114 &8560946304368867
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4270148256400962766}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e89ceed4394482f9eade6be87a68d82, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &880494710090650051
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4270148256400962766}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93bb8f5ddb2f5c5d3bb1691f37e9eea3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &3679214792177754562
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4270148256400962766}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ebb89f1668a466b860bcae70354a5ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!212 &4270148256400962764
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -406,43 +468,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &4270148256400962765
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4270148256400962766}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fad7292b03eb81d43964fdc5d3fcfe1e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  timeInvincible: 1
-  lifeGauge: {fileID: 9057244208906412714}
-  speed: 4
-  maxHealthPoints: 3
-  boxPullRange: 0.5
-  fightingSounds: {fileID: 7104318054709804874}
-  hitSounds: {fileID: 2065851212643451053}
-  deathSounds: {fileID: 7435980175288186188}
-  localControlsInitColor: 4
-  localInputPrefab: {fileID: 1573775178793761210, guid: 6172303992b7e6a2c842047a617fdf1b,
-    type: 3}
-  viewDirection: 0
---- !u!114 &8560946304368867
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4270148256400962766}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8e89ceed4394482f9eade6be87a68d82, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _customOrigin: {fileID: 0}
 --- !u!95 &4270148256400962754
 Animator:
   serializedVersion: 3
@@ -509,18 +534,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.70266455, y: 0.5903528}
   m_EdgeRadius: 0
---- !u!114 &880494710090650051
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4270148256400962766}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 93bb8f5ddb2f5c5d3bb1691f37e9eea3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &1151083528782973185
 PrefabInstance:
   m_ObjectHideFlags: 0

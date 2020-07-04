@@ -46,6 +46,7 @@ public class PhysicsEffects: MonoBehaviour
      * Hence, it is also moved, if the origin moves.
      */
     private Transform _customOrigin = null;
+    public Transform CustomOrigin => _customOrigin;
     // We cache the last position of the custom origin since the last update here, so that we can use it to determine
     // whether the origin moved since the last frame and by how much.
     private Vector2 _lastCustomOriginPosition;
@@ -105,7 +106,7 @@ public class PhysicsEffects: MonoBehaviour
     public void SetCustomOrigin(Transform customOrigin)
     {
         _customOrigin = customOrigin;
-        
+
         // We cache the last position of the custom origin since the last update here, so that we can use it to determine
         // whether the origin moved since the last frame and by how much.
         _lastCustomOriginPosition = customOrigin.position;

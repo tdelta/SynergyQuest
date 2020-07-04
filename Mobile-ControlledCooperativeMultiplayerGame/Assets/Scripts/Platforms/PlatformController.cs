@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlatformController : MonoBehaviour
 {
     public List<WayPointController> wayPoints;
-    public Tuple<WayPointController, int> nextWayPoint;
+    public (WayPointController, int) nextWayPoint;
 
     public PlayerController player;
 
@@ -14,12 +14,7 @@ public class PlatformController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        nextWayPoint = Tuple.Create(wayPoints[0], 0);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
+        nextWayPoint = (wayPoints[0], 0);
     }
 
     void FixedUpdate()
@@ -35,32 +30,36 @@ public class PlatformController : MonoBehaviour
             MoveHorizontal();
         } 
         
-        else if (isMoveVerticalNeeded(wayPoint)){
+        else if (IsMoveVerticalNeeded(wayPoint)){
             MoveVertical();
         }
 
         else {
-            updateNextWayPoint();
+            UpdateNextWayPoint();
         }
     }
 
-    private void updateNextWayPoint() 
+    private void UpdateNextWayPoint() 
     {
-        if (areAllWayPointsVisited()) {
+        if (AreAllWayPointsVisited())
+        {
             wayPoints.Reverse();
-            nextWayPoint = Tuple.Create(wayPoints[1], 1);
-        } else {
+            nextWayPoint = (wayPoints[1], 1);
+        }
+        
+        else
+        {
             int nextIndex = nextWayPoint.Item2 + 1;
-            nextWayPoint = Tuple.Create(wayPoints[nextIndex], nextIndex);
+            nextWayPoint = (wayPoints[nextIndex], nextIndex);
         }
     }
 
-    private Boolean areAllWayPointsVisited()
+    private bool AreAllWayPointsVisited()
     {
         return nextWayPoint.Item2 + 1 >= wayPoints.Count;
     }
 
-    private Boolean isMoveVerticalNeeded(WayPointController wayPoint)
+    private bool IsMoveVerticalNeeded(WayPointController wayPoint)
     {
         return Math.Abs(transform.position.y - wayPoint.transform.position.y) >= .9f;
     }
@@ -73,7 +72,7 @@ public class PlatformController : MonoBehaviour
     private void MoveHorizontal()
     {
         WayPointController wayPoint = nextWayPoint.Item1;
-        Vector2 deltaPosition = transform.position;
+        Vector3 deltaPosition = transform.position;
 
         // Need to move Left
         if (wayPoint.transform.position.x < transform.position.x) {
@@ -89,7 +88,7 @@ public class PlatformController : MonoBehaviour
     private void MoveVertical()
     {
         WayPointController wayPoint = nextWayPoint.Item1;
-        Vector2 deltaPosition = transform.position;
+        Vector3 deltaPosition = transform.position;
 
         // Need to move Down
         if (wayPoint.transform.position.y < transform.position.y) {
@@ -104,15 +103,37 @@ public class PlatformController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject.layer == LayerMask.NameToLayer("Player")) {
-            other.GetComponent<PhysicsEffects>().SetCustomOrigin(this.transform);
+        // Only transport an object, if it has a `PlatformTransportable` component
+        var maybePlatformTransportable = other.GetComponent<PlatformTransportable>();
+        if (maybePlatformTransportable != null)
+        {
+            // If the object has a physics effects component, we set the platform as new origin which it from now on
+            // shall move relative to
+            var maybePhysicsEffects = other.GetComponent<PhysicsEffects>();
+            if (maybePhysicsEffects != null)
+            {
+                maybePhysicsEffects.SetCustomOrigin(this.transform);
+            }
         }
     }
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        if (other.gameObject.layer == LayerMask.NameToLayer("Player")) {
-            other.GetComponent<PhysicsEffects>().SetCustomOrigin(null);
+        // Only handle objects, if they have a `PlatformTransportable` component
+        var maybePlatformTransportable = other.GetComponent<PlatformTransportable>();
+        if (maybePlatformTransportable != null)
+        {
+            // If the object has a physics effects component...
+            var maybePhysicsEffects = other.GetComponent<PhysicsEffects>();
+            if (maybePhysicsEffects != null)
+            {
+                // ...and it is using this platform as custom origin to move relative to, then remove the custom origin,
+                // since the object has left the platform
+                if (maybePhysicsEffects.CustomOrigin == this.transform)
+                {
+                    maybePhysicsEffects.RemoveCustomOrigin();
+                }
+            }
         }
     }
 
