@@ -25,9 +25,6 @@ public class PlayerController : EntityController
     [SerializeField] private MultiSound deathSounds;
     [SerializeField] private MultiSound fallingSounds;
     
-    // FIXME: Remove this, just for testing purposes regarding the custom origin functionality of the `PhysicsEffects` class
-    [SerializeField] private Transform customOrigin;
-    
     /**
      * If local controls will be used for this character instead of a remote controller, which color should be assigned
      * to this player?
@@ -140,13 +137,6 @@ public class PlayerController : EntityController
         
         var material = GetComponent<Renderer>().material;
         material.SetColor("_ShirtColor", PlayerColorMethods.ColorToRGB(this.Color));
-        
-        
-        // FIXME: Remove this, just for testing purposes regarding the custom origin functionality of the `PhysicsEffects` class
-        if (customOrigin != null)
-        {
-            PhysicsEffects.SetCustomOrigin(customOrigin);
-        }
     }
 
     // Update is called once per frame
@@ -296,7 +286,7 @@ public class PlayerController : EntityController
             // according to unity manual equality checks on vectors take floating point inaccuracies into account
             // https://docs.unity3d.com/ScriptReference/Vector2-operator_eq.html
             case PlayerState.thrown when PhysicsEffects.GetImpulse() == Vector2.zero:
-                _animator.SetBool(CarriedState, false);
+                Animator.SetBool(CarriedState, false);
                 _playerState = PlayerState.walking;
                 break;
             // Prevent change of velocity by collision forces
@@ -314,7 +304,7 @@ public class PlayerController : EntityController
         // if the player is carried by another player, release 
         else if (_otherPlayer?.CarriesSomeone() ?? false) {
             _otherPlayer.ThrowPlayer(Vector2.zero);
-            _animator.SetBool(CarriedState, false);
+            Animator.SetBool(CarriedState, false);
             _playerState = PlayerState.walking;
         }
         ChangeHealth(maxHealthPoints);
@@ -498,10 +488,10 @@ public class PlayerController : EntityController
         joint.enableCollision = false; 
         joint.enabled = false;
 
-        var ontop = new Vector2(_rigidbody2D.position.x, _renderer.bounds.max.y);
+        var ontop = new Vector2(Rigidbody2D.position.x, _renderer.bounds.max.y);
         StartCoroutine(_otherPlayer.PickUpCoroutine(ontop, joint, _collider, this));
         _playerState = PlayerState.carrying;
-        _animator.SetBool(CarryingState, true);
+        Animator.SetBool(CarryingState, true);
     }
 
     /**
@@ -510,7 +500,7 @@ public class PlayerController : EntityController
     void ThrowPlayer(Vector2 direction)
     {
         _playerState = PlayerState.walking;
-        _animator.SetBool(CarryingState, false);
+        Animator.SetBool(CarryingState, false);
 
         Destroy(gameObject.GetComponent("HingeJoint2D"));
         StartCoroutine(_otherPlayer.ThrowCoroutine(direction, _collider));
@@ -523,10 +513,10 @@ public class PlayerController : EntityController
     public IEnumerator PickUpCoroutine(Vector2 ontop, HingeJoint2D joint, BoxCollider2D collider, PlayerController other)
     {
         _otherPlayer = other;
-        joint.connectedBody = _rigidbody2D;
+        joint.connectedBody = Rigidbody2D;
         _playerState = PlayerState.carried;
 
-        _animator.SetBool(CarriedState, true);
+        Animator.SetBool(CarriedState, true);
         Physics2D.IgnoreCollision(collider, _collider);
         // temporally change sorting order to draw carried gameobject on top
         _renderer.sortingOrder++;

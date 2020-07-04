@@ -5,10 +5,10 @@ using UnityEngine;
 abstract public class EntityController : MonoBehaviour {
     [SerializeField] float timeInvincible = 1;
 
-    protected Animator _animator;
+    private Animator _animator;
     protected Animator Animator => _animator;
     
-    protected Rigidbody2D _rigidbody2D;
+    private Rigidbody2D _rigidbody2D;
     protected Rigidbody2D Rigidbody2D => _rigidbody2D;
     
     protected bool isInvincible;
