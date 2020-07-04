@@ -90,6 +90,15 @@ public class PhysicsEffects: MonoBehaviour
     }
 
     /**
+     * Instantly transports player to new position
+     */
+    public void Teleport(Vector3 position)
+    {
+        transform.position = position;
+        _rigidbody2D.position = position;
+    }
+
+    /**
      * Applies speed changes to an entities movement according to the given impulse.
      */
     public void ApplyImpulse(Vector2 impulse)

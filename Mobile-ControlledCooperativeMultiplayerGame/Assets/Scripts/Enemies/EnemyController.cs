@@ -54,7 +54,8 @@ abstract public class EnemyController : EntityController {
             direction = -direction;
     }
 
-    protected override bool ChangeHealth(int amount) {
+    protected override bool ChangeHealth(int amount, bool playSounds = true)
+    {
         healthPoints += amount;
 
         if (amount <= 0)

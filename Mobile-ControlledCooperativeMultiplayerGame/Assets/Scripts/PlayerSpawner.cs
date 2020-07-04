@@ -90,7 +90,10 @@ public class PlayerSpawner : MonoBehaviour
 
     private void Respawn(PlayerController player)
     {
-        player.transform.position = this.transform.position;
+        player.GetComponent<PhysicsEffects>().Teleport(this.transform.position);
+
+        // Make player visible again, if they have been invisible
+        player.GetComponent<SpriteRenderer>().enabled = true;
         player.Reset();
     }
 

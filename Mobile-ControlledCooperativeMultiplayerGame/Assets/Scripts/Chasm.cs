@@ -80,7 +80,7 @@ public class Chasm : MonoBehaviour
             // If the player is standing on a chasm with more than 50% of their own area, they fall
             if (intersectionArea / playerArea > 0.5)
             {
-                playerController.PutDamage(1, Vector2.zero);
+                playerController.InitiateFall();
             }
         }
     }

@@ -5,10 +5,10 @@ using UnityEngine;
 abstract public class EntityController : MonoBehaviour {
     [SerializeField] float timeInvincible = 1;
 
-    private Animator _animator;
+    protected Animator _animator;
     protected Animator Animator => _animator;
     
-    private Rigidbody2D _rigidbody2D;
+    protected Rigidbody2D _rigidbody2D;
     protected Rigidbody2D Rigidbody2D => _rigidbody2D;
     
     protected bool isInvincible;
@@ -87,10 +87,10 @@ abstract public class EntityController : MonoBehaviour {
         
 
         if (ChangeHealth(-amount))
-            effects.ApplyImpulse(knockbackDirection * 4);
+            PhysicsEffects.ApplyImpulse(knockbackDirection * 4);
         // if the entity doesn't accept change in health (e.g. flying player) only apply (reduced) knockback
         else {
-            effects.ApplyImpulse(knockbackDirection * 2);
+            PhysicsEffects.ApplyImpulse(knockbackDirection * 2);
             return;
         }
 
@@ -105,5 +105,5 @@ abstract public class EntityController : MonoBehaviour {
      * is affected by health changes.
      * The return value should indicate if the change in health actually happened
      */
-    protected abstract bool ChangeHealth(int amount);
+    protected abstract bool ChangeHealth(int amount, bool playSounds = true);
 }
