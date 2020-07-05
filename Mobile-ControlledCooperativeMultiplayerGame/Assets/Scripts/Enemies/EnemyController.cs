@@ -119,8 +119,10 @@ abstract public class EnemyController : EntityController {
 
     private void dropCoins()
     {
-        Instantiate(coin, transform.position, Quaternion.identity);
-        Instantiate(coin, transform.position, Quaternion.identity);
-        Instantiate(coin, transform.position, Quaternion.identity);
+        int amountCoins = Random.Range(0,5);
+        for(int i = 0; i < amountCoins; i++) {
+            Instantiate(coin, transform.position, Quaternion.identity);    
+        }
     }
+
 }

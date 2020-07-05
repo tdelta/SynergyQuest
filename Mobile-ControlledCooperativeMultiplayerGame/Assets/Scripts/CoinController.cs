@@ -6,11 +6,14 @@ public class CoinController : MonoBehaviour
 {
 
     public float thrust;
+    AudioSource source;
+    public AudioClip coinCollect;
 
 
     // Start is called before the first frame update
     void Start()
     {
+        source = this.GetComponent<AudioSource>();
         this.GetComponent<Rigidbody2D>().AddForce(getRandomDirection() * thrust);
     }
 
@@ -24,11 +27,17 @@ public class CoinController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log("Der Trigger wird ausgeführt");
         if (other.gameObject.layer == LayerMask.NameToLayer("Player")) {
             other.GetComponent<PlayerController>().increaseGoldCounter();
-            Destroy(this.gameObject);
-            // ToDo: Play sound
+            source.PlayOneShot(coinCollect, 1.0f);
+            this.GetComponent<SpriteRenderer>().enabled = false;
+            this.GetComponent<BoxCollider2D>().enabled = false;
+            StartCoroutine(DestroyCoroutine());
         }
+    }
+
+    public IEnumerator DestroyCoroutine() {
+        yield return new WaitForSeconds(1f);
+        Destroy(this);
     }
 }
