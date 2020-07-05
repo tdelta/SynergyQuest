@@ -89,5 +89,7 @@ public class BombItem : Item, Throwable
             var entity = other.gameObject.GetComponent<EntityController>();
             entity.PutDamage(1, (other.transform.position - transform.position).normalized); 
         }
+        else if (explosion && other.gameObject.CompareTag("DestroyableWall"))
+            Destroy(other.gameObject);
     }
 }
