@@ -4,7 +4,6 @@ using UnityEngine;
 
 abstract public class Item : MonoBehaviour
 {
-
-    // Start is called before the first frame update
-    protected abstract void Start();
+    // must be implemented to realize cooldown
+    public abstract bool Ready();
 }

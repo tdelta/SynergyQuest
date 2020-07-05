@@ -4,15 +4,17 @@ using UnityEngine;
 
 public class BombItem : Item, Throwable
 {
+    static bool ready = true;
+    bool explosion = false;
     readonly int explosionTrigger = Animator.StringToHash("Explode");
+
     Renderer renderer;
     Animator animator;
     PhysicsEffects effects;
     BoxCollider2D collider;
     Rigidbody2D rigidbody2D;
 
-    // Start is called before the first frame update
-    protected override void Start()
+    void Awake()
     {
         animator = GetComponent<Animator>();
         renderer = GetComponent<Renderer>();
@@ -23,8 +25,8 @@ public class BombItem : Item, Throwable
 
     public IEnumerator PickUpCoroutine(Vector2 ontop, HingeJoint2D joint, BoxCollider2D otherCollider)
     {
+        ready = false;
         joint.connectedBody = rigidbody2D;
-        Debug.Log(animator);
         animator.SetTrigger(explosionTrigger);
         Physics2D.IgnoreCollision(collider, otherCollider);
         // temporally change sorting order to draw carried gameobject on top
@@ -35,11 +37,19 @@ public class BombItem : Item, Throwable
         // because a joint disallows such movements
         yield return new WaitForFixedUpdate(); 
         joint.enabled = true;
-
+        
+        // if the bomb explodes before we throw it, make sure to get damage
+        yield return new WaitUntil(() => explosion);
+        Physics2D.IgnoreCollision(collider, otherCollider, false);
+        Destroy(joint);
     }
 
     public IEnumerator ThrowCoroutine(Vector2 direction, BoxCollider2D otherCollider)
     {
+        // can't throw a bomb if already exploded
+        if (Ready())
+            yield break;
+
         effects.ApplyImpulse(10 * direction);
 
         // according to unity manual equality checks on vectors take floating point inaccuracies into account
@@ -47,6 +57,37 @@ public class BombItem : Item, Throwable
         yield return new WaitUntil(() => effects.GetImpulse() == Vector2.zero);
         Physics2D.IgnoreCollision(collider, otherCollider, false);
         renderer.sortingOrder--;
+    }
 
+    public void Explode()
+    {
+        explosion = true;
+    }
+
+    public void Destroy()
+    {
+        // new bomb can only be instantiated when the previous one exploded
+        ready = true;
+        Destroy(gameObject);
+    }
+    
+    public override bool Ready()
+    {
+        return ready;
+    }
+
+    void FixedUpdate()
+    {
+        if (effects.GetImpulse() != Vector2.zero && !explosion)
+            effects.MoveBody(rigidbody2D.position);
+    }
+
+    void OnCollisionStay2D(Collision2D other)
+    {
+        if (explosion && (other.gameObject.CompareTag("Enemy") || other.gameObject.CompareTag("Player")))
+        {
+            var entity = other.gameObject.GetComponent<EntityController>();
+            entity.PutDamage(1, (other.transform.position - transform.position).normalized); 
+        }
     }
 }

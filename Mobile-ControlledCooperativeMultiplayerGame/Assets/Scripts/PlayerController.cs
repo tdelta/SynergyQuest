@@ -151,14 +151,14 @@ public class PlayerController : EntityController, Throwable
         if (!_input.GetButton(Button.Pull) && _playerState == PlayerState.pulling)
             ReleasePull();
         // Check whether the player released the item key
-        else if (!_input.GetButton(Button.Carry) && _playerState == PlayerState.carrying)
+        else if (!_input.GetButton(Button.Item) && _playerState == PlayerState.carrying && !CarriesSomeone())
             ThrowThrowable(_throwableItemInstance, new Vector2(_input.GetHorizontal(), _input.GetVertical()));
         // Check whether the player released the carry key
-        else if (!_input.GetButton(Button.Carry) && _playerState == PlayerState.carrying)
+        else if (!_input.GetButton(Button.Carry) && _playerState == PlayerState.carrying && CarriesSomeone())
             ThrowThrowable(_otherPlayer, new Vector2(_input.GetHorizontal(), _input.GetVertical()));
 
         // Attacking
-        if (_input.GetButtonDown(Button.Attack) && _playerState == PlayerState.walking || _playerState == PlayerState.attacking) {
+        if (_input.GetButtonDown(Button.Attack) && (_playerState == PlayerState.walking || _playerState == PlayerState.attacking)) {
             _playerState = PlayerState.attacking;
             Attack();
         }
@@ -168,7 +168,8 @@ public class PlayerController : EntityController, Throwable
             if (_input.GetButtonDown(Button.Pull) && GetNearPushable(out var pushable))
                 EnablePulling(pushable);
             // Item usage
-            else if (_input.GetButtonDown(Button.Carry) && _item && Instantiate(_item) is Throwable throwableItem)
+            else if (_input.GetButtonDown(Button.Item) && _item && _item.Ready() && 
+            Instantiate(_item, new Vector2(rigidbody2D.position.x, _renderer.bounds.max.y), Quaternion.identity) is Throwable throwableItem)
                 PickUpThrowable(_throwableItemInstance = throwableItem);
             // Carrying
             else if (_input.GetButtonDown(Button.Carry) && GetNearPlayer(out _otherPlayer)) {

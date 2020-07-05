@@ -6,7 +6,7 @@ AnimationClip:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: BombCountdown
+  m_Name: BombNormal
   serializedVersion: 6
   m_Legacy: 0
   m_Compressed: 0
@@ -20,16 +20,7 @@ AnimationClip:
   m_PPtrCurves:
   - curve:
     - time: 0
-      value: {fileID: -2613247888821195678, guid: aa215f4ae28714b6fa1ffd52fcf5eaa4,
-        type: 3}
-    - time: 1
-      value: {fileID: -8469204400738329757, guid: aa215f4ae28714b6fa1ffd52fcf5eaa4,
-        type: 3}
-    - time: 2
-      value: {fileID: 8114985772114671235, guid: aa215f4ae28714b6fa1ffd52fcf5eaa4,
-        type: 3}
-    - time: 3
-      value: {fileID: -4975520578640395922, guid: aa215f4ae28714b6fa1ffd52fcf5eaa4,
+      value: {fileID: 1843372830317561357, guid: aa215f4ae28714b6fa1ffd52fcf5eaa4,
         type: 3}
     attribute: m_Sprite
     path: 
@@ -50,16 +41,13 @@ AnimationClip:
       customType: 23
       isPPtrCurve: 1
     pptrCurveMapping:
-    - {fileID: -2613247888821195678, guid: aa215f4ae28714b6fa1ffd52fcf5eaa4, type: 3}
-    - {fileID: -8469204400738329757, guid: aa215f4ae28714b6fa1ffd52fcf5eaa4, type: 3}
-    - {fileID: 8114985772114671235, guid: aa215f4ae28714b6fa1ffd52fcf5eaa4, type: 3}
-    - {fileID: -4975520578640395922, guid: aa215f4ae28714b6fa1ffd52fcf5eaa4, type: 3}
+    - {fileID: 1843372830317561357, guid: aa215f4ae28714b6fa1ffd52fcf5eaa4, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
-    m_StopTime: 4
+    m_StopTime: 1
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0
