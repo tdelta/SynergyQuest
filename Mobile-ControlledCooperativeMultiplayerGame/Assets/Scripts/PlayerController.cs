@@ -41,6 +41,8 @@ public class PlayerController : EntityController
     
     private int _healthPoints;
 
+    private int _goldCounter;
+
     private BoxCollider2D _collider;
     private Renderer _renderer;
     
@@ -133,6 +135,7 @@ public class PlayerController : EntityController
         _renderer = GetComponent<Renderer>();
         
         _healthPoints = maxHealthPoints;
+        _goldCounter = 0;
         _playerState = PlayerState.walking;
         
         var material = GetComponent<Renderer>().material;
@@ -598,5 +601,12 @@ public class PlayerController : EntityController
         
         // Kill the player
         ChangeHealth(-_healthPoints, false);
+    }
+
+
+    public void increaseGoldCounter()
+    {
+        _goldCounter++;
+        Debug.Log("Current gold counter: " + _goldCounter);
     }
 }

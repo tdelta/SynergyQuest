@@ -10,6 +10,8 @@ abstract public class EnemyController : EntityController {
     [SerializeField] ParticleSystem smokeEffect;
     [SerializeField] private MultiSound hitSounds;
 
+    public GameObject coin;
+
     protected float directionTimer;
     protected Vector2 direction;
     
@@ -67,6 +69,7 @@ abstract public class EnemyController : EntityController {
             isDead = true;
             this.GetComponent<Collider2D>().enabled = false;
             Animator.SetTrigger(deadTrigger);
+            dropCoins();
             Destroy(gameObject, 1);
             if(OnDeath != null){
                 OnDeath();
@@ -112,5 +115,12 @@ abstract public class EnemyController : EntityController {
         {
             hitSounds.PlayOneShot();
         }
+    }
+
+    private void dropCoins()
+    {
+        Instantiate(coin, transform.position, Quaternion.identity);
+        Instantiate(coin, transform.position, Quaternion.identity);
+        Instantiate(coin, transform.position, Quaternion.identity);
     }
 }
