@@ -54,7 +54,8 @@ public class PlayerController : EntityController
      * also `ControllerInput`.
      */
     private Input _input;
-    
+    public Input Input => _input;
+
     private float _vertical;
     private float _horizontal;
     
