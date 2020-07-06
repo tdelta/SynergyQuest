@@ -165,6 +165,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 912231efc967ebbb5b8c407eb5616993, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sparkEffect: {fileID: 7612822685121192602}
 --- !u!1 &6077066857030850165
 GameObject:
   m_ObjectHideFlags: 0
@@ -177,7 +178,7 @@ GameObject:
   - component: {fileID: 7612822685121192602}
   - component: {fileID: 397519393093444426}
   m_Layer: 0
-  m_Name: Particle System
+  m_Name: SparkEffect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

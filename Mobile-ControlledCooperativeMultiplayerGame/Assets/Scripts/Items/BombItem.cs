@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class BombItem : Item, Throwable
 {
+    [SerializeField] ParticleSystem sparkEffect;
+
     static bool ready = true;
     bool explosion = false;
     readonly int explosionTrigger = Animator.StringToHash("Explode");
@@ -61,6 +63,7 @@ public class BombItem : Item, Throwable
 
     public void Explode()
     {
+        sparkEffect.Stop();
         explosion = true;
     }
 
