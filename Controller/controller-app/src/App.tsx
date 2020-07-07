@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   GameState,
-  Button,
   MenuAction,
   PlayerColor,
   ControllerClient,
@@ -9,6 +8,7 @@ import {
 } from 'controller-client-lib';
 import { ConnectScreen } from './ConnectScreen';
 import { LobbyScreen } from './LobbyScreen';
+import { MenuScreen } from './MenuScreen';
 import * as consts from './consts';
 import { Controller } from './Controller';
 import './App.css';
@@ -63,10 +63,6 @@ export interface AppState {
  * Main UI class
  */
 class App extends React.Component<{}, AppState> {
-  // References to two sliders which serve as joystick input
-  private vertRef = React.createRef<HTMLInputElement>();
-  private horRef = React.createRef<HTMLInputElement>();
-
   private static readonly initialState: AppState = {
     connectionStatus: NotConnectedC,
     failureMessage: undefined,
@@ -85,6 +81,8 @@ class App extends React.Component<{}, AppState> {
 
     this.connect = this.connect.bind(this);
     this.startGame = this.startGame.bind(this);
+    this.pause = this.pause.bind(this);
+    this.triggerMenuAction = this.triggerMenuAction.bind(this);
 
     // Initialize as not connected
     this.state = App.initialState;
@@ -148,7 +146,7 @@ class App extends React.Component<{}, AppState> {
         color: color, // <- set new color
       });
 
-    client.onSetMenuAction = (action: MenuAction, enabled: boolean) =>
+    client.onSetEnabledMenuActions = _ =>
       this.setState({
         ...this.state,
         enabledMenuActions: client.getEnabledMenuActions(),
@@ -165,6 +163,9 @@ class App extends React.Component<{}, AppState> {
         gameState: state,
       });
 
+    client.onVibrationRequest = (vibrationPattern: number[]) =>
+      window.navigator.vibrate(vibrationPattern);
+
     client.connect(playerName, window.location.hostname, consts.port);
 
     // Update the state to "Connecting"
@@ -174,13 +175,21 @@ class App extends React.Component<{}, AppState> {
   }
 
   startGame() {
+    this.triggerMenuAction(MenuAction.StartGame);
+  }
+
+  pause() {
+    this.triggerMenuAction(MenuAction.PauseGame);
+  }
+
+  triggerMenuAction(action: MenuAction) {
     if (this.state.connectionStatus.kind === 'Connected') {
       const client = this.state.connectionStatus.client;
 
-      client.triggerMenuAction(MenuAction.StartGame);
+      client.triggerMenuAction(action);
     }
   }
-  
+
   /**
    * Display different HTML, depending on whether we are connected to a game
    * or not.
@@ -205,11 +214,25 @@ class App extends React.Component<{}, AppState> {
             );
             break;
           case GameState.Started:
-            body = <Controller 
-                  client={this.state.connectionStatus.client}
-                  playerColor={consts.colors[this.state.color]}
-                  enabledGameActions={this.state.enabledGameActions}
-                  />;
+            body = (
+              <Controller
+                client={this.state.connectionStatus.client}
+                playerColor={consts.colors[this.state.color]}
+                enabledGameActions={this.state.enabledGameActions}
+                canPause={this.state.enabledMenuActions.has(
+                  MenuAction.PauseGame
+                )}
+                pause={this.pause}
+              />
+            );
+            break;
+          case GameState.Menu:
+            body = (
+              <MenuScreen
+                enabledMenuActions={this.state.enabledMenuActions}
+                triggerMenuAction={this.triggerMenuAction}
+              />
+            );
             break;
         }
     }

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 /**
  * A Pushable can either be resting or be moving
@@ -96,10 +97,15 @@ public class Pushable : MonoBehaviour
      * This objects checks for obstacles when moving on these layers:
      */
     private static LayerMask _raycastLayerMask;
-    
+
     // Start is called before the first frame update
     void Start()
     {
+        if (grid == null)
+        {
+            grid = GameObject.Find("Grid").GetComponent<Grid>();
+        }
+        
         _raycastLayerMask  = LayerMask.GetMask("LevelStatic", "Box");
         
         _boxCollider = GetComponent<BoxCollider2D>();
@@ -178,7 +184,6 @@ public class Pushable : MonoBehaviour
                 moveDistance + additionalRaycastDistance,
                  _raycastLayerMask
             );
-            Debug.Log("Hit: " + hit.collider?.name ?? "");
             var isSomethingInMoveDirection = !ReferenceEquals(hit.collider, null);
 
             return !isSomethingInMoveDirection;

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 /**
@@ -25,10 +26,11 @@ public enum MessageType
     Button = 5,              // Button input, sent by controller
     Joystick = 6,            // Joystick input, sent by controller
     PlayerColor = 7,         // Color assigned to a player, sent by the game
-    SetMenuAction = 8,       // Enable / disable a menu action, sent by game
+    SetMenuActions = 8,      // Set the set of enabled menu actions, sent by game
     MenuActionTriggered = 9, // A menu action has been selected on the controller
-    GameStateChanged = 10,   // The state of the game changed, e.g. Lobby -> Game started. Sent by the game
-    SetGameAction = 11           // Enable / disable a button in the controller UI, sent by game
+    GameStateChanged = 10,   // The state of the game changed, e.g. Lobby -> Game started. Sent by the game 
+    VibrationSequence = 11   // The game wants the controller to vibrate. Sent by the game
+    SetGameAction = 12       // Enable / disable a button in the controller UI, sent by game
 }
 
 /**
@@ -97,14 +99,17 @@ public class Message
             case MessageType.MaxPlayersReached:
                 return JsonUtility.FromJson<MaxPlayersReachedMessage>(str);
             
-            case MessageType.SetMenuAction:
-                return JsonUtility.FromJson<SetMenuActionMessage>(str);
+            case MessageType.SetMenuActions:
+                return JsonUtility.FromJson<SetMenuActionsMessage>(str);
             
             case MessageType.MenuActionTriggered:
                 return JsonUtility.FromJson<MenuActionTriggeredMessage>(str);
 
             case MessageType.SetGameAction:
                 return JsonUtility.FromJson<SetGameActionMessage>(str);
+            
+            case MessageType.VibrationSequence:
+                return JsonUtility.FromJson<VibrationSequenceMessage>(str);
         }
 
         return null;
@@ -280,16 +285,14 @@ public class Message
     }
 
     [Serializable]
-    public sealed class SetMenuActionMessage : Message
+    public sealed class SetMenuActionsMessage : Message
     {
-        public MenuAction menuAction;
-        public bool enabled;
+        public List<MenuAction> menuActions;
         
-        public SetMenuActionMessage(MenuAction action, bool enabled)
-            : base(MessageType.SetMenuAction)
+        public SetMenuActionsMessage(List<MenuAction> actions)
+            : base(MessageType.SetMenuActions)
         {
-            this.menuAction = action;
-            this.enabled = enabled;
+            this.menuActions = actions;
         }
 
         /**
@@ -297,7 +300,7 @@ public class Message
          */
         public override void Match( Matcher matcher )
         {
-            matcher.SetMenuActionMessage(this);
+            matcher.SetMenuActionsMessage(this);
         }
     }
     
@@ -341,6 +344,35 @@ public class Message
         }
     }
     
+    [Serializable]
+    public sealed class VibrationSequenceMessage : Message
+    {
+        /**
+         * Indicates how the controller shall vibrate.
+         * The first number is the number of milliseconds to vibrate,
+         * the next is the number to milliseconds to pause,
+         * the number after that is again a number of milliseconds to vibrate and so on.
+         *
+         * Hence these are numbers of milliseconds to vibrate and pause in
+         * alteration.
+         */
+        public List<float> vibrationPattern;
+        
+        public VibrationSequenceMessage(List<float> vibrationPattern)
+            : base(MessageType.VibrationSequence)
+        {
+            this.vibrationPattern = vibrationPattern;
+        }
+
+        /**
+         * See base class method for an explanation.
+         */
+        public override void Match( Matcher matcher )
+        {
+            matcher.VibrationSequenceMessage(this);
+        }
+    }
+    
     /**
      * See `Match` method for an explanation.
      */
@@ -353,10 +385,11 @@ public class Message
         public Action<NameTakenMessage> NameTakenMessage = _ => {};
         public Action<NameOkMessage> NameOkMessage = _ => {};
         public Action<MaxPlayersReachedMessage> MaxPlayersReachedMessage = _ => {};
-        public Action<SetMenuActionMessage> SetMenuActionMessage = _ => {};
+        public Action<SetMenuActionsMessage> SetMenuActionsMessage = _ => {};
         public Action<MenuActionTriggeredMessage> MenuActionTriggeredMessage = _ => {};
         public Action<GameStateChangedMessage> GameStateChangedMessage = _ => {};
         public Action<SetGameActionMessage> SetGameActionMessage = _ => {};
+        public Action<VibrationSequenceMessage> VibrationSequenceMessage = _ => {};
     }
 
     /**

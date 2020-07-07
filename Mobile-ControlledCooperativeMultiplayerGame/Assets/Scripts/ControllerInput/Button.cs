@@ -6,5 +6,6 @@ public enum Button
 {
     Attack = 0,
     Pull = 1,
-    Press = 2
+    Carry = 2,
+    Press = 3
 }

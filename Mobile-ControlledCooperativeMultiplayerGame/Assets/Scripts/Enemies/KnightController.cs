@@ -15,7 +15,7 @@ public class KnightController : EnemyController {
 
         foreach (var player in players) {
             Vector2 position = player.GetPosition();
-            Vector2 target = position - rigidbody2D.position;
+            Vector2 target = position - Rigidbody2D.position;
             float angle = Vector2.Angle(target, offset);
 
             if (angle < playerAngle) {
@@ -35,7 +35,7 @@ public class KnightController : EnemyController {
         else
             offset = Time.deltaTime * directionSpeed * direction;
 
-        animator.SetFloat(moveXProperty, offset.x);
+        Animator.SetFloat(moveXProperty, offset.x);
         return offset;
     }
 }

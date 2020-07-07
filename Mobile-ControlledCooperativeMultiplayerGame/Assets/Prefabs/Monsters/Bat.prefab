@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5481500327407250232}
   - component: {fileID: 5481500327407250212}
   - component: {fileID: 1807293467228889363}
+  - component: {fileID: 7496465968518166009}
   - component: {fileID: 5481500327407250215}
   - component: {fileID: 5481500327407250214}
   - component: {fileID: 4188588700924867490}
@@ -50,7 +51,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 947a0de2eeec8c7adac378ca1cf9f9b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeInvincible: 1
+  timeInvincible: 0.5
   healthPoints: 3
   directionSpeed: 1.5
   directionChangeTime: 1
@@ -71,6 +72,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93bb8f5ddb2f5c5d3bb1691f37e9eea3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &7496465968518166009
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5481500327407250211}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e89ceed4394482f9eade6be87a68d82, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _customOrigin: {fileID: 0}
 --- !u!212 &5481500327407250215
 SpriteRenderer:
   m_ObjectHideFlags: 0

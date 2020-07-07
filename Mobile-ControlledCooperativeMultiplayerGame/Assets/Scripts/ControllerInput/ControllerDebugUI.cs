@@ -26,12 +26,12 @@ public class ControllerDebugUI : MonoBehaviour
         SetConnectionStatusMsg();
     }
     
-    private void OnDisconnect()
+    private void OnDisconnect(ControllerInput input)
     {
         SetConnectionStatusMsg();
     }
 
-    private void OnReconnect()
+    private void OnReconnect(ControllerInput input)
     {
         SetConnectionStatusMsg();
     }

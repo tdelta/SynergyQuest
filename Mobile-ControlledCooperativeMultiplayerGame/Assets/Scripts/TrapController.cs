@@ -64,7 +64,7 @@ public class TrapController: MonoBehaviour
     {
       PlayerController player = other.gameObject.GetComponent<PlayerController>();
       if (player.Color == this.Color){
-        player.Die();
+        player.InitiateFall();
       }
     }
   }

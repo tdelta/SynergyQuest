@@ -44,6 +44,9 @@ public class LobbyMenuUi : MonoBehaviour
         // If IP addresses have been passed to this scene then we can continue
         if (IPs != null && IPs.Any())
         {
+            // Make sure the controller software is served
+            HttpServer.EnsureInitialization();
+            
             // For every already connected controller, bind to its events
             ControllerServer.Instance.GetInputs().ForEach(InitializeInput);
             // And register a callback, should new controllers connect
@@ -122,7 +125,7 @@ public class LobbyMenuUi : MonoBehaviour
      */
     private void SetStartGameAction(bool enable)
     {
-        ControllerServer.Instance.GetInputs().ForEach(input => input.EnableMenuAction(MenuAction.StartGame, enable));
+        SharedControllerState.Instance.EnableMenuActions((MenuAction.StartGame, enable));
     }
 
 
@@ -150,9 +153,9 @@ public class LobbyMenuUi : MonoBehaviour
             foreach (var input in inputs)
             {
                 UnbindInput(input);
-                input.EnableMenuAction(MenuAction.StartGame, false);
-                input.SetGameState(GameState.Started);
             }
+            SharedControllerState.Instance.EnableMenuActions((MenuAction.StartGame, false));
+            SharedControllerState.Instance.SetGameState(GameState.Started);
             
             DungeonController.Instance.LoadNextRoom();
         }

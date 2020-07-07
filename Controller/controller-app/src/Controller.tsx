@@ -7,8 +7,13 @@ import nipplejs, {
   JoystickOutputData,
 } from 'nipplejs';
 import './Controller.css';
+import fscreen from 'fscreen';
+
 import { ColorData } from './consts';
 import * as consts from './consts';
+
+import { faCompress, faExpand } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export class Controller extends React.Component<
   ControllerProbs,
@@ -27,6 +32,12 @@ export class Controller extends React.Component<
     this.onJoystickMoved = this.onJoystickMoved.bind(this);
     this.onJoystickReleased = this.onJoystickReleased.bind(this);
     this.onButtonChanged = this.onButtonChanged.bind(this);
+    this.toggleFullscreen = this.toggleFullscreen.bind(this);
+    this.onFullscreenChange = this.onFullscreenChange.bind(this);
+
+    this.state = {
+      isFullscreen: false,
+    };
   }
 
   onButtonChanged(button: Button, pressed: boolean) {
@@ -57,6 +68,38 @@ export class Controller extends React.Component<
     this.client.setJoystickPosition(vertical, horizontal);
   }
 
+  toggleFullscreen() {
+    // Hacky solution: Type should be Promise<void> but sadly the type definitions of fscreen say something else ...
+    let fullscreenFn: any;
+
+    if (!this.state.isFullscreen) {
+      fullscreenFn = fscreen.requestFullscreenFunction(
+        document.documentElement
+      ) as any;
+    } else {
+      fullscreenFn = fscreen.exitFullscreen as any;
+    }
+
+    fullscreenFn
+      .call(document.documentElement)
+      .then(
+        // Only set the state, if the fullscreen request was successfull
+        () => this.setState({ isFullscreen: !this.state.isFullscreen })
+      )
+      .catch((error: Error) =>
+        console.error(
+          `Error while requesting fullscreen: ${error.name} -- ${error.message}`
+        )
+      );
+  }
+
+  onFullscreenChange() {
+    this.setState({
+      // Evaluates to true if window is in fullscreen
+      isFullscreen: fscreen.fullscreenElement !== null,
+    });
+  }
+
   componentDidMount() {
     // Create joystick on div "boob"
     const boob = this.boob.current!; // Boob definetly exists when componentDidMount is called
@@ -68,17 +111,8 @@ export class Controller extends React.Component<
     manager.on('end', this.onJoystickReleased);
 
     // The titlebar is annoying on mobile, so we get rid of it
-    document.documentElement.requestFullscreen().catch(err => {
-      console.error(
-        `Error when trying to go full screen: ${err.message} (${err.name})`
-      );
-    });
-  }
-
-  componentWillUnmount() {
-    if (document.fullscreenElement) {
-      document.exitFullscreen();
-    }
+    this.toggleFullscreen();
+    fscreen.onfullscreenchange = this.onFullscreenChange;
   }
 
   render() {
@@ -101,7 +135,7 @@ export class Controller extends React.Component<
       </button>
     );
 
-    let playerColor: ColorData = this.props.playerColor;
+    const playerColor: ColorData = this.props.playerColor;
     
     let buttons: JSX.Element[] = [];
 
@@ -127,12 +161,35 @@ export class Controller extends React.Component<
                 <p id='boobText'> tap and drag to move </p>
               </div>
               <div className='buttonColumn'>
-                <div className='rowContainer'>
-                  <button
-                      className='colorIndicator text no-click'
-                      style={{ backgroundColor: playerColor.dark, borderColor: playerColor.light }} >
-                      {playerColor.name}
-                  </button>
+                <div className='rowContainer' style={{ height: '10%' }}>
+                  <div className='controllerMenuContainer'>
+                    <button
+                      className='controllerMenuItem text no-click'
+                      style={{
+                        backgroundColor: playerColor.dark,
+                        borderColor: playerColor.light,
+                      }}
+                    >
+                      Your Color: {playerColor.name}
+                    </button>
+                    {this.props.canPause && (
+                      <button
+                        className='controllerMenuItem text'
+                        style={{
+                          backgroundColor: '#c2185b',
+                          borderColor: '#e91e63',
+                        }}
+                        onClick={_ => this.props.pause()}
+                      >
+                        Pause
+                      </button>
+                    )}
+                  </div>
+                  <div id='fullscreenButton' onClick={this.toggleFullscreen}>
+                    <FontAwesomeIcon
+                      icon={this.state.isFullscreen ? faCompress : faExpand}
+                    />
+                  </div>
                 </div>
                 {buttons}
               </div>
@@ -144,10 +201,14 @@ export class Controller extends React.Component<
   }
 }
 
-interface ControllerState {}
+interface ControllerState {
+  isFullscreen: boolean;
+}
 
 interface ControllerProbs {
   client: ControllerClient;
   playerColor: ColorData;
   enabledGameActions: Set<Button>;
+  canPause: boolean;
+  pause: () => void;
 }

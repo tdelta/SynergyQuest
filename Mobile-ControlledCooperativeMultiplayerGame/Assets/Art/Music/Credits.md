@@ -9,3 +9,16 @@
 * Artist: itch.io user cactusdude
 * License: CCA 4.0
 * Link: https://cactusdude.itch.io/free-game-soundtrack-by-cactusdude-hurry-up
+
+# ./Quirky Boss Loop.ogg
+
+* Artist: Tim Beek
+* License: Free / Custom: "Giving me credit is always appreciated!"
+* Link: https://timbeek.itch.io/free-retro-boss-music
+
+# ./Victory1.mp3
+
+* Artist: Alex Smith / OpenGameArt.Org user cynicmusic
+* License: CC0
+* Link: https://opengameart.org/content/victory-theme-for-rpg
+  

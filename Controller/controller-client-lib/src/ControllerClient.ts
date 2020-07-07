@@ -8,7 +8,7 @@ import { MessageFormat } from './Message';
 export enum Button {
   Attack = 0,
   Pull = 1,
-  Press = 2,
+  Press = 3,
 }
 
 /**
@@ -17,6 +17,10 @@ export enum Button {
 export enum MenuAction {
   StartGame = 0,
   QuitGame = 1,
+  PauseGame = 2,
+  ResumeGame = 3,
+  Next = 4, // Info screens can have multiple pages, which can be browsed with this menu action
+  Back = 5,
 }
 
 export enum PlayerColor {
@@ -34,6 +38,7 @@ export enum PlayerColor {
 export enum GameState {
   Lobby = 0,
   Started = 1,
+  Menu = 2,
 }
 
 /**
@@ -139,7 +144,7 @@ export class ControllerClient {
    * Callback which can be set by users and which is called whenever the game
    * enables or disables some menu action for the controller
    */
-  public onSetMenuAction: (action: MenuAction, enabled: boolean) => any;
+  public onSetEnabledMenuActions: (enabledActions: Set<MenuAction>) => any;
 
   /**
    * Callback which can be set by users and which is called whenever the game
@@ -152,6 +157,14 @@ export class ControllerClient {
    * enables a game action to be displayed as a button in the controller ui
    */
   public onSetGameAction: (action: Button, enabled: boolean) => any;
+  
+  /**
+   * Callback which can be set by users and which is called whenever the game
+   * wants the controller to vibrate.
+   *
+   * @param vibrationPattern alternating number of milliseconds to vibrate and pause
+   */
+  public onVibrationRequest: (vibrationPattern: number[]) => any;
 
   /**
    * Creates a ControllerClient instance.
@@ -371,14 +384,9 @@ export class ControllerClient {
         this.onSetPlayerColor?.(msg.color);
       },
 
-      SetMenuActionMessage: msg => {
-        if (msg.enabled) {
-          this.enabledMenuActions.add(msg.menuAction);
-        } else if (this.enabledMenuActions.has(msg.menuAction)) {
-          this.enabledMenuActions.delete(msg.menuAction);
-        }
-
-        this.onSetMenuAction?.(msg.menuAction, msg.enabled);
+      SetMenuActionsMessage: msg => {
+        this.enabledMenuActions = new Set(msg.menuActions);
+        this.onSetEnabledMenuActions?.(this.enabledMenuActions);
       },
 
       GameStateChangedMessage: msg => {
@@ -395,6 +403,9 @@ export class ControllerClient {
         }
 
         this.onSetGameAction?.(msg.button, msg.enabled);
+      
+      VibrationSequenceMessage: msg => {
+        this.onVibrationRequest?.(msg.vibrationPattern);
       },
     });
   }

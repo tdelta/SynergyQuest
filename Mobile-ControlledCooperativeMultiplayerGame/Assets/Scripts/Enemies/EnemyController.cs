@@ -47,16 +47,16 @@ abstract public class EnemyController : EntityController {
     }
 
     void OnCollisionStay2D(Collision2D other) {
-        if (other.gameObject.tag == "Player") {
+        if (other.gameObject.CompareTag("Player")) {
             var player = other.gameObject.GetComponent<EntityController>();
             player.PutDamage(damageFactor, (other.transform.position - transform.position).normalized); 
         } else
             direction = -direction;
     }
 
-    protected override void ChangeHealth(int amount) {
+    protected override bool ChangeHealth(int amount, bool playSounds = true)
+    {
         healthPoints += amount;
-        Debug.Log("Enemy took damage");
 
         if (amount <= 0)
         {
@@ -65,12 +65,14 @@ abstract public class EnemyController : EntityController {
 
         if (healthPoints <= 0) {
             isDead = true;
-            animator.SetTrigger(deadTrigger);
+            this.GetComponent<Collider2D>().enabled = false;
+            Animator.SetTrigger(deadTrigger);
             Destroy(gameObject, 1);
             if(OnDeath != null){
                 OnDeath();
             }
         }
+        return true;
     }
 
     /*
@@ -81,9 +83,10 @@ abstract public class EnemyController : EntityController {
     
     void FixedUpdate() {
         if (!isDead) {
-            Vector2 position = rigidbody2D.position;
+            Vector2 position = Rigidbody2D.position;
             position += ComputeOffset();
-            rigidbody2D.MovePosition(position);
+            
+            PhysicsEffects.MoveBody(position);
         }
     }
 

@@ -1,4 +1,6 @@
 
+using System.Collections.Generic;
+
 /**
  * Models the different inputs for a player character.
  *
@@ -8,6 +10,12 @@
  */
 public interface Input
 {
+    /**
+     * This event is emitted when a certain menu action is selected on the controller.
+     * E.g. if the controller wants to pause the game etc.
+     */
+    event MenuActionTriggeredAction OnMenuActionTriggered;
+ 
     /**
      * Returns whether a specific button is currently pressed or not.
      * For the different button ids, see the `Button` enum.
@@ -57,4 +65,20 @@ public interface Input
      * (such as reading a sign or pressing a button)
      */
     void SetGameAction(Button action, bool enabled);
+
+    /**
+     * Tell the controller to vibrate. This will only have an effect if the controller
+     * supports vibration.
+     * 
+     * @param vibrationPattern Indicates how the controller shall vibrate.
+     *   The first number is the number of milliseconds to vibrate,
+     *   the next is the number to milliseconds to pause,
+     *   the number after that is again a number of milliseconds to vibrate and so on.
+     *
+     *   Hence these are numbers of milliseconds to vibrate and pause in
+     *   alteration.
+     */
+    void PlayVibrationFeedback(List<float> vibrationPattern);
 }
+
+public delegate void MenuActionTriggeredAction(MenuAction action);
