@@ -371,5 +371,21 @@ public class Pushable : MonoBehaviour
         _inContactObject = other.gameObject;
         _inContactTimer = inContactTime;
     }
+    
+    /**
+     * Only called in editor, e.g. when changing a property
+     */
+    private void OnValidate()
+    {
+        // Usually, `Pushable` is used in conjunction with the `Box` behavior which changes sprites in the editor
+        // depending on the color value of the Pushable.
+        // 
+        // Hence, we inform `Box` could a property change in this behavior.
+        var box = GetComponent<Box>();
+        if (box != null)
+        {
+            box.OnValidate();
+        }
+    }
 }
 

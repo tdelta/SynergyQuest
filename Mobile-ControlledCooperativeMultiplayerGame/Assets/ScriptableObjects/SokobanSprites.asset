@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3b34e5cbea34773b827b6bf778da673, type: 3}
+  m_Name: SokobanSprites
+  m_EditorClassIdentifier: 
+  redBox: {fileID: 1733987727890565723, guid: 790092c14f520b846b7ce2a8819741bb, type: 3}
+  blueBox: {fileID: -5788357303200141578, guid: 790092c14f520b846b7ce2a8819741bb,
+    type: 3}
+  greenBox: {fileID: 6389151952404025254, guid: 790092c14f520b846b7ce2a8819741bb,
+    type: 3}
+  yellowBox: {fileID: -4918480417615516805, guid: 790092c14f520b846b7ce2a8819741bb,
+    type: 3}
+  anyBox: {fileID: 3474657177172211449, guid: 790092c14f520b846b7ce2a8819741bb, type: 3}
+  redSwitch: {fileID: 3153656056060034279, guid: 790092c14f520b846b7ce2a8819741bb,
+    type: 3}
+  blueSwitch: {fileID: -9007857085991022505, guid: 790092c14f520b846b7ce2a8819741bb,
+    type: 3}
+  greenSwitch: {fileID: 122222392177022508, guid: 790092c14f520b846b7ce2a8819741bb,
+    type: 3}
+  yellowSwitch: {fileID: 152633917544581452, guid: 790092c14f520b846b7ce2a8819741bb,
+    type: 3}
+  anySwitch: {fileID: -5830073860447929725, guid: 790092c14f520b846b7ce2a8819741bb,
+    type: 3}
