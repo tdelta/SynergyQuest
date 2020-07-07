@@ -27,7 +27,8 @@ public enum MessageType
     PlayerColor = 7,         // Color assigned to a player, sent by the game
     SetMenuAction = 8,       // Enable / disable a menu action, sent by game
     MenuActionTriggered = 9, // A menu action has been selected on the controller
-    GameStateChanged = 10    // The state of the game changed, e.g. Lobby -> Game started. Sent by the game 
+    GameStateChanged = 10,   // The state of the game changed, e.g. Lobby -> Game started. Sent by the game
+    SetGameAction = 11           // Enable / disable a button in the controller UI, sent by game
 }
 
 /**
@@ -101,6 +102,9 @@ public class Message
             
             case MessageType.MenuActionTriggered:
                 return JsonUtility.FromJson<MenuActionTriggeredMessage>(str);
+
+            case MessageType.SetGameAction:
+                return JsonUtility.FromJson<SetGameActionMessage>(str);
         }
 
         return null;
@@ -252,7 +256,29 @@ public class Message
             matcher.MaxPlayersReachedMessage(this);
         }
     }
-    
+   
+    [Serializable]
+    public sealed class SetGameActionMessage : Message
+    {
+        public Button button;
+        public bool enabled;
+
+        public SetGameActionMessage(Button button, bool enabled)
+            : base(MessageType.SetGameAction)
+        {
+            this.button = button;
+            this.enabled = enabled;
+        }
+        
+        /**
+         * See base class method for an explanation.
+         */
+        public override void Match( Matcher matcher )
+        {
+            matcher.SetGameActionMessage(this);
+        }
+    }
+
     [Serializable]
     public sealed class SetMenuActionMessage : Message
     {
@@ -330,6 +356,7 @@ public class Message
         public Action<SetMenuActionMessage> SetMenuActionMessage = _ => {};
         public Action<MenuActionTriggeredMessage> MenuActionTriggeredMessage = _ => {};
         public Action<GameStateChangedMessage> GameStateChangedMessage = _ => {};
+        public Action<SetGameActionMessage> SetGameActionMessage = _ => {};
     }
 
     /**

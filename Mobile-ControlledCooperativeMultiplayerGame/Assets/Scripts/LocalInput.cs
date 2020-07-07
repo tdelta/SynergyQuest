@@ -82,6 +82,13 @@ public class LocalInput: Input
     {
         return _color;
     }
+
+    /**
+     * Keys on the keyboard cannot disappear. Do nothing
+     */
+    public void SetGameAction(Button action, bool enabled){
+        return;
+    }
 }
 
 /**

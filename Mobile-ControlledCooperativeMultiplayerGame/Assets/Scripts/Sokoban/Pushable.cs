@@ -347,6 +347,11 @@ public class Pushable : MonoBehaviour
         {
             _inContactObject = null;
         }
+        
+        if (other.gameObject.tag == "Player") {
+          var player = other.gameObject.GetComponent<PlayerController>();
+          player.EnableGameAction(Button.Press,null);
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D other)
@@ -365,6 +370,9 @@ public class Pushable : MonoBehaviour
         // (See also `OnCollisionStay2D`.)
         _inContactObject = other.gameObject;
         _inContactTimer = inContactTime;
+        
+        var player = other.gameObject.GetComponent<PlayerController>();
+        player.EnableGameAction(Button.Press,null);
     }
 }
 

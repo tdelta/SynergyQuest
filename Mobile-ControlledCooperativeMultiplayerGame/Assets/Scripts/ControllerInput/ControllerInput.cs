@@ -52,9 +52,12 @@ public class ControllerInput: Input
     // We cache the last inputs reported by a controller here
     private float _vertical   = 0.0f;  // vertical joystick position
     private float _horizontal = 0.0f;  // horizontal joystick position
+
+    // TODO: Maybe use an automatically created dictionary of ButtonPressState, so we dont need to repeat code
     private ButtonPressState _attackButtonState = new ButtonPressState(); // whether the Attack button is pressed
-    private ButtonPressState _pullButtonState   = new ButtonPressState(); // whether the Pull button is pressed
-    
+    private ButtonPressState _pullButtonState = new ButtonPressState(); // whether the Pull button is pressed
+    private ButtonPressState _pressButtonState = new ButtonPressState(); // whether the Press button is pressed
+ 
     // We also cache the last special values set by the game
     // FIXME: We must resend this stuff to the client on reconnect if the client temporarily disconnects.
     //        We should also cache and resend the menu actions
@@ -115,6 +118,8 @@ public class ControllerInput: Input
                 return _attackButtonState.GetValue();
             case Button.Pull:
                 return _pullButtonState.GetValue();
+            case Button.Press:
+                return _pressButtonState.GetValue();
         }
 
         return false;
@@ -134,6 +139,8 @@ public class ControllerInput: Input
                 return _attackButtonState.GetValueDown();
             case Button.Pull:
                 return _pullButtonState.GetValueDown();
+            case Button.Press:
+                return _pressButtonState.GetValueDown();
         }
 
         return false;
@@ -153,9 +160,23 @@ public class ControllerInput: Input
                 return _attackButtonState.GetValueUp();
             case Button.Pull:
                 return _pullButtonState.GetValueUp();
+            case Button.Press:
+                return _pressButtonState.GetValueUp();
         }
 
         return false;
+    }
+
+    /**
+     * Tells the controlled that an action can or cannot be performed
+     * (such as reading a sign or pressing a button)
+     * 
+     * @throws ApplicationError if the controller is currently not connected
+     */
+    public void SetGameAction(Button action, bool enabled)
+    {
+        var msg = new Message.SetGameActionMessage(action, enabled);
+        SendMessage(msg);
     }
 
     /**
@@ -273,6 +294,9 @@ public class ControllerInput: Input
                         break;
                     case Button.Pull:
                         _pullButtonState.ProcessRawInput(msg.onOff);
+                        break;
+                    case Button.Press:
+                        _pressButtonState.ProcessRawInput(msg.onOff);
                         break;
                 }
             },

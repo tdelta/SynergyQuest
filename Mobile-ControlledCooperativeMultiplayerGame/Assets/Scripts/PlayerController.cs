@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public enum PlayerState{
@@ -85,6 +86,16 @@ public class PlayerController : EntityController
     public Respawn respawn;
 
     /**
+     * Delegate function is assigned a specific action, when the player stands next to a button
+     */
+    public delegate void ButtonAction();
+
+    /**
+     * Dictionary is dynamically filled with actions that can currently be performed
+     */
+    private Dictionary<Button, ButtonAction> _gameActions;
+
+    /**
      * Should be used to assign a remote controller to this player after creating the game object instance from a
      * prefab using `Instantiate`.
      *
@@ -112,7 +123,9 @@ public class PlayerController : EntityController
         
         _healthPoints = maxHealthPoints;
         _playerState = PlayerState.walking;
-        
+       
+        _gameActions = new Dictionary<Button, ButtonAction>();
+
         var material = GetComponent<Renderer>().material;
         material.SetColor("_ShirtColor", PlayerColorMethods.ColorToRGB(this.Color));
     }
@@ -140,6 +153,35 @@ public class PlayerController : EntityController
                 EnablePulling(pushable);
             }
         }
+
+        else if (_input.GetButtonDown(Button.Press))
+        {
+            try
+            {
+                // Execute a function defined by the button
+                _gameActions[Button.Press]();
+            }
+            catch (KeyNotFoundException)
+            {
+                Debug.LogWarning("Client Send Press, but Player currently can't perform that action");
+            }
+        }
+    }
+
+    public void EnableGameAction(Button action, ButtonAction fn) {
+        // Tell Controller client that action is enabled
+        _input.SetGameAction(action, true);
+
+        // Save the action that should be performed
+        _gameActions.Add(action, fn);
+    }
+
+    public void DisableGameAction(Button action) {
+        // Tell Controller client that action is enabled
+        _input.SetGameAction(action, false);
+
+        // Disable action
+        _gameActions.Remove(action);
     }
 
     /**
@@ -206,11 +248,7 @@ public class PlayerController : EntityController
         _healthPoints += delta;
 
         if (_healthPoints <= 0) {
-            deathSounds.PlayOneShot();
-          
-            _healthPoints = maxHealthPoints;
-            respawn(this);
-
+          Die();
         }
         
         // Display some effects when damaged
@@ -226,12 +264,13 @@ public class PlayerController : EntityController
         }    
     }
 
-    private void Die(){
-        // This is only a temporary solution until we have respawn
-        rigidbody2D.simulated = false;
-        lifeGauge.SetActive(false);
-        GetComponent<SpriteRenderer>().enabled = false;
-        Destroy(this.gameObject, 2.0f);
+
+
+    public void Die(){
+      deathSounds.PlayOneShot();
+      
+      _healthPoints = maxHealthPoints;
+      respawn(this);
     }
 
     /**

@@ -36,6 +36,8 @@ export namespace MessageFormat {
     MenuActionTriggered = 9,
     // The state of the game changed, e.g. Lobby -> Game started. Sent by the game
     GameStateChanged = 10,
+    // An action that the player can perform has been enabled or disabled
+    SetGameAction = 11,
   }
 
   /**
@@ -113,6 +115,11 @@ export namespace MessageFormat {
 
   export interface SetMenuActionMessage extends Message {
     readonly menuAction: MenuAction;
+    readonly enabled: boolean;
+  }
+
+  export interface SetGameActionMessage extends Message {
+    readonly button: Button;
     readonly enabled: boolean;
   }
 
@@ -196,6 +203,9 @@ export namespace MessageFormat {
       case MessageType.GameStateChanged:
         matcher.GameStateChangedMessage(msg as GameStateChangedMessage);
         break;
+      case MessageType.SetGameAction:
+        matcher.SetGameActionMessage(msg as SetGameActionMessage);
+        break;
     }
   }
 
@@ -213,6 +223,7 @@ export namespace MessageFormat {
     readonly SetMenuActionMessage: (_: SetMenuActionMessage) => any;
     readonly MenuActionTriggeredMessage: (_: MenuActionTriggeredMessage) => any;
     readonly GameStateChangedMessage: (_: GameStateChangedMessage) => any;
+    readonly SetGameActionMessage: (_: SetGameActionMessage) => any;
   }
 
   /**
@@ -232,5 +243,6 @@ export namespace MessageFormat {
     SetMenuActionMessage: _ => {},
     MenuActionTriggeredMessage: _ => {},
     GameStateChangedMessage: _ => {},
+    SetGameActionMessage: _ => {},
   };
 }

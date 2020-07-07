@@ -8,6 +8,7 @@ import { MessageFormat } from './Message';
 export enum Button {
   Attack = 0,
   Pull = 1,
+  Press = 2,
 }
 
 /**
@@ -95,6 +96,11 @@ export class ControllerClient {
   private enabledMenuActions: Set<MenuAction> = new Set<MenuAction>();
 
   /**
+   * Set of all currently enabled menu actions. (e.g. pressing a button of reading a sign)
+   */
+  private enabledGameActions: Set<Button> = new Set<Button>();
+
+  /**
    * Current state of the game. E.g. Lobby or Started
    */
   private gameState: GameState = GameState.Lobby;
@@ -140,6 +146,12 @@ export class ControllerClient {
    * changes its state, e.g. from "Lobby" to "Started"
    */
   public onGameStateChanged: (state: GameState) => any;
+
+  /**
+   * Callback which can be set by users and which is called whenever the game
+   * enables a game action to be displayed as a button in the controller ui
+   */
+  public onSetGameAction: (action: Button, enabled: boolean) => any;
 
   /**
    * Creates a ControllerClient instance.
@@ -260,6 +272,16 @@ export class ControllerClient {
   }
 
   /**
+   * Returns all game actions (e.g. pressing a button or reading a sign)
+   * which are currently enabled by the game.
+   * Use the `onSetGameAction` event to keep track of when actions are enabled
+   * or disabled.
+   */
+  public getEnabledGameActions(): Set<Button> {
+    return this.enabledGameActions;
+  }
+
+  /**
    * Returns the current state of the game. E.g. "Lobby" or "Started".
    * Use the `onGameStateChanged` event to keep track of when the state changes.
    */
@@ -363,6 +385,16 @@ export class ControllerClient {
         this.gameState = msg.gameState;
 
         this.onGameStateChanged?.(msg.gameState);
+      },
+
+      SetGameActionMessage: msg => {
+        if (msg.enabled) {
+          this.enabledGameActions.add(msg.button);
+        } else if (this.enabledGameActions.has(msg.button)) {
+          this.enabledGameActions.delete(msg.button);
+        }
+
+        this.onSetGameAction?.(msg.button, msg.enabled);
       },
     });
   }

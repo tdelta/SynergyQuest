@@ -51,4 +51,10 @@ public interface Input
      * Returns the color that has been assigned to this input.
      */
     PlayerColor GetColor();
+
+    /**
+     * Enables or disables game actions
+     * (such as reading a sign or pressing a button)
+     */
+    void SetGameAction(Button action, bool enabled);
 }

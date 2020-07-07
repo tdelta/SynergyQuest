@@ -8,6 +8,7 @@ import nipplejs, {
 } from 'nipplejs';
 import './Controller.css';
 import { ColorData } from './consts';
+import * as consts from './consts';
 
 export class Controller extends React.Component<
   ControllerProbs,
@@ -101,6 +102,20 @@ export class Controller extends React.Component<
     );
 
     let playerColor: ColorData = this.props.playerColor;
+    
+    let buttons: JSX.Element[] = [];
+
+    buttons.push(button(
+        consts.buttonStyles[Button.Attack].name,
+        Button.Attack,
+        consts.buttonStyles[Button.Attack].dark,
+        consts.buttonStyles[Button.Attack].dark));
+    console.log(this.props.enabledGameActions);
+    this.props.enabledGameActions.forEach( (action: Button) =>
+    {
+        let info: ColorData = consts.buttonStyles[action];
+        buttons.push(button(info.name, action, info.light, info.dark));
+    });
 
     // Return DOM elements
     return (
@@ -119,8 +134,7 @@ export class Controller extends React.Component<
                       {playerColor.name}
                   </button>
                 </div>
-                {button('Attack', Button.Attack, '#E53935', '#EF5350')}
-                {button('Pull', Button.Pull, '#039BE5', '#29B6F6')}
+                {buttons}
               </div>
             </div>
           </div>
@@ -135,4 +149,5 @@ interface ControllerState {}
 interface ControllerProbs {
   client: ControllerClient;
   playerColor: ColorData;
+  enabledGameActions: Set<Button>;
 }
