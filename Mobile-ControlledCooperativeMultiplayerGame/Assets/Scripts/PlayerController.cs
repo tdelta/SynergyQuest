@@ -14,7 +14,7 @@ public enum PlayerState{
     falling,
 }
 
-public class PlayerController : EntityController
+public class PlayerController : EntityController, Throwable
 {
     [SerializeField] private GameObject lifeGauge;
     [SerializeField] private float speed = 3.0f; // units per second
@@ -60,11 +60,18 @@ public class PlayerController : EntityController
     private float _horizontal;
     
     private Pushable _pushableToPull;
+    private Item _item;
+
+    /**
+     * If the item can be thrown, safe reference to instantiated item
+     */
+    private Throwable _throwableItemInstance;
     
     /**
      *Modeling the current action of the player
      */
     private PlayerState _playerState;
+
     /**
      * Reference to the other player during carrying
      */
@@ -147,24 +154,34 @@ public class PlayerController : EntityController
         // Check whether the player released the pull key
         if (!_input.GetButton(Button.Pull) && _playerState == PlayerState.pulling)
             ReleasePull();
+        // Check whether the player released the item key
+        else if (!_input.GetButton(Button.Item) && _playerState == PlayerState.carrying && !CarriesSomeone())
+            ThrowThrowable(_throwableItemInstance, new Vector2(_input.GetHorizontal(), _input.GetVertical()));
         // Check whether the player released the carry key
-        else if (!_input.GetButton(Button.Carry) && _playerState == PlayerState.carrying)
-            ThrowPlayer(new Vector2(_input.GetHorizontal(), _input.GetVertical()));
+        else if (!_input.GetButton(Button.Carry) && _playerState == PlayerState.carrying && CarriesSomeone())
+            ThrowThrowable(_otherPlayer, new Vector2(_input.GetHorizontal(), _input.GetVertical()));
 
         // Attacking
-        if (_input.GetButtonDown(Button.Attack) && _playerState != PlayerState.pulling && 
-        _playerState != PlayerState.carrying && _playerState != PlayerState.carried) {
+        if (_input.GetButtonDown(Button.Attack) && (_playerState == PlayerState.walking || _playerState == PlayerState.attacking)) {
             _playerState = PlayerState.attacking;
             Attack();
-        }   
-        // Pulling / Pushing
-        else if (_input.GetButtonDown(Button.Pull) && _playerState == PlayerState.walking &&
-        GetNearPushable(out var pushable))
-            EnablePulling(pushable);
-        // Carrying
-        else if (_input.GetButtonDown(Button.Carry) && _playerState == PlayerState.walking &&
-        GetNearPlayer(out var otherPlayer))
-                PickUpPlayer(otherPlayer);
+        }
+        else if (_playerState == PlayerState.walking)
+        {
+            // Pulling / Pushing
+            if (_input.GetButtonDown(Button.Pull) && GetNearPushable(out var pushable))
+                EnablePulling(pushable);
+            // Item usage
+            else if (_input.GetButtonDown(Button.Item) && _item && _item.Ready() && 
+            Instantiate(_item, new Vector2(Rigidbody2D.position.x, _renderer.bounds.max.y), Quaternion.identity) is Throwable throwableItem)
+                PickUpThrowable(_throwableItemInstance = throwableItem);
+            // Carrying
+            else if (_input.GetButtonDown(Button.Carry) && GetNearPlayer(out _otherPlayer)) {
+                _otherPlayer.SetCarry(this);
+                PickUpThrowable(_otherPlayer);
+            }
+
+        }
     }
 
     private void OnDestroy()
@@ -301,10 +318,10 @@ public class PlayerController : EntityController
     {
         // if the player carries another player, release
         if (CarriesSomeone())
-            ThrowPlayer(Vector2.zero);
+            ThrowThrowable(_otherPlayer, Vector2.zero);
         // if the player is carried by another player, release 
         else if (_otherPlayer?.CarriesSomeone() ?? false) {
-            _otherPlayer.ThrowPlayer(Vector2.zero);
+            _otherPlayer.ThrowThrowable(this, Vector2.zero);
             Animator.SetBool(CarriedState, false);
             _playerState = PlayerState.walking;
         }
@@ -474,15 +491,22 @@ public class PlayerController : EntityController
      */
     public bool CarriesSomeone()
     {
-        return gameObject.GetComponent("HingeJoint2D");
+        return gameObject.GetComponent("HingeJoint2D") != null && _otherPlayer != null;
+    }
+
+    /**
+     * When a player is being carried he needs a reference to the carrying player
+     */
+    public void SetCarry(PlayerController otherPlayer)
+    {
+        _otherPlayer = otherPlayer;
     }
 
     /**
      * Call this method to pickup another player
      */
-    void PickUpPlayer(PlayerController otherPlayer) 
+    public void PickUpThrowable(Throwable throwable) 
     {
-        _otherPlayer = otherPlayer;
         // glue to players together
         HingeJoint2D joint = gameObject.AddComponent<HingeJoint2D>();
         // Stops objects from continuing to collide and creating more joints
@@ -490,7 +514,7 @@ public class PlayerController : EntityController
         joint.enabled = false;
 
         var ontop = new Vector2(Rigidbody2D.position.x, _renderer.bounds.max.y);
-        StartCoroutine(_otherPlayer.PickUpCoroutine(ontop, joint, _collider, this));
+        StartCoroutine(throwable.PickUpCoroutine(ontop, joint, _collider));
         _playerState = PlayerState.carrying;
         Animator.SetBool(CarryingState, true);
     }
@@ -498,22 +522,23 @@ public class PlayerController : EntityController
     /**
      * Call this method to throw the carried player into direction (or drop if direction is zero vector)
      */
-    void ThrowPlayer(Vector2 direction)
+    public void ThrowThrowable(Throwable throwable, Vector2 direction)
     {
         _playerState = PlayerState.walking;
         Animator.SetBool(CarryingState, false);
 
         Destroy(gameObject.GetComponent("HingeJoint2D"));
-        StartCoroutine(_otherPlayer.ThrowCoroutine(direction, _collider));
+        StartCoroutine(throwable.ThrowCoroutine(direction, _collider));
+
+        // if we throw a player, remove reference, if we throw an item it doesn't matter
         _otherPlayer = null;
     }
 
     /**
      * This coroutine is called on the player that is being carried
      */
-    public IEnumerator PickUpCoroutine(Vector2 ontop, HingeJoint2D joint, BoxCollider2D collider, PlayerController other)
+    public IEnumerator PickUpCoroutine(Vector2 ontop, HingeJoint2D joint, BoxCollider2D collider)
     {
-        _otherPlayer = other;
         joint.connectedBody = Rigidbody2D;
         _playerState = PlayerState.carried;
 
@@ -599,5 +624,12 @@ public class PlayerController : EntityController
         
         // Kill the player
         ChangeHealth(-_healthPoints, false);
+    }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.CompareTag("Collectible")) {
+            _item = other.gameObject.GetComponent<Collectible>().Collect();
+        }
     }
 }
