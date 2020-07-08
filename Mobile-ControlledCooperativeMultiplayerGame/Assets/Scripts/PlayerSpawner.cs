@@ -1,4 +1,6 @@
-﻿using Cinemachine;
+﻿using System;
+using System.Linq;
+using Cinemachine;
 using UnityEngine;
 
 /**
@@ -35,7 +37,17 @@ public class PlayerSpawner : MonoBehaviour
      * lobby which assigns colors. Here we store the next color to assign to a new controller.
      */
     private PlayerColor _nextPlayerColor = PlayerColor.Red;
-    
+
+    private void Awake()
+    {
+        // If we are in debug mode, and no players have been added manually to be managed,
+        // we retrieve the preexisting player instances in the scene automatically
+        if (DebugSettings.DebugMode && !managedPreexistingPlayers.Any())
+        {
+            managedPreexistingPlayers = FindObjectsOfType<PlayerController>();
+        }
+    }
+
     // Start is called before the first frame update
     void Start()
     {
