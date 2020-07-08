@@ -404,13 +404,14 @@ public class PlayerController : EntityController, Throwable
     {
         Animator.SetTrigger(AttackTrigger);
         fightingSounds.PlayOneShot();
-        StartCoroutine(AttackCoroutine());
     }
 
-    private IEnumerator AttackCoroutine()
+    /**
+     * Called by attack animations, when they are finished
+     */
+    private void OnAttackFinished()
     {
-        yield return new WaitForSeconds(0.3f);
-        // After attack aninmation is done (0.3 seconds), the playerstate changes back to walking
+        // After attack aninmation is done the playerstate changes back to walking
         _playerState = PlayerState.walking;
     }
 
