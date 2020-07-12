@@ -40,11 +40,8 @@ public class Chasm : MonoBehaviour
         // We now want to compute, whether the player is standing on the chasm, which means they should fall
         if (other.CompareTag("Player"))
         {
-            // Get a handle on the player
-            var playerController = other.GetComponent<PlayerController>();
-
             // Compute some geometric properties of the player, e.g. area of its collider and the shape of the collider
-            var playerBounds = other.bounds;
+            var playerBounds = other.GetComponent<BoxCollider2D>().bounds;
             var playerArea = playerBounds.size.x * playerBounds.size.y;
             Shapes.BoundsToPath(playerBounds, _playerShapeBuffer);
 
@@ -80,6 +77,8 @@ public class Chasm : MonoBehaviour
             // If the player is standing on a chasm with more than 50% of their own area, they fall
             if (intersectionArea / playerArea > 0.5)
             {
+                // Get a handle on the player
+                var playerController = other.GetComponent<PlayerController>();
                 playerController.InitiateFall();
             }
         }

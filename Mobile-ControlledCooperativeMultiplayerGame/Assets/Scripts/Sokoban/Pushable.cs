@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 /**
  * A Pushable can either be resting or be moving
@@ -96,10 +97,15 @@ public class Pushable : MonoBehaviour
      * This objects checks for obstacles when moving on these layers:
      */
     private static LayerMask _raycastLayerMask;
-    
+
     // Start is called before the first frame update
     void Start()
     {
+        if (grid == null)
+        {
+            grid = GameObject.Find("Grid").GetComponent<Grid>();
+        }
+        
         _raycastLayerMask  = LayerMask.GetMask("LevelStatic", "Box");
         
         _boxCollider = GetComponent<BoxCollider2D>();
@@ -364,6 +370,22 @@ public class Pushable : MonoBehaviour
         // (See also `OnCollisionStay2D`.)
         _inContactObject = other.gameObject;
         _inContactTimer = inContactTime;
+    }
+    
+    /**
+     * Only called in editor, e.g. when changing a property
+     */
+    private void OnValidate()
+    {
+        // Usually, `Pushable` is used in conjunction with the `Box` behavior which changes sprites in the editor
+        // depending on the color value of the Pushable.
+        // 
+        // Hence, we inform `Box` could a property change in this behavior.
+        var box = GetComponent<Box>();
+        if (box != null)
+        {
+            box.OnValidate();
+        }
     }
 }
 

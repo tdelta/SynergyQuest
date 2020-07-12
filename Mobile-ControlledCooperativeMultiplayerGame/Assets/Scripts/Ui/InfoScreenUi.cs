@@ -45,6 +45,9 @@ public class InfoScreenUi: MonoBehaviour, MenuUi
     public void Init(InfoScreenContent content)
     {
         _content = content;
+        
+        header.SetText(content.headerText);
+        subHeader.SetText(content.subHeaderText);
     }
     
     /**
@@ -56,7 +59,7 @@ public class InfoScreenUi: MonoBehaviour, MenuUi
         if (HasNextPage())
         {
             ++_currentPage;
-            Draw();
+            DrawContent();
         }
 
         else
@@ -73,7 +76,7 @@ public class InfoScreenUi: MonoBehaviour, MenuUi
         if (HasPreviousPage())
         {
             --_currentPage;
-            Draw();
+            DrawContent();
         }
     }
 
@@ -81,7 +84,7 @@ public class InfoScreenUi: MonoBehaviour, MenuUi
      * Dynamically updates the UI to display the contents of the current page.
      * It also adapts the menu buttons (next, back, resume) displayed on remote controllers.
      */
-    void Draw()
+    void DrawContent()
     {
         // Determine, which actions / buttons shall be available
         var nextActionAvailable = HasNextPage();
@@ -122,7 +125,7 @@ public class InfoScreenUi: MonoBehaviour, MenuUi
     public void OnLaunch()
     {
         // Dynamically draw the content as soon as the menu base UI has been loaded
-        Draw();
+        DrawContent();
     }
 
     public void OnClose()

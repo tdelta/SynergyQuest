@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 268351231}
   - component: {fileID: 268351232}
   - component: {fileID: 9283753934280254}
+  - component: {fileID: 2703046263398990827}
   m_Layer: 0
   m_Name: AttackPointRight
   m_TagString: Untagged
@@ -77,6 +78,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8c6b75cce229254f948149bdf91a204, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!50 &2703046263398990827
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 268351230}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 7
 --- !u!1 &645781148
 GameObject:
   m_ObjectHideFlags: 0
@@ -88,6 +110,7 @@ GameObject:
   - component: {fileID: 645781149}
   - component: {fileID: 645781150}
   - component: {fileID: 8933781604585633881}
+  - component: {fileID: 7283954946436885052}
   m_Layer: 0
   m_Name: AttackPointTop
   m_TagString: Untagged
@@ -155,6 +178,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8c6b75cce229254f948149bdf91a204, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!50 &7283954946436885052
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 645781148}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 7
 --- !u!1 &1684417763
 GameObject:
   m_ObjectHideFlags: 0
@@ -166,6 +210,7 @@ GameObject:
   - component: {fileID: 1684417764}
   - component: {fileID: 1684417765}
   - component: {fileID: 6566295534855085481}
+  - component: {fileID: 5395333289344715738}
   m_Layer: 0
   m_Name: AttackPointBottom
   m_TagString: Untagged
@@ -233,6 +278,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8c6b75cce229254f948149bdf91a204, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!50 &5395333289344715738
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1684417763}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 7
 --- !u!1 &1894431301
 GameObject:
   m_ObjectHideFlags: 0
@@ -244,6 +310,7 @@ GameObject:
   - component: {fileID: 1894431302}
   - component: {fileID: 1894431303}
   - component: {fileID: 8053707630260868602}
+  - component: {fileID: 4581795318486904352}
   m_Layer: 0
   m_Name: AttackPointLeft
   m_TagString: Untagged
@@ -310,6 +377,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8c6b75cce229254f948149bdf91a204, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!50 &4581795318486904352
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1894431301}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 7
 --- !u!1 &4270148256400962766
 GameObject:
   m_ObjectHideFlags: 0
@@ -378,7 +466,6 @@ MonoBehaviour:
   hitSounds: {fileID: 2065851212643451053}
   deathSounds: {fileID: 7435980175288186188}
   fallingSounds: {fileID: 2582344011964161507}
-  customOrigin: {fileID: 0}
   localControlsInitColor: 4
   localInputPrefab: {fileID: 1573775178793761210, guid: 6172303992b7e6a2c842047a617fdf1b,
     type: 3}
@@ -951,6 +1038,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 37e72f8d85c3e48ff94a706cf9f4acd0, type: 3}
+--- !u!4 &257590814078524209 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8238955357890096599, guid: 37e72f8d85c3e48ff94a706cf9f4acd0,
+    type: 3}
+  m_PrefabInstance: {fileID: 8198103024944215782}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &7104318054709804874 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1392202608508520876, guid: 37e72f8d85c3e48ff94a706cf9f4acd0,
@@ -966,12 +1059,6 @@ MonoBehaviour:
 --- !u!82 &2315565254847434213 stripped
 AudioSource:
   m_CorrespondingSourceObject: {fileID: 5901695804182231811, guid: 37e72f8d85c3e48ff94a706cf9f4acd0,
-    type: 3}
-  m_PrefabInstance: {fileID: 8198103024944215782}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &257590814078524209 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 8238955357890096599, guid: 37e72f8d85c3e48ff94a706cf9f4acd0,
     type: 3}
   m_PrefabInstance: {fileID: 8198103024944215782}
   m_PrefabAsset: {fileID: 0}
