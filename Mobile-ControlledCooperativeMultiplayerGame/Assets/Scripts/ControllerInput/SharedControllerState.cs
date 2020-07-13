@@ -57,18 +57,21 @@ public class SharedControllerState: BehaviourSingleton<SharedControllerState>
      */
     public void SetGameState(GameState gameState)
     {
-        _gameState = gameState;
-        
-        // Send new game state to all connected controllers
-        ControllerServer.Instance.GetInputs().ForEach( input =>
+        if (gameState != _gameState)
         {
-            // Only send game state, if the controller is connected.
-            // Otherwise, the `OnReconnect` handler will send it.
-            if (input.IsConnected())
+            _gameState = gameState;
+            
+            // Send new game state to all connected controllers
+            ControllerServer.Instance.GetInputs().ForEach( input =>
             {
-                input.SetGameState(_gameState);
-            }
-        });
+                // Only send game state, if the controller is connected.
+                // Otherwise, the `OnReconnect` handler will send it.
+                if (input.IsConnected())
+                {
+                    input.SetGameState(_gameState);
+                }
+            });
+        }
     }
     
     /**

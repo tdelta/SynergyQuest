@@ -53,18 +53,17 @@ public class PlayerController : EntityController, Throwable
      */
     private TintFlashController _tintFlashController;
 
-    /**
-     * Initialize input to local. However, it may be reassigned in the Init method to a remote controller, see
-     * also `ControllerInput`.
-     */
-    private Input _input;
-    public Input Input => _input;
-
     private float _vertical;
     private float _horizontal;
     
     private Pushable _pushableToPull;
-    private Item _item;
+
+    /**
+     * Initialize input to local. However, it may be reassigned in the Init method to a remote controller, see
+     * also `ControllerInput`.
+     */
+    private PlayerData _data;
+    public Input Input => _data.input;
 
     /**
      * If the item can be thrown, safe reference to instantiated item
@@ -105,7 +104,7 @@ public class PlayerController : EntityController, Throwable
     private static readonly int CarriedState  = Animator.StringToHash("Carried");
     private static readonly int FallTrigger = Animator.StringToHash("Fall");
 
-    public PlayerColor Color => _input.GetColor();
+    public PlayerColor Color => Input.GetColor();
 
     /**
      * Delegate function is filled by the script that does the respawning
@@ -119,9 +118,9 @@ public class PlayerController : EntityController, Throwable
      *
      * If this method is not called before the first frame, local input will be used instead.
      */
-    public void Init(Input input)
+    public void Init(PlayerData data)
     {
-        _input = input;
+        _data = data;
     }
 
     // Start is called before the first frame update
@@ -129,16 +128,18 @@ public class PlayerController : EntityController, Throwable
     {
         base.Start();
         
-        // If `Init` has not been called and no remote input has been assigned, we assign a local input controller
-        // instead
-        if (_input == null)
+        // If this player instance has not been initialized by calling `Init`, it has also not been registered at the
+        // `PlayerManager`. This usually happens, if a player instance is placed manually and has not been created
+        // using a spawner.
+        // We fix this issue, by registering at the `PlayerManager` now, which will also call `Init` for us.
+        if (_data == null)
         {
             var localInput = Instantiate(localInputPrefab, this.transform);
             localInput.SetColor(localControlsInitColor);
 
-            _input = localInput;
+            PlayerManager.Instance.RegisterExistingInstance(this, localInput);
         }
-        _input.OnMenuActionTriggered += OnMenuActionTriggered;
+        Input.OnMenuActionTriggered += OnMenuActionTriggered;
         
         _collider = GetComponent<BoxCollider2D>();
         _tintFlashController = GetComponent<TintFlashController>();
@@ -157,31 +158,31 @@ public class PlayerController : EntityController, Throwable
     {
         base.Update();
         // Check whether the player released the pull key
-        if (!_input.GetButton(Button.Pull) && _playerState == PlayerState.pulling)
+        if (!Input.GetButton(Button.Pull) && _playerState == PlayerState.pulling)
             ReleasePull();
         // Check whether the player released the item key
-        else if (!_input.GetButton(Button.Item) && _playerState == PlayerState.carrying && !CarriesSomeone())
-            ThrowThrowable(_throwableItemInstance, new Vector2(_input.GetHorizontal(), _input.GetVertical()));
+        else if (!Input.GetButton(Button.Item) && _playerState == PlayerState.carrying && !CarriesSomeone())
+            ThrowThrowable(_throwableItemInstance, new Vector2(Input.GetHorizontal(), Input.GetVertical()));
         // Check whether the player released the carry key
-        else if (!_input.GetButton(Button.Carry) && _playerState == PlayerState.carrying && CarriesSomeone())
-            ThrowThrowable(_otherPlayer, new Vector2(_input.GetHorizontal(), _input.GetVertical()));
+        else if (!Input.GetButton(Button.Carry) && _playerState == PlayerState.carrying && CarriesSomeone())
+            ThrowThrowable(_otherPlayer, new Vector2(Input.GetHorizontal(), Input.GetVertical()));
 
         // Attacking
-        if (_input.GetButtonDown(Button.Attack) && (_playerState == PlayerState.walking || _playerState == PlayerState.attacking)) {
+        if (Input.GetButtonDown(Button.Attack) && (_playerState == PlayerState.walking || _playerState == PlayerState.attacking)) {
             _playerState = PlayerState.attacking;
             Attack();
         }
         else if (_playerState == PlayerState.walking)
         {
             // Pulling / Pushing
-            if (_input.GetButtonDown(Button.Pull) && GetNearPushable(out var pushable))
+            if (Input.GetButtonDown(Button.Pull) && GetNearPushable(out var pushable))
                 EnablePulling(pushable);
             // Item usage
-            else if (_input.GetButtonDown(Button.Item) && _item && _item.Ready() && 
-            Instantiate(_item, new Vector2(Rigidbody2D.position.x, _renderer.bounds.max.y), Quaternion.identity) is Throwable throwableItem)
+            else if (Input.GetButtonDown(Button.Item) && _data.item && _data.item.Ready() && 
+            Instantiate(_data.item, new Vector2(Rigidbody2D.position.x, _renderer.bounds.max.y), Quaternion.identity) is Throwable throwableItem)
                 PickUpThrowable(_throwableItemInstance = throwableItem);
             // Carrying
-            else if (_input.GetButtonDown(Button.Carry) && GetNearPlayer(out _otherPlayer)) {
+            else if (Input.GetButtonDown(Button.Carry) && GetNearPlayer(out _otherPlayer)) {
                 _otherPlayer.SetCarry(this);
                 PickUpThrowable(_otherPlayer);
             }
@@ -191,10 +192,10 @@ public class PlayerController : EntityController, Throwable
 
     private void OnDestroy()
     {
-        if (_input != null)
+        if (Input != null)
         {
             // Unregister callbacks when destroyed
-            _input.OnMenuActionTriggered -= OnMenuActionTriggered;
+            Input.OnMenuActionTriggered -= OnMenuActionTriggered;
         }
     }
 
@@ -357,7 +358,7 @@ public class PlayerController : EntityController, Throwable
             {
                 hitSounds.PlayOneShot();
             }
-            _input.PlayVibrationFeedback(new List<float>
+            Input.PlayVibrationFeedback(new List<float>
             {
                 200
             });
@@ -453,8 +454,8 @@ public class PlayerController : EntityController, Throwable
      */
     private void Move(bool enableVertical, bool enableHorizontal)
     {
-        _vertical = (enableVertical) ? _input.GetVertical() : 0;
-        _horizontal = (enableHorizontal) ? _input.GetHorizontal() : 0;
+        _vertical = (enableVertical) ? Input.GetVertical() : 0;
+        _horizontal = (enableHorizontal) ? Input.GetHorizontal() : 0;
 
         // If we are pulling a box and trying to move in the pulling direction, we instruct the box to pull
         if (_playerState == PlayerState.pulling && DoesMoveInPullDirection())
@@ -648,7 +649,18 @@ public class PlayerController : EntityController, Throwable
     public void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.CompareTag("Collectible")) {
-            _item = other.gameObject.GetComponent<Collectible>().Collect();
+            _data.item = other.gameObject.GetComponent<Collectible>().Collect();
+        }
+    }
+
+    public void ClearRespawnHandlers()
+    {
+        if (OnRespawn != null)
+        {
+            foreach (var handler in OnRespawn.GetInvocationList())
+            {
+                OnRespawn -= (OnRespawnAction) handler;
+            }
         }
     }
 }

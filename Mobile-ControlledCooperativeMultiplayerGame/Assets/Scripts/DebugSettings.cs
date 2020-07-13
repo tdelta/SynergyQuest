@@ -1,4 +1,19 @@
-public static class DebugSettings
+using System;
+using UnityEngine;
+
+[Serializable]
+public class LocalDebugPlayerConfig
+{
+    public PlayerColor color;
+    /**
+     * If players with local controls are spawned for debugging, which local input controls shall be used?
+     * When spawning multiple locally controlled players, we will cycle through this list.
+     */
+    public LocalInput inputPrefab;
+}
+
+[CreateAssetMenu(fileName = "DebugSettings", menuName = "ScriptableObjects/DebugSettings")]
+public class DebugSettings: ScriptableObjectSingleton<DebugSettings>
 {
     /**
      * Indicates whether the game shall be run in debug mode.
@@ -9,11 +24,11 @@ public static class DebugSettings
      * See also `PlayerSpawner`
      */
     #if UNITY_EDITOR
-        private static bool _debugMode = true;
+        private bool _debugMode = true;
     #else
-        private static bool _debugMode = false;
+        private bool _debugMode = false;
     #endif
-    public static bool DebugMode => _debugMode;
+    public bool DebugMode => _debugMode;
 
     /**
      * Number of players and their color every spawner shall spawn with local controls.
@@ -21,6 +36,12 @@ public static class DebugSettings
      *
      * See also `PlayerSpawner`
      */
-    private static PlayerColor[] _localDebugPlayers = { };// {PlayerColor.Blue};
-    public static PlayerColor[] LocalDebugPlayers => _localDebugPlayers;
+    [SerializeField] private LocalDebugPlayerConfig[] _localDebugPlayers = { };
+    public LocalDebugPlayerConfig[] LocalDebugPlayers => _localDebugPlayers;
+
+    [NonSerialized] // <- This attribute is needed, so that changes to this variable are not saved to the resource
+    public bool DebugPlayersWereSpawned = false;
+
+    [SerializeField] private int _defaultDungeonPlayerNum = 2;
+    public int DefaultDungeonPlayerNum => _defaultDungeonPlayerNum;
 }

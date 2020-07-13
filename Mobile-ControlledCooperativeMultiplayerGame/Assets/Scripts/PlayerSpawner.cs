@@ -3,24 +3,8 @@ using System.Linq;
 using Cinemachine;
 using UnityEngine;
 
-/**
- * Spawns character objects for every connected controller at its current position.
- *
- * If debug mode is set to true, a character will also be spawned for every newly connected controller
- */
-public class PlayerSpawner : MonoBehaviour
+public abstract class PlayerSpawner : MonoBehaviour
 {
-    /**
-     * Character prefab object spawned for every controller. Must have a `PlayerController` component
-     */
-    [SerializeField] private GameObject playerPrefab;
-
-    /**
-     * If players with local controls are spawned for debugging, which local input controls shall be used?
-     * When spawning multiple locally controlled players, we will cycle through this list.
-     */
-    [SerializeField] private LocalInput[] localInputPrefabs;
-
     /**
      * If you want the new players to be tracked by the camera, assign the camera target group here
      */
@@ -38,65 +22,123 @@ public class PlayerSpawner : MonoBehaviour
      */
     private PlayerColor _nextPlayerColor = PlayerColor.Red;
 
+    protected abstract bool IsSpawnerActive();
+
     private void Awake()
     {
-        // If we are in debug mode, and no players have been added manually to be managed,
-        // we retrieve the preexisting player instances in the scene automatically
-        if (DebugSettings.DebugMode && !managedPreexistingPlayers.Any())
+        if (ReferenceEquals(targetGroup, null))
         {
-            managedPreexistingPlayers = FindObjectsOfType<PlayerController>();
+            targetGroup = FindObjectOfType<CinemachineTargetGroup>();
         }
+    }
+
+    private void OnEnable()
+    {
+        // Register callback so that we get informed about new controllers
+        ControllerServer.Instance.OnNewController += OnNewController;
+    }
+    
+    private void OnDisable()
+    {
+        ControllerServer.Instance.OnNewController -= OnNewController;
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        // Ensure game is in started state
-        // (NOTE: This a weird place to set the game state, however, it makes debugging easier. Spawners can only
-        //  be found in game scenes and we want controllers to register the game as started when running those scenes
-        //  in the editor)
-        SharedControllerState.Instance.SetGameState(GameState.Started);
-        
-        // Register callback so that we get informed about new controllers
-        ControllerServer.Instance.OnNewController += OnNewController;
-        
-        // Spawn every already connected player
-        var inputs = ControllerServer.Instance.GetInputs();
-        foreach (var input in inputs)
+        if (IsSpawnerActive())
         {
-            SpawnPlayer(input);
-        }
-        
-        // Spawn locally controlled players when this is enabled in the debug settings
-        {
-            for (var i = 0; i < DebugSettings.LocalDebugPlayers.Length; ++i)
+            // Ensure game is in started state
+            // (NOTE: This a weird place to set the game state, however, it makes debugging easier. Spawners can only
+            //  be found in game scenes and we want controllers to register the game as started when running those scenes
+            //  in the editor)
+            SharedControllerState.Instance.SetGameState(GameState.Started);
+
+            Spawn();
+            
+            // If we are in debug mode, and no players have been added manually to be managed,
+            // we retrieve the preexisting player instances in the scene automatically
+            if (DebugSettings.Instance.DebugMode && !managedPreexistingPlayers.Any())
             {
-                var layout = localInputPrefabs[i % 2];
-                var input = Instantiate(layout);
-                input.SetColor(DebugSettings.LocalDebugPlayers[i]);
-                
-                var player = SpawnPlayer(input);
-                input.transform.SetParent(player.gameObject.transform);
+                managedPreexistingPlayers = FindObjectsOfType<PlayerController>();
+            }
+
+            // Register local player instances for respawning
+            foreach (var player in managedPreexistingPlayers)
+            {
+                player.OnRespawn += Respawn;
             }
         }
-        
-        // Register local player instances for respawning
-        foreach (var player in managedPreexistingPlayers)
+    }
+
+    public void Spawn()
+    {
+        PlayerManager.Instance
+            .InstantiateExistingPlayers(this.transform.position)
+            .ForEach(SpawnPlayer);
+
+        SpawnConnectedInputs();
+        SpawnDebugPlayers();
+    }
+
+    private void SpawnConnectedInputs()
+    {
+        // Spawn every already connected player, which has not yet been spawned
+        var inputs = ControllerServer.Instance.GetInputs().Where(PlayerManager.Instance.IsInputAssignedToPlayer);
+            
+        foreach (var input in inputs)
         {
-            player.OnRespawn += Respawn;
+            var player = PlayerManager.Instance.InstantiateNewPlayer(input);
+            SpawnPlayer(player);
         }
+    }
+
+    private void SpawnDebugPlayers()
+    {
+        // Spawn locally controlled players when this is enabled in the debug settings
+        if (!DebugSettings.Instance.DebugPlayersWereSpawned)
+        {
+            foreach (var playerConfig in DebugSettings.Instance.LocalDebugPlayers)
+            {
+                var input = Instantiate(playerConfig.inputPrefab);
+                input.SetColor(playerConfig.color);
+
+                var player = PlayerManager.Instance.InstantiateNewPlayer(input, this.transform.position);
+                // ReSharper disable once Unity.InstantiateWithoutParent
+                input.transform.SetParent(player.gameObject.transform);
+                
+                SpawnPlayer(player);
+            }
+
+            DebugSettings.Instance.DebugPlayersWereSpawned = true;
+        }
+    }
+    
+    /**
+     * Creates a character / player object at the current position and initializes it with the given controller
+     */
+    private void SpawnPlayer(PlayerController player)
+    {
+        if (targetGroup != null)
+        {
+            targetGroup.AddMember(player.transform, 1, 1);
+        }
+
+        player.ClearRespawnHandlers();
+        player.OnRespawn += Respawn;
     }
 
     void OnNewController(ControllerInput input)
     {
         // Only let new controllers join if we are in debug mode.
         // Otherwise they must join via lobby.
-        if (DebugSettings.DebugMode)
+        if (DebugSettings.Instance.DebugMode && IsSpawnerActive())
         {
             input.SetColor(_nextPlayerColor);
             _nextPlayerColor = _nextPlayerColor.NextColor();
-            
-            SpawnPlayer(input);
+
+            var player = PlayerManager.Instance.InstantiateNewPlayer(input, this.transform.position);
+            SpawnPlayer(player);
         }
     }
 
@@ -109,23 +151,8 @@ public class PlayerSpawner : MonoBehaviour
         player.Reset();
     }
 
-    /**
-     * Creates a character / player object at the current position and initializes it with the given controller
-     */
-    private PlayerController SpawnPlayer(Input input)
+    private void OnDrawGizmos()
     {
-        var instance = Instantiate(playerPrefab);
-        instance.transform.position = this.transform.position;
-
-        if (targetGroup != null)
-        {
-            targetGroup.AddMember(instance.transform, 1, 1);
-        }
-
-        var controller = instance.GetComponent<PlayerController>();
-        controller.OnRespawn += Respawn;
-        controller.Init(input);
-
-        return controller;
+        Gizmos.DrawIcon(transform.position, "spawnIcon.png", true);
     }
 }

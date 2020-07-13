@@ -17,6 +17,10 @@ public class SceneController : BehaviourSingleton<SceneController>
     // The LobbyMenu scene must be passed a list of IP addresses
     private List<string> _loadMenuIPs;
 
+    public delegate void SceneLoadedCallback();
+    private SceneLoadedCallback _onSceneLoadedCallback;
+    private TransitionType _transitionType = TransitionType.None;
+
     protected override void OnInstantiate()
     {
         // call the OnSceneLoaded method of this object, as soon as a level is loaded
@@ -25,12 +29,12 @@ public class SceneController : BehaviourSingleton<SceneController>
 
     public void LoadNetworkSetup()
     {
-        SceneManager.LoadScene("NetworkSetup");
+        LoadSceneByName("NetworkSetup");
     }
 
     public void LoadLobbyMenu(List<string> ips)
     {
-        SceneManager.LoadScene("LobbyMenu");
+        LoadSceneByName("LobbyMenu");
 
         // cache the IPs, so they can be set by OnSceneLoaded as soon as the LobbyMenu scene has been loaded.
         _loadMenuIPs = ips;
@@ -38,12 +42,12 @@ public class SceneController : BehaviourSingleton<SceneController>
 
     public void LoadTestRoom()
     {
-        SceneManager.LoadScene("TestRoom");
+        LoadSceneByName("TestRoom");
     }
 
     public void LoadEndOfGame()
     {
-        SceneManager.LoadScene("EndOfGame");
+        LoadSceneByName("EndOfGame");
     }
 
     public void QuitGame()
@@ -58,9 +62,14 @@ public class SceneController : BehaviourSingleton<SceneController>
     /**
      * Loads any scene by its name. Note however that this bypasses passing any required parameters to scenes.
      */
-    public void LoadSceneByName(string sceneName)
+    public void LoadSceneByName(string sceneName, TransitionType transitionType = TransitionType.None, SceneLoadedCallback callback = null)
     {
-        SceneManager.LoadScene(sceneName);
+        _onSceneLoadedCallback = callback;
+        _transitionType = transitionType;
+        TransitionController.Instance.TransitionOutOfScene(transitionType, () =>
+        {
+            SceneManager.LoadScene(sceneName);
+        });
     }
     
     private void OnSceneLoaded(Scene scene, LoadSceneMode _)
@@ -70,5 +79,9 @@ public class SceneController : BehaviourSingleton<SceneController>
             LobbyMenuUi lobbyMenu = GameObject.Find("LobbyMenuUi").GetComponent<LobbyMenuUi>();
             lobbyMenu.IPs = this._loadMenuIPs;
         }
+        
+        TransitionController.Instance.TransitionIntoScene(_transitionType, () => { });
+        
+        _onSceneLoadedCallback?.Invoke();
     }
 }
