@@ -57,6 +57,7 @@ public class SharedControllerState: BehaviourSingleton<SharedControllerState>
      */
     public void SetGameState(GameState gameState)
     {
+        // Only send messages about updated state, if it actually changed
         if (gameState != _gameState)
         {
             _gameState = gameState;

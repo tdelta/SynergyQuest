@@ -32,7 +32,7 @@ public class CoinController : MonoBehaviour
     {
         Collider2D other = collision.collider;
         if (other.gameObject.layer == LayerMask.NameToLayer("Player")) {
-            other.GetComponent<PlayerController>().increaseGoldCounter();
+            other.GetComponent<PlayerController>().IncreaseGoldCounter();
             source.PlayOneShot(coinCollect, 1.0f);
             this.GetComponent<SpriteRenderer>().enabled = false;
             this.GetComponent<BoxCollider2D>().enabled = false;

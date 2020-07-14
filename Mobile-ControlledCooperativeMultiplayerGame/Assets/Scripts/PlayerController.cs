@@ -43,6 +43,7 @@ public class PlayerController : EntityController, Throwable
     
     private int _healthPoints;
 
+    // FIXME: Integrate gold counter into dataset which is persistent across scenes (`PlayerData`)
     private int _goldCounter;
 
     private BoxCollider2D _collider;
@@ -59,8 +60,7 @@ public class PlayerController : EntityController, Throwable
     private Pushable _pushableToPull;
 
     /**
-     * Initialize input to local. However, it may be reassigned in the Init method to a remote controller, see
-     * also `ControllerInput`.
+     * All player properties which shall persist across scenes.
      */
     private PlayerData _data;
     public Input Input => _data.input;
@@ -137,7 +137,7 @@ public class PlayerController : EntityController, Throwable
             var localInput = Instantiate(localInputPrefab, this.transform);
             localInput.SetColor(localControlsInitColor);
 
-            PlayerManager.Instance.RegisterExistingInstance(this, localInput);
+            PlayerDataKeeper.Instance.RegisterExistingInstance(this, localInput);
         }
         Input.OnMenuActionTriggered += OnMenuActionTriggered;
         
@@ -641,11 +641,12 @@ public class PlayerController : EntityController, Throwable
     }
 
 
-    public void increaseGoldCounter()
+    public void IncreaseGoldCounter()
     {
         _goldCounter++;
         DisplayCoinGauge();
     }
+    
     public void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.CompareTag("Collectible")) {
@@ -653,6 +654,13 @@ public class PlayerController : EntityController, Throwable
         }
     }
 
+    /**
+     * If the player dies, they emit the OnRespawn event.
+     * This function removes all subscribers from that event. Usually there is only one subscriber, which is the
+     * (Re-)Spawner.
+     * 
+     * Hence, this method may be used to reset the respawning point.
+     */
     public void ClearRespawnHandlers()
     {
         if (OnRespawn != null)

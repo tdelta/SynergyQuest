@@ -17,8 +17,14 @@ public class SceneController : BehaviourSingleton<SceneController>
     // The LobbyMenu scene must be passed a list of IP addresses
     private List<string> _loadMenuIPs;
 
+    /**
+     * Callback that will be invoked when a new scene has finished loading.
+     */
     public delegate void SceneLoadedCallback();
     private SceneLoadedCallback _onSceneLoadedCallback;
+    /**
+     * Which transition animation to play when changing scenes.
+     */
     private TransitionType _transitionType = TransitionType.None;
 
     protected override void OnInstantiate()
@@ -61,13 +67,20 @@ public class SceneController : BehaviourSingleton<SceneController>
 
     /**
      * Loads any scene by its name. Note however that this bypasses passing any required parameters to scenes.
+     *
+     * @param sceneName      name of the scene to load
+     * @param transitionType the animation to play when changing scenes (optional)
+     * @param callback       callback to invoke, when the new scene has finished loading (optional)
      */
     public void LoadSceneByName(string sceneName, TransitionType transitionType = TransitionType.None, SceneLoadedCallback callback = null)
     {
         _onSceneLoadedCallback = callback;
         _transitionType = transitionType;
+        
+        // Play animation to transition out of the current scene
         TransitionController.Instance.TransitionOutOfScene(transitionType, () =>
         {
+            // When the animation completed, load the new scene
             SceneManager.LoadScene(sceneName);
         });
     }
@@ -80,8 +93,10 @@ public class SceneController : BehaviourSingleton<SceneController>
             lobbyMenu.IPs = this._loadMenuIPs;
         }
         
+        // Finish playing the transition animation
         TransitionController.Instance.TransitionIntoScene(_transitionType, () => { });
         
+        // If a callback has been set, invoke it now, since the new scene has finished loading
         _onSceneLoadedCallback?.Invoke();
     }
 }

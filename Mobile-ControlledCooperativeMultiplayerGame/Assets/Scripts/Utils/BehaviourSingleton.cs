@@ -14,7 +14,10 @@ public abstract class BehaviourSingleton<T> : MonoBehaviour
     // Lazyily create an instance when it is first requested
     private static readonly Lazy<GameObject> _instance = new Lazy<GameObject>(() =>
     {
+        // To easier differentiate the created game object from other singletons in the editor when
+        // running the game, we give it the name of its behavior type as game object name:
         var name = typeof(T).ToString();
+        
         var instance = new GameObject(name);
         var component = instance.AddComponent<T>();
         
