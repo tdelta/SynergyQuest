@@ -1,6 +1,7 @@
-using System.Collections.Generic;
-using UnityEngine;
+using System;
 
+
+[Obsolete("Use `DungeonLayout` script instead")]
 public class DungeonController : BehaviourSingleton<DungeonController>
 {
 

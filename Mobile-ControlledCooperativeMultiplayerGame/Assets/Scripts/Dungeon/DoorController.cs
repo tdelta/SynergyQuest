@@ -2,6 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections;
 
+[Obsolete("Use `Door` script instead")]
 public class DoorController: MonoBehaviour 
 {
     [SerializeField] private Sprite openedDoor;
