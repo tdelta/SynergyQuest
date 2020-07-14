@@ -3,53 +3,53 @@
   "rooms": {
     "D1": {
       "roomConnections": {
-        "1": {
+        "up": {
           "targetRoom": "D2",
-          "targetDoor": 0
+          "targetDoor": "down"
         }
       }
     },
     "D2": {
       "roomConnections": {
-        "0": {
+        "down": {
           "targetRoom": "D1",
-          "targetDoor": 1
+          "targetDoor": "up"
         },
-        "1": {
+        "up": {
           "targetRoom": "D3",
-          "targetDoor": 0
+          "targetDoor": "down"
         }
       }
     },
     "D3": {
       "roomConnections": {
-        "0": {
+        "down": {
           "targetRoom": "D2",
-          "targetDoor": 1
+          "targetDoor": "up"
         },
-        "2": {
+        "left": {
           "targetRoom": "D4",
-          "targetDoor": 3
+          "targetDoor": "right"
         },
-        "3": {
+        "right": {
           "targetRoom": "D5",
-          "targetDoor": 2
+          "targetDoor": "left"
         }
       }
     },
     "D4": {
       "roomConnections": {
-        "3": {
+        "right": {
           "targetRoom": "D3",
-          "targetDoor": 2
+          "targetDoor": "left"
         }
       }
     },
     "D5": {
       "roomConnections": {
-        "2": {
+        "left": {
           "targetRoom": "D3",
-          "targetDoor": 3
+          "targetDoor": "right"
         }
       }
     }

@@ -21,7 +21,7 @@ public class Door : MonoBehaviour
     /**
      * Identifier of this door. Should be the same as the one set in the layout file of the dungeon.
      */
-    [SerializeField] private int doorId;
+    [SerializeField] private string doorId;
     /**
      * Which transition animation to play when using the door to switch scenes
      */
@@ -43,7 +43,7 @@ public class Door : MonoBehaviour
      */
     private bool _open;
 
-    public int DoorId => doorId;
+    public string DoorId => doorId;
     public TransitionType TransitionType => transitionType;
 
     public void Awake()

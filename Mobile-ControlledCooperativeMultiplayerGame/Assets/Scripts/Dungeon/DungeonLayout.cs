@@ -63,14 +63,14 @@ public class DungeonLayout : Singleton<DungeonLayout>
      * Which door of the room has been used by players to enter it.
      * Players will be spawned at its spawner object, see also the `DoorSpawner" behavior.
      */
-    private int _spawnerDoorId = InvalidDoorId;
+    private string _spawnerDoorId = InvalidDoorId;
 
     /**
      * Whether a dungeon layout has been loaded
      */
     public bool IsLoaded => _currentRoom != null;
-    public int SpawnerDoorId => _spawnerDoorId;
-    public const int InvalidDoorId = -1;
+    public string SpawnerDoorId => _spawnerDoorId;
+    public const string InvalidDoorId = null;
     
     /**
      * Whether a door has been used to enter the current room.
@@ -155,7 +155,7 @@ public class DungeonLayout : Singleton<DungeonLayout>
      *                       If set to `InvalidDoorId`, a default spawner will be used instead
      *                       (see also `RoomDefaultPlayerSpawner`). Optional parameter.
      */
-    private void LoadRoomByName(string roomName, TransitionType transitionType = TransitionType.None, int targetDoor = InvalidDoorId)
+    private void LoadRoomByName(string roomName, TransitionType transitionType = TransitionType.None, string targetDoor = InvalidDoorId)
     {
         SceneController.Instance.LoadSceneByName(
             SceneNameFromRoomName(roomName),
@@ -212,7 +212,7 @@ public class DungeonLayout : Singleton<DungeonLayout>
 class DoorData
 {
     public string targetRoom;
-    public int targetDoor;
+    public string targetDoor;
 }
 
 /**
@@ -221,7 +221,7 @@ class DoorData
  */
 class DungeonRoomData
 {
-    public Dictionary<int, DoorData> roomConnections;
+    public Dictionary<string, DoorData> roomConnections;
 }
 
 /**

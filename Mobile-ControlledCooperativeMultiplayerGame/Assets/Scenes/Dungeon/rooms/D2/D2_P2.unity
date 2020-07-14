@@ -142,7 +142,7 @@ PrefabInstance:
     - target: {fileID: 8451649553765607551, guid: 896795d39b1254ea596a70557eeff80c,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.00000035762787
+      value: -0.00000023841858
       objectReference: {fileID: 0}
     - target: {fileID: 8451649553765607551, guid: 896795d39b1254ea596a70557eeff80c,
         type: 3}
@@ -394,7 +394,7 @@ PrefabInstance:
     - target: {fileID: 8153043136341992037, guid: f925feb2d83cd4fc6b55ecd04fed0ebb,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.00000035762787
+      value: -0.00000023841858
       objectReference: {fileID: 0}
     - target: {fileID: 8153043136341992037, guid: f925feb2d83cd4fc6b55ecd04fed0ebb,
         type: 3}
@@ -520,11 +520,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8579012082855823835, guid: 3817f4eb6fc042ec2a795e7683d41038,
-        type: 3}
-      propertyPath: doorId
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 8579012082855823837, guid: 3817f4eb6fc042ec2a795e7683d41038,
         type: 3}
       propertyPath: m_Name
@@ -606,70 +601,6 @@ CompositeCollider2D:
   m_ColliderPaths:
   - m_Collider: {fileID: 890659176966990388}
     m_ColliderPaths:
-    - - X: -60000000
-        Y: -90000000
-      - X: -160000000
-        Y: -90000000
-      - X: -160000000
-        Y: 60000000
-      - X: -150000100
-        Y: 60000000
-      - X: -150000100
-        Y: 59999959
-      - X: -150000041
-        Y: 59999900
-      - X: -139999959
-        Y: 59999900
-      - X: -139999900
-        Y: 59999959
-      - X: -139999900
-        Y: 60000000
-      - X: -130000100
-        Y: 60000000
-      - X: -130000100
-        Y: 59999959
-      - X: -130000041
-        Y: 59999900
-      - X: -119999959
-        Y: 59999900
-      - X: -119999900
-        Y: 59999959
-      - X: -119999900
-        Y: 60000000
-      - X: -60000000
-        Y: 60000000
-      - X: -60000000
-        Y: 70000000
-      - X: -119999900
-        Y: 70000000
-      - X: -119999900
-        Y: 70000041
-      - X: -119999959
-        Y: 70000100
-      - X: -130000041
-        Y: 70000100
-      - X: -130000100
-        Y: 70000041
-      - X: -130000100
-        Y: 70000000
-      - X: -139999900
-        Y: 70000000
-      - X: -139999900
-        Y: 70000041
-      - X: -139999959
-        Y: 70000100
-      - X: -150000041
-        Y: 70000100
-      - X: -150000100
-        Y: 70000041
-      - X: -150000100
-        Y: 70000000
-      - X: -170000000
-        Y: 70000000
-      - X: -170000000
-        Y: -100000000
-      - X: -60000000
-        Y: -100000000
     - - X: 60000000
         Y: 70000000
       - X: -50000000
@@ -685,6 +616,22 @@ CompositeCollider2D:
       - X: -50000000
         Y: -100000000
       - X: 60000000
+        Y: -100000000
+    - - X: -60000000
+        Y: -90000000
+      - X: -160000000
+        Y: -90000000
+      - X: -160000000
+        Y: 60000000
+      - X: -60000000
+        Y: 60000000
+      - X: -60000000
+        Y: 70000000
+      - X: -170000000
+        Y: 70000000
+      - X: -170000000
+        Y: -100000000
+      - X: -60000000
         Y: -100000000
   m_CompositePaths:
     m_Paths:
