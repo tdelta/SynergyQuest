@@ -119,6 +119,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   thrust: 100
+  deactivationTime: 10
   coinCollect: {fileID: 8300000, guid: aa105176812ed0c42975a43560d40354, type: 3}
 --- !u!61 &7476413430186449271
 BoxCollider2D:
@@ -130,7 +131,7 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}

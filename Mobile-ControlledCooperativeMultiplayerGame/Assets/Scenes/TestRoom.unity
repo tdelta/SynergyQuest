@@ -11970,6 +11970,12 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1810145175 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4270148256667748071, guid: 13eca49289d50674d8f5a3616579a440,
+    type: 3}
+  m_PrefabInstance: {fileID: 4270148256464369323}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1996733010
 GameObject:
   m_ObjectHideFlags: 0
@@ -12491,10 +12497,20 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4270148256400962765, guid: 13eca49289d50674d8f5a3616579a440,
+        type: 3}
+      propertyPath: coinGauge
+      value: 
+      objectReference: {fileID: 1810145175}
     - target: {fileID: 4270148256400962766, guid: 13eca49289d50674d8f5a3616579a440,
         type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 4270148256667748071, guid: 13eca49289d50674d8f5a3616579a440,
+        type: 3}
+      propertyPath: m_Name
+      value: CoinGauge
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 13eca49289d50674d8f5a3616579a440, type: 3}
@@ -12740,7 +12756,7 @@ PrefabInstance:
     - target: {fileID: 8153043136341992037, guid: f925feb2d83cd4fc6b55ecd04fed0ebb,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -11
+      value: -10
       objectReference: {fileID: 0}
     - target: {fileID: 8153043136341992037, guid: f925feb2d83cd4fc6b55ecd04fed0ebb,
         type: 3}
@@ -12918,7 +12934,7 @@ PrefabInstance:
     - target: {fileID: 8451649553765607551, guid: 896795d39b1254ea596a70557eeff80c,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -11
+      value: -10
       objectReference: {fileID: 0}
     - target: {fileID: 8451649553765607551, guid: 896795d39b1254ea596a70557eeff80c,
         type: 3}

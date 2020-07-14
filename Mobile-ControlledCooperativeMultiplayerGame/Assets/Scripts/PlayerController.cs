@@ -17,7 +17,7 @@ public enum PlayerState{
 public class PlayerController : EntityController, Throwable
 {
     [SerializeField] private GameObject lifeGauge;
-    [SerializeField] private GameObject goldGauge;
+    [SerializeField] private GameObject coinGauge;
     
     [SerializeField] private float speed = 3.0f; // units per second
     [SerializeField] private int maxHealthPoints = 5;
@@ -401,10 +401,10 @@ public class PlayerController : EntityController, Throwable
         this.lifeGauge.GetComponent<LifeGauge>().DrawLifeGauge(_healthPoints, maxHealthPoints);
     }
 
-    private void DisplayColdCounter()
+    private void DisplayCoinGauge()
     {
         // ToDo: Adjust height, so that lifeGauge and goldGauge can be displayed concurrently!
-        this.goldGauge.GetComponent<ColdGauge>().DrawColdCounter(this._goldCounter);
+        this.coinGauge.GetComponent<CoinGaugeController>().DrawColdCounter(this._goldCounter);
     }
 
     public Vector2 GetPosition()
@@ -643,7 +643,7 @@ public class PlayerController : EntityController, Throwable
     public void increaseGoldCounter()
     {
         _goldCounter++;
-        DisplayColdCounter();
+        DisplayCoinGauge();
     }
     public void OnTriggerEnter2D(Collider2D other)
     {

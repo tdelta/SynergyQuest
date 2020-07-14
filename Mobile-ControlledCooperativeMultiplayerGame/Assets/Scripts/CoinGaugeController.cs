@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ColdGauge : MonoBehaviour
+public class CoinGaugeController : MonoBehaviour
 {
     GameObject goldText;
 

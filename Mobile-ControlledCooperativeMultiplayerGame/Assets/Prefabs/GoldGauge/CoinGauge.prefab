@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 606437041652480751}
   - component: {fileID: 606437041652480748}
   m_Layer: 0
-  m_Name: GoldText
+  m_Name: CoinText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -104,7 +104,7 @@ GameObject:
   - component: {fileID: 606437041818147504}
   - component: {fileID: 606437041818147507}
   m_Layer: 0
-  m_Name: GoldIcon
+  m_Name: CoinIcon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -187,7 +187,7 @@ GameObject:
   - component: {fileID: 606437042140398313}
   - component: {fileID: 606437042140398326}
   m_Layer: 0
-  m_Name: ColdGauge
+  m_Name: CoinGauge
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

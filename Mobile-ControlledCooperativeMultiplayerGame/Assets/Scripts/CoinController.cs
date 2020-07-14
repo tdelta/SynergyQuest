@@ -6,6 +6,8 @@ public class CoinController : MonoBehaviour
 {
 
     public float thrust;
+
+    public int deactivationTime;
     AudioSource source;
     public AudioClip coinCollect;
 
@@ -15,6 +17,7 @@ public class CoinController : MonoBehaviour
     {
         source = this.GetComponent<AudioSource>();
         this.GetComponent<Rigidbody2D>().AddForce(getRandomDirection() * thrust);
+        StartCoroutine(NotCollectedDestroyCoroutine());
     }
 
     private Vector3 getRandomDirection() 
@@ -25,19 +28,25 @@ public class CoinController : MonoBehaviour
     }
 
 
-    private void OnTriggerEnter2D(Collider2D other)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
+        Collider2D other = collision.collider;
         if (other.gameObject.layer == LayerMask.NameToLayer("Player")) {
             other.GetComponent<PlayerController>().increaseGoldCounter();
             source.PlayOneShot(coinCollect, 1.0f);
             this.GetComponent<SpriteRenderer>().enabled = false;
             this.GetComponent<BoxCollider2D>().enabled = false;
             StartCoroutine(DestroyCoroutine());
-        }
+        } 
     }
 
     public IEnumerator DestroyCoroutine() {
         yield return new WaitForSeconds(1f);
-        Destroy(this);
+        Destroy(this.gameObject);
+    }
+
+    public IEnumerator NotCollectedDestroyCoroutine() {
+        yield return new WaitForSeconds(deactivationTime);
+        Destroy(this.gameObject);
     }
 }
