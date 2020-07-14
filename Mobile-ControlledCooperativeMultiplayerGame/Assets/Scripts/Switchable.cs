@@ -12,7 +12,7 @@ public class Switchable : MonoBehaviour
     /**
      * Switches which shall be observed.
      */
-    [SerializeField] private Switch[] switches = new Switch[1];
+    [SerializeField] private Switch[] switches = new Switch[0];
     
     
     /**
@@ -24,7 +24,7 @@ public class Switchable : MonoBehaviour
     /**
      * Stores, whether all observed switches are currently active
      */
-    private bool _activation = false;
+    private bool _activation = true;
     public bool Activation => _activation;
     
     /**

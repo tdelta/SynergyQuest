@@ -57,6 +57,7 @@ GameObject:
   - component: {fileID: 8579012082855823832}
   - component: {fileID: 8579012082855823839}
   - component: {fileID: 8579012082855823835}
+  - component: {fileID: 4026202368482378476}
   - component: {fileID: 8579012082855823834}
   - component: {fileID: 2897151793173817165}
   m_Layer: 0
@@ -145,6 +146,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   doorId: 0
   transitionType: 2
+  openSprite: {fileID: 21300000, guid: a10558efc39441496951b0fb8c80f755, type: 3}
+  closedSprite: {fileID: 21300000, guid: 1ebc37e2cccb9d3a79e10586924ea3fc, type: 3}
+--- !u!114 &4026202368482378476
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8579012082855823837}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d285e2e54cbb0aeeaa0a18c96130cfa3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  switches: []
 --- !u!114 &8579012082855823834
 MonoBehaviour:
   m_ObjectHideFlags: 0
