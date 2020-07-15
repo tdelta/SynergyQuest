@@ -59,6 +59,8 @@ public class DungeonLayout : Singleton<DungeonLayout>
      * Currently loaded room
      */
     private string _currentRoom;
+    public string CurrentRoom => _currentRoom;
+
     /**
      * Which door of the room has been used by players to enter it.
      * Players will be spawned at its spawner object, see also the `DoorSpawner" behavior.

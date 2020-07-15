@@ -12,6 +12,7 @@ public enum PlayerState{
     carried,
     thrown,
     falling,
+    presenting_item
 }
 
 public class PlayerController : EntityController, Throwable
@@ -40,6 +41,12 @@ public class PlayerController : EntityController, Throwable
      * Has no effect if remote controls are used.
      */
     [SerializeField] private LocalInput localInputPrefab;
+    
+    /**
+     * There is an animation, in which a player can present an item.
+     * The sprite of the item will be displayed by this renderer.
+     */
+    [SerializeField] private SpriteRenderer itemPresentation;
     
     private int _healthPoints;
 
@@ -103,6 +110,7 @@ public class PlayerController : EntityController, Throwable
     private static readonly int CarryingState = Animator.StringToHash("Carrying");
     private static readonly int CarriedState  = Animator.StringToHash("Carried");
     private static readonly int FallTrigger = Animator.StringToHash("Fall");
+    private static readonly int PresentItemTrigger = Animator.StringToHash("PresentItem");
 
     public PlayerColor Color => Input.GetColor();
 
@@ -111,6 +119,14 @@ public class PlayerController : EntityController, Throwable
      */
     public delegate void OnRespawnAction(PlayerController player);
     public event OnRespawnAction OnRespawn;
+    
+    /**
+     * There is an animation in which the player presents an item.
+     * This callback will be invoked, when the animation completes.
+     * See also the `PresentItem` method.
+     */
+    public delegate void PresentItemAction();
+    private PresentItemAction _presentItemCallback;
 
     /**
      * Should be used to assign a remote controller to this player after creating the game object instance from a
@@ -670,5 +686,29 @@ public class PlayerController : EntityController, Throwable
                 OnRespawn -= (OnRespawnAction) handler;
             }
         }
+    }
+
+    /**
+     * Plays an animation in which the player presents an item.
+     *
+     * @param sprite   sprite of the item which is presented
+     * @param callback callback which is invoked, as soon as the animation completes
+     */
+    public void PresentItem(Sprite sprite, PresentItemAction callback = null)
+    {
+        _playerState = PlayerState.presenting_item;
+        _presentItemCallback = callback;
+        itemPresentation.sprite = sprite;
+        Animator.SetTrigger(PresentItemTrigger);
+    }
+
+    /**
+     * Invoked, as whenever the item presentation animation completes.
+     * It resets the player state to `walking` and invokes callbacks, if set.
+     */
+    public void OnPresentItemAnimationComplete()
+    {
+        _playerState = PlayerState.walking;
+        _presentItemCallback?.Invoke();
     }
 }

@@ -10,3 +10,8 @@
 * Link: https://opengameart.org/content/open-chest-sfx
 * License: CC0
 
+# success.mp3
+
+* Created by freesound.org user "FunWithSound"
+* Link: https://freesound.org/people/FunWithSound/sounds/456965/
+* License: CC0

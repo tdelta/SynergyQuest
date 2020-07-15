@@ -37,11 +37,12 @@ public class Door : MonoBehaviour
     [SerializeField] private Sprite closedSprite;
 
     private SpriteRenderer _renderer;
+    private AudioSource _audioSource;
     private Switchable _switchable;
     /**
      * Stores whether the door is open or closed
      */
-    private bool _open;
+    private bool _open = true;
 
     public string DoorId => doorId;
     public TransitionType TransitionType => transitionType;
@@ -50,6 +51,7 @@ public class Door : MonoBehaviour
     {
         _switchable = GetComponent<Switchable>();
         _renderer = GetComponent<SpriteRenderer>();
+        _audioSource = GetComponent<AudioSource>();
     }
 
     private void OnEnable()
@@ -65,7 +67,8 @@ public class Door : MonoBehaviour
     private void Start()
     {
         // When starting, refresh the opened/closed state and sprites, depending on the state of all connected switches
-        OnActivationChanged(_switchable.Activation);
+        _open = _switchable.Activation;
+        UpdateSprite();
     }
 
     /**
@@ -76,7 +79,7 @@ public class Door : MonoBehaviour
      *
      * This method has no effect, if the door is still locked (with a key lock or due to some other mechanism)
      */
-    public void UseDoor()
+    public void UseDoor(PlayerController user)
     {
         if (_open)
         {
@@ -90,6 +93,10 @@ public class Door : MonoBehaviour
     private void OnActivationChanged(bool activation)
     {
         // the door is opened, if connected switches are active
+        if (_open != activation && activation)
+        {
+            _audioSource.Play();
+        }
         _open = activation;
         
         UpdateSprite();

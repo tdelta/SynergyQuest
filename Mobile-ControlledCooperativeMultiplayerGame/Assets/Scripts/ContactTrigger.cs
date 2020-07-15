@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -8,7 +10,14 @@ using UnityEngine.Events;
 public class ContactTrigger : MonoBehaviour
 {
      // Event mentioned in the description above
-     [SerializeField] private UnityEvent onContactEvent;
+     [SerializeField] private ContactEvent onContactEvent;
+
+     private Collider2D _collider;
+
+     private void Awake()
+     {
+          _collider = GetComponent<Collider2D>();
+     }
 
      private void OnTriggerEnter2D(Collider2D other)
      {
@@ -25,7 +34,22 @@ public class ContactTrigger : MonoBehaviour
           // If the object which is touching this one is a player, invoke the event.
           if (other.CompareTag("Player"))
           {
-               onContactEvent?.Invoke();
+               onContactEvent?.Invoke(other.GetComponent<PlayerController>());
           }
      }
+
+     /**
+      * Fires the `onContactEvent` for all players currently in contact with this object.
+      */
+     public void RecheckContacts()
+     {
+          var contacts = new List<Collider2D>();
+          _collider.GetContacts(contacts);
+          
+          contacts.ForEach(HandleContact);
+     }
 }
+
+[Serializable]
+class ContactEvent : UnityEvent<PlayerController>
+{ }

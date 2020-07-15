@@ -1,4 +1,6 @@
+using System;
 using UnityEngine;
+using UnityEngine.Events;
 
 /**
  * Utility behavior which allows to determine whether a player is interacting with an object by pressing some button.
@@ -7,6 +9,8 @@ using UnityEngine;
  * Other behaviors can then access the `IsInteracting` property of this class to determine, whether a player is
  * interacting.
  * See for example the `DeadManSwitch` behavior.
+ *
+ * Alternatively, one can subscribe to the `interactionTriggeredEvent`.
  *
  * A Collider Component must be present.
  */
@@ -47,7 +51,26 @@ public class Interactive : MonoBehaviour
      * Whether a player is triggering an interaction. See also class description.
      */
     private bool _isInteracting = false;
-    public bool IsInteracting => _isInteracting;
+
+    public bool IsInteracting
+    {
+        get => _isInteracting;
+        set
+        {
+            // If the value changed and a player is currently interacting with this object, fire the `interactionTriggeredEvent`
+            if (value != _isInteracting && value)
+            {
+                interactionTriggeredEvent?.Invoke(_interactingPlayer);
+            }
+            
+            _isInteracting = value;
+        }
+    }
+    
+    /**
+     * Event which is fired, when a player starts interacting with this object
+     */
+    [SerializeField] private InteractionEvent interactionTriggeredEvent;
 
     private void Update()
     {
@@ -58,13 +81,13 @@ public class Interactive : MonoBehaviour
             switch (interactionType)
             {
                 case InteractionType.Down:
-                    _isInteracting = _interactingPlayer.Input.GetButtonDown(button);
+                    IsInteracting = _interactingPlayer.Input.GetButtonDown(button);
                     break;
                 case InteractionType.Up:
-                    _isInteracting = _interactingPlayer.Input.GetButtonUp(button);
+                    IsInteracting = _interactingPlayer.Input.GetButtonUp(button);
                     break;
                 case InteractionType.Hold:
-                    _isInteracting = _interactingPlayer.Input.GetButton(button);
+                    IsInteracting = _interactingPlayer.Input.GetButton(button);
                     break;
             }
         }
@@ -91,7 +114,11 @@ public class Interactive : MonoBehaviour
             // ...no longer remember that player
             _interactingPlayer = null;
             // ...and interrupt any interaction that might have taken place
-            _isInteracting = false;
+            IsInteracting = false;
         }
     }
 }
+
+[Serializable]
+class InteractionEvent : UnityEvent<PlayerController>
+{ }

@@ -1,6 +1,8 @@
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using UnityEngine;
+using WebSocketSharp;
 using Debug = UnityEngine.Debug;
 
 /**
@@ -11,9 +13,83 @@ using Debug = UnityEngine.Debug;
 public class PlayerDataKeeper: Singleton<PlayerDataKeeper>
 {
     /**
-     * Scene-persistent data of all players
+     * Scene-persistent data of each player
      */
     private List<PlayerData> _playerDatas = new List<PlayerData>();
+
+    /**
+     * #######################
+     * # Scene-persistent data shared across players
+     * #######################
+     */
+    /**
+     * The number of keys currently collected by the players
+     */
+    private int _numKeys = 0;
+    public int NumKeys
+    {
+        get => _numKeys;
+        set {
+            _numKeys = value;
+            // If the number of collected keys changes, inform subscribers
+            OnNumKeysChanged?.Invoke(_numKeys);
+        }
+    }
+    /**
+     * Event which is emitted, whenever the number of keys changes, the players have collected so far.
+     */
+    public delegate void NumKeysChangedAction(int numKeys);
+    public event NumKeysChangedAction OnNumKeysChanged;
+    
+    /**
+     * These sets remember, which keys have been collected and which locks been opened across scenes
+     */
+    private HashSet<(string, string)> _keyOpenedDoors = new HashSet<(string, string)>(); // Pairs of room and door IDs
+    private HashSet<string> _collectedKeys = new HashSet<string>(); // Key IDs
+    
+    /**
+     * True iff the given locked door has already been opened using a key.
+     */
+    [Pure]
+    public bool HasDoorBeenOpened(Door door)
+    {
+        return _keyOpenedDoors.Contains(
+            (
+                DungeonLayout.Instance.CurrentRoom,
+                door.DoorId
+            )
+        );
+    }
+    /**
+     * Marks a door as opened by a key.
+     * A `DungeonLayout` must currently be loaded.
+     */
+    public void MarkDoorAsKeyUnlocked(Door door)
+    {
+        _keyOpenedDoors.Add(
+            (DungeonLayout.Instance.CurrentRoom, door.DoorId)
+        );
+    }
+
+    /**
+     * Marks a key as collected by the players.
+     */
+    public void MarkKeyAsCollected(Key key)
+    {
+        if (!key.KeyId.IsNullOrEmpty())
+        {
+            _collectedKeys.Add(key.KeyId);
+        }
+    }
+
+    /**
+     * True iff the given key has already been collected by the players.
+     */
+    [Pure]
+    public bool HasKeyBeenCollected(Key key)
+    {
+        return !key.KeyId.IsNullOrEmpty() && _collectedKeys.Contains(key.KeyId);
+    }
 
     /**
      * Determines, if the given input instance has been assigned to any player.
