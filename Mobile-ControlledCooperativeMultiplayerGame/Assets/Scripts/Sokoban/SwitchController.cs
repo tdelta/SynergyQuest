@@ -12,14 +12,15 @@ public class SwitchController : MonoBehaviour
      */
     [SerializeField] private SokobanSprites sprites;
     
-    private bool _pressed;
+
+    private Switch _switch;
 
     public delegate void SwitchChangedAction();
     public event SwitchChangedAction OnSwitchChanged;
 
     public void Start()
     {
-        _pressed = false;
+        _switch = this.GetComponent<Switch>();
     }
 
     /**
@@ -33,7 +34,8 @@ public class SwitchController : MonoBehaviour
 
     private void SetPressed(bool pressed)
     {
-        _pressed = pressed;
+        _switch.Value = pressed;
+
         OnSwitchChanged?.Invoke();
     }
 
@@ -58,11 +60,7 @@ public class SwitchController : MonoBehaviour
             }
         }
     }
-
-    public bool IsPressed(){
-        return _pressed;
-    }
-
+    
     public PlayerColor GetColor(){
         return color;
     }

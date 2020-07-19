@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+// DEPRECATED! Use Switchable Door!
+/*
 public class SokobanDoorController : DoorController
 {
     [SerializeField] private SwitchController[] switches;
@@ -51,3 +53,4 @@ public class SokobanDoorController : DoorController
     }
 
 }
+*/
