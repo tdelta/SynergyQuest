@@ -604,10 +604,15 @@ public class PlayerController : EntityController, Throwable
      */
     void OnCollisionEnter2D(Collision2D other)
     {
-        if (other.gameObject.CompareTag("Enemy") && _playerState == PlayerState.thrown)
+        if ( _playerState == PlayerState.thrown)
         {
-            var enemy = other.gameObject.GetComponent<EntityController>();
-            enemy.PutDamage(1, (other.transform.position - transform.position).normalized); 
+            if (other.gameObject.CompareTag("Enemy"))
+            {
+                var enemy = other.gameObject.GetComponent<EntityController>();
+                enemy.PutDamage(1, (other.transform.position - transform.position).normalized); 
+            }
+            else if (other.gameObject.CompareTag("Switch"))
+                other.gameObject.GetComponent<ShockSwitch>().Activate();
         }
     }
 
