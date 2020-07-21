@@ -1,55 +1,56 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
 public class EnemySpawn : MonoBehaviour {
-    public EnemyController slime;
-    public EnemyController bat;
-    public EnemyController knight;
 
-    public int numberOfSlimes = 1;
-    public int numberOfBats = 1;
-    public int numberOfKnights = 1;
+    [System.Serializable] struct EnemyTypeCountPair {
+        public EnemyController Type;
+        public int Count;
+    }
+
+    [SerializeField] List<EnemyTypeCountPair> enemies;
 
     int emptyRadius = 1;
     float totalSpawnTime = 1;
     float spawnTime;
+    bool spawnComplete;
     Tilemap tilemap;
+    Switch switcher;
     System.Random rand = new System.Random();
     List<EnemyController> gameObjects = new List<EnemyController>();
-
-    //private DoorController _door = GameObject.Find("Door").GetComponent<MainScript>();
-    
 
     // Start is called before the first frame update
     void Start() {
         tilemap = GetComponent<Tilemap>();
-        spawnTime = totalSpawnTime / (numberOfSlimes + numberOfBats + numberOfKnights);
-        Invoke("SpawnEnemies", spawnTime);
+        switcher = GetComponent<Switch>();
+        spawnTime = totalSpawnTime / Math.Max(enemies.Sum(e => e.Count), 1);
+        StartCoroutine(SpawnEnemies());
     }
 
-    //void Update() {
-    //    CheckExit();
-    //}
+    void Update() {
+        CheckExit();
+    }
 
-    //void CheckExit() {
-    //    if (gameObjects.All(e => e == null)) {
-    //        DoorController.OpenDoor();
-    //    }
-    //}
+    void CheckExit() {
+        if (spawnComplete && gameObjects.All(e => e == null)) {
+            switcher.Value = true;
+        }
+    }
 
-    void SpawnEnemies() {
-        if (numberOfSlimes-- > 0)
-            SpawnWithRandomPosition(slime);
-        else if (numberOfBats-- > 0)
-            SpawnWithRandomPosition(bat);
-        else if (numberOfKnights-- > 0)
-            SpawnWithRandomPosition(knight);
-        else    
-            return;
-        Invoke("SpawnEnemies", spawnTime);
+    IEnumerator SpawnEnemies() {
+        yield return new WaitForSeconds(spawnTime);
+
+        foreach (var enemy in enemies) {
+            for (var i = 0; i < enemy.Count; i++) {
+                SpawnWithRandomPosition(enemy.Type);
+                yield return new WaitForSeconds(spawnTime);
+            }
+        }
+        spawnComplete = true;
     }
 
     void SpawnWithRandomPosition(EnemyController obj) {
