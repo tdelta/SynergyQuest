@@ -27,6 +27,9 @@ public class PlayerController : EntityController, Throwable
     [SerializeField] private MultiSound hitSounds;
     [SerializeField] private MultiSound deathSounds;
     [SerializeField] private MultiSound fallingSounds;
+    [SerializeField] private InteractionSpeechBubble interactionSpeechBubble;
+
+    public InteractionSpeechBubble InteractionSpeechBubble => interactionSpeechBubble;
     
     /**
      * If local controls will be used for this character instead of a remote controller, which color should be assigned
@@ -197,7 +200,7 @@ public class PlayerController : EntityController, Throwable
             else if (Input.GetButtonDown(Button.Item) && _data.item && _data.item.Ready() && 
             Instantiate(_data.item, new Vector2(Rigidbody2D.position.x, _renderer.bounds.max.y), Quaternion.identity) is Throwable throwableItem)
                 PickUpThrowable(_throwableItemInstance = throwableItem);
-            // Carrying
+            // Carrying (FIXME: We should have the `Interactive` component handle this.)
             else if (Input.GetButtonDown(Button.Carry) && GetNearPlayer(out _otherPlayer)) {
                 _otherPlayer.SetCarry(this);
                 PickUpThrowable(_otherPlayer);

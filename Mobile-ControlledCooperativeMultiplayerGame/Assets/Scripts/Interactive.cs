@@ -13,6 +13,9 @@ using UnityEngine.Events;
  * Alternatively, one can subscribe to the `interactionTriggeredEvent`.
  *
  * A Collider Component must be present.
+ *
+ * This behavior also causes players to display a speech bubble, giving a hint about possible interactions
+ * (see also the `InteractionSpeechBubble` behavior).
  */
 public class Interactive : MonoBehaviour
 {
@@ -103,6 +106,19 @@ public class Interactive : MonoBehaviour
         if (ReferenceEquals(_interactingPlayer, null) && other.gameObject.CompareTag("Player"))
         {
             _interactingPlayer = other.gameObject.GetComponent<PlayerController>();
+            
+            // Furthermore, we want to display a speech bubble on the player, which informs about the possible
+            // interactions with this object.
+            //
+            // If this object is a player, we require the other player to be intentionally moving into us to display a
+            //   speech bubble
+            //   (the direction of the collision of the other player must be the same as their steering direction).
+            //   This way, not both players display a bubble when one bumps into another.
+            // If this object is not a player, we just always display the bubble
+            if (!this.CompareTag("Player") || Vector2.Dot(other.GetContact(0).normal, _interactingPlayer.PhysicsEffects.SteeringDirection) > 0)
+            {
+                _interactingPlayer.InteractionSpeechBubble.DisplayBubble(button);
+            }
         }
     }
 
@@ -111,6 +127,8 @@ public class Interactive : MonoBehaviour
         // If there has been a player touching this object and the object exiting the collision is this player...
         if (!ReferenceEquals(_interactingPlayer, null) && _interactingPlayer.gameObject == other.gameObject)
         {
+            // ...no longer display a speech bubble about the interaction
+            _interactingPlayer.InteractionSpeechBubble.HideBubble();
             // ...no longer remember that player
             _interactingPlayer = null;
             // ...and interrupt any interaction that might have taken place
