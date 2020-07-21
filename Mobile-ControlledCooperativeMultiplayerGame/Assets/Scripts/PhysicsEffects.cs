@@ -63,7 +63,7 @@ public class PhysicsEffects: MonoBehaviour
      */
     private Vector2 _currentSpeed = Vector2.zero;
 
-    private void Start()
+    private void Awake()
     {
         _rigidbody2D = GetComponent<Rigidbody2D>();
         if (_customOrigin != null)

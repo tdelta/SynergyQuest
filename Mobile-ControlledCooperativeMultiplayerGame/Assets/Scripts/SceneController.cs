@@ -17,6 +17,16 @@ public class SceneController : BehaviourSingleton<SceneController>
     // The LobbyMenu scene must be passed a list of IP addresses
     private List<string> _loadMenuIPs;
 
+    /**
+     * Callback that will be invoked when a new scene has finished loading.
+     */
+    public delegate void SceneLoadedCallback();
+    private SceneLoadedCallback _onSceneLoadedCallback;
+    /**
+     * Which transition animation to play when changing scenes.
+     */
+    private TransitionType _transitionType = TransitionType.None;
+
     protected override void OnInstantiate()
     {
         // call the OnSceneLoaded method of this object, as soon as a level is loaded
@@ -25,12 +35,12 @@ public class SceneController : BehaviourSingleton<SceneController>
 
     public void LoadNetworkSetup()
     {
-        SceneManager.LoadScene("NetworkSetup");
+        LoadSceneByName("NetworkSetup");
     }
 
     public void LoadLobbyMenu(List<string> ips)
     {
-        SceneManager.LoadScene("LobbyMenu");
+        LoadSceneByName("LobbyMenu");
 
         // cache the IPs, so they can be set by OnSceneLoaded as soon as the LobbyMenu scene has been loaded.
         _loadMenuIPs = ips;
@@ -38,12 +48,12 @@ public class SceneController : BehaviourSingleton<SceneController>
 
     public void LoadTestRoom()
     {
-        SceneManager.LoadScene("TestRoom");
+        LoadSceneByName("TestRoom");
     }
 
     public void LoadEndOfGame()
     {
-        SceneManager.LoadScene("EndOfGame");
+        LoadSceneByName("EndOfGame");
     }
 
     public void QuitGame()
@@ -57,10 +67,22 @@ public class SceneController : BehaviourSingleton<SceneController>
 
     /**
      * Loads any scene by its name. Note however that this bypasses passing any required parameters to scenes.
+     *
+     * @param sceneName      name of the scene to load
+     * @param transitionType the animation to play when changing scenes (optional)
+     * @param callback       callback to invoke, when the new scene has finished loading (optional)
      */
-    public void LoadSceneByName(string sceneName)
+    public void LoadSceneByName(string sceneName, TransitionType transitionType = TransitionType.None, SceneLoadedCallback callback = null)
     {
-        SceneManager.LoadScene(sceneName);
+        _onSceneLoadedCallback = callback;
+        _transitionType = transitionType;
+        
+        // Play animation to transition out of the current scene
+        TransitionController.Instance.TransitionOutOfScene(transitionType, () =>
+        {
+            // When the animation completed, load the new scene
+            SceneManager.LoadScene(sceneName);
+        });
     }
     
     private void OnSceneLoaded(Scene scene, LoadSceneMode _)
@@ -70,5 +92,11 @@ public class SceneController : BehaviourSingleton<SceneController>
             LobbyMenuUi lobbyMenu = GameObject.Find("LobbyMenuUi").GetComponent<LobbyMenuUi>();
             lobbyMenu.IPs = this._loadMenuIPs;
         }
+        
+        // Finish playing the transition animation
+        TransitionController.Instance.TransitionIntoScene(_transitionType, () => { });
+        
+        // If a callback has been set, invoke it now, since the new scene has finished loading
+        _onSceneLoadedCallback?.Invoke();
     }
 }

@@ -1,0 +1,57 @@
+{
+  "initialRoom": "D1",
+  "rooms": {
+    "D1": {
+      "roomConnections": {
+        "up": {
+          "targetRoom": "D2",
+          "targetDoor": "down"
+        }
+      }
+    },
+    "D2": {
+      "roomConnections": {
+        "down": {
+          "targetRoom": "D1",
+          "targetDoor": "up"
+        },
+        "up": {
+          "targetRoom": "D3",
+          "targetDoor": "down"
+        }
+      }
+    },
+    "D3": {
+      "roomConnections": {
+        "down": {
+          "targetRoom": "D2",
+          "targetDoor": "up"
+        },
+        "left": {
+          "targetRoom": "D4",
+          "targetDoor": "right"
+        },
+        "right": {
+          "targetRoom": "D5",
+          "targetDoor": "left"
+        }
+      }
+    },
+    "D4": {
+      "roomConnections": {
+        "right": {
+          "targetRoom": "D3",
+          "targetDoor": "left"
+        }
+      }
+    },
+    "D5": {
+      "roomConnections": {
+        "left": {
+          "targetRoom": "D3",
+          "targetDoor": "right"
+        }
+      }
+    }
+  }
+}

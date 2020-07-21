@@ -1,25 +1,41 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Sokoban;
 using UnityEngine;
 
 public class SwitchController : MonoBehaviour
 {
     [SerializeField] private PlayerColor color = PlayerColor.Any;
+    /**
+     * Sprites to use, depending on the color
+     */
+    [SerializeField] private SokobanSprites sprites;
     
-    private bool _pressed;
+
+    private Switch _switch;
 
     public delegate void SwitchChangedAction();
     public event SwitchChangedAction OnSwitchChanged;
 
     public void Start()
     {
-        _pressed = false;
+        _switch = this.GetComponent<Switch>();
+    }
+
+    /**
+     * Only called in editor, e.g. when changing a property
+     */
+    private void OnValidate()
+    {
+        // Change the sprite according to the assigned color
+        GetComponent<SpriteRenderer>().sprite = sprites.GetSwitchSprite(this.color);
     }
 
     private void SetPressed(bool pressed)
     {
-        _pressed = pressed;
+        _switch.Value = pressed;
+
         OnSwitchChanged?.Invoke();
     }
 
@@ -44,11 +60,7 @@ public class SwitchController : MonoBehaviour
             }
         }
     }
-
-    public bool IsPressed(){
-        return _pressed;
-    }
-
+    
     public PlayerColor GetColor(){
         return color;
     }

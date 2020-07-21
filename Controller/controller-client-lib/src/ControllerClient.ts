@@ -403,6 +403,7 @@ export class ControllerClient {
         }
 
         this.onSetGameAction?.(msg.button, msg.enabled);
+      },
       
       VibrationSequenceMessage: msg => {
         this.onVibrationRequest?.(msg.vibrationPattern);

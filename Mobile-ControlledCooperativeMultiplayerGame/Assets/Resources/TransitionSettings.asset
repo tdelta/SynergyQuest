@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 385869dd1ef7484e918893fef8cf867d, type: 3}
+  m_Name: TransitionSettings
+  m_EditorClassIdentifier: 
+  transitionControllerPrefab: {fileID: 9089570282901439268, guid: caa7c2af1554ee5a0bd2724d2e50a347,
+    type: 3}
+  transitionTypeAnimators:
+  - transitionType: 1
+    animator: {fileID: 22100000, guid: 81523302db5893b518303f0fb4200ed3, type: 2}
+  - transitionType: 2
+    animator: {fileID: 22100000, guid: a976067768d5ffc7f8e4d8c51d3ac849, type: 2}
+  - transitionType: 3
+    animator: {fileID: 22100000, guid: d2c30860225eae68280e23a004ac516e, type: 2}
+  - transitionType: 4
+    animator: {fileID: 22100000, guid: 5194a2dab825756e6b3211376a8f2b78, type: 2}
+  - transitionType: 5
+    animator: {fileID: 22100000, guid: ebf5db6d5b0b1d212bb404d7101ac339, type: 2}

@@ -21,5 +21,5 @@ export const buttonStyles: { [button in Button]: ColorData; } =
   {
     0: { name: 'Attack', light: '#e53935', dark: '#ef5350'},
     1: { name: 'Pull', light: '#039Be5', dark: '#29b6f6'},
-    2: { name: 'Press', light: '#ffa726', dark: '#fb8c00'},
+    3: { name: 'Press', light: '#ffa726', dark: '#fb8c00'},
   };
