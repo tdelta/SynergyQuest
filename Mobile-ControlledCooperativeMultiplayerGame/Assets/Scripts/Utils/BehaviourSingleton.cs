@@ -12,7 +12,7 @@ public abstract class BehaviourSingleton<T> : MonoBehaviour
     where T: BehaviourSingleton<T>
 {
     // Lazyily create an instance when it is first requested
-    private static readonly Lazy<GameObject> _instance = new Lazy<GameObject>(() =>
+    private static readonly Lazy<T> _instance = new Lazy<T>(() =>
     {
         // To easier differentiate the created game object from other singletons in the editor when
         // running the game, we give it the name of its behavior type as game object name:
@@ -27,18 +27,10 @@ public abstract class BehaviourSingleton<T> : MonoBehaviour
         // Give subclasses a chance to perform some setup logic on instantiation
         component.OnInstantiate();
 
-        return instance;
+        return component;
     });
-    
-    public static T Instance
-    {
-        get
-        {
-            var gameObject = _instance.Value;
-            
-            return gameObject.GetComponent<T>();
-        }
-    }
+
+    public static T Instance => _instance.Value;
 
     /**
      * Subclasses can override this to execute some logic on instantiation during the Awake phase.

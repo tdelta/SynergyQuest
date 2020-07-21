@@ -54,7 +54,10 @@ public abstract class PlayerSpawner : MonoBehaviour
     
     private void OnDisable()
     {
-        ControllerServer.Instance.OnNewController -= OnNewController;
+        if (ControllerServer.Instance != null)
+        {
+            ControllerServer.Instance.OnNewController -= OnNewController;
+        }
     }
 
     // Start is called before the first frame update

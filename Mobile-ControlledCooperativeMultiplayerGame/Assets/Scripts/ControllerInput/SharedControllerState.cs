@@ -41,11 +41,14 @@ public class SharedControllerState: BehaviourSingleton<SharedControllerState>
 
     private void OnDisable()
     {
-        // Unregister all callbacks, when this behavior is disabled
-        ControllerServer.Instance.OnNewController -= OnNewController;
-        ControllerServer.Instance.GetInputs().ForEach(
-            input => input.OnReconnect -= OnReconnect
-        );
+        if (ControllerServer.Instance != null)
+        {
+            // Unregister all callbacks, when this behavior is disabled
+            ControllerServer.Instance.OnNewController -= OnNewController;
+            ControllerServer.Instance.GetInputs().ForEach(
+                input => input.OnReconnect -= OnReconnect
+            );
+        }
     }
 
     /**
