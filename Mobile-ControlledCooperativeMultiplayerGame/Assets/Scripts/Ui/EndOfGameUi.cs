@@ -16,18 +16,28 @@ public class EndOfGameUi : MonoBehaviour
         // Display the names of all players
         var playerNames = inputs.Select(input => input.PlayerName);
         _playerNamesText.SetText(string.Join(" ", playerNames));
-        
-        // Allow each controller to quit the game
-        foreach (var input in inputs)
-        {
-            input.OnMenuActionTriggered += OnMenuActionTriggered;
-        }
-        SharedControllerState.Instance.EnableMenuActions((MenuAction.QuitGame, true));
     }
 
-    private void OnDestroy()
+    private void OnEnable()
     {
-        ControllerServer.Instance.GetInputs().ForEach(input => input.OnMenuActionTriggered -= this.OnMenuActionTriggered);
+        // Allow each controller to quit the game by entering a menu state
+        SharedControllerState.Instance.SetGameState(GameState.Menu);
+        SharedControllerState.Instance.OnMenuActionTriggered += OnMenuActionTriggered;
+        SharedControllerState.Instance.EnableMenuActions(
+            (MenuAction.QuitGame, true),
+            (MenuAction.PauseGame, false)
+        );
+    }
+
+    private void OnDisable()
+    {
+        // The controllers shall leave the menu state when this screen is closed 
+        SharedControllerState.Instance.SetGameState(GameState.Started);
+        SharedControllerState.Instance.OnMenuActionTriggered -= OnMenuActionTriggered;
+        SharedControllerState.Instance.EnableMenuActions(
+            (MenuAction.QuitGame, false),
+            (MenuAction.PauseGame, true)
+        );
     }
 
     private void OnMenuActionTriggered(MenuAction action)

@@ -85,7 +85,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: PAUSED
+  m_text: Quitting the Game
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 25a49c1c0963dc8f6b3c80bb186d4a78, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: 0fa285df202b2c22a8f87734e0f735a6, type: 2}
@@ -154,10 +154,10 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 1087559894188242497}
-    characterCount: 6
+    characterCount: 17
     spriteCount: 0
-    spaceCount: 0
-    wordCount: 1
+    spaceCount: 2
+    wordCount: 3
     linkCount: 0
     lineCount: 1
     pageCount: 1
@@ -209,9 +209,9 @@ GameObject:
   - component: {fileID: 1087559894583305112}
   - component: {fileID: 1087559894583305113}
   - component: {fileID: 1087559894583305114}
-  - component: {fileID: 1087559894583305118}
+  - component: {fileID: 7281591264406191480}
   m_Layer: 5
-  m_Name: PauseScreen
+  m_Name: QuitGameScreen
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -297,7 +297,7 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &1087559894583305118
+--- !u!114 &7281591264406191480
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -306,7 +306,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1087559894583305115}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ba26ba559ec573a659b3399ca6322762, type: 3}
+  m_Script: {fileID: 11500000, guid: 5b0c6a4999a54cb8a53b0ca0b1531d92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1087559895233120395
@@ -374,7 +374,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: use your controller or the button below to resume or quit the game
+  m_text: Do you really want to quit the game? Your progress will be lost.
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 25a49c1c0963dc8f6b3c80bb186d4a78, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: 0fa285df202b2c22a8f87734e0f735a6, type: 2}
@@ -443,7 +443,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 1087559895233120393}
-    characterCount: 66
+    characterCount: 64
     spriteCount: 0
     spaceCount: 12
     wordCount: 13
@@ -572,7 +572,7 @@ MonoBehaviour:
     m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 0
-  m_Spacing: 60
+  m_Spacing: 80
   m_ChildForceExpandWidth: 0
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
@@ -914,12 +914,12 @@ PrefabInstance:
     - target: {fileID: 5545749644423621429, guid: 2f7603ded15c4e441baa215e41fd1f5f,
         type: 3}
       propertyPath: m_text
-      value: Quit Game
+      value: No
       objectReference: {fileID: 0}
     - target: {fileID: 5545749644423621429, guid: 2f7603ded15c4e441baa215e41fd1f5f,
         type: 3}
       propertyPath: m_textInfo.characterCount
-      value: 9
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5545749644423621429, guid: 2f7603ded15c4e441baa215e41fd1f5f,
         type: 3}
@@ -939,7 +939,7 @@ PrefabInstance:
     - target: {fileID: 5545749644423621429, guid: 2f7603ded15c4e441baa215e41fd1f5f,
         type: 3}
       propertyPath: m_textInfo.wordCount
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5545749644423621429, guid: 2f7603ded15c4e441baa215e41fd1f5f,
         type: 3}
@@ -954,7 +954,7 @@ PrefabInstance:
     - target: {fileID: 5545749644423621429, guid: 2f7603ded15c4e441baa215e41fd1f5f,
         type: 3}
       propertyPath: m_textInfo.spaceCount
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5545749645262665296, guid: 2f7603ded15c4e441baa215e41fd1f5f,
         type: 3}
@@ -1080,11 +1080,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1087559894583305118}
+      objectReference: {fileID: 7281591264406191480}
     - target: {fileID: 5545749645262665297, guid: 2f7603ded15c4e441baa215e41fd1f5f,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnQuitGamePressed
+      value: OnNoPressed
       objectReference: {fileID: 0}
     - target: {fileID: 5545749645262665297, guid: 2f7603ded15c4e441baa215e41fd1f5f,
         type: 3}
@@ -1094,7 +1094,7 @@ PrefabInstance:
     - target: {fileID: 5545749645262665299, guid: 2f7603ded15c4e441baa215e41fd1f5f,
         type: 3}
       propertyPath: m_Name
-      value: QuitButton
+      value: NoButton
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2f7603ded15c4e441baa215e41fd1f5f, type: 3}
@@ -1120,12 +1120,12 @@ PrefabInstance:
     - target: {fileID: 5545749644423621429, guid: 2f7603ded15c4e441baa215e41fd1f5f,
         type: 3}
       propertyPath: m_text
-      value: Resume
+      value: Yes
       objectReference: {fileID: 0}
     - target: {fileID: 5545749644423621429, guid: 2f7603ded15c4e441baa215e41fd1f5f,
         type: 3}
       propertyPath: m_textInfo.characterCount
-      value: 6
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5545749644423621429, guid: 2f7603ded15c4e441baa215e41fd1f5f,
         type: 3}
@@ -1141,6 +1141,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_fontSizeBase
       value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 5545749644423621429, guid: 2f7603ded15c4e441baa215e41fd1f5f,
+        type: 3}
+      propertyPath: m_textInfo.spaceCount
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5545749645262665296, guid: 2f7603ded15c4e441baa215e41fd1f5f,
         type: 3}
@@ -1266,11 +1271,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1087559894583305118}
+      objectReference: {fileID: 7281591264406191480}
     - target: {fileID: 5545749645262665297, guid: 2f7603ded15c4e441baa215e41fd1f5f,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnResumePressed
+      value: OnYesPressed
       objectReference: {fileID: 0}
     - target: {fileID: 5545749645262665297, guid: 2f7603ded15c4e441baa215e41fd1f5f,
         type: 3}
@@ -1280,7 +1285,7 @@ PrefabInstance:
     - target: {fileID: 5545749645262665299, guid: 2f7603ded15c4e441baa215e41fd1f5f,
         type: 3}
       propertyPath: m_Name
-      value: ResumeButton
+      value: YesButton
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2f7603ded15c4e441baa215e41fd1f5f, type: 3}

@@ -15,12 +15,19 @@ public class PauseScreenUi : MonoBehaviour, MenuUi
     {
         PauseScreenLauncher.Instance.Close();
     }
-    
+
+    public void OnQuitGamePressed()
+    {
+        PauseScreenLauncher.Instance.Close();
+        QuitGameScreenLauncher.Instance.Launch();
+    }
+
     public void OnLaunch()
     {
         // When the pause screen UI is opened, give remote controllers the capability to close the pause screen and resume the game
         SharedControllerState.Instance.EnableMenuActions(
-            (MenuAction.ResumeGame, true)
+            (MenuAction.ResumeGame, true),
+            (MenuAction.QuitGame, true)
         );
     }
     
@@ -28,7 +35,21 @@ public class PauseScreenUi : MonoBehaviour, MenuUi
     {
         // When the pause screen UI is closed and destroyed, remove the "Resume" capability from remote controllers
         SharedControllerState.Instance.EnableMenuActions(
-            (MenuAction.ResumeGame, false)
+            (MenuAction.ResumeGame, false),
+            (MenuAction.QuitGame, false)
         );
+    }
+
+    public void OnMenuActionTriggered(MenuAction action)
+    {
+        switch (action)
+        {
+            case MenuAction.ResumeGame:
+                OnResumePressed();
+                break;
+            case MenuAction.QuitGame:
+                OnQuitGamePressed();
+                break;
+        }
     }
 }

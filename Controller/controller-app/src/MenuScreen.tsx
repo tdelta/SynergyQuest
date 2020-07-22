@@ -4,6 +4,20 @@ import './ConnectScreen.css';
 import { ReactComponent as Logo } from './gfx/logo_web.svg';
 import { menuActionStrings } from './EnumStrings';
 
+/**
+ * Menu actions are always displayed in this order
+ */
+const menuActionDisplayOrder = [
+  MenuAction.StartGame,
+  MenuAction.PauseGame,
+  MenuAction.ResumeGame,
+  MenuAction.QuitGame,
+  MenuAction.Next,
+  MenuAction.Back,
+  MenuAction.No,
+  MenuAction.Yes,
+];
+
 export class MenuScreen extends React.Component<
   MenuScreenProbs,
   MenuScreenState
@@ -12,7 +26,13 @@ export class MenuScreen extends React.Component<
     let scrollContent = <>Please follow the instructions on the game screen</>;
     if (this.props.enabledMenuActions.size > 0) {
       const menuActions = Array.from(this.props.enabledMenuActions);
-      menuActions.sort();
+      // Sort the available menu actions to display them in the intended order
+      menuActions.sort((left, right) => {
+        const leftIdx = menuActionDisplayOrder.indexOf(left);
+        const rightIdx = menuActionDisplayOrder.indexOf(right);
+
+        return leftIdx - rightIdx;
+      });
 
       const buttonList = Array.from(menuActions).map(action => {
         const click = (_: any) => this.props.triggerMenuAction(action);

@@ -18,8 +18,13 @@ public abstract class MenuLauncher<LauncherType, UiType>: Singleton<LauncherType
     where UiType: MonoBehaviour, MenuUi
 {
     // We store an instance of the menu UI here, if it is active
-    private UiType _uiInstance;
-    protected UiType UiInstance => _uiInstance;
+    protected UiType UiInstance { get; private set; }
+
+    /**
+     * Caches the state of the game before entering a menu so that it can be restored when
+     * closing the menu
+     */
+    private GameState _gameStateBeforeMenu;
     
     /**
      * Subclasses must provide a prefab of the menu UI by implementing this method.
@@ -47,7 +52,7 @@ public abstract class MenuLauncher<LauncherType, UiType>: Singleton<LauncherType
         }
         
         else {
-            if (_uiInstance != null)
+            if (UiInstance != null)
             {
                 Debug.LogError("Can not launch menu which is already active.");
             }
@@ -55,14 +60,24 @@ public abstract class MenuLauncher<LauncherType, UiType>: Singleton<LauncherType
             else
             {
                 // Instantiate UI prefab
-                _uiInstance = Object.Instantiate(GetUiPrefab());
-                onUiInstantiated?.Invoke(_uiInstance);
+                UiInstance = Object.Instantiate(GetUiPrefab());
+                onUiInstantiated?.Invoke(UiInstance);
                 
                 // Pause the game
                 PauseGameLogic.Instance.Pause();
-               
+                // Cache the state of the game before entering the menu
+                _gameStateBeforeMenu = SharedControllerState.Instance.GameState;
+                // Inform the controllers about the game being paused / in menu state
+                SharedControllerState.Instance.SetGameState(GameState.Menu);
+                SharedControllerState.Instance.EnableMenuActions(
+                    (MenuAction.PauseGame, false)
+                );
+
+                // Allow the UI to receive menu actions from the controllers
+                SharedControllerState.Instance.OnMenuActionTriggered += UiInstance.OnMenuActionTriggered;
+                
                 // More callbacks to inform about the state of the UI
-                _uiInstance.OnLaunch();
+                UiInstance.OnLaunch();
                 OnUiLaunched();
             }
         }
@@ -75,21 +90,30 @@ public abstract class MenuLauncher<LauncherType, UiType>: Singleton<LauncherType
      */
     public void Close()
     {
-        if (_uiInstance == null)
+        if (UiInstance == null)
         {
             Debug.LogError("Can not close menu which has not been opened yet.");
         }
 
         else
         {
+            // When being closed, the UI should no longer receive menu actions from the controllers
+            SharedControllerState.Instance.OnMenuActionTriggered -= UiInstance.OnMenuActionTriggered;
+            
             // Inform UI prefab instance that it is about to be destroyed
-            _uiInstance.OnClose();
+            UiInstance.OnClose();
             // Inform subclass that Ui is being closed
             OnUiClosed();
             
             // Destroy UI prefab instance
-            Object.Destroy(_uiInstance.gameObject);
-            _uiInstance = null;
+            Object.Destroy(UiInstance.gameObject);
+            UiInstance = null;
+            
+            // Inform the controllers about the game being resumed by restoring the previous game state
+            SharedControllerState.Instance.SetGameState(_gameStateBeforeMenu);
+            SharedControllerState.Instance.EnableMenuActions(
+                (MenuAction.PauseGame, true)
+            );
             
             // Unpause the game
             PauseGameLogic.Instance.Resume();
@@ -124,4 +148,9 @@ public interface MenuUi
      * Called before the menu is closed and destroyed.
      */
     void OnClose();
+
+    /**
+     * Allows menus to react to menu actions triggered by controllers in addition to pressed UI buttons
+     */
+    void OnMenuActionTriggered(MenuAction action);
 }

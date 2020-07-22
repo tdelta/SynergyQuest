@@ -158,7 +158,6 @@ public class PlayerController : EntityController, Throwable
 
             PlayerDataKeeper.Instance.RegisterExistingInstance(this, localInput);
         }
-        Input.OnMenuActionTriggered += OnMenuActionTriggered;
         
         _collider = GetComponent<BoxCollider2D>();
         _tintFlashController = GetComponent<TintFlashController>();
@@ -206,48 +205,6 @@ public class PlayerController : EntityController, Throwable
                 PickUpThrowable(_otherPlayer);
             }
 
-        }
-    }
-
-    private void OnDestroy()
-    {
-        if (Input != null)
-        {
-            // Unregister callbacks when destroyed
-            Input.OnMenuActionTriggered -= OnMenuActionTriggered;
-        }
-    }
-
-    /**
-     * Callback, which is called, should a remote controller send a menu action, e.g MenuAction.PauseGame etc.
-     *
-     * Note, that some menu actions are handled by other behaviors, e.g. `MenuAction.StartGame` is handled by
-     * `LobbyMenuUi`.
-     */
-    private void OnMenuActionTriggered(MenuAction action)
-    {
-        switch (action)
-        {
-            case MenuAction.PauseGame:
-                PauseScreenLauncher.Instance.Launch();
-                break;
-            case MenuAction.ResumeGame:
-                if (PauseScreenLauncher.Instance.IsPaused)
-                {
-                    PauseScreenLauncher.Instance.Close();
-                }
-
-                else if (InfoScreenLauncher.Instance.IsShowingInfoScreen)
-                {
-                    InfoScreenLauncher.Instance.Close();
-                }
-                break;
-            case MenuAction.Next:
-                InfoScreenLauncher.Instance.NextPage();
-                break;
-            case MenuAction.Back:
-                InfoScreenLauncher.Instance.PreviousPage();
-                break;
         }
     }
 

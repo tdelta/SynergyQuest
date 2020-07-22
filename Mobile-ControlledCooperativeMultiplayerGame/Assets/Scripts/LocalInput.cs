@@ -1,4 +1,5 @@
 
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -20,12 +21,22 @@ public class LocalInput: MonoBehaviour, Input
     
     public event MenuActionTriggeredAction OnMenuActionTriggered;
 
+    private void OnEnable()
+    {
+        SharedControllerState.Instance.RegisterLocalDebugInput(this);
+    }
+    
+    private void OnDisable()
+    {
+        SharedControllerState.Instance.UnregisterLocalDebugInput(this);
+    }
+
     void Update()
     {
         if (UnityEngine.Input.GetKeyDown(keymap.PauseKey()))
         {
             OnMenuActionTriggered?.Invoke(
-                PauseScreenLauncher.Instance.IsPaused?
+                PauseScreenLauncher.Instance.IsPaused || InfoScreenLauncher.Instance.IsShowingInfoScreen?
                       MenuAction.ResumeGame
                     : MenuAction.PauseGame
             );
