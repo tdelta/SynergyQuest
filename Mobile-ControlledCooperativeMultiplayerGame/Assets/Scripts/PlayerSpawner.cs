@@ -105,12 +105,12 @@ public abstract class PlayerSpawner : MonoBehaviour
     private void SpawnConnectedInputs()
     {
         // Collect all connected inputs which have not been assigned to a player prefab instance before
-        var inputs = ControllerServer.Instance.GetInputs().Where(PlayerDataKeeper.Instance.IsInputAssignedToPlayer);
+        var inputs = ControllerServer.Instance.GetInputs().Where(input => !PlayerDataKeeper.Instance.IsInputAssignedToPlayer(input));
             
         // Spawn instances for them
         foreach (var input in inputs)
         {
-            var player = PlayerDataKeeper.Instance.InstantiateNewPlayer(input);
+            var player = PlayerDataKeeper.Instance.InstantiateNewPlayer(input, this.transform.position);
             RegisterSpawnedInstance(player);
         }
     }
