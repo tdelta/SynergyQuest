@@ -43,10 +43,14 @@ public class MovementBinder : MonoBehaviour
         _objectOffset = _boundObject.transform.position - transform.position;
 
         // If there is a rigidbody on the object, temporarily disable it
-        var body = _boundObject.GetComponent<Rigidbody2D>();
-        if (!ReferenceEquals(body, null))
+        if (_boundObject.GetComponent<Rigidbody2D>() is Rigidbody2D body)
         {
             body.simulated = false;
+        }
+
+        if (_boundObject.GetComponent<Animator>() is Animator animator)
+        {
+            animator.enabled = false;
         }
     }
 
@@ -59,10 +63,14 @@ public class MovementBinder : MonoBehaviour
         if (ReferenceEquals(_boundObject, null)) return;
         
         // If there is a rigidbody on the object, enable it
-        var body = _boundObject.GetComponent<Rigidbody2D>();
-        if (!ReferenceEquals(body, null))
+        if (_boundObject.GetComponent<Rigidbody2D>() is Rigidbody2D body)
         {
             body.simulated = true;
+        }
+        
+        if (_boundObject.GetComponent<Animator>() is Animator animator)
+        {
+            animator.enabled = true;
         }
         
         _boundObject = null;

@@ -56,7 +56,8 @@ public class PlayerController : EntityController, Throwable
     // FIXME: Integrate gold counter into dataset which is persistent across scenes (`PlayerData`)
     private int _goldCounter;
 
-    private BoxCollider2D _collider;
+    public BoxCollider2D Collider { get; private set; }
+
     private Renderer _renderer;
     
     /**
@@ -67,6 +68,9 @@ public class PlayerController : EntityController, Throwable
     private float _vertical;
     private float _horizontal;
     
+    /**
+     * Caches `Pushable` object, the player is pulling
+     */
     private Pushable _pushableToPull;
 
     /**
@@ -110,6 +114,7 @@ public class PlayerController : EntityController, Throwable
     private static readonly int LookYProperty = Animator.StringToHash("Look y");
     private static readonly int SpeedProperty = Animator.StringToHash("Speed");
     private static readonly int AttackTrigger = Animator.StringToHash("Attack");
+    private static readonly int PullingState = Animator.StringToHash("Pulling");
     private static readonly int CarryingState = Animator.StringToHash("Carrying");
     private static readonly int CarriedState  = Animator.StringToHash("Carried");
     private static readonly int FallTrigger = Animator.StringToHash("Fall");
@@ -159,7 +164,7 @@ public class PlayerController : EntityController, Throwable
             PlayerDataKeeper.Instance.RegisterExistingInstance(this, localInput);
         }
         
-        _collider = GetComponent<BoxCollider2D>();
+        Collider = GetComponent<BoxCollider2D>();
         _tintFlashController = GetComponent<TintFlashController>();
         _renderer = GetComponent<Renderer>();
         
@@ -175,11 +180,8 @@ public class PlayerController : EntityController, Throwable
     protected override void Update()
     {
         base.Update();
-        // Check whether the player released the pull key
-        if (!Input.GetButton(Button.Pull) && _playerState == PlayerState.pulling)
-            ReleasePull();
         // Check whether the player released the item key
-        else if (!Input.GetButton(Button.Item) && _playerState == PlayerState.carrying && !CarriesSomeone())
+        if (!Input.GetButton(Button.Item) && _playerState == PlayerState.carrying && !CarriesSomeone())
             ThrowThrowable(_throwableItemInstance, new Vector2(Input.GetHorizontal(), Input.GetVertical()));
         // Check whether the player released the carry key
         else if (!Input.GetButton(Button.Carry) && _playerState == PlayerState.carrying && CarriesSomeone())
@@ -192,11 +194,8 @@ public class PlayerController : EntityController, Throwable
         }
         else if (_playerState == PlayerState.walking)
         {
-            // Pulling / Pushing
-            if (Input.GetButtonDown(Button.Pull) && GetNearPushable(out var pushable))
-                EnablePulling(pushable);
             // Item usage
-            else if (Input.GetButtonDown(Button.Item) && _data.item && _data.item.Ready() && 
+            if (Input.GetButtonDown(Button.Item) && _data.item && _data.item.Ready() && 
             Instantiate(_data.item, new Vector2(Rigidbody2D.position.x, _renderer.bounds.max.y), Quaternion.identity) is Throwable throwableItem)
                 PickUpThrowable(_throwableItemInstance = throwableItem);
             // Carrying (FIXME: We should have the `Interactive` component handle this.)
@@ -206,32 +205,6 @@ public class PlayerController : EntityController, Throwable
             }
 
         }
-    }
-
-    /**
-     * Checks whether there is a pullable object near to the player in viewing direction.
-     *
-     * @param pushable    if a pullable object has been found, it will be stored here, otherwise, null is stored
-     * @returns true iff a pullable object has been found.
-     * 
-     * FIXME: Check color of box
-     */
-    bool GetNearPushable(out Pushable pushable)
-    {
-        var hit = Search("Box");
-        if (!ReferenceEquals(hit.collider, null)) // !ReferenceEquals is supposed to be faster than != null
-        {
-            pushable = hit.collider.gameObject.GetComponent<Pushable>();
-
-            if (!ReferenceEquals(pushable, null))
-            {
-                // We can only interact with boxes where the color matches our own
-                return pushable.Color.IsCompatibleWith(this.Color);
-            }            
-        }
-    
-        pushable = null;
-        return false;
     }
 
     bool GetNearPlayer(out PlayerController player)
@@ -252,7 +225,7 @@ public class PlayerController : EntityController, Throwable
         // We want to search in viewing direction
         var searchDirection = viewDirection.ToVector();
         return Physics2D.Raycast(
-            (Vector2) transform.position + _collider.offset,  // Search from middle point of our collider
+            (Vector2) transform.position + Collider.offset,  // Search from middle point of our collider
             searchDirection,
             boxPullRange,
             LayerMask.GetMask(layer));
@@ -352,14 +325,6 @@ public class PlayerController : EntityController, Throwable
         return true;
     }
 
-    private void Die(){
-        // This is only a temporary solution until we have respawn
-        Rigidbody2D.simulated = false;
-        lifeGauge.SetActive(false);
-        GetComponent<SpriteRenderer>().enabled = false;
-        Destroy(this.gameObject, 2.0f);
-    }
-
     /**
      * Displays a bar of hearts (life gauge) relative to the player avatar
      */
@@ -436,7 +401,7 @@ public class PlayerController : EntityController, Throwable
         // If we are pulling a box and trying to move in the pulling direction, we instruct the box to pull
         if (_playerState == PlayerState.pulling && DoesMoveInPullDirection())
         {
-            _pushableToPull.Pull(viewDirection.Inverse(), this.gameObject);
+            _pushableToPull.Pull(viewDirection.Inverse(), this);
         }
 
         // Otherwise, move normally
@@ -463,16 +428,29 @@ public class PlayerController : EntityController, Throwable
         }
     }
 
-    
-    private void EnablePulling(Pushable pushable)
+    /**
+     * Changes player state so that they are ready to pull an object (e.g. a Sokoban box).
+     * It also stores a reference to the `Pushable` which the player can pull.
+     */
+    public void EnablePulling(Pushable pushable)
     {
         _playerState = PlayerState.pulling;
+        Animator.SetBool(PullingState, true);
         _pushableToPull = pushable;
     }
 
-    private void ReleasePull()
+    /**
+     * Changes player state so that the player is no longer ready to pull an object (e.g. a Sokoban box).
+     */
+    public void DisablePulling()
     {
         _playerState = PlayerState.walking;
+        Animator.SetBool(PullingState, false);
+        // `Pushable` objects have a timeout before a player can push them.
+        // Since a player is in constant contact with the `Pushable` during pulling, this timeout has likely run out by
+        // now. Resetting the timeout when stopping to pull leads to a better experience:
+        _pushableToPull?.ResetContactTimeout();
+        
         _pushableToPull = null;
     }
 
@@ -504,7 +482,7 @@ public class PlayerController : EntityController, Throwable
         joint.enabled = false;
 
         var ontop = new Vector2(Rigidbody2D.position.x, _renderer.bounds.max.y);
-        StartCoroutine(throwable.PickUpCoroutine(ontop, joint, _collider));
+        StartCoroutine(throwable.PickUpCoroutine(ontop, joint, Collider));
         _playerState = PlayerState.carrying;
         Animator.SetBool(CarryingState, true);
     }
@@ -518,7 +496,7 @@ public class PlayerController : EntityController, Throwable
         Animator.SetBool(CarryingState, false);
 
         Destroy(gameObject.GetComponent("HingeJoint2D"));
-        StartCoroutine(throwable.ThrowCoroutine(direction, _collider));
+        StartCoroutine(throwable.ThrowCoroutine(direction, Collider));
 
         // if we throw a player, remove reference, if we throw an item it doesn't matter
         _otherPlayer = null;
@@ -533,7 +511,7 @@ public class PlayerController : EntityController, Throwable
         _playerState = PlayerState.carried;
 
         Animator.SetBool(CarriedState, true);
-        Physics2D.IgnoreCollision(collider, _collider);
+        Physics2D.IgnoreCollision(collider, Collider);
         // temporally change sorting order to draw carried gameobject on top
         _renderer.sortingOrder++;
         PhysicsEffects.MoveBody(ontop);
@@ -555,7 +533,7 @@ public class PlayerController : EntityController, Throwable
 
         // restore sorting order & collision between the two players, when player leaves state thrown
         yield return new WaitUntil(() => _playerState == PlayerState.walking);
-        Physics2D.IgnoreCollision(collider, _collider, false);
+        Physics2D.IgnoreCollision(collider, Collider, false);
         _renderer.sortingOrder--;
     }
 
@@ -675,5 +653,14 @@ public class PlayerController : EntityController, Throwable
     {
         _playerState = PlayerState.walking;
         _presentItemCallback?.Invoke();
+    }
+
+    public bool IsLookingAt(Vector3 point)
+    {
+        return
+            Collider.bounds.DirectionTo(
+                point, out var fromPlayerToPointDirection
+            )
+            && fromPlayerToPointDirection == viewDirection;
     }
 }

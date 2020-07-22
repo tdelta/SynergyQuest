@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 250908839767076306}
   - component: {fileID: 250908839767076334}
   - component: {fileID: 7081900409702879996}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: DeadManSwitch
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -128,6 +128,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   button: 1
   interactionType: 2
+  interactionTriggeredEvent:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!61 &250908839767076334
 BoxCollider2D:
   m_ObjectHideFlags: 0

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using Sokoban;
+﻿using Sokoban;
 using UnityEngine;
 
 public class SwitchController : MonoBehaviour
@@ -42,7 +39,7 @@ public class SwitchController : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.CompareTag("Box")){
-            Pushable box = other.gameObject.GetComponent<Pushable>();
+            var box = other.gameObject.GetComponent<Box>();
             
             if(box.Color.IsCompatibleWith(this.GetColor())) {
                 SetPressed(true);
@@ -53,7 +50,7 @@ public class SwitchController : MonoBehaviour
     private void OnTriggerExit2D(Collider2D other)
     {
         if (other.gameObject.CompareTag("Box")){
-            Pushable box = other.gameObject.GetComponent<Pushable>();
+            var box = other.gameObject.GetComponent<Box>();
             
             if(box.Color.IsCompatibleWith(this.GetColor())) {
                 SetPressed(false);
