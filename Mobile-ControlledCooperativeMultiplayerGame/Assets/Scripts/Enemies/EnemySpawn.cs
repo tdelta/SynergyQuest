@@ -17,6 +17,11 @@ public class EnemySpawn : MonoBehaviour {
     // If true, the configured number of enemies will be spawned for every player
     [SerializeField] private bool spawnEnemiesPerPlayer = false;
     [SerializeField] List<EnemyTypeCountPair> enemies;
+    /**
+     * If this list is non-empty, enemies will be spawned at these points instead
+     * of on random tiles
+     */
+    [SerializeField] private List<Transform> customSpawnPoints = null;
 
     private int _emptyRadius = 1;
     private float _totalSpawnTime = 1;
@@ -86,14 +91,26 @@ public class EnemySpawn : MonoBehaviour {
         }
     }
 
-    List<Vector3Int> GetValidSpawnPositions()
+    List<Vector3> GetValidSpawnPositions()
     {
-        var spawnPositions = new List<Vector3Int>();
-        foreach (var position in _tilemap.cellBounds.allPositionsWithin) {
-            var collider = Physics2D.OverlapCircle((Vector3) position, _emptyRadius);
-            if (_tilemap.HasTile(position) && collider == null)
-                spawnPositions.Add(position);
+        if (customSpawnPoints is null || customSpawnPoints.Count == 0)
+        {
+            var spawnPositions = new List<Vector3>();
+            foreach (var position in _tilemap.cellBounds.allPositionsWithin)
+            {
+                var floatPosition = (Vector3) position;
+                var collider = Physics2D.OverlapCircle(floatPosition, _emptyRadius);
+                if (_tilemap.HasTile(position) && collider is null)
+                {
+                    spawnPositions.Add(floatPosition);
+                }
+            }
+            return spawnPositions;
         }
-        return spawnPositions;
+
+        else
+        {
+            return customSpawnPoints.Select(obj => obj.position).ToList();
+        }
     }
 }
