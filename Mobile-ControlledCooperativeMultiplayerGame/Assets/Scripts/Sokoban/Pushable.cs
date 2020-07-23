@@ -111,7 +111,7 @@ public class Pushable : MonoBehaviour
             grid = GameObject.Find("Grid").GetComponent<Grid>();
         }
         
-        _raycastLayerMask  = LayerMask.GetMask("LevelStatic", "Box");
+        _raycastLayerMask  = LayerMask.GetMask("LevelStatic", "Box", "Chasm", "Monster");
         
         _boxCollider = GetComponent<BoxCollider2D>();
         _body = GetComponent<Rigidbody2D>();

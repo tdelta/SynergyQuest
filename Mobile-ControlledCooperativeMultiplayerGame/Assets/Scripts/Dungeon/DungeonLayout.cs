@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
 /**
  * A dungeon can be defined as a graph of connected rooms using a `.json` file.
@@ -38,8 +40,10 @@ using Newtonsoft.Json;
  *
  * This singleton will search for the scene files of rooms in the subdirectories of the directory where the layout .json
  * file was placed.
- * For every room "DX" for every number "N" of players supported must be implemented as a Unity scene which has been
- * added to the build settings and is saved in the subdirectory "rooms/DX/DX_PN.unity". 
+ * For every room "DX" for every number "N" of supported players a scene must be implemented. It must be
+ * added to the build settings and be saved in the subdirectory "rooms/DX/DX_PN.unity".
+ * If you want to develop just one scene for every number of players, leave out the "_PN" suffix and the scene will
+ * be used as fallback, whenever no scene with the right numeric suffix is present.
  */
 public class DungeonLayout : Singleton<DungeonLayout>
 {
@@ -179,20 +183,25 @@ public class DungeonLayout : Singleton<DungeonLayout>
     {
         var sep = Path.DirectorySeparatorChar;
         
-        // This variable will store the path to the folder where all scene files of the dungeon layout are located
-        string dungeonScenePath = _dungeonPath;
-
+        var scenePrefixPath = Path.Combine(_dungeonPath, $"rooms{sep}{roomName}{sep}{roomName}");
+        var scenePath = $"{scenePrefixPath}_P{_playerNum}";
+        // If no scene is at the computed path, fall back to a path without a player number
+        if (!File.Exists($"{scenePath}.unity"))
+        {
+            scenePath = scenePrefixPath;
+        }
+        
         // If the path starts with the "Assets" folder, we remove it from the path, since Unity will automatically
         // assume all scene files to be located in the Assets folder and expects paths to be relative to it.
         var assetsRelPath = $"Assets{sep}";
-        var assetsIdx = _dungeonPath.IndexOf(assetsRelPath);
+        var assetsIdx = scenePath.IndexOf(assetsRelPath);
         if (assetsIdx != -1)
         {
-            dungeonScenePath = dungeonScenePath.Remove(assetsIdx, assetsRelPath.Length);
+            scenePath = scenePath.Remove(assetsIdx, assetsRelPath.Length);
         }
         
         // Return the full path where the room scene file for the current number of players is expected
-        return Path.Combine(dungeonScenePath, $"rooms{sep}{roomName}{sep}{roomName}_P{_playerNum}");
+        return scenePath;
     }
 
     /**

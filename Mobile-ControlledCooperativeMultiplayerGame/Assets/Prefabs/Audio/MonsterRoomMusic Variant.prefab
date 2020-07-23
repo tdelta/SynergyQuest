@@ -1,5 +1,32 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &4212935711817087858
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1055254150527712258}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d285e2e54cbb0aeeaa0a18c96130cfa3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  switches: []
+--- !u!114 &1073761430953310506
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1055254150527712258}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 12a2945bc95e4d72b86ca11b3f48d368, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  initialAudio: {fileID: 8300000, guid: 7dfa7ccc122b90abf88f6cee2955f773, type: 3}
+  switchedAudio: {fileID: 8300000, guid: a1d4b472e243973aea0b001f47d3a7e2, type: 3}
 --- !u!1001 &464212264461881856
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -65,12 +92,18 @@ PrefabInstance:
     - target: {fileID: 636189072667487746, guid: 1f5cce7558a92e31da5af2d7a403f21d,
         type: 3}
       propertyPath: m_Name
-      value: MonsterRoomMusic
+      value: MonsterRoomMusic Variant
       objectReference: {fileID: 0}
     - target: {fileID: 636189072667487747, guid: 1f5cce7558a92e31da5af2d7a403f21d,
         type: 3}
       propertyPath: m_audioClip
       value: 
-      objectReference: {fileID: 8300000, guid: 7dfa7ccc122b90abf88f6cee2955f773, type: 3}
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1f5cce7558a92e31da5af2d7a403f21d, type: 3}
+--- !u!1 &1055254150527712258 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 636189072667487746, guid: 1f5cce7558a92e31da5af2d7a403f21d,
+    type: 3}
+  m_PrefabInstance: {fileID: 464212264461881856}
+  m_PrefabAsset: {fileID: 0}

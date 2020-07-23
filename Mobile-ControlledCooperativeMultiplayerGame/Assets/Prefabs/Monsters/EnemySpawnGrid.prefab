@@ -57,6 +57,7 @@ GameObject:
   - component: {fileID: 4617749517432785707}
   - component: {fileID: 4617749517432785704}
   - component: {fileID: 7624197619055225673}
+  - component: {fileID: 3756204181427935985}
   - component: {fileID: 4617749517432785701}
   - component: {fileID: 4617749517432785703}
   - component: {fileID: 4617749517432785700}
@@ -1928,6 +1929,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 984aac8471481389daa148a6334ef2b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spawnEnemiesPerPlayer: 0
   enemies:
   - Type: {fileID: 5481500327407250212, guid: f0c1adf6b4e8d2006a9096257c9a2e80, type: 3}
     Count: 1
@@ -1948,6 +1950,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   value: 0
+  isPersistentAcrossScenes: 1
+--- !u!114 &3756204181427935985
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4617749517432785710}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c457c33eaa484ddd9aec52891f1086ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _guid: 38d903fc-8d36-4a3e-b1ce-4dab6ae9a8af
 --- !u!19719996 &4617749517432785701
 TilemapCollider2D:
   m_ObjectHideFlags: 0

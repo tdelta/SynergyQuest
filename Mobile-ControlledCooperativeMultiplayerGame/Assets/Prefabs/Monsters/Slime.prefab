@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 4379324440833947342}
   - component: {fileID: 4379324440833947343}
   - component: {fileID: 4379324440833947340}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Slime
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -236,6 +236,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: HitSounds
       objectReference: {fileID: 0}
+    - target: {fileID: 2966709030660991388, guid: 37e72f8d85c3e48ff94a706cf9f4acd0,
+        type: 3}
+      propertyPath: m_Layer
+      value: 14
+      objectReference: {fileID: 0}
     - target: {fileID: 5901695804182231811, guid: 37e72f8d85c3e48ff94a706cf9f4acd0,
         type: 3}
       propertyPath: m_Volume
@@ -382,6 +387,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Smoke
+      objectReference: {fileID: 0}
+    - target: {fileID: 4098822668328429575, guid: 3a8c965459b39b31abeac92fbb15c6d0,
+        type: 3}
+      propertyPath: m_Layer
+      value: 14
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3a8c965459b39b31abeac92fbb15c6d0, type: 3}

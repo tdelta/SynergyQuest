@@ -1,29 +1,31 @@
-﻿using JetBrains.Annotations;
-using UnityEngine;
+﻿using UnityEngine;
 
 /**
  * A key can be collected by players and be used to open doors. See also `KeyLock`.
  *
  * Usually this class should be combined with a `ContactTrigger` which invokes the `CollectKey` method.
  */
+[RequireComponent(typeof(Guid))]
 public class Key : MonoBehaviour
 {
-    /**
-     * Every key can optionally have an ID.
-     * This ID must be set if you want the game to remember, whether a key has already been collected across scenes.
-     * Then, an already collected key will not appear again when revisiting a scene.
-     */
-    [SerializeField] [CanBeNull] private string keyId;
-    [CanBeNull] public string KeyId => keyId;
-    
     private SpriteRenderer _renderer;
+    public Guid Guid { get; private set; }
+
+    /**
+     * Since this object will invisibly persist for a short while before being destroyed to play a sound,
+     * we use this flag to indicate this state and prevent the key from being collected.
+     *
+     * This prevents multiple players from collecting a key at the same time.
+     */
+    private bool _isBeingDestroyed = false; 
 
     private void Awake()
     {
         _renderer = GetComponent<SpriteRenderer>();
+        Guid = GetComponent<Guid>();
         
         // Self-destruct, if this key has already been collected
-        if (PlayerDataKeeper.Instance.HasKeyBeenCollected(this))
+        if (DungeonDataKeeper.Instance.HasKeyBeenCollected(this))
         {
             Destroy(this.gameObject);
         }
@@ -34,13 +36,17 @@ public class Key : MonoBehaviour
      */
     public void CollectKey(PlayerController collector)
     {
-        // Remember, that this key has been collected
-        PlayerDataKeeper.Instance.MarkKeyAsCollected(this);
-        // Increase the counter of collected keys for the players
-        PlayerDataKeeper.Instance.NumKeys += 1;
-        // Play a sound and destroy this object afterwards
-        this.PlaySoundAndDestroy();
-        // Display an animation on the player collecting this key.
-        collector.PresentItem(_renderer.sprite);
+        if (!_isBeingDestroyed)
+        {
+            // Remember, that this key has been collected
+            DungeonDataKeeper.Instance.MarkKeyAsCollected(this);
+            // Increase the counter of collected keys for the players
+            PlayerDataKeeper.Instance.NumKeys += 1;
+            // Play a sound and destroy this object afterwards
+            this.PlaySoundAndDestroy();
+            _isBeingDestroyed = true;
+            // Display an animation on the player collecting this key.
+            collector.PresentItem(_renderer.sprite);
+        }
     }
 }

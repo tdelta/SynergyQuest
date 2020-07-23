@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 540270698614065435}
   - component: {fileID: 2587272270832964802}
   - component: {fileID: 2676466396527834540}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Dummy
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -58,6 +58,7 @@ MonoBehaviour:
   damageFactor: 1
   smokeEffect: {fileID: 5306489982219389968}
   hitSounds: {fileID: 9052991940343098414}
+  coin: {fileID: 0}
 --- !u!114 &3986429896781604294
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -82,7 +83,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e89ceed4394482f9eade6be87a68d82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _customOrigin: {fileID: 0}
 --- !u!212 &7458184417568935829
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -221,6 +221,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: HitSounds
+      objectReference: {fileID: 0}
+    - target: {fileID: 2966709030660991388, guid: 37e72f8d85c3e48ff94a706cf9f4acd0,
+        type: 3}
+      propertyPath: m_Layer
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 8238955357890096599, guid: 37e72f8d85c3e48ff94a706cf9f4acd0,
         type: 3}
@@ -363,6 +368,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Smoke
+      objectReference: {fileID: 0}
+    - target: {fileID: 4098822668328429575, guid: 3a8c965459b39b31abeac92fbb15c6d0,
+        type: 3}
+      propertyPath: m_Layer
+      value: 14
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3a8c965459b39b31abeac92fbb15c6d0, type: 3}

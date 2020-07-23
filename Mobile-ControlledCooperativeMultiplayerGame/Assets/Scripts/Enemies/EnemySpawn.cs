@@ -5,69 +5,93 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
+[RequireComponent(typeof(Tilemap), typeof(Switch))]
 public class EnemySpawn : MonoBehaviour {
 
-    [System.Serializable] struct EnemyTypeCountPair {
+    [Serializable]
+    struct EnemyTypeCountPair {
         public EnemyController Type;
         public int Count;
     }
 
+    // If true, the configured number of enemies will be spawned for every player
+    [SerializeField] private bool spawnEnemiesPerPlayer = false;
     [SerializeField] List<EnemyTypeCountPair> enemies;
 
-    int emptyRadius = 1;
-    float totalSpawnTime = 1;
-    float spawnTime;
-    bool spawnComplete;
-    Tilemap tilemap;
-    Switch switcher;
-    System.Random rand = new System.Random();
-    List<EnemyController> gameObjects = new List<EnemyController>();
+    private int _emptyRadius = 1;
+    private float _totalSpawnTime = 1;
+    private float _spawnTime;
+    private bool _spawnComplete;
+    private Tilemap _tilemap;
+    private Switch _switch;
+    private System.Random _rand = new System.Random();
+    private List<EnemyController> _spawnedEnemies = new List<EnemyController>();
 
     // Start is called before the first frame update
-    void Start() {
-        tilemap = GetComponent<Tilemap>();
-        switcher = GetComponent<Switch>();
-        spawnTime = totalSpawnTime / Math.Max(enemies.Sum(e => e.Count), 1);
-        StartCoroutine(SpawnEnemies());
+    void Start()
+    {
+        _tilemap = GetComponent<Tilemap>();
+        _switch = GetComponent<Switch>();
+        
+        _spawnTime = _totalSpawnTime / Math.Max(enemies.Sum(e => e.Count), 1);
+
+        // Only spawn enemies, if this spawner has not already been defeated
+        if (!_switch.Value)
+        {
+            StartCoroutine(SpawnEnemies());
+        }
     }
 
-    void Update() {
+    void Update()
+    {
         CheckExit();
     }
 
-    void CheckExit() {
-        if (spawnComplete && gameObjects.All(e => e == null)) {
-            switcher.Value = true;
+    void CheckExit()
+    {
+        if (_spawnComplete && _spawnedEnemies.All(e => e == null)) {
+            _switch.Value = true;
         }
     }
 
     IEnumerator SpawnEnemies() {
-        yield return new WaitForSeconds(spawnTime);
+        yield return new WaitForSeconds(_spawnTime);
 
-        foreach (var enemy in enemies) {
-            for (var i = 0; i < enemy.Count; i++) {
+        foreach (var enemy in enemies)
+        {
+            var spawnCount = enemy.Count;
+            if (spawnEnemiesPerPlayer)
+            {
+                spawnCount *= PlayerDataKeeper.Instance.NumPlayers;
+            }
+            
+            for (var i = 0; i < spawnCount; ++i)
+            {
                 SpawnWithRandomPosition(enemy.Type);
-                yield return new WaitForSeconds(spawnTime);
+                yield return new WaitForSeconds(_spawnTime);
             }
         }
-        spawnComplete = true;
+        
+        _spawnComplete = true;
     }
 
-    void SpawnWithRandomPosition(EnemyController obj) {
+    void SpawnWithRandomPosition(EnemyController obj)
+    {
         var spawnPositions = GetValidSpawnPositions();
         if (spawnPositions.Count > 0) { // if no spawn position with no collider inside radius exists
-            int index = rand.Next(spawnPositions.Count);
+            int index = _rand.Next(spawnPositions.Count);
             var instance = Instantiate(obj, spawnPositions[index], Quaternion.identity);
             instance.ShowParticles();
-            gameObjects.Add(instance);
+            _spawnedEnemies.Add(instance);
         }
     }
 
-    List<Vector3Int> GetValidSpawnPositions() {
+    List<Vector3Int> GetValidSpawnPositions()
+    {
         var spawnPositions = new List<Vector3Int>();
-        foreach (var position in tilemap.cellBounds.allPositionsWithin) {
-            var collider = Physics2D.OverlapCircle((Vector3) position, emptyRadius);
-            if (tilemap.HasTile(position) && collider == null)
+        foreach (var position in _tilemap.cellBounds.allPositionsWithin) {
+            var collider = Physics2D.OverlapCircle((Vector3) position, _emptyRadius);
+            if (_tilemap.HasTile(position) && collider == null)
                 spawnPositions.Add(position);
         }
         return spawnPositions;
