@@ -1,10 +1,10 @@
 using System;
 
 /**
- * The `Connection` class handles all communication between the game and a controller client on a low level on another
- * thread.
+ * The `ControllerConnection` class handles all communication between the game and a controller client on a low level on
+ * another thread.
  * It communicates with the main thread via message passing and this class hierarchy determines the shape of those
- * messages. See the `Connection` and `ControllerServer` classes.
+ * messages. See the `ControllerConnection` and `ControllerServer` classes.
  *
  * All concrete kinds of messages are subclasses of `ConnectionUpdate`.
  * One can do a "switch-case" on them using the `Match` method. See the `ControllerServer` class for an example

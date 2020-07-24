@@ -11,7 +11,7 @@ using WebSocketSharp.Server;
  *
  * For sending, see the methods of the `ControllerInput` class.
  */
-public class Connection : WebSocketBehavior
+public class ControllerConnection : WebSocketBehavior
 {
     // Though the websocket library already provides an ID for every connection, we use our own numeric IDs since the
     // library uses string ids which are expensive to compare. And we need to compare IDs a LOT in the server update

@@ -6,6 +6,7 @@ import {
   PlayerColor,
   ControllerClient,
   ConnectFailureReason,
+  DiagnosticsClient,
 } from 'controller-client-lib';
 
 /**
@@ -372,11 +373,39 @@ class App extends React.Component<{}, AppState> {
       failureDisplay = <></>;
     }
 
+    const retrieveDiagnostics = async (_: any) => {
+      const address = prompt('Address?', window.location.hostname);
+      const port = prompt('Port?', '4242');
+
+      if (address != null && address !== '' && port != null && port !== '') {
+        try {
+          const diagnostics = await DiagnosticsClient.getDiagnostics(
+            address,
+            +port
+          );
+
+          alert(
+            `Players with lost connection: ${diagnostics.playersWithLostConnection}`
+          );
+        } catch (e) {
+          alert(e);
+        }
+      }
+    };
+
+    const diagnosticsDisplay = (
+      <div>
+        <h3>Diagnostics</h3>
+        <button onClick={retrieveDiagnostics}>Get Diagnostics</button>
+      </div>
+    );
+
     return (
       <div className='App'>
         {failureDisplay}
         {body}
         {menuActionDisplay}
+        {diagnosticsDisplay}
       </div>
     );
   }

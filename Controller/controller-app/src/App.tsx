@@ -96,6 +96,11 @@ class App extends React.Component<{}, AppState> {
     const client = new ControllerClient();
 
     client.onReady = () => {
+      // If we connected successfully, we remember the name we connected with.
+      // This way, `ConnectScreen` can use this name to reconnect when reloading
+      // the page after having lost the connection.
+      window.localStorage.setItem('name', playerName);
+
       this.setState({
         ...this.state,
         connectionStatus: ConnectedC(client),

@@ -13,10 +13,13 @@ using WebSocketSharp.Server;
  * You should listen to the event and use the produced input instances in your
  * game logic since they give access to the individual game controllers
  * on a high-level.
+ *
+ * Furthermore, a websocket service is provided offering diagnostic information
+ * about the game, see also the `DiagnosticsConnection` class.
  * 
  * Internally, this class uses a websocket connection to the controller over
  * which JSON messages are exchanged. For the format of the JSON messages,
- * see the `Message` class hierarchy.
+ * see the `Message` class hierarchy and the `DiagnosticsMessage` class.
  * Since the native C# WebSocket functionalities which are required for
  * servers (a compatible HTTPListener implementation) do not ship with the .NET
  * runtime of the current version of Unity (at least not on Linux), we use
@@ -68,10 +71,10 @@ public class ControllerServer : BehaviourSingleton<ControllerServer>
         // Bind to all local addresses (0.0.0.0)
         _wss = new WebSocketServer($"ws://0.0.0.0:{_port}");
         
-        // The connection class will handle the connection on a different
+        // The `ControllerConnection` class will handle remote controller connections on a different
         // thread.
-        _wss.AddWebSocketService<Connection>(
-            "/sockets",      // we expect connections on the /sockets path
+        _wss.AddWebSocketService<ControllerConnection>(
+            "/controllers",      // we expect connections on the /controllers path
             connection =>
             {
                 // we use this initialization function to pass the message queue
@@ -82,11 +85,14 @@ public class ControllerServer : BehaviourSingleton<ControllerServer>
                 Log("A new connection has been established.");
             });
         
+        // Furthermore, we provide a websocket service offering diagnostic data about the game.
+        _wss.AddWebSocketService<DiagnosticsConnection>("/diagnostics");
+
         // Now we need to get a handle to the session manager which
         // keeps track of all connections, so that we can use it later
         // to send data
         WebSocketServiceHost serviceHost;
-        if (_wss.WebSocketServices.TryGetServiceHost("/sockets", out serviceHost))
+        if (_wss.WebSocketServices.TryGetServiceHost("/controllers", out serviceHost))
         {
             _wssm = serviceHost.Sessions;
         }
