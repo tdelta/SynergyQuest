@@ -14,4 +14,22 @@ public class PlayerData
     private Input _input;
     public Input input => _input;
     public Item item { get; set; }
+
+    public int goldCounter = 0;
+
+    public string name
+    {
+        get
+        {
+            if (input is ControllerInput controllerInput)
+            {
+                return controllerInput.PlayerName;
+            }
+
+            else
+            {
+                return "Debug Player";
+            }
+        }
+    }
 }

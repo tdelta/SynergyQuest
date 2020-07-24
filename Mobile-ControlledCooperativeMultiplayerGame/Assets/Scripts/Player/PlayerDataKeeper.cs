@@ -16,6 +16,7 @@ public class PlayerDataKeeper: Singleton<PlayerDataKeeper>
      * Scene-persistent data of each player
      */
     private List<PlayerData> _playerDatas = new List<PlayerData>();
+    public List<PlayerData> PlayerDatas => _playerDatas;
     public int NumPlayers => _playerDatas.Count;
 
     /**

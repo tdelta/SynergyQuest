@@ -5,19 +5,6 @@ using UnityEngine;
 
 public class EndOfGameUi : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI _playerNamesText;
-    
-    // Start is called before the first frame update
-    void Start()
-    {
-        // Get all connected controllers
-        var inputs = ControllerServer.Instance.GetInputs();
-        
-        // Display the names of all players
-        var playerNames = inputs.Select(input => input.PlayerName);
-        _playerNamesText.SetText(string.Join(" ", playerNames));
-    }
-
     private void OnEnable()
     {
         // Allow each controller to quit the game by entering a menu state

@@ -53,9 +53,6 @@ public class PlayerController : EntityController, Throwable
     
     private int _healthPoints;
 
-    // FIXME: Integrate gold counter into dataset which is persistent across scenes (`PlayerData`)
-    private int _goldCounter;
-
     public BoxCollider2D Collider { get; private set; }
 
     private Renderer _renderer;
@@ -169,7 +166,6 @@ public class PlayerController : EntityController, Throwable
         _renderer = GetComponent<Renderer>();
         
         _healthPoints = maxHealthPoints;
-        _goldCounter = 0;
         _playerState = PlayerState.walking;
         
         var material = GetComponent<Renderer>().material;
@@ -346,7 +342,7 @@ public class PlayerController : EntityController, Throwable
     private void DisplayCoinGauge()
     {
         // ToDo: Adjust height, so that lifeGauge and goldGauge can be displayed concurrently!
-        this.coinGauge.GetComponent<CoinGaugeController>().DrawColdCounter(this._goldCounter);
+        this.coinGauge.GetComponent<CoinGaugeController>().DrawColdCounter(this._data.goldCounter);
     }
 
     public Vector2 GetPosition()
@@ -602,7 +598,7 @@ public class PlayerController : EntityController, Throwable
 
     public void IncreaseGoldCounter()
     {
-        _goldCounter++;
+        _data.goldCounter++;
         DisplayCoinGauge();
     }
     
