@@ -120,7 +120,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   thrust: 100
   deactivationTime: 10
-  coinCollect: {fileID: 8300000, guid: aa105176812ed0c42975a43560d40354, type: 3}
 --- !u!61 &7476413430186449271
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -178,8 +177,8 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 1
+  m_audioClip: {fileID: 8300000, guid: aa105176812ed0c42975a43560d40354, type: 3}
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0

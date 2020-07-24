@@ -212,12 +212,10 @@ public class ControllerServer : BehaviourSingleton<ControllerServer>
      */
     private void HandleConnectionSetup(string name, int connectionId, string websocketId)
     {
-        int playerId;
         // check if there is already a player of this name...
-        if (_clients.TryGetPlayerId(name, out playerId))
+        if (_clients.TryGetPlayerId(name, out var playerId))
         {
-            ControllerInput input;
-            if (_clients.TryGetInput(playerId, out input))
+            if (_clients.TryGetInput(playerId, out var input))
             {
                 // if the controller of that player is still connected, deny the connection
                 if (input.IsConnected())
@@ -229,8 +227,8 @@ public class ControllerServer : BehaviourSingleton<ControllerServer>
                 else
                 {
                     _clients.SetNewConnectionInfo(playerId, connectionId, websocketId);
-                    input.SetStatus(ConnectionStatus.Connected);
                     SendToByWebsocketId(websocketId, new Message.NameOkMessage());
+                    input.SetStatus(ConnectionStatus.Connected);
                 }
             }
 
@@ -250,14 +248,9 @@ public class ControllerServer : BehaviourSingleton<ControllerServer>
                     name, 
                     connectionId,
                     websocketId,
-                    newPlayerId =>
-                    {
-                        var input = new ControllerInput(newPlayerId, name, this);
-                        input.SetStatus(ConnectionStatus.Connected);
-
-                        return input;
-                    }
+                    newPlayerId => new ControllerInput(newPlayerId, name, this)
                 );
+                newInput.SetStatus(ConnectionStatus.Connected);
                 
                 Log($"Accepted new player of name {name}");
                 SendToByWebsocketId(websocketId, new Message.NameOkMessage());
