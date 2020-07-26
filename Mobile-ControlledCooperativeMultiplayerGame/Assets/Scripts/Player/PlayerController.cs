@@ -192,7 +192,7 @@ public class PlayerController : EntityController, Throwable
         {
             // Item usage
             if (Input.GetButtonDown(Button.Item) && _data.item && _data.item.Ready() && 
-            Instantiate(_data.item, new Vector2(Rigidbody2D.position.x, _renderer.bounds.max.y), Quaternion.identity) is Throwable throwableItem)
+            _data.item.Instantiate(new Vector2(Rigidbody2D.position.x, _renderer.bounds.max.y)) is Throwable throwableItem)
                 PickUpThrowable(_throwableItemInstance = throwableItem);
             // Carrying (FIXME: We should have the `Interactive` component handle this.)
             else if (Input.GetButtonDown(Button.Carry) && GetNearPlayer(out _otherPlayer)) {

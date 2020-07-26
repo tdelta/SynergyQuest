@@ -6,10 +6,11 @@ public class BombItem : Item, Throwable
 {
     [SerializeField] ParticleSystem sparkEffect;
 
-    static bool ready = true;
+    bool destroyed = false;
     bool explosion = false;
     readonly int explosionTrigger = Animator.StringToHash("Explode");
 
+    BombItem instance;
     Renderer renderer;
     Animator animator;
     PhysicsEffects effects;
@@ -27,7 +28,6 @@ public class BombItem : Item, Throwable
 
     public IEnumerator PickUpCoroutine(Vector2 ontop, HingeJoint2D joint, BoxCollider2D otherCollider)
     {
-        ready = false;
         joint.connectedBody = rigidbody2D;
         animator.SetTrigger(explosionTrigger);
         Physics2D.IgnoreCollision(collider, otherCollider);
@@ -49,7 +49,7 @@ public class BombItem : Item, Throwable
     public IEnumerator ThrowCoroutine(Vector2 direction, BoxCollider2D otherCollider)
     {
         // can't throw a bomb if already exploded
-        if (Ready())
+        if (destroyed)
             yield break;
 
         effects.ApplyImpulse(10 * direction);
@@ -70,13 +70,24 @@ public class BombItem : Item, Throwable
     public void Destroy()
     {
         // new bomb can only be instantiated when the previous one exploded
-        ready = true;
+        destroyed = true;
         Destroy(gameObject);
+    }
+
+    protected bool isDestroyed()
+    {
+      return destroyed;
     }
     
     public override bool Ready()
     {
-        return ready;
+        return instance?.isDestroyed() ?? true;
+    }
+
+    public override Item Instantiate(Vector2 coords)
+    {
+      instance = Instantiate(this, coords, Quaternion.identity);
+      return instance;
     }
 
     void FixedUpdate()

@@ -9,6 +9,6 @@ public class Collectible : MonoBehaviour
     public Item Collect()
     {
         Destroy(gameObject);
-        return item;
+        return Instantiate(item);
     }
 }

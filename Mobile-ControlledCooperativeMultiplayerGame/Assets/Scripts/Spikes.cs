@@ -59,9 +59,9 @@ public class Spikes : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") || other.CompareTag("Enemy"))
         {
-            var player = other.GetComponent<PlayerController>();
+            var player = other.GetComponent<EntityController>();
             
             player.PutDamage(damage, Vector2.zero);
         }
