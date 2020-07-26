@@ -19,7 +19,9 @@ export const colors: { [color in PlayerColor]: ColorData; } =
 
 export const buttonStyles: { [button in Button]: ColorData; } =
   {
-    0: { name: 'Attack', light: '#e53935', dark: '#ef5350'},
-    1: { name: 'Pull', light: '#039Be5', dark: '#29b6f6'},
-    3: { name: 'Press', light: '#ffa726', dark: '#fb8c00'},
+    0: { name: 'Attack', light: '#ff6f60', dark: '#E53935'},
+    1: { name: 'Pull', light: '#6ab7ff', dark: '#1e88e5'},
+    2: { name: 'Carry', light: '#4ebaaa', dark: '#00897B'},
+    3: { name: 'Press', light: '#ff844c', dark: '#F4511E'},
+    4: { name: 'Trow Bomb', light: '#c158dc', dark: '#8E24AA'},
   };

@@ -67,4 +67,12 @@ public class MovementBinder : MonoBehaviour
         
         _boundObject = null;
     }
+
+    /**
+     * Returns true if the binder is currently manipulating an object
+     */
+    public bool IsActive()
+    {
+        return !ReferenceEquals(_boundObject, null);
+    }
 }

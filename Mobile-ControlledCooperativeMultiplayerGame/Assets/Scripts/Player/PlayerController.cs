@@ -136,7 +136,8 @@ public class PlayerController : EntityController, Throwable
     /**
      * Dictionary is dynamically filled with actions that can currently be performed
      */
-    private Dictionary<Button, ButtonAction> _gameActions;
+    private Dictionary<Button, ButtonAction> _gameActionsDown;
+    private Dictionary<Button, ButtonAction> _gameActionsUp;
 
     /**
      * Should be used to assign a remote controller to this player after creating the game object instance from a
@@ -175,7 +176,8 @@ public class PlayerController : EntityController, Throwable
         _goldCounter = 0;
         _playerState = PlayerState.walking;
        
-        _gameActions = new Dictionary<Button, ButtonAction>();
+        _gameActionsDown = new Dictionary<Button, ButtonAction>();
+        _gameActionsUp = new Dictionary<Button, ButtonAction>();
 
         var material = GetComponent<Renderer>().material;
         material.SetColor("_ShirtColor", PlayerColorMethods.ColorToRGB(this.Color));
@@ -186,25 +188,49 @@ public class PlayerController : EntityController, Throwable
     {
         base.Update();
         // Check whether the player released the pull key
-        if (!Input.GetButton(Button.Pull) && _playerState == PlayerState.pulling)
+        if (!Input.GetButton(Button.Pull) && _playerState == PlayerState.pulling){
             ReleasePull();
-        // Check whether the player released the item key
-        else if (!Input.GetButton(Button.Item) && _playerState == PlayerState.carrying && !CarriesSomeone())
-            ThrowThrowable(_throwableItemInstance, new Vector2(Input.GetHorizontal(), Input.GetVertical()));
-        // Check whether the player released the carry key
-        else if (!Input.GetButton(Button.Carry) && _playerState == PlayerState.carrying && CarriesSomeone())
-            ThrowThrowable(_otherPlayer, new Vector2(Input.GetHorizontal(), Input.GetVertical()));
-        else if (Input.GetButtonDown(Button.Press))
-        {
-            try
-            {
-                // Execute a function defined by the button
-                _gameActions[Button.Press]();
+        }
+
+        // Check for game actions that are conditionally enabled and disabled
+        foreach(Button button in Enum.GetValues(typeof(Button))){
+            if(Input.GetButtonDown(button) && _gameActionsDown.ContainsKey(button)){
+                _gameActionsDown[button]();
             }
-            catch (KeyNotFoundException)
-            {
-                Debug.LogWarning("Client Send Press, but Player currently can't perform that action");
+            if(Input.GetButtonUp(button) && _gameActionsUp.ContainsKey(button)){
+                _gameActionsUp[button]();
             }
+        }
+
+        // Check if a player can be carried
+        if (GetNearPlayer(out _otherPlayer)) {
+          ButtonAction fn = () => {
+            _otherPlayer.SetCarry(this);
+            PickUpThrowable(_otherPlayer);
+            ButtonAction throw_fn = () => ThrowThrowable(_otherPlayer, new Vector2(Input.GetHorizontal(), Input.GetVertical()));
+            EnableGameAction(Button.Carry, throw_fn, true);
+          };
+          EnableGameAction(Button.Carry, fn);
+        }
+        else {
+          DisableGameAction(Button.Carry);
+        }
+
+        // Check if an item can be used
+        if (_data.item && _data.item.Ready()) {
+          ButtonAction fn = () => {
+            if (Instantiate(_data.item, new Vector2(Rigidbody2D.position.x, _renderer.bounds.max.y), Quaternion.identity) is Throwable throwableItem){
+                PickUpThrowable(throwableItem);
+                // Enable throwing when button is released
+                ButtonAction throw_fn = () => ThrowThrowable(throwableItem, new Vector2(Input.GetHorizontal(), Input.GetVertical()));
+                EnableGameAction(_data.item.GetButton(), throw_fn, true);
+              }
+          };
+          EnableGameAction(_data.item.GetButton(), fn);
+        }
+        else if (_data.item && _playerState != PlayerState.carrying){
+          // Item is not ready and not currently being carried
+          DisableGameAction(_data.item.GetButton());
         }
 
         // Attacking
@@ -212,22 +238,19 @@ public class PlayerController : EntityController, Throwable
             _playerState = PlayerState.attacking;
             Attack();
         }
-        else if (_playerState == PlayerState.walking)
-        {
-            // Pulling / Pushing
-            if (Input.GetButtonDown(Button.Pull) && GetNearPushable(out var pushable))
-                EnablePulling(pushable);
-            // Item usage
-            else if (Input.GetButtonDown(Button.Item) && _data.item && _data.item.Ready() && 
-            Instantiate(_data.item, new Vector2(Rigidbody2D.position.x, _renderer.bounds.max.y), Quaternion.identity) is Throwable throwableItem)
-                PickUpThrowable(_throwableItemInstance = throwableItem);
-            // Carrying
-            else if (Input.GetButtonDown(Button.Carry) && GetNearPlayer(out _otherPlayer)) {
-                _otherPlayer.SetCarry(this);
-                PickUpThrowable(_otherPlayer);
-            }
 
-        }
+        //if (GetNearPushable(out var pushable)){
+        //    PlayerController.ButtonAction fn = () => EnablePulling(pushable);
+        //    EnableGameAction(Button.Pull, fn);
+        //} else {
+        //    DisableGameAction(Button.Pull);
+        //}
+        //else if (_playerState == PlayerState.walking)
+        //{
+        //    // Pulling / Pushing
+        //    if (Input.GetButtonDown(Button.Pull) && GetNearPushable(out var pushable))
+        //        EnablePulling(pushable);
+        //}
     }
 
     private void OnDestroy()
@@ -272,20 +295,28 @@ public class PlayerController : EntityController, Throwable
         }
     }
 
-    public void EnableGameAction(Button action, ButtonAction fn) {
-        // Tell Controller client that action is enabled
-        Input.SetGameAction(action, true);
+    public void EnableGameAction(Button action, ButtonAction fn, bool onButtonUp=false) {
 
         // Save the action that should be performed
-        _gameActions.Add(action, fn);
+        if (onButtonUp){
+          _gameActionsUp.Add(action, fn);
+        }
+        else {
+          // Tell Controller client that action is enabled
+          Input.SetGameAction(action, true);
+          _gameActionsDown.Add(action, fn);
+        }
     }
 
     public void DisableGameAction(Button action) {
-        // Tell Controller client that action is enabled
-        Input.SetGameAction(action, false);
+        // Dont spam the client with messages if the action is not actually active
+        if (_gameActionsDown.ContainsKey(action)){
+          // Tell Controller client that action is enabled
+          Input.SetGameAction(action, false);
 
-        // Disable action
-        _gameActions.Remove(action);
+          // Disable action
+          _gameActionsDown.Remove(action);
+        }
     }
 
     /**
@@ -544,13 +575,13 @@ public class PlayerController : EntityController, Throwable
     }
 
     
-    private void EnablePulling(Pushable pushable)
+    public void EnablePulling(Pushable pushable)
     {
         _playerState = PlayerState.pulling;
         _pushableToPull = pushable;
     }
 
-    private void ReleasePull()
+    public void ReleasePull()
     {
         _playerState = PlayerState.walking;
         _pushableToPull = null;
@@ -584,8 +615,8 @@ public class PlayerController : EntityController, Throwable
         joint.enabled = false;
 
         var ontop = new Vector2(Rigidbody2D.position.x, _renderer.bounds.max.y);
-        StartCoroutine(throwable.PickUpCoroutine(ontop, joint, _collider));
         _playerState = PlayerState.carrying;
+        StartCoroutine(throwable.PickUpCoroutine(ontop, joint, _collider));
         Animator.SetBool(CarryingState, true);
     }
 
@@ -594,6 +625,7 @@ public class PlayerController : EntityController, Throwable
      */
     public void ThrowThrowable(Throwable throwable, Vector2 direction)
     {
+        Debug.Log("Throw");;
         _playerState = PlayerState.walking;
         Animator.SetBool(CarryingState, false);
 

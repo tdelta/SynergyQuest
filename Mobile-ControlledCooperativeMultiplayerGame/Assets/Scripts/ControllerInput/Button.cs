@@ -7,6 +7,6 @@ public enum Button
     Attack = 0,
     Pull = 1,
     Carry = 2,
-    Item = 3,
-    Press = 4
+    Press = 3,
+    Bomb = 4
 }

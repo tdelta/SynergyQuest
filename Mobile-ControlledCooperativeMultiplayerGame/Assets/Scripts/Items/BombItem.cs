@@ -25,6 +25,11 @@ public class BombItem : Item, Throwable
         collider = GetComponent<BoxCollider2D>();
     }
 
+    public override Button GetButton()
+    {
+        return Button.Bomb;
+    }
+
     public IEnumerator PickUpCoroutine(Vector2 ontop, HingeJoint2D joint, BoxCollider2D otherCollider)
     {
         ready = false;

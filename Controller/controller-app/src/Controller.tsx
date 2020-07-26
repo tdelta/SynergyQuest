@@ -120,12 +120,12 @@ export class Controller extends React.Component<
     const button = (
       text: string,
       button: Button,
-      col1: string,
-      col2: string
+      backgroundColor: string,
+      borderColor: string
     ) => (
       <button
         className='pixelButton text'
-        style={{ backgroundColor: col1, borderColor: col2 }}
+        style={{ backgroundColor: backgroundColor, borderColor: borderColor }}
         onMouseDown={_ => this.onButtonChanged(button, true)}
         onMouseUp={_ => this.onButtonChanged(button, false)}
         onTouchStart={_ => this.onButtonChanged(button, true)}
@@ -147,8 +147,9 @@ export class Controller extends React.Component<
     console.log(this.props.enabledGameActions);
     this.props.enabledGameActions.forEach( (action: Button) =>
     {
+        console.log(action);
         let info: ColorData = consts.buttonStyles[action];
-        buttons.push(button(info.name, action, info.light, info.dark));
+        buttons.push(button(info.name, action, info.dark, info.light));
     });
 
     // Return DOM elements

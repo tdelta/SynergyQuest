@@ -52,7 +52,7 @@ public class LocalInput: MonoBehaviour, Input
                 return UnityEngine.Input.GetKey(keymap.PullKey());
             case Button.Carry:
                 return UnityEngine.Input.GetKey(keymap.CarryKey());
-            case Button.Item:
+            case Button.Bomb:
                 return UnityEngine.Input.GetKey(keymap.ItemKey());
 
         }
@@ -70,7 +70,7 @@ public class LocalInput: MonoBehaviour, Input
                 return UnityEngine.Input.GetKeyDown(keymap.PullKey());
             case Button.Carry:
                 return UnityEngine.Input.GetKeyDown(keymap.CarryKey());
-            case Button.Item:
+            case Button.Bomb:
                 return UnityEngine.Input.GetKeyDown(keymap.ItemKey());
 
         }
@@ -88,7 +88,7 @@ public class LocalInput: MonoBehaviour, Input
                 return UnityEngine.Input.GetKeyUp(keymap.PullKey());
             case Button.Carry:
                 return UnityEngine.Input.GetKeyUp(keymap.CarryKey());
-            case Button.Item:
+            case Button.Bomb:
                 return UnityEngine.Input.GetKeyUp(keymap.ItemKey());
 
         }

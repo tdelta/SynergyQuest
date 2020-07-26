@@ -147,11 +147,11 @@ class App extends React.Component<{}, AppState> {
         color: color, // <- set new color
       });
 
-    //client.onSetEnabledMenuActions = _ =>
-    //  this.setState({
-    //    ...this.state,
-    //    enabledMenuActions: client.getEnabledMenuActions(),
-    //  });
+    client.onSetEnabledMenuActions = _ =>
+      this.setState({
+        ...this.state,
+        enabledMenuActions: client.getEnabledMenuActions(),
+      });
 
     client.onSetGameAction = (action: Button, enabled: boolean) =>
       this.setState({

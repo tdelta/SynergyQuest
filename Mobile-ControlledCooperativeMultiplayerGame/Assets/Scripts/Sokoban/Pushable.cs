@@ -333,6 +333,7 @@ public class Pushable : MonoBehaviour
                     // (It may then still fail though since there may be an obstacle)
                     if (ContactSurfaceSufficientToInteract(moveDirection, other.collider))
                     {
+                        Debug.Log("Move");
                         Move(moveDirection);
                     }
                 }
@@ -348,6 +349,15 @@ public class Pushable : MonoBehaviour
 
     private void OnCollisionExit2D(Collision2D other)
     {
+        Debug.Log("Collision Exit");
+        if (this._movementBinder.IsActive()) {
+          // Quick fix to prevent the box from moving when the player moves away
+          _inContactTimer = inContactTime;
+          // For some weird reason first collision exit and then collision enter
+          // are called when the movementBinder moves the player
+          return;
+        }
+
         if (other.gameObject == _inContactObject)
         {
             _inContactObject = null;
@@ -355,7 +365,8 @@ public class Pushable : MonoBehaviour
         
         if (other.gameObject.tag == "Player") {
           var player = other.gameObject.GetComponent<PlayerController>();
-          player.EnableGameAction(Button.Press,null);
+          player.DisableGameAction(Button.Pull);
+          player.ReleasePull();
         }
     }
 
@@ -367,17 +378,18 @@ public class Pushable : MonoBehaviour
         if (_inContactObject != null) return;
         // We also do not handle collisions with non-player objects
         if (!other.collider.CompareTag("Player")) return;
+        PlayerController player = other.collider.GetComponent<PlayerController>();
         // The color must also match
-        if (!other.collider.GetComponent<PlayerController>().Color.IsCompatibleWith(this.color)) return;
+        if (!player.Color.IsCompatibleWith(this.color)) return;
 
         // A player collided with us!
         // We now need to track, how long it stays in contact with us.
         // (See also `OnCollisionStay2D`.)
         _inContactObject = other.gameObject;
         _inContactTimer = inContactTime;
-        
-        var player = other.gameObject.GetComponent<PlayerController>();
-        player.EnableGameAction(Button.Press,null);
+       
+        PlayerController.ButtonAction fn = () => player.EnablePulling(this);
+        player.EnableGameAction(Button.Pull,fn);
     }
     
     /**
