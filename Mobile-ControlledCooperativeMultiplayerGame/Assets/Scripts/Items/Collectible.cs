@@ -9,6 +9,8 @@ public class Collectible : MonoBehaviour
     public Item Collect()
     {
         Destroy(gameObject);
-        return Instantiate(item);
+        var clone = Instantiate(item);
+        clone.gameObject.SetActive(false);
+        return clone;
     }
 }

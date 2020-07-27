@@ -87,6 +87,7 @@ public class BombItem : Item, Throwable
     public override Item Instantiate(Vector2 coords)
     {
       instance = Instantiate(this, coords, Quaternion.identity);
+      instance.gameObject.SetActive(true);
       return instance;
     }
 
