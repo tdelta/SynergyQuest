@@ -92,4 +92,30 @@ public static class DirectionMethods
 
         return true;
     }
+
+    /**
+     * Given a bounded object and a point, this method returns the direction where the point lies relative to the bounds.
+     *
+     * @returns false if `other` lies in the center of the bounds, true otherwise
+     */
+    public static bool DirectionTo(this Bounds bounds, Vector3 other, out Direction direction)
+    {
+        if (bounds.center == other)
+        {
+            direction = Direction.Down;
+            return false;
+        }
+        
+        if (other.y > bounds.min.y && other.y < bounds.max.y)
+        {
+            direction = other.x < bounds.center.x ? Direction.Left : Direction.Right;
+        }
+
+        else
+        {
+            direction = other.y < bounds.center.y ? Direction.Down : Direction.Up;
+        }
+
+        return true;
+    }
 }

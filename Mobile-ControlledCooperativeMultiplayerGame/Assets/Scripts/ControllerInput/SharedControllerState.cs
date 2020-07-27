@@ -16,8 +16,8 @@ using UnityEngine;
 public class SharedControllerState: BehaviourSingleton<SharedControllerState>
 {
     // The game starts in lobby mode
-    private GameState _gameState = GameState.Lobby;
-
+    public GameState GameState { get; private set; } = GameState.Lobby;
+    
     private HashSet<MenuAction> _enabledMenuActions = new HashSet<MenuAction>()
     { // These actions are initially enabled 
         MenuAction.PauseGame
@@ -41,11 +41,18 @@ public class SharedControllerState: BehaviourSingleton<SharedControllerState>
 
     private void OnDisable()
     {
-        // Unregister all callbacks, when this behavior is disabled
-        ControllerServer.Instance.OnNewController -= OnNewController;
-        ControllerServer.Instance.GetInputs().ForEach(
-            input => input.OnReconnect -= OnReconnect
-        );
+        if (ControllerServer.Instance != null)
+        {
+            // Unregister all callbacks, when this behavior is disabled
+            ControllerServer.Instance.OnNewController -= OnNewController;
+            ControllerServer.Instance.GetInputs().ForEach(
+                input =>
+                {
+                    input.OnReconnect -= OnReconnect;
+                    input.OnMenuActionTriggered -= MenuActionTriggeredHandler;
+                }
+            );
+        }
     }
 
     /**
@@ -58,9 +65,9 @@ public class SharedControllerState: BehaviourSingleton<SharedControllerState>
     public void SetGameState(GameState gameState)
     {
         // Only send messages about updated state, if it actually changed
-        if (gameState != _gameState)
+        if (gameState != this.GameState)
         {
-            _gameState = gameState;
+            this.GameState = gameState;
             
             // Send new game state to all connected controllers
             ControllerServer.Instance.GetInputs().ForEach( input =>
@@ -69,7 +76,7 @@ public class SharedControllerState: BehaviourSingleton<SharedControllerState>
                 // Otherwise, the `OnReconnect` handler will send it.
                 if (input.IsConnected())
                 {
-                    input.SetGameState(_gameState);
+                    input.SetGameState(this.GameState);
                 }
             });
         }
@@ -116,6 +123,12 @@ public class SharedControllerState: BehaviourSingleton<SharedControllerState>
             }
         });
     }
+    
+    /**
+     * This event is emitted when a certain menu action is selected on any controller.
+     * E.g. if a controller wants to pause the game etc.
+     */
+    public event MenuActionTriggeredAction OnMenuActionTriggered;
 
     /**
      * Callback which is called when a new controller connects.
@@ -135,7 +148,35 @@ public class SharedControllerState: BehaviourSingleton<SharedControllerState>
     private void OnReconnect(ControllerInput input)
     {
         // Send the state of all variables shared across controllers to the reconnected controller
-        input.SetGameState(_gameState);
+        input.SetGameState(GameState);
         input.SetEnabledMenuActions(_enabledMenuActions);
+
+        input.OnMenuActionTriggered += MenuActionTriggeredHandler;
+    }
+
+    private void MenuActionTriggeredHandler(MenuAction action)
+    {
+        OnMenuActionTriggered?.Invoke(action);
+    }
+
+    /**
+     * Local debug inputs register here, so that their menu actions can be listened to by subscribers
+     * of the `OnMenuActionTriggeredEvent`.
+     *
+     * They must call `UnregisterLocalDebugInput` when being destroyed.
+     * See also the `LocalInput` class.
+     */
+    public void RegisterLocalDebugInput(Input input)
+    {
+        input.OnMenuActionTriggered += MenuActionTriggeredHandler;
+    }
+    
+    /**
+     * Must be called by local debug instances when they are being destroyed, if they called `RegisterLocalDebugInput`
+     * before.
+     */
+    public void UnregisterLocalDebugInput(Input input)
+    {
+        input.OnMenuActionTriggered -= MenuActionTriggeredHandler;
     }
 }

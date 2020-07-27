@@ -1,6 +1,7 @@
 import React from 'react';
 import './ConnectScreen.css';
 import { ReactComponent as Logo } from './gfx/logo_web.svg';
+import { DiagnosticsClient } from 'controller-client-lib';
 
 export class ConnectScreen extends React.Component<
   ConnectScreenProbs,
@@ -14,6 +15,34 @@ export class ConnectScreen extends React.Component<
 
     this.joinGame = this.joinGame.bind(this);
     this.onNameChange = this.onNameChange.bind(this);
+  }
+
+  componentDidMount() {
+    // If we connected before, then our name has been stored...
+    const storedName = window.localStorage.getItem('name');
+    if (storedName != null) {
+      (async () => {
+        try {
+          // Ask the server, if there are currently players who lost their connection
+          const diagnostics = await DiagnosticsClient.getDiagnostics(
+            window.location.hostname,
+            4242
+          );
+
+          // If we are one of the players with the lost connection, we immediately
+          // reconnect
+          if (diagnostics.playersWithLostConnection.indexOf(storedName) > -1) {
+            this.props.connect(storedName);
+          } else {
+            // Otherwise, we do not automatically reconnect and delete the cached
+            // name
+            window.localStorage.removeItem('name');
+          }
+        } catch (e) {
+          console.log(`Failed to retrieve game diagnostics: ${e}`);
+        }
+      })();
+    }
   }
 
   joinGame(e: React.MouseEvent) {

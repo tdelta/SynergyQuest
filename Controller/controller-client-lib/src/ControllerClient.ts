@@ -23,6 +23,8 @@ export enum MenuAction {
   ResumeGame = 3,
   Next = 4, // Info screens can have multiple pages, which can be browsed with this menu action
   Back = 5,
+  Yes = 6,
+  No = 7,
 }
 
 export enum PlayerColor {
@@ -56,7 +58,7 @@ export enum ConnectFailureReason {
  * or receive messages from the game.
  *
  * Internally, this class sends and receives JSON encoded messages over
- * websockets.  For the format of the websockets, see the `Message` class
+ * websockets.  For the format of the messages, see the `Message` class
  * hierarchy.
  *
  * Usage example:
@@ -205,7 +207,7 @@ export class ControllerClient {
     }
 
     // Create a new websocket and connect to the game
-    this.socket = new WebSocket(`ws://${address}:${port}/sockets/`);
+    this.socket = new WebSocket(`ws://${address}:${port}/controllers/`);
 
     // Set all event handlers of the socket to local methods
     this.socket.onopen = (_: Event) => this.handleSocketOpen(name);

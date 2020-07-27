@@ -7,6 +7,7 @@ using UnityEngine;
  * A game object implementing this behavior must also have a `Switch` component.
  * Moreover, you may want to use the `Interactive` component, to trigger the `Unlock` method of this behaviour.
  */
+[RequireComponent(typeof(Switch))]
 public class KeyLock : MonoBehaviour
 {
     /**
@@ -33,15 +34,6 @@ public class KeyLock : MonoBehaviour
         _switch = GetComponent<Switch>();
     }
 
-    private void Start()
-    {
-        // Automatically open the lock, if it has been opened before
-        if (PlayerDataKeeper.Instance.HasDoorBeenOpened(door))
-        {
-            _switch.Value = true;
-        }
-    }
-
     /**
      * Unlock this lock, if it has not already been opened and if the players have enough keys.
      * The game will remember if a door has been unlocked across scenes, if a `DungeonLayout` has been loaded.
@@ -55,8 +47,6 @@ public class KeyLock : MonoBehaviour
         {
             // Reduce the number of keys
             PlayerDataKeeper.Instance.NumKeys -= 1;
-            // Remember, that this lock has been unlocked across scenes.
-            PlayerDataKeeper.Instance.MarkDoorAsKeyUnlocked(door);
             
             // Open the lock, by activating its `Switch` component
             _switch.Value = true;

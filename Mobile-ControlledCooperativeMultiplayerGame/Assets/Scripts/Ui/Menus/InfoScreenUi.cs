@@ -148,4 +148,21 @@ public class InfoScreenUi: MonoBehaviour, MenuUi
     {
         return _currentPage > 0;
     }
+    
+    /**
+     * React to menu actions triggered by controllers instead of pressing buttons on the screen
+     */
+    public void OnMenuActionTriggered(MenuAction action)
+    {
+        switch (action)
+        {
+            case MenuAction.ResumeGame:
+            case MenuAction.Next:
+                OnNextButton();
+                break;
+            case MenuAction.Back:
+                OnPrevButton();
+                break;
+        }
+    }
 }

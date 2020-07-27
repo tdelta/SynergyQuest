@@ -10,3 +10,5 @@ menuActionStrings.set(MenuAction.PauseGame, 'Pause Game');
 menuActionStrings.set(MenuAction.ResumeGame, 'Resume Game');
 menuActionStrings.set(MenuAction.Next, 'Next');
 menuActionStrings.set(MenuAction.Back, 'Back');
+menuActionStrings.set(MenuAction.Yes, 'Yes');
+menuActionStrings.set(MenuAction.No, 'No');

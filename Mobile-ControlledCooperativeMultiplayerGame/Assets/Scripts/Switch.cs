@@ -17,7 +17,12 @@ public class Switch : MonoBehaviour
      * Current value of the switch (activated / not activated)
      */
     [SerializeField] private bool value = false;
-    
+    /**
+     * If set, this switch will remember its value when switching scenes at runtime.
+     * Use this property to keep doors opened, if a puzzle has already been solved
+     */
+    [SerializeField] private bool isPersistentAcrossScenes = false;
+
     /**
      * Event which is triggered when the state of this switch changes
      */
@@ -36,13 +41,39 @@ public class Switch : MonoBehaviour
             // Hence it does not trigger if the same value is set as before.
             if (oldValue != this.value)
             {
+                if (isPersistentAcrossScenes)
+                {
+                    DungeonDataKeeper.Instance.SaveSwitchActivation(this);
+                }
                 OnValueChanged?.Invoke(value);
             }
         }
     }
 
+    public Guid Guid { get; private set; }
+
+    private void Awake()
+    {
+        Guid = GetComponent<Guid>();
+        isPersistentAcrossScenes = !(Guid is null) && isPersistentAcrossScenes;
+    }
+
     void Start()
     {
         OnValueChanged?.Invoke(Value);
+
+        if (isPersistentAcrossScenes)
+        {
+            Value = DungeonDataKeeper.Instance.HasSwitchBeenActivated(this, Value);
+        }
+    }
+
+    private void OnValidate()
+    {
+        if (isPersistentAcrossScenes && GetComponent<Guid>() is null)
+        {
+            isPersistentAcrossScenes = false;
+            Debug.LogError("Can not make switch persistent, if there is no Guid component.");
+        }
     }
 }

@@ -24,7 +24,10 @@ public class ControllerDebugUISpawner : MonoBehaviour
     
     void OnDisable()
     {
-        ControllerServer.Instance.OnNewController -= OnNewController;
+        if (ControllerServer.Instance != null)
+        {
+            ControllerServer.Instance.OnNewController -= OnNewController;
+        }
     }
     
     void OnNewController(ControllerInput input)

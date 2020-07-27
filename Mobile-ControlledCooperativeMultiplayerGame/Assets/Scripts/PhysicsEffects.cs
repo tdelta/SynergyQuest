@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.InteropServices;
 using UnityEngine;
 
 /**
@@ -61,7 +62,14 @@ public class PhysicsEffects: MonoBehaviour
      * Note that this an additional speed for changes on top of what is already applied by an entity controller.
      * Hence, it can for example be 0 while the entity is moving.
      */
-    private Vector2 _currentSpeed = Vector2.zero;
+    private Vector2 _effectsSpeed = Vector2.zero;
+
+    /**
+     * Stores the last direction the player intentionally moved into.
+     * (It does not report directions the player has been pushed to by other objects.)
+     */
+    private Vector2 _steeringDirection = Vector2.zero;
+    public Vector2 SteeringDirection => _steeringDirection;
 
     private void Awake()
     {
@@ -86,7 +94,7 @@ public class PhysicsEffects: MonoBehaviour
         var frictionForceMagnitude = frictionCoefficient * normalForceMagnitude;
         var deceleration = frictionForceMagnitude / mass;
         
-        return -_currentSpeed.normalized * deceleration;
+        return -_effectsSpeed.normalized * deceleration;
     }
 
     /**
@@ -103,7 +111,7 @@ public class PhysicsEffects: MonoBehaviour
      */
     public void ApplyImpulse(Vector2 impulse)
     {
-        _currentSpeed += impulse / _rigidbody2D.mass;
+        _effectsSpeed += impulse / _rigidbody2D.mass;
     }
 
     /**
@@ -150,20 +158,24 @@ public class PhysicsEffects: MonoBehaviour
         // Actually, we would need to ensure, that there is no sign change due to friction and clamp at 0, however,
         // together with the minimum speed logic this seems to work for now, as long as deceleration does not get too 
         // high.
-        _currentSpeed += frictionDeceleration * Time.deltaTime;
+        _effectsSpeed += frictionDeceleration * Time.deltaTime;
         
         // Avoid slow sliding by defining a minimum effect speed
-        if (Mathf.Abs(_currentSpeed.magnitude) < MinSpeed)
+        if (Mathf.Abs(_effectsSpeed.magnitude) < MinSpeed)
         {
-            _currentSpeed = Vector2.zero;
+            _effectsSpeed = Vector2.zero;
         }
 
-        nextMovementPosition += _currentSpeed * Time.deltaTime;
+        nextMovementPosition += _effectsSpeed * Time.deltaTime;
 
         _rigidbody2D.MovePosition(nextMovementPosition);
         // Cache the position the rigidbody is moving towards. We need it when a custom origin has been set, see the
         // `Update` method.
         _lastNextPosition = nextMovementPosition;
+        
+        // Remember the direction the player wants to move (if the difference between the current and the target position is big enough)
+        var steeringDirection = _lastNextPosition - _rigidbody2D.position;
+        _steeringDirection = steeringDirection.magnitude > 0.01 ? steeringDirection.normalized : Vector2.zero;
     }
     
     private void Update()
@@ -192,6 +204,6 @@ public class PhysicsEffects: MonoBehaviour
 
     public Vector2 GetImpulse()
     {
-        return _currentSpeed;
+        return _effectsSpeed;
     }
 }

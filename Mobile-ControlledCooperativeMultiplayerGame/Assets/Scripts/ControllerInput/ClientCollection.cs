@@ -23,7 +23,7 @@ class ClientCollection
      * Registers a new player with its controller connection meta data.
      *
      * @param name         name of the player
-     * @param connectionId id of the `Connection` class instance that handles low-level network communication
+     * @param connectionId id of the `ControllerConnection` class instance that handles low-level network communication
      * @param websocketId  id of the websocket that is used for communication
      * @param initializer  this function will be called with the new id generated for the player and it shall produce a ControllerInput instance to be stored here
      *
@@ -77,7 +77,7 @@ class ClientCollection
     }
     
     /**
-     * Retrieve a `ControllerInput` instance by the id of the `Connection` instance that is supplying its network data.
+     * Retrieve a `ControllerInput` instance by the id of the `ControllerConnection` instance that is supplying its network data.
      */
     public bool TryGetInputByConnectionId(int connectionId, out ControllerInput input)
     {
@@ -111,7 +111,8 @@ class ClientCollection
     }
 
     /**
-     * Deletes meta-data of the `Connection` and websocket instance for the controller of the specified player.
+     * Deletes meta-data of the `ControllerConnection` and websocket instance for the controller of the specified
+     * player.
      * This is called by `ControllerServer` when a connection fails / disconnects.
      *
      * As soon as a new connection is established, the corresponding meta-data can be re-registered using the

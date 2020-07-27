@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 8589274080009821023}
   - component: {fileID: 8589274080009821008}
   - component: {fileID: 8589274080009821022}
+  - component: {fileID: 7528925637291364417}
   - component: {fileID: 8589274080009821009}
   m_Layer: 0
   m_Name: KeyLock
@@ -48,6 +49,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   keySprite: {fileID: 6908069387385937300, guid: 1ab1d8b28db1b19d3ab36fd5fadaf09f,
     type: 3}
+  contactTriggerToReset: {fileID: 0}
+  door: {fileID: 0}
 --- !u!114 &8589274080009821008
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -62,6 +65,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   button: 1
   interactionType: 0
+  color: 4
   interactionTriggeredEvent:
     m_PersistentCalls:
       m_Calls:
@@ -89,6 +93,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   value: 0
+  isPersistentAcrossScenes: 1
+--- !u!114 &7528925637291364417
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8589274080009821011}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c457c33eaa484ddd9aec52891f1086ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _guid: 56017893-a822-4658-bb6c-f3534b4acb4f
 --- !u!61 &8589274080009821009
 BoxCollider2D:
   m_ObjectHideFlags: 0

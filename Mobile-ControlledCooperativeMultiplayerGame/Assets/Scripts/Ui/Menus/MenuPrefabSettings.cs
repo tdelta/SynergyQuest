@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 
 /**
  * This ScriptableObject allows to store references to menu UI prefabs.
@@ -12,6 +13,9 @@ public class MenuPrefabSettings : ScriptableObjectSingleton<MenuPrefabSettings>
 {
     // Prefab of the pause screen UI
     public PauseScreenUi pauseScreenUiPrefab;
+    
+    // Prefab of the close game screen UI
+    [FormerlySerializedAs("closeGameScreenUi")] public QuitGameScreenUi quitGameScreenUi;
     
     // Prefab of the info screen UI
     public InfoScreenUi infoScreenUiPrefab;

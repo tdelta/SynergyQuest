@@ -59,10 +59,8 @@ public class ControllerInput: Input
     private Dictionary<Button, ButtonPressState> _buttonPressStates = new Dictionary<Button, ButtonPressState>(); 
  
     // We also cache the last special values set by the game
-    // FIXME: We must resend this stuff to the client on reconnect if the client temporarily disconnects.
-    //        We should also cache and resend the menu actions
+    // (Attention: They must be resent, if the client temporarily disconnects)
     private PlayerColor _playerColor = PlayerColor.Any;
-    private GameState _gameState = GameState.Lobby;
 
     /**
      * This event is emitted when the underlying controller loses its connection to the game. The game should be paused
@@ -218,8 +216,6 @@ public class ControllerInput: Input
      */
     public void SetGameState(GameState state)
     {
-        _gameState = state;
-        
         var msg = new Message.GameStateChangedMessage(state);
         SendMessage(msg);
     }
@@ -251,8 +247,13 @@ public class ControllerInput: Input
         switch (status)
         {
             case ConnectionStatus.Connected:
-                // FIXME: Cache whole state and send the state on reconnect. This way, activated menu actions stay active etc.
+                // # Resend state specific to this controller:
+                //
+                // Player color:
+                SetColor(_playerColor);
+                
                 OnReconnect?.Invoke(this);
+
                 break;
             
             case ConnectionStatus.NotConnected:

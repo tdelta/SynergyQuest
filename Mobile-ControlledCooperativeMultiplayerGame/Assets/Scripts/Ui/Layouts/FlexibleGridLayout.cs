@@ -14,6 +14,24 @@ public class FlexibleGridLayout: LayoutGroup
     [SerializeField] private Vector2 spacing;
     [SerializeField] private FitType fitType;
 
+    public int Rows
+    {
+        get => rows;
+        set
+        {
+            rows = value;
+        }
+    }
+    
+    public int Columns
+    {
+        get => columns;
+        set
+        {
+            columns = value;
+        }
+    }
+
     public enum FitType
     {
         // Try to achieve same number of columns and rows but this may result in empty space

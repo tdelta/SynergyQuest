@@ -25,28 +25,6 @@ public class InfoScreenLauncher: MenuLauncher<InfoScreenLauncher, InfoScreenUi>
     {
         Launch(ui => ui.Init(content));
     }
-
-    /**
-     * Display the next page of the info screen, if there is one and if the screen is active.
-     */
-    public void NextPage()
-    {
-        if (UiInstance != null)
-        {
-            UiInstance.OnNextButton();
-        }
-    }
-
-    /**
-     * Display the previous page of the info screen, if there is one and if the screen is active.
-     */
-    public void PreviousPage()
-    {
-        if (UiInstance != null)
-        {
-            UiInstance.OnPrevButton();
-        }
-    }
     
     protected override InfoScreenUi GetUiPrefab()
     {

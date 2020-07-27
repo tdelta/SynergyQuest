@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 /**
  * A Pushable can either be resting or be moving
@@ -43,13 +42,6 @@ public class Pushable : MonoBehaviour
     [SerializeField] private AudioClip pushSound;
 
     /**
-     * Every pushable object can be assigned a specific color so that only players with the right color can
-     * interact with it and only switches with the right color accept it.
-     */
-    [SerializeField] private PlayerColor color = PlayerColor.Any;
-    public PlayerColor Color => color;
-
-    /**
      * A Pushable should be part of an object with a box collider, a rigidbody and a `MovementBinder`.
      * These components are retrieved automatically during `Start`
      */
@@ -73,12 +65,19 @@ public class Pushable : MonoBehaviour
     private Vector2 _moveDirection = Vector2.zero;
 
     /**
-     * We want to keep track of objects which collided with this one until it has been in contact for at least
-     * `inContactTime` since only after that time it may push this object.
+     * We want to keep track of players who collided with this one until it has been in contact for at least
+     * `inContactTime` since only after that time they may push this object.
      *
      * Hence we remember the object which is currently in contact in this field.
      */
-    private GameObject _inContactObject;
+    private PlayerController _inContactPlayer;
+    
+    /**
+     * An `Interactive` behavior must be used in conjunction with this behavior to enable pulling.
+     * We cache a reference to the player who is potentially pulling this object here.
+     */
+    private PlayerController _pullingPlayer;
+    
     /**
      * Counts down from `inContactTime` to enable the functionality explained above
      */
@@ -97,6 +96,12 @@ public class Pushable : MonoBehaviour
      * This objects checks for obstacles when moving on these layers:
      */
     private static LayerMask _raycastLayerMask;
+    
+    /**
+     * An `Interactive` behavior must be used in conjunction with this behavior to enable pulling.
+     */
+    private Interactive _interactive;
+    
 
     // Start is called before the first frame update
     void Start()
@@ -106,13 +111,15 @@ public class Pushable : MonoBehaviour
             grid = GameObject.Find("Grid").GetComponent<Grid>();
         }
         
-        _raycastLayerMask  = LayerMask.GetMask("LevelStatic", "Box");
+        _raycastLayerMask  = LayerMask.GetMask("LevelStatic", "Box", "Chasm", "Monster");
         
         _boxCollider = GetComponent<BoxCollider2D>();
         _body = GetComponent<Rigidbody2D>();
         _movementBinder = GetComponent<MovementBinder>();
         _audioSource = GetComponent<AudioSource>();
-
+        _interactive = GetComponent<Interactive>();
+        PlayerController.ButtonAction fn = () => _interactive.InteractingPlayer.EnablePulling(this);
+        _interactive.Action = fn;
         // We move by the size of a grid cell and the gaps between them, if present
         _xMoveWidth = grid.cellSize.x + grid.cellGap.x;
         _yMoveWidth = grid.cellSize.y + grid.cellGap.y;
@@ -125,6 +132,28 @@ public class Pushable : MonoBehaviour
         );
     }
 
+    private void Update()
+    {
+        // If a player is interacting with this object by pressing the `Pull` button,
+        // we cache a reference to it, and change its state accordingly to prepare it for pulling.
+        if (_interactive.IsInteracting)
+        {
+            if (_pullingPlayer is null)
+            {
+                _pullingPlayer = _interactive.InteractingPlayer;
+                _pullingPlayer.EnablePulling(this);
+            }
+        }
+        
+        // If a player has been interacting with this object using the `Pull` button, 
+        // and the interaction stopped, we reset the players state and stop caching it.
+        else if (_state == State.Resting && !ReferenceEquals(_pullingPlayer, null))
+        {
+            _pullingPlayer.DisablePulling();
+            _pullingPlayer = null;
+        }
+    }
+
     private void FixedUpdate()
     {
         // Do nothing here, if we are not moving.
@@ -135,6 +164,8 @@ public class Pushable : MonoBehaviour
         {
             _state = State.Resting;
             _movementBinder.Unbind(); // If we have been pulled, release the player, so that they are no longer moved along us
+            // If the this object is no longer moving, we allow displaying interaction hints again
+            _interactive.SuppressSpeechBubble = false;
             
             _audioSource.Stop();
         }
@@ -221,10 +252,10 @@ public class Pushable : MonoBehaviour
      * The pull will be performed over multiple (Fixed-)Update steps.
      *
      * @param direction     the direction to pull in
-     * @param pullingObject the box will take care of moving the player while pulling. Hence the player game object
+     * @param pullingPlayer the box will take care of moving the player while pulling. Hence the player game object
      *                      shall be passed here
      */
-    public void Pull(Direction direction, GameObject pullingObject)
+    public void Pull(Direction direction, PlayerController pullingPlayer)
     {
         // We want to check the next 2 cells for obstacles, since otherwise a player might be crushed between this object
         // and a wall while pulling.
@@ -234,11 +265,12 @@ public class Pushable : MonoBehaviour
         // Try to move
         if (Move(direction, additionalRayCastDistance))
         {
+            _pullingPlayer = pullingPlayer;
             // If moving is possible, make sure the player is moved with us
-            _movementBinder.Bind(pullingObject);
+            _movementBinder.Bind(pullingPlayer.gameObject);
         }
     }
-    
+
     /**
      * Starts to move this object in a certain direction by the width of one grid cell if the path is not blocked.
      * The move is performed over multiple (Fixed-)Update steps.
@@ -257,6 +289,10 @@ public class Pushable : MonoBehaviour
         {
             // See documentation of these fields for an explanation of why we are setting these values.
             _state = State.Moving;
+            // While the box is moving, we do not want to display any interaction hints to players
+            _interactive.InteractingPlayer?.InteractionSpeechBubble.HideBubble();
+            _interactive.SuppressSpeechBubble = true;
+            
             _remainingMoveDistance = moveDistance;
             _moveDirection = directionVec;
 
@@ -315,7 +351,7 @@ public class Pushable : MonoBehaviour
     private void OnCollisionStay2D(Collision2D other)
     {
         // Abort if the object is not the first player who recently collided with us
-        if (other.gameObject != _inContactObject) return;
+        if (other.gameObject != _inContactPlayer.gameObject) return;
         
         // Only continue if the player has already been in contact with this object for the minimum amount of time to
         // interact
@@ -324,17 +360,20 @@ public class Pushable : MonoBehaviour
             // The player must collide with this object with at least this velocity to be able to move it
             if (other.relativeVelocity.magnitude > minimumPushVelocity)
             {
-                // The contact normal tells us, from what side the player is colliding with this object.
-                // We can derive the movement direction from it!
-                var moveVector = other.contacts[0].normal;
-                if (moveVector.ToDirection(out var moveDirection))
+                // The player must also be looking towards this object
+                if ( _inContactPlayer.IsLookingAt(_boxCollider.bounds.center) )
                 {
-                    // Now, if there is enough contact surface between the player and this object, we can attempt to move
-                    // (It may then still fail though since there may be an obstacle)
-                    if (ContactSurfaceSufficientToInteract(moveDirection, other.collider))
+                    // The contact normal tells us, from what side the player is colliding with this object.
+                    // We can derive the movement direction from it!
+                    var moveVector = other.contacts[0].normal;
+                    if (moveVector.ToDirection(out var moveDirection))
                     {
-                        Debug.Log("Move");
-                        Move(moveDirection);
+                        // Now, if there is enough contact surface between the player and this object, we can attempt to move
+                        // (It may then still fail though since there may be an obstacle)
+                        if (ContactSurfaceSufficientToInteract(moveDirection, other.collider))
+                        {
+                            Move(moveDirection);
+                        }
                     }
                 }
             }
@@ -352,21 +391,21 @@ public class Pushable : MonoBehaviour
         Debug.Log("Collision Exit");
         if (this._movementBinder.IsActive()) {
           // Quick fix to prevent the box from moving when the player moves away
-          _inContactTimer = inContactTime;
+          //_inContactTimer = inContactTime;
           // For some weird reason first collision exit and then collision enter
           // are called when the movementBinder moves the player
           return;
         }
 
-        if (other.gameObject == _inContactObject)
-        {
-            _inContactObject = null;
-        }
+        //if (other.gameObject == _inContactPlayer.gameObject)
+        //{
+        //    _inContactPlayer = null;
+        //}
         
         if (other.gameObject.tag == "Player") {
           var player = other.gameObject.GetComponent<PlayerController>();
-          player.DisableGameAction(Button.Pull);
-          player.ReleasePull();
+          //player.DisableGameAction(Button.Pull);
+          //player.DisablePulling();
         }
     }
 
@@ -375,37 +414,27 @@ public class Pushable : MonoBehaviour
         // If we are not currently at rest (i.e. moving), we ignore collisions
         if (_state != State.Resting) return;
         // Abort, if we are already tracking a player
-        if (_inContactObject != null) return;
+        if (!(_inContactPlayer is null)) return;
         // We also do not handle collisions with non-player objects
         if (!other.collider.CompareTag("Player")) return;
         PlayerController player = other.collider.GetComponent<PlayerController>();
         // The color must also match
-        if (!player.Color.IsCompatibleWith(this.color)) return;
+        if (!player.Color.IsCompatibleWith(_interactive.Color)) return;
 
         // A player collided with us!
         // We now need to track, how long it stays in contact with us.
         // (See also `OnCollisionStay2D`.)
-        _inContactObject = other.gameObject;
-        _inContactTimer = inContactTime;
-       
-        PlayerController.ButtonAction fn = () => player.EnablePulling(this);
-        player.EnableGameAction(Button.Pull,fn);
+        _inContactPlayer = other.gameObject.GetComponent<PlayerController>();
+        _inContactTimer = inContactTime;   
     }
     
     /**
-     * Only called in editor, e.g. when changing a property
+     * There is a timeout before a player can push this object.
+     * This method resets this timeout.
      */
-    private void OnValidate()
+    public void ResetContactTimeout()
     {
-        // Usually, `Pushable` is used in conjunction with the `Box` behavior which changes sprites in the editor
-        // depending on the color value of the Pushable.
-        // 
-        // Hence, we inform `Box` could a property change in this behavior.
-        var box = GetComponent<Box>();
-        if (box != null)
-        {
-            box.OnValidate();
-        }
+        _inContactTimer = inContactTime;
     }
 }
 

@@ -816,6 +816,11 @@ PrefabInstance:
       propertyPath: room
       value: D3
       objectReference: {fileID: 0}
+    - target: {fileID: 1817313890251897035, guid: 0e6cfdf97c579c17a83a7a3dd81c47e1,
+        type: 3}
+      propertyPath: playerNum
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 1817313890251897036, guid: 0e6cfdf97c579c17a83a7a3dd81c47e1,
         type: 3}
       propertyPath: m_LocalPosition.x

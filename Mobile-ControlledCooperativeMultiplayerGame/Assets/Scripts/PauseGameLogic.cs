@@ -17,12 +17,9 @@ public class PauseGameLogic : Singleton<PauseGameLogic>
     private bool _isPaused = false;
 
     public bool IsPaused => _isPaused;
-
+    
     /**
      * Pause the game by freezing time.
-     * 
-     * It also changes the available menu options and game state for remote controllers
-     * (i.e. whether the pause button is available etc.)
      */
     public void Pause()
     {
@@ -34,20 +31,11 @@ public class PauseGameLogic : Singleton<PauseGameLogic>
             _timeScaleBeforePause = Time.timeScale;
             // Set Time.timeScale to zero, which effectively pauses the game by freezing time.
             Time.timeScale = 0.0f;
-
-            // Inform the controllers about the game being paused / in menu state
-            SharedControllerState.Instance.SetGameState(GameState.Menu);
-            SharedControllerState.Instance.EnableMenuActions(
-                (MenuAction.PauseGame, false)
-            );
         }
     }
 
     /**
      * Resume the game.
-     * 
-     * It also changes the available menu options and game state for remote controllers
-     * (i.e. whether the pause button is available etc.)
      */
     public void Resume()
     {
@@ -57,12 +45,6 @@ public class PauseGameLogic : Singleton<PauseGameLogic>
             
             // Make time flow again, like it did before pausing
             Time.timeScale = _timeScaleBeforePause;
-
-            // Inform the controllers about the game being resumed
-            SharedControllerState.Instance.SetGameState(GameState.Started);
-            SharedControllerState.Instance.EnableMenuActions(
-                (MenuAction.PauseGame, true)
-            );
         }
     }
 }
