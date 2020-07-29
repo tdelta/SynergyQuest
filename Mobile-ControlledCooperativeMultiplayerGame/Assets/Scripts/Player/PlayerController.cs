@@ -56,6 +56,7 @@ public class PlayerController : EntityController, Throwable
     public BoxCollider2D Collider { get; private set; }
 
     private Renderer _renderer;
+    public Renderer Renderer => _renderer;
     
     /**
      * Used to briefly flash the player in a certain color. For example red when they are hit.
@@ -134,17 +135,6 @@ public class PlayerController : EntityController, Throwable
     private PresentItemAction _presentItemCallback;
 
     /**
-     * Delegate function is assigned a specific action, when the player stands next to a button
-     */
-    public delegate void ButtonAction();
-
-    /**
-     * Dictionary is dynamically filled with actions that can currently be performed
-     */
-    private Dictionary<Button, ButtonAction> _gameActionsDown;
-    private Dictionary<Button, ButtonAction> _gameActionsUp;
-
-    /**
      * Should be used to assign a remote controller to this player after creating the game object instance from a
      * prefab using `Instantiate`.
      *
@@ -179,9 +169,6 @@ public class PlayerController : EntityController, Throwable
         _healthPoints = maxHealthPoints;
         _playerState = PlayerState.walking;
        
-        _gameActionsDown = new Dictionary<Button, ButtonAction>();
-        _gameActionsUp = new Dictionary<Button, ButtonAction>();
-
         var material = GetComponent<Renderer>().material;
         material.SetColor("_ShirtColor", PlayerColorMethods.ColorToRGB(this.Color));
     }
@@ -190,51 +177,23 @@ public class PlayerController : EntityController, Throwable
     protected override void Update()
     {
         base.Update();
-        // Check whether the player released the pull key
-        if (!Input.GetButton(Button.Pull) && _playerState == PlayerState.pulling){
-            DisablePulling();
-        }
-
-        // Check for game actions that are conditionally enabled and disabled
-        foreach(Button button in Enum.GetValues(typeof(Button))){
-            if(Input.GetButtonDown(button) && _gameActionsDown.ContainsKey(button)){
-                _gameActionsDown[button]();
-            }
-            if(Input.GetButtonUp(button) && _gameActionsUp.ContainsKey(button)){
-                _gameActionsUp[button]();
-            }
-        }
-
-        // Check if a player can be carried
-        if (GetNearPlayer(out _otherPlayer)) {
-          ButtonAction fn = () => {
-            _otherPlayer.SetCarry(this);
-            PickUpThrowable(_otherPlayer);
-            ButtonAction throw_fn = () => ThrowThrowable(_otherPlayer, new Vector2(Input.GetHorizontal(), Input.GetVertical()));
-            EnableGameAction(Button.Carry, throw_fn, true);
-          };
-          EnableGameAction(Button.Carry, fn);
-        }
-        else {
-          DisableGameAction(Button.Carry);
-        }
 
         // Check if an item can be used
-        if (_data.item && _data.item.Ready()) {
-          ButtonAction fn = () => {
-            if (Instantiate(_data.item, new Vector2(Rigidbody2D.position.x, _renderer.bounds.max.y), Quaternion.identity) is Throwable throwableItem){
-                PickUpThrowable(throwableItem);
-                // Enable throwing when button is released
-                ButtonAction throw_fn = () => ThrowThrowable(throwableItem, new Vector2(Input.GetHorizontal(), Input.GetVertical()));
-                EnableGameAction(_data.item.GetButton(), throw_fn, true);
-              }
-          };
-          EnableGameAction(_data.item.GetButton(), fn);
-        }
-        else if (_data.item && _playerState != PlayerState.carrying){
-          // Item is not ready and not currently being carried
-          DisableGameAction(_data.item.GetButton());
-        }
+        //if (_data.item && _data.item.Ready()) {
+        //  ButtonAction fn = () => {
+        //    if (Instantiate(_data.item, new Vector2(Rigidbody2D.position.x, _renderer.bounds.max.y), Quaternion.identity) is Throwable throwableItem){
+        //        PickUpThrowable(throwableItem);
+        //        // Enable throwing when button is released
+        //        ButtonAction throw_fn = () => ThrowThrowable(throwableItem, new Vector2(Input.GetHorizontal(), Input.GetVertical()));
+        //        EnableGameAction(_data.item.GetButton(), throw_fn, true);
+        //      }
+        //  };
+        //  EnableGameAction(_data.item.GetButton(), fn);
+        //}
+        //else if (_data.item && _playerState != PlayerState.carrying){
+        //  // Item is not ready and not currently being carried
+        //  DisableGameAction(_data.item.GetButton());
+        //}
 
         // Attacking
         if (Input.GetButtonDown(Button.Attack) && (_playerState == PlayerState.walking || _playerState == PlayerState.attacking)) {
@@ -244,31 +203,12 @@ public class PlayerController : EntityController, Throwable
 
     }
 
-    public void EnableGameAction(Button action, ButtonAction fn, bool onButtonUp=false) {
-
-        // Save the action that should be performed
-        if (onButtonUp){
-          _gameActionsUp.Add(action, fn);
-        }
-        else {
-          // Tell Controller client that action is enabled
-          Input.SetGameAction(action, true);
-          _gameActionsDown.Add(action, fn);
-        }
+    public void EnableGameAction(Button action) {
+        Input.SetGameAction(action, true);
     }
 
     public void DisableGameAction(Button action) {
-        if (action == Button.Pull){  
-          Debug.Log("Disable Game Action");
-        }
-        // Dont spam the client with messages if the action is not actually active
-        if (_gameActionsDown.ContainsKey(action)){
-          // Tell Controller client that action is enabled
-          Input.SetGameAction(action, false);
-
-          // Disable action
-          _gameActionsDown.Remove(action);
-        }
+        Input.SetGameAction(action, false);
     }
 
     bool GetNearPlayer(out PlayerController player)
@@ -535,6 +475,40 @@ public class PlayerController : EntityController, Throwable
     }
 
     /**
+     * Used by the interactive component
+     *
+     * @param player: The player that picks us up
+     */
+    public void GetPickedUp(PlayerController player){
+        // The collisions are turned off during carrying but we dont want the interactive to react to that
+        Interactive[] interactives = GetComponents<Interactive>();
+        foreach(Interactive interactive in interactives) {
+            if (interactive.Button == Button.Carry){
+                interactive.IgnoreCollisions = true;
+            }
+        }
+        player.PickUpThrowable(this);
+        player.SetCarry(this);
+    }
+
+    /**
+     * Used by the interactive component
+     *
+     * @param player: The player that throws us
+     */
+    public void GetThrown(PlayerController player){
+        // The collisions are turned off during carrying but we dont want the interactive to react to that
+        Interactive[] interactives = GetComponents<Interactive>();
+        foreach(Interactive interactive in interactives) {
+            if (interactive.Button == Button.Carry){
+                interactive.IgnoreCollisions = false;
+            }
+        }
+        Debug.Log("Throw");
+        player.ThrowThrowable(this, new Vector2(player.Input.GetHorizontal(), player.Input.GetVertical()));
+    }
+
+    /**
      * Call this method to pickup another player
      */
     public void PickUpThrowable(Throwable throwable) 
@@ -559,7 +533,7 @@ public class PlayerController : EntityController, Throwable
         _playerState = PlayerState.walking;
         Animator.SetBool(CarryingState, false);
 
-        Destroy(gameObject.GetComponent("HingeJoint2D"));
+        Destroy(this.gameObject.GetComponent("HingeJoint2D"));
         StartCoroutine(throwable.ThrowCoroutine(direction, Collider));
 
         // if we throw a player, remove reference, if we throw an item it doesn't matter
@@ -673,7 +647,7 @@ public class PlayerController : EntityController, Throwable
     public void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.CompareTag("Collectible")) {
-            _data.item = other.gameObject.GetComponent<Collectible>().Collect();
+            other.gameObject.GetComponent<Collectible>().Collect(this);
         }
     }
 

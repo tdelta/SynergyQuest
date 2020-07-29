@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BombItem : Item, Throwable
+public class BombItem : ThrowableItem, Throwable
 {
     [SerializeField] ParticleSystem sparkEffect;
 
@@ -101,5 +101,18 @@ public class BombItem : Item, Throwable
             other.gameObject.GetComponent<ShockSwitch>().Activate();
         else if (explosion && other.gameObject.CompareTag("DestroyableWall"))
             Destroy(other.gameObject);
+    }
+
+    public override Throwable PickUp(PlayerController player){
+        if (Instantiate(this, new Vector2(player.Rigidbody2D.position.x, player.Renderer.bounds.max.y), Quaternion.identity) is Throwable throwableItem){
+            player.PickUpThrowable(throwableItem);
+            return throwableItem;
+        } else {
+            return null;
+        }
+    }
+
+    protected override void Throw(PlayerController player, Throwable throwableItem){
+        player.ThrowThrowable(throwableItem, new Vector2(player.Input.GetHorizontal(), player.Input.GetVertical()));
     }
 }

@@ -38,6 +38,7 @@ public class Interactive : MonoBehaviour
      * Which button must a player press to interact?
      */
     [SerializeField] private Button button;
+    public Button Button => button;
     /**
      * The kind of interaction that is registered, see enum above.
      */
@@ -46,7 +47,11 @@ public class Interactive : MonoBehaviour
     /**
      * Function to perform on interaction with this object
      */
-    public PlayerController.ButtonAction Action {get; set;} = () => {};
+    public bool IgnoreCollisions {get; set;} = false;
+
+    public delegate void OnCollision();
+    public OnCollision OnCollisionEnter {get; set;} = () => {};
+    public OnCollision OnCollisionExit {get; set;} = () => {};
 
     /**
      * The player which is currently touching this object and who can interact.
@@ -60,15 +65,19 @@ public class Interactive : MonoBehaviour
       private set {
         if (ReferenceEquals(value, null)) {
           // Player moved away from interactive
-          //if (!ReferenceEquals(_interactingPlayer, null)){
-            // Previous interacting player
-            //_interactingPlayer.DisableGameAction(button);
-          //}
+          OnCollisionExit();
+          if (!ReferenceEquals(_interactingPlayer, null)){
+            // Previous interacting player exists
+            _interactingPlayer.DisableGameAction(button);
+          }
         } else {
           // Player collided with interactive
-          value.EnableGameAction(button, Action);
-          _interactingPlayer = value;
+          OnCollisionEnter();
+          if (interactionType == InteractionType.Down || interactionType == InteractionType.Hold){
+              value.EnableGameAction(button);
+          }
         }
+        _interactingPlayer = value;
       }
     }
 
@@ -92,6 +101,7 @@ public class Interactive : MonoBehaviour
             // If the value changed and a player is currently interacting with this object, fire the `interactionTriggeredEvent`
             if (value != _isInteracting && value)
             {
+                Debug.Log(interactionType);
                 interactionTriggeredEvent?.Invoke(InteractingPlayer);
             }
             
@@ -157,7 +167,7 @@ public class Interactive : MonoBehaviour
         // remember the object as the player who is potentially interacting with this object.
         //
         // See also the `Update` method
-        if (ReferenceEquals(InteractingPlayer, null))
+        if (!IgnoreCollisions && ReferenceEquals(InteractingPlayer, null))
         {
             if (other.gameObject.CompareTag("Player"))
             {
@@ -207,7 +217,7 @@ public class Interactive : MonoBehaviour
     private void OnCollisionExit2D(Collision2D other)
     {
         // If there has been a player touching this object and the object exiting the collision is this player...
-        if (!ReferenceEquals(InteractingPlayer, null) && InteractingPlayer.gameObject == other.gameObject)
+        if (!IgnoreCollisions && !ReferenceEquals(InteractingPlayer, null) && InteractingPlayer.gameObject == other.gameObject)
         {
             ClearInteractingPlayer();
         }

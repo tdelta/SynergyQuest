@@ -6,9 +6,9 @@ public class Collectible : MonoBehaviour
 {
     [SerializeField] Item item;
 
-    public Item Collect()
+    public void Collect(PlayerController player)
     {
         Destroy(gameObject);
-        return item;
+        item.Collect(player);
     }
 }

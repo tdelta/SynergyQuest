@@ -9,7 +9,7 @@ abstract public class EntityController : MonoBehaviour {
     protected Animator Animator => _animator;
     
     private Rigidbody2D _rigidbody2D;
-    protected Rigidbody2D Rigidbody2D => _rigidbody2D;
+    public Rigidbody2D Rigidbody2D => _rigidbody2D;
     
     protected bool isInvincible;
     protected float invincibleTimer;

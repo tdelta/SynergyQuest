@@ -9,4 +9,13 @@ abstract public class Item : MonoBehaviour
 
     // Each item has to specify a button to activate it
     public abstract Button GetButton();
+
+    protected PlayerController _player;
+
+    /**
+     * Called by Collectible. Item becomes available to the player
+     */
+    public void Collect(PlayerController player){
+        _player = player;
+    }
 }

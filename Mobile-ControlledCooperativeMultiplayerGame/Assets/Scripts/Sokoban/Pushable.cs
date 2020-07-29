@@ -118,8 +118,7 @@ public class Pushable : MonoBehaviour
         _movementBinder = GetComponent<MovementBinder>();
         _audioSource = GetComponent<AudioSource>();
         _interactive = GetComponent<Interactive>();
-        PlayerController.ButtonAction fn = () => _interactive.InteractingPlayer.EnablePulling(this);
-        _interactive.Action = fn;
+        _interactive.OnCollisionEnter = OnInteractiveCollisionEnter;
         // We move by the size of a grid cell and the gaps between them, if present
         _xMoveWidth = grid.cellSize.x + grid.cellGap.x;
         _yMoveWidth = grid.cellSize.y + grid.cellGap.y;
@@ -140,6 +139,9 @@ public class Pushable : MonoBehaviour
         {
             if (_pullingPlayer is null)
             {
+                // Quick fix: For some weird reason first collision exit and then 
+                // collision enter are called when the movementBinder moves the player
+                _interactive.IgnoreCollisions = true;
                 _pullingPlayer = _interactive.InteractingPlayer;
                 _pullingPlayer.EnablePulling(this);
             }
@@ -149,6 +151,9 @@ public class Pushable : MonoBehaviour
         // and the interaction stopped, we reset the players state and stop caching it.
         else if (_state == State.Resting && !ReferenceEquals(_pullingPlayer, null))
         {
+            // Quick fix: For some weird reason first collision exit and then 
+            // collision enter are called when the movementBinder moves the player
+            _interactive.IgnoreCollisions = false;
             _pullingPlayer.DisablePulling();
             _pullingPlayer = null;
         }
@@ -351,7 +356,8 @@ public class Pushable : MonoBehaviour
     private void OnCollisionStay2D(Collision2D other)
     {
         // Abort if the object is not the first player who recently collided with us
-        if (other.gameObject != _inContactPlayer.gameObject) return;
+        if (ReferenceEquals(_interactive.InteractingPlayer, null) ||
+            other.gameObject != _interactive.InteractingPlayer.gameObject) return;
         
         // Only continue if the player has already been in contact with this object for the minimum amount of time to
         // interact
@@ -361,7 +367,7 @@ public class Pushable : MonoBehaviour
             if (other.relativeVelocity.magnitude > minimumPushVelocity)
             {
                 // The player must also be looking towards this object
-                if ( _inContactPlayer.IsLookingAt(_boxCollider.bounds.center) )
+                if ( _interactive.InteractingPlayer.IsLookingAt(_boxCollider.bounds.center) )
                 {
                     // The contact normal tells us, from what side the player is colliding with this object.
                     // We can derive the movement direction from it!
@@ -386,48 +392,11 @@ public class Pushable : MonoBehaviour
         }
     }
 
-    private void OnCollisionExit2D(Collision2D other)
+    private void OnInteractiveCollisionEnter()
     {
-        Debug.Log("Collision Exit");
-        if (this._movementBinder.IsActive()) {
-          // Quick fix to prevent the box from moving when the player moves away
-          //_inContactTimer = inContactTime;
-          // For some weird reason first collision exit and then collision enter
-          // are called when the movementBinder moves the player
-          return;
-        }
-
-        //if (other.gameObject == _inContactPlayer.gameObject)
-        //{
-        //    _inContactPlayer = null;
-        //}
-        
-        if (other.gameObject.tag == "Player") {
-          var player = other.gameObject.GetComponent<PlayerController>();
-          //player.DisableGameAction(Button.Pull);
-          //player.DisablePulling();
-        }
-    }
-
-    private void OnCollisionEnter2D(Collision2D other)
-    {
-        // If we are not currently at rest (i.e. moving), we ignore collisions
-        if (_state != State.Resting) return;
-        // Abort, if we are already tracking a player
-        if (!(_inContactPlayer is null)) return;
-        // We also do not handle collisions with non-player objects
-        if (!other.collider.CompareTag("Player")) return;
-        PlayerController player = other.collider.GetComponent<PlayerController>();
-        // The color must also match
-        if (!player.Color.IsCompatibleWith(_interactive.Color)) return;
-
-        // A player collided with us!
-        // We now need to track, how long it stays in contact with us.
-        // (See also `OnCollisionStay2D`.)
-        _inContactPlayer = other.gameObject.GetComponent<PlayerController>();
         _inContactTimer = inContactTime;   
     }
-    
+ 
     /**
      * There is a timeout before a player can push this object.
      * This method resets this timeout.
