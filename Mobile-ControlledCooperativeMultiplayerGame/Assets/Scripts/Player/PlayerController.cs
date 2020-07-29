@@ -605,7 +605,9 @@ public class PlayerController : EntityController, Throwable
     public void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.CompareTag("Collectible")) {
-            _data.item = other.gameObject.GetComponent<Collectible>().Collect();
+            var param = _data.item;
+            other.gameObject.GetComponent<Collectible>().Collect(ref param);
+            _data.item = param;
         }
     }
 

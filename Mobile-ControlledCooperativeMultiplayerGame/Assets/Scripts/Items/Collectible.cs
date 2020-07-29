@@ -6,11 +6,13 @@ public class Collectible : MonoBehaviour
 {
     [SerializeField] Item item;
 
-    public Item Collect()
+    public void Collect(ref Item item)
     {
-        Destroy(gameObject);
-        var clone = Instantiate(item);
-        clone.gameObject.SetActive(false);
-        return clone;
+        if (item?.GetType() != this.item.GetType())
+        {
+          Destroy(gameObject);
+          item = Instantiate(this.item);
+          item.gameObject.SetActive(false);
+        }
     }
 }
