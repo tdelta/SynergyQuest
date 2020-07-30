@@ -38,7 +38,7 @@ public class Chasm : MonoBehaviour
     private void OnTriggerStay2D(Collider2D other)
     {
         // We now want to compute, whether the player is standing on the chasm, which means they should fall
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") || other.CompareTag("Item"))
         {
             // Compute some geometric properties of the player, e.g. area of its collider and the shape of the collider
             var playerBounds = other.GetComponent<BoxCollider2D>().bounds;
@@ -78,8 +78,10 @@ public class Chasm : MonoBehaviour
             if (intersectionArea / playerArea > 0.5)
             {
                 // Get a handle on the player
-                var playerController = other.GetComponent<PlayerController>();
-                playerController.InitiateFall();
+                if (other.GetComponent<PlayerController>() is PlayerController playerController)
+                    playerController.InitiateFall();
+                else if (other.GetComponent<Item>() is Item item)
+                    item.Shrink();
             }
         }
     }

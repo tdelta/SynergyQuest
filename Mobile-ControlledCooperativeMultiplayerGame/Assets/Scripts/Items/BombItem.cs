@@ -8,6 +8,7 @@ public class BombItem : Item, Throwable
 
     bool destroyed = false;
     bool explosion = false;
+    readonly Vector3 scaleFactor = new Vector3(0.01f, 0.01f, 0.01f);
     readonly int explosionTrigger = Animator.StringToHash("Explode");
 
     BombItem instance;
@@ -79,11 +80,13 @@ public class BombItem : Item, Throwable
       return destroyed;
     }
     
+    // FIXME: this method belongs in a new class InventoryItem
     public override bool Ready()
     {
         return instance?.isDestroyed() ?? true;
     }
 
+    // FIXME: this method belongs in a new class InventoryItem
     public override Item Instantiate(Vector2 coords)
     {
       instance = Instantiate(this, coords, Quaternion.identity);
@@ -108,5 +111,13 @@ public class BombItem : Item, Throwable
             other.gameObject.GetComponent<ShockSwitch>().Activate();
         else if (explosion && other.gameObject.CompareTag("DestroyableWall"))
             Destroy(other.gameObject);
+    }
+
+    public override void Shrink()
+    {
+        if (effects.GetImpulse() == Vector2.zero)
+        {
+          gameObject.transform.localScale -= scaleFactor;
+        }
     }
 }

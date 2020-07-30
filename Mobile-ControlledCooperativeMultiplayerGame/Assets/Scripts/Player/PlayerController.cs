@@ -558,7 +558,7 @@ public class PlayerController : EntityController, Throwable
      */
     public void InitiateFall()
     {
-        if (_playerState != PlayerState.falling)
+        if (_playerState != PlayerState.falling && _playerState != PlayerState.thrown)
         {
             _playerState = PlayerState.falling;
             // If the player is being moved by a platform, they should no longer be moved when falling

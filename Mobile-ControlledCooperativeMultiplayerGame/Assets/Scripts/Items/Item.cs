@@ -10,4 +10,7 @@ abstract public class Item : MonoBehaviour
     // TODO: currently an Item instantiates itself, which is a bit confusing
     // a better solution would be to introduce an additional class of indirection
     public abstract Item Instantiate(Vector2 coords);
+
+    // Repeatedly called by a Chasm when an Item falls down
+    public abstract void Shrink();
 }
