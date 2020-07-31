@@ -61,15 +61,19 @@ public class Bomb : MonoBehaviour
 
     void OnCollisionStay2D(Collision2D other)
     {
-        if (explosion && (other.gameObject.CompareTag("Enemy") || other.gameObject.CompareTag("Player")))
+        if (explosion) 
         {
-            var entity = other.gameObject.GetComponent<EntityController>();
-            entity.PutDamage(1, (other.transform.position - transform.position).normalized); 
+            var otherGameobject = other.collider.gameObject;
+            if (otherGameobject.CompareTag("Enemy") || otherGameobject.CompareTag("Player"))
+            {
+                var entity = other.gameObject.GetComponent<EntityController>();
+                entity.PutDamage(1, (other.transform.position - transform.position).normalized); 
+            }
+            else if (otherGameobject.CompareTag("Switch"))
+                otherGameobject.GetComponent<ShockSwitch>().Activate();
+            else if (otherGameobject.CompareTag("DestroyableWall"))
+                Destroy(otherGameobject);
         }
-        else if (explosion && other.gameObject.CompareTag("Switch"))
-            other.gameObject.GetComponent<ShockSwitch>().Activate();
-        else if (explosion && other.gameObject.CompareTag("DestroyableWall"))
-            Destroy(other.gameObject);
     }
     
 }
