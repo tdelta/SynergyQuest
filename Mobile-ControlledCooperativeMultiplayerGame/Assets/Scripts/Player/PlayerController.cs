@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public enum PlayerState{
@@ -205,26 +206,26 @@ public class PlayerController : EntityController, Throwable
 
     bool GetNearPlayer(out PlayerController player)
     {
-        var hit = Search("Player");
-        if (hit.collider?.gameObject.GetComponent<PlayerController>() is PlayerController candidate && !candidate.CarriesSomeone())
-        {
-            player = candidate;
-            return true;
-        }
-    
-        player = null;
-        return false;
+        player = SearchPlayer();
+
+        return !ReferenceEquals(player, null);
     }
 
-    RaycastHit2D Search(string layer)
+    PlayerController SearchPlayer()
     {
         // We want to search in viewing direction
         var searchDirection = viewDirection.ToVector();
-        return Physics2D.Raycast(
+        var results = Physics2D.RaycastAll(
             (Vector2) transform.position + Collider.offset,  // Search from middle point of our collider
             searchDirection,
             boxPullRange,
-            LayerMask.GetMask(layer));
+            LayerMask.GetMask("Player")
+        );
+
+        return results
+            .Where(hit => hit.collider.CompareTag("Player"))
+            .Select(hit => hit.collider.GetComponent<PlayerController>())
+            .FirstOrDefault();
     }
 
     void FixedUpdate ()
@@ -602,12 +603,13 @@ public class PlayerController : EntityController, Throwable
         DisplayCoinGauge();
     }
     
-    public void OnTriggerEnter2D(Collider2D other)
+    public void Collect(Collectible collectible)
     {
-        if (other.gameObject.CompareTag("Collectible")) {
-            var param = _data.item;
-            other.gameObject.GetComponent<Collectible>().Collect(ref param);
-            _data.item = param;
+        if (collectible.ItemPrefab?.GetType() != this._data.item?.GetType())
+        {
+            var item = Instantiate(collectible.ItemPrefab);
+            item.gameObject.SetActive(false);
+            _data.item = item;
         }
     }
 

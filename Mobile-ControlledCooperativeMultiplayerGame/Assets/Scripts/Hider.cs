@@ -1,11 +1,13 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
+[RequireComponent(typeof(Switchable))]
 public class Hider : MonoBehaviour
 {
     // List of objects which will be made invisible / visible
-    public List<MonoBehaviour> objects;
+    [SerializeField] private List<GameObject> objects;
+    
     private Switchable _switchable;
 
     // Start is called before the first frame update
@@ -26,21 +28,9 @@ public class Hider : MonoBehaviour
 
     private void OnActivationChanged(bool activation)
     {
-        if (activation) {
-            foreach (var o in objects) {
-                if (o != null) {
-                    Debug.Log("Aktiviert!");
-                    o.MakeVisible();
-                }
-            }
-        }
-        else {
-            foreach (var o in objects) {
-                if (o != null) {
-                    Debug.Log("Deaktiviert!");
-                    o.MakeInvisible();
-                }
-            }
+        foreach (var o in objects.Where(o => o != null))
+        {
+            o.SetVisibility(activation);
         }
     }
 }

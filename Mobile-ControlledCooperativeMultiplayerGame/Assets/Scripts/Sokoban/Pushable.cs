@@ -350,7 +350,7 @@ public class Pushable : MonoBehaviour
     private void OnCollisionStay2D(Collision2D other)
     {
         // Abort if the object is not the first player who recently collided with us
-        if (other.gameObject != _inContactPlayer.gameObject) return;
+        if (_inContactPlayer is null || other.gameObject != _inContactPlayer.gameObject) return;
         
         // Only continue if the player has already been in contact with this object for the minimum amount of time to
         // interact
@@ -387,7 +387,7 @@ public class Pushable : MonoBehaviour
 
     private void OnCollisionExit2D(Collision2D other)
     {
-        if (other.gameObject == _inContactPlayer.gameObject)
+        if (!ReferenceEquals(_inContactPlayer, null) &&  other.gameObject == _inContactPlayer.gameObject)
         {
             _inContactPlayer = null;
         }

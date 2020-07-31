@@ -43,7 +43,7 @@ public class Key : MonoBehaviour
             // Increase the counter of collected keys for the players
             PlayerDataKeeper.Instance.NumKeys += 1;
             // Play a sound and destroy this object afterwards
-            this.PlaySoundAndDestroy();
+            this.gameObject.PlaySoundAndDestroy();
             _isBeingDestroyed = true;
             // Display an animation on the player collecting this key.
             collector.PresentItem(_renderer.sprite);

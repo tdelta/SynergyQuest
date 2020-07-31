@@ -127,7 +127,7 @@ public class Interactive : MonoBehaviour
         return player.IsLookingAt(_collider.bounds.center);
     }
 
-    private void OnCollisionStay2D(Collision2D other)
+    private void OnTriggerEnter2D(Collider2D other)
     {
         // If there is not already a player touching this object,
         // if the other object touching this object is a player
@@ -138,22 +138,24 @@ public class Interactive : MonoBehaviour
         // See also the `Update` method
         if (ReferenceEquals(InteractingPlayer, null))
         {
-            if (other.gameObject.CompareTag("Player"))
+            // Players have a special collider child object `InteractorCollider` for
+            // and we use this one to detect collisions with the player.
+            //
+            // See the class description of `InteractorCollider` for more information
+            if (other.gameObject.CompareTag("InteractorCollider"))
             {
-                var maybeInteractingPlayer = other.gameObject.GetComponent<PlayerController>();
-                if (Color.IsCompatibleWith(maybeInteractingPlayer.Color) && IsPlayerFacingThisObject(maybeInteractingPlayer))
+                var maybeInteractingPlayer = other.gameObject.GetComponent<InteractorCollider>().Player;
+                if (
+                    maybeInteractingPlayer.gameObject != this.gameObject && // do not interact with self
+                    Color.IsCompatibleWith(maybeInteractingPlayer.Color) &&
+                    IsPlayerFacingThisObject(maybeInteractingPlayer)
+                )
                 {
                     InteractingPlayer = maybeInteractingPlayer;
                     
                     // Furthermore, we want to display a speech bubble on the player, which informs about the possible
                     // interactions with this object.
-                    //
-                    // If this object is a player, we require the other player to be intentionally moving into us to display a
-                    //   speech bubble
-                    //   (the direction of the collision of the other player must be the same as their steering direction).
-                    //   This way, not both players display a bubble when one bumps into another.
-                    // If this object is not a player, we just always display the bubble
-                    if (!SuppressSpeechBubble && (!this.CompareTag("Player") || Vector2.Dot(other.GetContact(0).normal, InteractingPlayer.PhysicsEffects.SteeringDirection) > 0))
+                    if (!SuppressSpeechBubble)
                     {
                         InteractingPlayer.InteractionSpeechBubble.DisplayBubble(button);
                     }
@@ -182,11 +184,15 @@ public class Interactive : MonoBehaviour
         // ...and interrupt any interaction that might have taken place
         IsInteracting = false;
     }
-
-    private void OnCollisionExit2D(Collision2D other)
+    
+    private void OnTriggerExit2D(Collider2D other)
     {
         // If there has been a player touching this object and the object exiting the collision is this player...
-        if (!ReferenceEquals(InteractingPlayer, null) && InteractingPlayer.gameObject == other.gameObject)
+        if (
+            !ReferenceEquals(InteractingPlayer, null) &&
+            other.CompareTag("InteractorCollider") &&
+            InteractingPlayer.gameObject == other.GetComponent<InteractorCollider>().Player.gameObject
+        )
         {
             ClearInteractingPlayer();
         }

@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 8639083641536784487}
   - component: {fileID: 8259971198781867303}
   - component: {fileID: 3484282839299105555}
+  - component: {fileID: 2742033008512660613}
   - component: {fileID: 6439988154814164865}
   m_Layer: 10
   m_Name: BombCollectible
@@ -96,7 +97,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c4245d7e96bb7630b68da05cc4782a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  item: {fileID: 1018472030549898126, guid: 7d69c942768f070d0a89d7d3e995182f, type: 3}
+  itemPrefab: {fileID: 1018472030549898126, guid: 7d69c942768f070d0a89d7d3e995182f,
+    type: 3}
+--- !u!114 &2742033008512660613
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8469643538550077246}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d24f23144dba424dad23427c44dd0263, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onContactEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 3484282839299105555}
+        m_MethodName: Collect
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!61 &6439988154814164865
 BoxCollider2D:
   m_ObjectHideFlags: 0

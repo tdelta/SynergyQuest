@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 abstract public class EnemyController : EntityController {
     [SerializeField] protected int   healthPoints = 1;
@@ -28,7 +26,6 @@ abstract public class EnemyController : EntityController {
      */
     public delegate void EnemyDied();
     public static event EnemyDied OnDeath;
-
 
     protected override void Start() {
         base.Start();

@@ -1,18 +1,16 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.Serialization;
 
+[RequireComponent(typeof(ContactTrigger))]
 public class Collectible : MonoBehaviour
 {
-    [SerializeField] Item item;
+    [FormerlySerializedAs("item")]
+    [SerializeField] private Item itemPrefab;
+    public Item ItemPrefab => itemPrefab;
 
-    public void Collect(ref Item item)
+    public void Collect(PlayerController collector)
     {
-        if (item?.GetType() != this.item.GetType())
-        {
-          Destroy(gameObject);
-          item = Instantiate(this.item);
-          item.gameObject.SetActive(false);
-        }
+        collector.Collect(this);
+        Destroy(gameObject);
     }
 }

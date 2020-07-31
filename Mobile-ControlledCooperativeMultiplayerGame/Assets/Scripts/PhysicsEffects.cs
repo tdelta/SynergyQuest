@@ -1,5 +1,3 @@
-using System;
-using System.Runtime.InteropServices;
 using UnityEngine;
 
 /**
@@ -27,6 +25,7 @@ using UnityEngine;
  * This class simulates the application of forces / impulses by manipulating positions directly.
  * Its kind of hacky, but it seems to work.
  */
+[RequireComponent(typeof(Rigidbody2D))]
 public class PhysicsEffects: MonoBehaviour
 {
     // Should be 9.81 but 10 will do for us

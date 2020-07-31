@@ -31,11 +31,11 @@ public class CoinController : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D collision)
     {
         var other = collision.collider;
-        if (other.gameObject.layer == LayerMask.NameToLayer("Player"))
+        if (other.CompareTag("Player"))
         {
             other.GetComponent<PlayerController>().IncreaseGoldCounter();
             
-            this.PlaySoundAndDestroy();
+            this.gameObject.PlaySoundAndDestroy();
         } 
     }
 }

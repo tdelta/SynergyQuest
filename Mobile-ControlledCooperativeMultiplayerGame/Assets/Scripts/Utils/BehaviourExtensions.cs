@@ -6,45 +6,34 @@ using UnityEngine;
 public static class BehaviourExtensions
 {
     /**
-     * Ensures a game object does not interact with other game objects without disabling it completely.
+     * Ensures a game object does / does not interact with other game objects.
+     * 
+     * Unlike SetActive, it does not disable all functionality of an object.
+     * Instead, currently it disables any renderer and 2d collider.
      *
-     * Currently it disables any renderer and 2d collider.
+     * @param visible true iff the object shall interact / be visible
      */
-    public static void MakeInvisible(this MonoBehaviour self)
+    public static void SetVisibility(this GameObject self, bool visible)
     {
-        var renderer = self.GetComponent<Renderer>();
-        if (!ReferenceEquals(renderer, null))
+        if (self.GetComponent<Renderer>() is Renderer renderer)
         {
-            renderer.enabled = false;
+            renderer.enabled = visible;
         }
 
-        var collider = self.GetComponent<Collider2D>();
-        if (!ReferenceEquals(collider, null))
+        if (self.GetComponent<Collider2D>() is Collider2D collider)
         {
-            collider.enabled = false;
+            collider.enabled = visible;
         }
     }
 
-
-    // TODO: Refactor to One metod with boolean argument!
-    /**
-     * Ensures a game object does not interact with other game objects without disabling it completely.
-     *
-     * Currently it enables any renderer and 2d collider.
-     */
-    public static void MakeVisible(this MonoBehaviour self)
+    public static void MakeInvisible(this GameObject self)
     {
-        var renderer = self.GetComponent<Renderer>();
-        if (!ReferenceEquals(renderer, null))
-        {
-            renderer.enabled = true;
-        }
+        self.SetVisibility(false);
+    }
 
-        var collider = self.GetComponent<Collider2D>();
-        if (!ReferenceEquals(collider, null))
-        {
-            collider.enabled = true;
-        }
+    public static void MakeVisible(this GameObject self)
+    {
+        self.SetVisibility(true);
     }
     
     /**
@@ -54,7 +43,7 @@ public static class BehaviourExtensions
      *
      * Requires that the game object has an `AudioSource`.
      */
-    public static void PlaySoundAndDestroy(this MonoBehaviour self)
+    public static void PlaySoundAndDestroy(this GameObject self)
     {
         self.MakeInvisible();
 
@@ -63,7 +52,7 @@ public static class BehaviourExtensions
         
         audioSource.Play();
         
-        Object.Destroy(self.gameObject, waitTimeUntilDestroy);
+        Object.Destroy(self, waitTimeUntilDestroy);
     }
 
     /**
