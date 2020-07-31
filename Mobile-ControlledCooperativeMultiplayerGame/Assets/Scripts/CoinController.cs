@@ -13,9 +13,11 @@ public class CoinController : MonoBehaviour
         
         if (deactivationTime > 0)
         {
-            CoroutineUtils.Wait(
-                deactivationTime,
-                () => Destroy(this.gameObject)
+            StartCoroutine(
+                CoroutineUtils.Wait(
+                    deactivationTime,
+                    () => Destroy(this.gameObject)
+                )
             );
         }
     }

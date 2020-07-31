@@ -1,16 +1,13 @@
 ﻿using UnityEngine;
-using UnityEngine.Serialization;
 
 [RequireComponent(typeof(ContactTrigger))]
 public class Collectible : MonoBehaviour
 {
-    [FormerlySerializedAs("item")]
-    [SerializeField] private Item itemPrefab;
-    public Item ItemPrefab => itemPrefab;
+    [SerializeField] private ItemDescription itemDescription;
 
     public void Collect(PlayerController collector)
     {
-        collector.Collect(this);
+        collector.Collect(itemDescription);
         Destroy(gameObject);
     }
 }

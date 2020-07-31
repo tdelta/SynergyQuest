@@ -8,11 +8,10 @@ public class PlayerData
     )
     {
         _input = input;
-        _collectedItems = new LinkedList<Item>();
     }
     
-    private LinkedList<Item> _collectedItems;
-    public LinkedList<Item> CollectedItems => _collectedItems;
+    private LinkedList<ItemDescription> _collectedItems = new LinkedList<ItemDescription>();
+    public LinkedList<ItemDescription> CollectedItems => _collectedItems;
 
     private Input _input;
     public Input input => _input;

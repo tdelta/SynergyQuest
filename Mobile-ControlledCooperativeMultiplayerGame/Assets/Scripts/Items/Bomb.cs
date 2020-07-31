@@ -1,8 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class Bomb : ItemInstance<BombItem>, Throwable
+public class Bomb : MonoBehaviour
 {
     [SerializeField] ParticleSystem sparkEffect;
 
@@ -25,39 +23,9 @@ public class Bomb : ItemInstance<BombItem>, Throwable
         collider = GetComponent<BoxCollider2D>();
     }
 
-    public IEnumerator PickUpCoroutine(Vector2 ontop, HingeJoint2D joint, BoxCollider2D otherCollider)
+    private void Start()
     {
-        joint.connectedBody = rigidbody2D;
         animator.SetTrigger(explosionTrigger);
-        Physics2D.IgnoreCollision(collider, otherCollider);
-        // temporally change sorting order to draw carried gameobject on top
-        renderer.sortingOrder++;
-        effects.MoveBody(ontop);
-
-        // the joint should be disabled until the carried object moved ontop of the carrying player,
-        // because a joint disallows such movements
-        yield return new WaitForFixedUpdate(); 
-        joint.enabled = true;
-        
-        // if the bomb explodes before we throw it, make sure to get damage
-        yield return new WaitUntil(() => explosion);
-        Physics2D.IgnoreCollision(collider, otherCollider, false);
-        Destroy(joint);
-    }
-
-    public IEnumerator ThrowCoroutine(Vector2 direction, BoxCollider2D otherCollider)
-    {
-        // can't throw a bomb if already exploded
-        if (destroyed)
-            yield break;
-
-        effects.ApplyImpulse(10 * direction);
-
-        // according to unity manual equality checks on vectors take floating point inaccuracies into account
-        // https://docs.unity3d.com/ScriptReference/Vector2-operator_eq.html
-        yield return new WaitUntil(() => effects.GetImpulse() == Vector2.zero);
-        Physics2D.IgnoreCollision(collider, otherCollider, false);
-        renderer.sortingOrder--;
     }
 
     public void Explode()
@@ -103,4 +71,5 @@ public class Bomb : ItemInstance<BombItem>, Throwable
         else if (explosion && other.gameObject.CompareTag("DestroyableWall"))
             Destroy(other.gameObject);
     }
+    
 }

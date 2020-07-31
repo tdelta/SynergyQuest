@@ -1,43 +1,29 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class BombItem : ThrowableItem
+public class BombItem : Item
 {
+    // FIXME: Report to ItemController, when new instance can be created
 
-    [SerializeField] private Bomb _instance;
-    private Bomb _copiedInstance;
+    private Throwable _throwable;
 
-    public override bool Ready()
+    private void Awake()
     {
-        return _copiedInstance?.isDestroyed() ?? true;
+        _throwable = GetComponent<Throwable>();
     }
-    
-    public override Button GetButton()
+
+    public override void OnActivate(PlayerController player)
     {
-        return Button.Bomb;
+        _throwable.Pickup(player);
     }
 
-    public override Throwable PickUp(PlayerController player){
-        Vector2 position = new Vector2(player.Rigidbody2D.position.x, player.Renderer.bounds.max.y);
-        if (_instance.Instantiate(position) is Bomb throwableItem){
-            player.PickUpThrowable(throwableItem);
-            _copiedInstance = throwableItem;
-            return throwableItem;
-        } else {
-            return null;
-        }
-    }
-
-    protected override void Throw(PlayerController player, Throwable throwableItem){
-        player.ThrowThrowable(throwableItem, new Vector2(player.Input.GetHorizontal(), player.Input.GetVertical()));
-    }
-
-    public override void Shrink()
+    private void Update()
     {
-        if (effects.GetImpulse() == Vector2.zero)
+        var carrier = _throwable.Carrier;
+        
+        if (_throwable.IsBeingCarried && carrier.Input.GetButtonUp(ItemDescription.UseButton))
         {
-          gameObject.transform.localScale -= scaleFactor;
+            // FIXME: Refactor throwing direction into property of player
+            _throwable.Carrier.ThrowThrowable(_throwable, new Vector2(carrier.Input.GetHorizontal(), carrier.Input.GetVertical()));
         }
     }
 }

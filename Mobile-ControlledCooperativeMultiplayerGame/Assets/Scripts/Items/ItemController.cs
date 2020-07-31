@@ -1,42 +1,52 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class ItemController: MonoBehaviour
 {
-
   private PlayerController _player; 
+  
+  private Dictionary<ItemDescription, bool> _cooldownFlags = new Dictionary<ItemDescription, bool>();
 
   private void Awake()
   {
       _player = GetComponent<PlayerController>();
   }
 
-  private void Start()
+  public bool HasItem(ItemDescription item)
   {
-      foreach(Item collectedItem in _player.CollectedItems){
-        collectedItem.Player = _player;
-      }
-  }
-
-  public bool HasItem(Item item)
-  {
-      foreach(Item collectedItem in _player.CollectedItems){
-          if (collectedItem.GetType() == item.GetType()){
-              return true;
-          }
-      }
-      return false;
+      return _player
+          .CollectedItems
+          .Any(itemDescription => itemDescription.GetType() == item.GetType());
   }
   
-  public void Collect(Item item)
+  public void Collect(ItemDescription itemDescription)
   {
-      _player.CollectedItems.AddLast(item);
-      item.Player = _player;
+      _player.CollectedItems.AddLast(itemDescription);
+      _player.EnableGameAction(itemDescription.UseButton);
   }
 
   private void Update()
   {
-      foreach(Item item in _player.CollectedItems){
-          item.Update();
+      foreach (var itemDescription in _player.CollectedItems)
+      {
+          if(
+              _player.Input.GetButtonDown(itemDescription.UseButton) &&
+              !_cooldownFlags.GetOrDefault(itemDescription, false)
+          )
+          {
+              _cooldownFlags[itemDescription] = true;
+              StartCoroutine(
+                  CoroutineUtils.Wait(itemDescription.Cooldown, () =>
+                  {
+                      _cooldownFlags[itemDescription] = false;
+                  })
+              );
+
+              var itemInstance = Instantiate(itemDescription.ItemInstancePrefab);
+
+              itemInstance.Activate(_player, itemDescription);
+          }
       }
   }
 

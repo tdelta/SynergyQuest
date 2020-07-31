@@ -16,7 +16,7 @@ public enum PlayerState{
     presenting_item
 }
 
-public class PlayerController : EntityController, Throwable
+public class PlayerController : EntityController
 {
     [SerializeField] private GameObject lifeGauge;
     [SerializeField] private GameObject coinGauge;
@@ -29,6 +29,8 @@ public class PlayerController : EntityController, Throwable
     [SerializeField] private MultiSound deathSounds;
     [SerializeField] private MultiSound fallingSounds;
     [SerializeField] private InteractionSpeechBubble interactionSpeechBubble;
+    [SerializeField] private Transform carryPosition;
+    public Vector3 CarryPosition => carryPosition.position;
 
     public InteractionSpeechBubble InteractionSpeechBubble => interactionSpeechBubble;
     
@@ -57,8 +59,11 @@ public class PlayerController : EntityController, Throwable
     public BoxCollider2D Collider { get; private set; }
 
     private Renderer _renderer;
+    public Renderer Renderer => _renderer;
    
     private ItemController _itemController;
+
+    private Throwable _throwable;
 
     /**
      * Used to briefly flash the player in a certain color. For example red when they are hit.
@@ -79,12 +84,12 @@ public class PlayerController : EntityController, Throwable
     private PlayerData _data;
     public Input Input => _data.input;
 
-    public LinkedList<Item> CollectedItems => _data.CollectedItems;
+    public LinkedList<ItemDescription> CollectedItems => _data.CollectedItems;
 
     /**
      * If the item can be thrown, safe reference to instantiated item
      */
-    private Throwable _throwableItemInstance;
+    private ThrowableI _throwableIItemInstance;
     
     /**
      *Modeling the current action of the player
@@ -92,9 +97,9 @@ public class PlayerController : EntityController, Throwable
     private PlayerState _playerState;
 
     /**
-     * Reference to the other player during carrying
+     * Reference to carried object
      */
-    private PlayerController _otherPlayer;
+    private Throwable _carriedThrowable;
     
     /**
      * TODO: To be discussed (from Marc) : Do we need this variable as an class attribute?
@@ -149,6 +154,26 @@ public class PlayerController : EntityController, Throwable
         _data = data;
     }
 
+    protected override void Awake()
+    {
+        base.Awake();
+        _throwable = GetComponent<Throwable>();
+    }
+
+    private void OnEnable()
+    {
+        _throwable.OnPickedUp += OnPickedUp;
+        _throwable.OnThrown += OnThrown;
+        _throwable.OnLanded += OnLanded;
+    }
+    
+    private void OnDisable()
+    {
+        _throwable.OnPickedUp -= OnPickedUp;
+        _throwable.OnThrown -= OnThrown;
+        _throwable.OnLanded -= OnLanded;
+    }
+
     // Start is called before the first frame update
     protected override void Start()
     {
@@ -190,15 +215,7 @@ public class PlayerController : EntityController, Throwable
         }
 
     }
-
-    public void Collect(Collider2D other) {
-        Collectible collectible = other.gameObject.GetComponent<Collectible>();
-        if (!_itemController.HasItem(collectible.Item)){
-            Item item = collectible.Collect();
-            _itemController.Collect(item);
-        }
-    }
-
+    
     public void EnableGameAction(Button action) {
         Input.SetGameAction(action, true);
     }
@@ -256,12 +273,6 @@ public class PlayerController : EntityController, Throwable
             // because of joint carried player shouldn't call Move
             case PlayerState.carried: 
                 break;
-            // according to unity manual equality checks on vectors take floating point inaccuracies into account
-            // https://docs.unity3d.com/ScriptReference/Vector2-operator_eq.html
-            case PlayerState.thrown when PhysicsEffects.GetImpulse() == Vector2.zero:
-                Animator.SetBool(CarriedState, false);
-                _playerState = PlayerState.walking;
-                break;
             // Prevent change of velocity by collision forces
             default:
                 Move(false, false);
@@ -273,12 +284,12 @@ public class PlayerController : EntityController, Throwable
     {
         // if the player carries another player, release
         if (CarriesSomeone())
-            ThrowThrowable(_otherPlayer, Vector2.zero);
+        {
+            ThrowThrowable(_carriedThrowable, Vector2.zero);
+        }
         // if the player is carried by another player, release 
-        else if (_otherPlayer?.CarriesSomeone() ?? false) {
-            _otherPlayer.ThrowThrowable(this, Vector2.zero);
-            Animator.SetBool(CarriedState, false);
-            _playerState = PlayerState.walking;
+        else if (_throwable.IsBeingCarried) {
+            _throwable.Carrier.ThrowThrowable(_throwable, Vector2.zero);
         }
         ChangeHealth(maxHealthPoints);
     }
@@ -459,15 +470,7 @@ public class PlayerController : EntityController, Throwable
      */
     public bool CarriesSomeone()
     {
-        return gameObject.GetComponent("HingeJoint2D") != null && _otherPlayer != null;
-    }
-
-    /**
-     * When a player is being carried he needs a reference to the carrying player
-     */
-    public void SetCarry(PlayerController otherPlayer)
-    {
-        _otherPlayer = otherPlayer;
+        return !ReferenceEquals(_carriedThrowable, null);
     }
 
     /**
@@ -476,15 +479,7 @@ public class PlayerController : EntityController, Throwable
      * @param player: The player that picks us up
      */
     public void GetPickedUp(PlayerController player){
-        // The collisions are turned off during carrying but we dont want the interactive to react to that
-        Interactive[] interactives = GetComponents<Interactive>();
-        foreach(Interactive interactive in interactives) {
-            if (interactive.Button == Button.Carry){
-                interactive.IgnoreCollisions = true;
-            }
-        }
-        player.PickUpThrowable(this);
-        player.SetCarry(this);
+        _throwable.Pickup(player);
     }
 
     /**
@@ -493,31 +488,7 @@ public class PlayerController : EntityController, Throwable
      * @param player: The player that throws us
      */
     public void GetThrown(PlayerController player){
-        // The collisions are turned off during carrying but we dont want the interactive to react to that
-        Interactive[] interactives = GetComponents<Interactive>();
-        foreach(Interactive interactive in interactives) {
-            if (interactive.Button == Button.Carry){
-                interactive.IgnoreCollisions = false;
-            }
-        }
-        player.ThrowThrowable(this, new Vector2(player.Input.GetHorizontal(), player.Input.GetVertical()));
-    }
-
-    /**
-     * Call this method to pickup another player
-     */
-    public void PickUpThrowable(Throwable throwable) 
-    {
-        // glue to players together
-        HingeJoint2D joint = gameObject.AddComponent<HingeJoint2D>();
-        // Stops objects from continuing to collide and creating more joints
-        joint.enableCollision = false; 
-        joint.enabled = false;
-
-        var ontop = new Vector2(Rigidbody2D.position.x, _renderer.bounds.max.y);
-        StartCoroutine(throwable.PickUpCoroutine(ontop, joint, Collider));
-        _playerState = PlayerState.carrying;
-        Animator.SetBool(CarryingState, true);
+        player.ThrowThrowable(_throwable, new Vector2(player.Input.GetHorizontal(), player.Input.GetVertical()));
     }
 
     /**
@@ -528,11 +499,8 @@ public class PlayerController : EntityController, Throwable
         _playerState = PlayerState.walking;
         Animator.SetBool(CarryingState, false);
 
-        Destroy(this.gameObject.GetComponent("HingeJoint2D"));
-        StartCoroutine(throwable.ThrowCoroutine(direction, Collider));
-
-        // if we throw a player, remove reference, if we throw an item it doesn't matter
-        _otherPlayer = null;
+        //Destroy(this.gameObject.GetComponent("HingeJoint2D"));
+        throwable.Throw(direction);
     }
 
     /**
@@ -553,21 +521,6 @@ public class PlayerController : EntityController, Throwable
         // because a joint disallows such movements
         yield return new WaitForFixedUpdate(); 
         joint.enabled = true;
-    }
-
-    /**
-     * This coroutine is called when a carried player is dropped or thrown
-     */
-    public IEnumerator ThrowCoroutine(Vector2 direction, BoxCollider2D collider)
-    {
-        _otherPlayer = null;
-        _playerState = PlayerState.thrown;
-        PhysicsEffects.ApplyImpulse(10 * direction);
-
-        // restore sorting order & collision between the two players, when player leaves state thrown
-        yield return new WaitUntil(() => _playerState == PlayerState.walking);
-        Physics2D.IgnoreCollision(collider, Collider, false);
-        _renderer.sortingOrder--;
     }
 
     /**
@@ -639,15 +592,10 @@ public class PlayerController : EntityController, Throwable
         DisplayCoinGauge();
     }
     
-    public void Collect(Collectible collectible)
+    public void Collect(ItemDescription itemDescription)
     {
-        if (collectible.ItemPrefab?.GetType() != this._data.item?.GetType())
-        {
-            var item = Instantiate(collectible.ItemPrefab);
-            item.gameObject.SetActive(false);
-            _data.item = item;
-            
-            COLLECT(collectible)
+        if (!_itemController.HasItem(itemDescription)){
+            _itemController.Collect(itemDescription);
         }
     }
 
@@ -700,5 +648,48 @@ public class PlayerController : EntityController, Throwable
                 point, out var fromPlayerToPointDirection
             )
             && fromPlayerToPointDirection == viewDirection;
+    }
+
+    public void InitCarryingState(Throwable carriedThrowable)
+    {
+        //_playerState = PlayerState.carried;
+        //Animator.SetBool(CarriedState, true);
+        _carriedThrowable = carriedThrowable;
+        _playerState = PlayerState.carrying;
+        Animator.SetBool(CarryingState, true);
+    }
+
+    private void OnPickedUp(PlayerController carrier)
+    {
+        Animator.SetBool(CarriedState, true);
+        _playerState = PlayerState.carried;
+        
+        // The collisions are turned off during carrying but we dont want the interactive to react to that
+        Interactive[] interactives = GetComponents<Interactive>();
+        foreach(Interactive interactive in interactives) {
+            if (interactive.Button == Button.Carry){
+                interactive.IgnoreCollisions = true;
+            }
+        }
+    }
+
+    private void OnThrown()
+    {
+        _carriedThrowable = null;
+        _playerState = PlayerState.thrown;
+        
+        // The collisions are turned off during carrying but we dont want the interactive to react to that
+        GetComponents<Interactive>()
+            .Where(interactive => interactive.Button == Button.Carry)
+            .ToList()
+            .ForEach(interactive => interactive.IgnoreCollisions = false);
+    }
+
+    private void OnLanded()
+    {
+        // according to unity manual equality checks on vectors take floating point inaccuracies into account
+        // https://docs.unity3d.com/ScriptReference/Vector2-operator_eq.html
+        Animator.SetBool(CarriedState, false);
+        _playerState = PlayerState.walking;
     }
 }

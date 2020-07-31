@@ -38,10 +38,17 @@ public class Interactive : MonoBehaviour
      * Which button must a player press to interact?
      */
     [SerializeField] private Button button;
+    public Button Button => button;
+    
     /**
      * The kind of interaction that is registered, see enum above.
      */
     [SerializeField] private InteractionType interactionType;
+    
+     /**
+      * Function to perform on interaction with this object
+      */
+     public bool IgnoreCollisions {get; set;} = false;
 
     /**
      * The player which is currently touching this object and who can interact.
@@ -155,7 +162,7 @@ public class Interactive : MonoBehaviour
         // remember the object as the player who is potentially interacting with this object.
         //
         // See also the `Update` method
-        if (ReferenceEquals(InteractingPlayer, null))
+        if (!IgnoreCollisions && ReferenceEquals(InteractingPlayer, null))
         {
             // Players have a special collider child object `InteractorCollider` for
             // and we use this one to detect collisions with the player.
@@ -208,6 +215,7 @@ public class Interactive : MonoBehaviour
     {
         // If there has been a player touching this object and the object exiting the collision is this player...
         if (
+            !IgnoreCollisions &&
             !ReferenceEquals(InteractingPlayer, null) &&
             other.CompareTag("InteractorCollider") &&
             InteractingPlayer.gameObject == other.GetComponent<InteractorCollider>().Player.gameObject
