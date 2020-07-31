@@ -13,8 +13,8 @@ GameObject:
   - component: {fileID: 3794202867393883376}
   - component: {fileID: 3794202867393883377}
   - component: {fileID: 9151362525911322018}
-  - component: {fileID: 1018472030549898126}
   - component: {fileID: 885227077130476129}
+  - component: {fileID: 9011477615683419576}
   - component: {fileID: 2003972195146774949}
   m_Layer: 0
   m_Name: BombItem
@@ -155,19 +155,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &1018472030549898126
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3794202867393883389}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 912231efc967ebbb5b8c407eb5616993, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sparkEffect: {fileID: 7612822685121192602}
 --- !u!114 &885227077130476129
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -180,6 +167,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e89ceed4394482f9eade6be87a68d82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &9011477615683419576
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3794202867393883389}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1bd910c73b5dd1838f9aab7a0566308, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sparkEffect: {fileID: 7612822685121192602}
 --- !u!114 &2003972195146774949
 MonoBehaviour:
   m_ObjectHideFlags: 0

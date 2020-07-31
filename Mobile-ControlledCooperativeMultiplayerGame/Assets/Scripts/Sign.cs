@@ -8,11 +8,15 @@ public class Sign : MonoBehaviour
     // Info screen content to display
     [SerializeField] private InfoScreenContent content;
 
-    private void OnCollisionEnter2D(Collision2D other)
+    private Interactive _interactive;
+    
+    void Start()
     {
-        if (other.gameObject.CompareTag("Player"))
-        {
-            InfoScreenLauncher.Instance.Launch(content);
-        }
+        _interactive = GetComponent<Interactive>();
+    }
+
+    public void Show()
+    {
+        InfoScreenLauncher.Instance.Launch(content);
     }
 }

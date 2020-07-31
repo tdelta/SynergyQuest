@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -57,7 +57,9 @@ public class PlayerController : EntityController, Throwable
     public BoxCollider2D Collider { get; private set; }
 
     private Renderer _renderer;
-    
+   
+    private ItemController _itemController;
+
     /**
      * Used to briefly flash the player in a certain color. For example red when they are hit.
      */
@@ -76,6 +78,8 @@ public class PlayerController : EntityController, Throwable
      */
     private PlayerData _data;
     public Input Input => _data.input;
+
+    public LinkedList<Item> CollectedItems => _data.CollectedItems;
 
     /**
      * If the item can be thrown, safe reference to instantiated item
@@ -165,10 +169,11 @@ public class PlayerController : EntityController, Throwable
         Collider = GetComponent<BoxCollider2D>();
         _tintFlashController = GetComponent<TintFlashController>();
         _renderer = GetComponent<Renderer>();
-        
+        _itemController = GetComponent<ItemController>();
+
         _healthPoints = maxHealthPoints;
         _playerState = PlayerState.walking;
-        
+       
         var material = GetComponent<Renderer>().material;
         material.SetColor("_ShirtColor", PlayerColorMethods.ColorToRGB(this.Color));
     }
@@ -177,31 +182,29 @@ public class PlayerController : EntityController, Throwable
     protected override void Update()
     {
         base.Update();
-        // Check whether the player released the item key
-        if (!Input.GetButton(Button.Item) && _playerState == PlayerState.carrying && !CarriesSomeone())
-            ThrowThrowable(_throwableItemInstance, new Vector2(Input.GetHorizontal(), Input.GetVertical()));
-        // Check whether the player released the carry key
-        else if (!Input.GetButton(Button.Carry) && _playerState == PlayerState.carrying && CarriesSomeone())
-            ThrowThrowable(_otherPlayer, new Vector2(Input.GetHorizontal(), Input.GetVertical()));
 
         // Attacking
         if (Input.GetButtonDown(Button.Attack) && (_playerState == PlayerState.walking || _playerState == PlayerState.attacking)) {
             _playerState = PlayerState.attacking;
             Attack();
         }
-        else if (_playerState == PlayerState.walking)
-        {
-            // Item usage
-            if (Input.GetButtonDown(Button.Item) && _data.item && _data.item.Ready() && 
-            _data.item.Instantiate(new Vector2(Rigidbody2D.position.x, _renderer.bounds.max.y)) is Throwable throwableItem)
-                PickUpThrowable(_throwableItemInstance = throwableItem);
-            // Carrying (FIXME: We should have the `Interactive` component handle this.)
-            else if (Input.GetButtonDown(Button.Carry) && GetNearPlayer(out _otherPlayer)) {
-                _otherPlayer.SetCarry(this);
-                PickUpThrowable(_otherPlayer);
-            }
 
+    }
+
+    public void Collect(Collider2D other) {
+        Collectible collectible = other.gameObject.GetComponent<Collectible>();
+        if (!_itemController.HasItem(collectible.Item)){
+            Item item = collectible.Collect();
+            _itemController.Collect(item);
         }
+    }
+
+    public void EnableGameAction(Button action) {
+        Input.SetGameAction(action, true);
+    }
+
+    public void DisableGameAction(Button action) {
+        Input.SetGameAction(action, false);
     }
 
     bool GetNearPlayer(out PlayerController player)
@@ -468,6 +471,39 @@ public class PlayerController : EntityController, Throwable
     }
 
     /**
+     * Used by the interactive component
+     *
+     * @param player: The player that picks us up
+     */
+    public void GetPickedUp(PlayerController player){
+        // The collisions are turned off during carrying but we dont want the interactive to react to that
+        Interactive[] interactives = GetComponents<Interactive>();
+        foreach(Interactive interactive in interactives) {
+            if (interactive.Button == Button.Carry){
+                interactive.IgnoreCollisions = true;
+            }
+        }
+        player.PickUpThrowable(this);
+        player.SetCarry(this);
+    }
+
+    /**
+     * Used by the interactive component
+     *
+     * @param player: The player that throws us
+     */
+    public void GetThrown(PlayerController player){
+        // The collisions are turned off during carrying but we dont want the interactive to react to that
+        Interactive[] interactives = GetComponents<Interactive>();
+        foreach(Interactive interactive in interactives) {
+            if (interactive.Button == Button.Carry){
+                interactive.IgnoreCollisions = false;
+            }
+        }
+        player.ThrowThrowable(this, new Vector2(player.Input.GetHorizontal(), player.Input.GetVertical()));
+    }
+
+    /**
      * Call this method to pickup another player
      */
     public void PickUpThrowable(Throwable throwable) 
@@ -492,7 +528,7 @@ public class PlayerController : EntityController, Throwable
         _playerState = PlayerState.walking;
         Animator.SetBool(CarryingState, false);
 
-        Destroy(gameObject.GetComponent("HingeJoint2D"));
+        Destroy(this.gameObject.GetComponent("HingeJoint2D"));
         StartCoroutine(throwable.ThrowCoroutine(direction, Collider));
 
         // if we throw a player, remove reference, if we throw an item it doesn't matter
@@ -610,6 +646,8 @@ public class PlayerController : EntityController, Throwable
             var item = Instantiate(collectible.ItemPrefab);
             item.gameObject.SetActive(false);
             _data.item = item;
+            
+            COLLECT(collectible)
         }
     }
 

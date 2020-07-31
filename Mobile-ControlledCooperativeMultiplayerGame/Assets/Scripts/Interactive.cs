@@ -49,7 +49,26 @@ public class Interactive : MonoBehaviour
      *
      * FIXME: We might want to allow multiple players to interact?
      */
-    public PlayerController InteractingPlayer { get; private set; } = null;
+    private PlayerController _interactingPlayer = null;
+    public PlayerController InteractingPlayer {
+        get => _interactingPlayer;
+        private set {
+            if (!ReferenceEquals(value, _interactingPlayer))
+            {
+                if (ReferenceEquals(value, null)) {
+                    // We stopped interacting with something, hence
+                    // we must disable the corresponding interaction on
+                    // the controllers:
+                    _interactingPlayer.DisableGameAction(button);
+                } else {
+                    if (interactionType == InteractionType.Down || interactionType == InteractionType.Hold){
+                        value.EnableGameAction(button);
+                    }
+                }
+            }
+            _interactingPlayer = value;
+        }
+    }
 
     /**
      * Every interactive object can be assigned a specific color so that only players with the right color can

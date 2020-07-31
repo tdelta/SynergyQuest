@@ -4,13 +4,19 @@ using UnityEngine;
 
 abstract public class Item : MonoBehaviour
 {
+
+    protected PlayerController _player;
+    public PlayerController Player {
+      set { _player = value; }
+    }
+    
     // must be implemented to realize cooldown
     public abstract bool Ready();
 
-    // TODO: currently an Item instantiates itself, which is a bit confusing
-    // a better solution would be to introduce an additional class of indirection
-    public abstract Item Instantiate(Vector2 coords);
+    // Each item has to specify a button to activate it
+    public abstract Button GetButton();
 
+    public abstract void Update();
     // Repeatedly called by a Chasm when an Item falls down
     public abstract void Shrink();
 }

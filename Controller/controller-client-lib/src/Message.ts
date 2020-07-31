@@ -38,6 +38,8 @@ export namespace MessageFormat {
     GameStateChanged = 10,
     // The game wants the controller to vibrate. Sent by the game
     VibrationSequence = 11,
+    // An action that the player can perform has been enabled or disabled
+    SetGameAction = 12,
   }
 
   /**
@@ -115,6 +117,11 @@ export namespace MessageFormat {
 
   export interface SetMenuActionsMessage extends Message {
     readonly menuActions: MenuAction[];
+  }
+
+  export interface SetGameActionMessage extends Message {
+    readonly button: Button;
+    readonly enabled: boolean;
   }
 
   export interface MenuActionTriggeredMessage extends Message {
@@ -210,6 +217,9 @@ export namespace MessageFormat {
       case MessageType.GameStateChanged:
         matcher.GameStateChangedMessage(msg as GameStateChangedMessage);
         break;
+      case MessageType.SetGameAction:
+        matcher.SetGameActionMessage(msg as SetGameActionMessage);
+        break;
       case MessageType.VibrationSequence:
         matcher.VibrationSequenceMessage(msg as VibrationSequenceMessage);
         break;
@@ -230,6 +240,7 @@ export namespace MessageFormat {
     readonly SetMenuActionsMessage: (_: SetMenuActionsMessage) => any;
     readonly MenuActionTriggeredMessage: (_: MenuActionTriggeredMessage) => any;
     readonly GameStateChangedMessage: (_: GameStateChangedMessage) => any;
+    readonly SetGameActionMessage: (_: SetGameActionMessage) => any;
     readonly VibrationSequenceMessage: (_: VibrationSequenceMessage) => any;
   }
 
@@ -250,6 +261,7 @@ export namespace MessageFormat {
     SetMenuActionsMessage: _ => {},
     MenuActionTriggeredMessage: _ => {},
     GameStateChangedMessage: _ => {},
+    SetGameActionMessage: _ => {},
     VibrationSequenceMessage: _ => {},
   };
 }

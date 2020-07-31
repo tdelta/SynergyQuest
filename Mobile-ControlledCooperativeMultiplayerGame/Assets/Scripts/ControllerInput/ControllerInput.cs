@@ -54,9 +54,10 @@ public class ControllerInput: Input
     // We cache the last inputs reported by a controller here
     private float _vertical   = 0.0f;  // vertical joystick position
     private float _horizontal = 0.0f;  // horizontal joystick position
-    private ButtonPressState _attackButtonState = new ButtonPressState(); // whether the Attack button is pressed
-    private ButtonPressState _pullButtonState   = new ButtonPressState(); // whether the Pull button is pressed
-    
+
+    // Store whether any button is currently pressed
+    private Dictionary<Button, ButtonPressState> _buttonPressStates = new Dictionary<Button, ButtonPressState>(); 
+ 
     // We also cache the last special values set by the game
     // (Attention: They must be resent, if the client temporarily disconnects)
     private PlayerColor _playerColor = PlayerColor.Any;
@@ -79,7 +80,8 @@ public class ControllerInput: Input
      */
     public event ReconnectAction OnReconnect;
     public delegate void ReconnectAction(ControllerInput input);
-    
+
+
     /**
      * Returns the value of the Joystick position on the vertical axis.
      * 
@@ -108,15 +110,7 @@ public class ControllerInput: Input
      */
     public bool GetButton(Button b)
     {
-        switch (b)
-        {
-            case Button.Attack:
-                return _attackButtonState.GetValue();
-            case Button.Pull:
-                return _pullButtonState.GetValue();
-        }
-
-        return false;
+        return _buttonPressStates[b].GetValue();
     }
     
     /**
@@ -127,15 +121,7 @@ public class ControllerInput: Input
      */
     public bool GetButtonDown(Button b)
     {
-        switch (b)
-        {
-            case Button.Attack:
-                return _attackButtonState.GetValueDown();
-            case Button.Pull:
-                return _pullButtonState.GetValueDown();
-        }
-
-        return false;
+        return _buttonPressStates[b].GetValueDown();
     }
     
     /**
@@ -146,15 +132,19 @@ public class ControllerInput: Input
      */
     public bool GetButtonUp(Button b)
     {
-        switch (b)
-        {
-            case Button.Attack:
-                return _attackButtonState.GetValueUp();
-            case Button.Pull:
-                return _pullButtonState.GetValueUp();
-        }
+        return _buttonPressStates[b].GetValueUp();
+    }
 
-        return false;
+    /**
+     * Tells the controlled that an action can or cannot be performed
+     * (such as reading a sign or pressing a button)
+     * 
+     * @throws ApplicationError if the controller is currently not connected
+     */
+    public void SetGameAction(Button action, bool enabled)
+    {
+        var msg = new Message.SetGameActionMessage(action, enabled);
+        SendMessage(msg);
     }
 
     /**
@@ -240,6 +230,9 @@ public class ControllerInput: Input
         this.PlayerId = playerId;
         this.PlayerName = playerName;
         this._controllerServer = server;
+        foreach(Button button in Enum.GetValues(typeof(Button))){
+            _buttonPressStates.Add(button, new ButtonPressState());
+        }
     }
     
     /**
@@ -297,15 +290,7 @@ public class ControllerInput: Input
         {
             ButtonMessage = msg =>
             {
-                switch (msg.button)
-                {
-                    case Button.Attack:
-                        _attackButtonState.ProcessRawInput(msg.onOff);
-                        break;
-                    case Button.Pull:
-                        _pullButtonState.ProcessRawInput(msg.onOff);
-                        break;
-                }
+                _buttonPressStates[msg.button].ProcessRawInput(msg.onOff);
             },
             
             JoystickMessage = msg =>

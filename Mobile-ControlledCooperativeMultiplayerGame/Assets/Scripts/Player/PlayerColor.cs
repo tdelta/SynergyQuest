@@ -34,18 +34,32 @@ public static class PlayerColorMethods
      * Red -> Blue -> Green -> Yellow -> Red
      * Any -> Any
      */
-    public static PlayerColor NextColor(this PlayerColor color)
+    public static PlayerColor NextColor(this PlayerColor color, int numPlayers = 4)
     {
+        // This code is a bit hard to read but all it does is implement a modulus
+        Debug.Log(numPlayers);
         switch (color)
         {
             case PlayerColor.Any:
                 return PlayerColor.Any;
-            case PlayerColor.Red:
-                return PlayerColor.Blue;
+            case  PlayerColor.Red:
+                if (numPlayers > 1) {
+                  return PlayerColor.Blue;
+                }
+                // Else: Return Red (the first color)
+                goto case PlayerColor.Yellow;
             case PlayerColor.Blue:
-                return PlayerColor.Green;
+                if (numPlayers > 2) {
+                  return PlayerColor.Green;
+                }
+                // Else: Return Red (the first color)
+                goto case PlayerColor.Yellow;
             case PlayerColor.Green:
-                return PlayerColor.Yellow;
+                if (numPlayers > 3) {
+                  return PlayerColor.Yellow;
+                }
+                // Else: Return Red (the first color)
+                goto case PlayerColor.Yellow;
             case PlayerColor.Yellow:
                 return PlayerColor.Red;
         }

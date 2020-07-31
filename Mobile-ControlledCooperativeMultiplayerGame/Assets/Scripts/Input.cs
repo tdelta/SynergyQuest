@@ -60,6 +60,11 @@ public interface Input
      */
     PlayerColor GetColor();
 
+    /**
+     * Enables or disables game actions
+     * (such as reading a sign or pressing a button)
+     */
+    void SetGameAction(Button action, bool enabled);
 
     /**
      * Tell the controller to vibrate. This will only have an effect if the controller

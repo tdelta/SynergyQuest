@@ -10,6 +10,7 @@ import './Controller.css';
 import fscreen from 'fscreen';
 
 import { ColorData } from './consts';
+import * as consts from './consts';
 
 import { faCompress, faExpand } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -119,12 +120,12 @@ export class Controller extends React.Component<
     const button = (
       text: string,
       button: Button,
-      col1: string,
-      col2: string
+      backgroundColor: string,
+      borderColor: string
     ) => (
       <button
         className='pixelButton text'
-        style={{ backgroundColor: col1, borderColor: col2 }}
+        style={{ backgroundColor: backgroundColor, borderColor: borderColor }}
         onMouseDown={_ => this.onButtonChanged(button, true)}
         onMouseUp={_ => this.onButtonChanged(button, false)}
         onTouchStart={_ => this.onButtonChanged(button, true)}
@@ -135,6 +136,23 @@ export class Controller extends React.Component<
     );
 
     const playerColor: ColorData = this.props.playerColor;
+
+    const buttons: JSX.Element[] = [];
+
+    buttons.push(
+      button(
+        consts.buttonStyles[Button.Attack].name,
+        Button.Attack,
+        consts.buttonStyles[Button.Attack].dark,
+        consts.buttonStyles[Button.Attack].dark
+      )
+    );
+    console.log(this.props.enabledGameActions);
+    this.props.enabledGameActions.forEach((action: Button) => {
+      console.log(action);
+      const info: ColorData = consts.buttonStyles[action];
+      buttons.push(button(info.name, action, info.dark, info.light));
+    });
 
     // Return DOM elements
     return (
@@ -176,8 +194,7 @@ export class Controller extends React.Component<
                     />
                   </div>
                 </div>
-                {button('Attack', Button.Attack, '#E53935', '#EF5350')}
-                {button('Pull', Button.Pull, '#039BE5', '#29B6F6')}
+                {buttons}
               </div>
             </div>
           </div>
@@ -194,6 +211,7 @@ interface ControllerState {
 interface ControllerProbs {
   client: ControllerClient;
   playerColor: ColorData;
+  enabledGameActions: Set<Button>;
   canPause: boolean;
   pause: () => void;
 }
