@@ -11,6 +11,7 @@ export enum Button {
   Carry = 2,
   Press = 3,
   Throw = 4,
+  Read = 5,
 }
 
 /**
@@ -161,7 +162,7 @@ export class ControllerClient {
    * enables a game action to be displayed as a button in the controller ui
    */
   public onSetGameAction: (action: Button, enabled: boolean) => any;
-  
+
   /**
    * Callback which can be set by users and which is called whenever the game
    * wants the controller to vibrate.
@@ -408,7 +409,7 @@ export class ControllerClient {
 
         this.onSetGameAction?.(msg.button, msg.enabled);
       },
-      
+
       VibrationSequenceMessage: msg => {
         this.onVibrationRequest?.(msg.vibrationPattern);
       },

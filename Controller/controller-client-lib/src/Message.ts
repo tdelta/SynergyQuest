@@ -219,6 +219,7 @@ export namespace MessageFormat {
         break;
       case MessageType.SetGameAction:
         matcher.SetGameActionMessage(msg as SetGameActionMessage);
+        break;
       case MessageType.VibrationSequence:
         matcher.VibrationSequenceMessage(msg as VibrationSequenceMessage);
         break;

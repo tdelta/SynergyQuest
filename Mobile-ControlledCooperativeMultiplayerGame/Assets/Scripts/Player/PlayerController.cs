@@ -57,7 +57,9 @@ public class PlayerController : EntityController, Throwable
 
     private Renderer _renderer;
     public Renderer Renderer => _renderer;
-    
+   
+    private ItemController _itemController;
+
     /**
      * Used to briefly flash the player in a certain color. For example red when they are hit.
      */
@@ -165,7 +167,8 @@ public class PlayerController : EntityController, Throwable
         Collider = GetComponent<BoxCollider2D>();
         _tintFlashController = GetComponent<TintFlashController>();
         _renderer = GetComponent<Renderer>();
-        
+        _itemController = GetComponent<ItemController>();
+
         _healthPoints = maxHealthPoints;
         _playerState = PlayerState.walking;
        
@@ -178,29 +181,16 @@ public class PlayerController : EntityController, Throwable
     {
         base.Update();
 
-        // Check if an item can be used
-        //if (_data.item && _data.item.Ready()) {
-        //  ButtonAction fn = () => {
-        //    if (Instantiate(_data.item, new Vector2(Rigidbody2D.position.x, _renderer.bounds.max.y), Quaternion.identity) is Throwable throwableItem){
-        //        PickUpThrowable(throwableItem);
-        //        // Enable throwing when button is released
-        //        ButtonAction throw_fn = () => ThrowThrowable(throwableItem, new Vector2(Input.GetHorizontal(), Input.GetVertical()));
-        //        EnableGameAction(_data.item.GetButton(), throw_fn, true);
-        //      }
-        //  };
-        //  EnableGameAction(_data.item.GetButton(), fn);
-        //}
-        //else if (_data.item && _playerState != PlayerState.carrying){
-        //  // Item is not ready and not currently being carried
-        //  DisableGameAction(_data.item.GetButton());
-        //}
-
         // Attacking
         if (Input.GetButtonDown(Button.Attack) && (_playerState == PlayerState.walking || _playerState == PlayerState.attacking)) {
             _playerState = PlayerState.attacking;
             Attack();
         }
 
+    }
+
+    public void Collect(Item item) {
+        _itemController.Collect(item);
     }
 
     public void EnableGameAction(Button action) {
@@ -504,7 +494,6 @@ public class PlayerController : EntityController, Throwable
                 interactive.IgnoreCollisions = false;
             }
         }
-        Debug.Log("Throw");
         player.ThrowThrowable(this, new Vector2(player.Input.GetHorizontal(), player.Input.GetVertical()));
     }
 
@@ -647,7 +636,8 @@ public class PlayerController : EntityController, Throwable
     public void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.CompareTag("Collectible")) {
-            other.gameObject.GetComponent<Collectible>().Collect(this);
+          Item item = other.gameObject.GetComponent<Collectible>().Collect();
+          Collect(item);
         }
     }
 

@@ -22,8 +22,10 @@ abstract public class ThrowableItem : Item
     // Item was ready in the last update
     private bool _wasReady = false;
 
-    private void Update()
+    public override void Update()
     {
+        if (ReferenceEquals(_player, null))
+            return;
         if (Ready()){
             if (!_wasReady){
                 _player.EnableGameAction(GetButton());
@@ -32,14 +34,14 @@ abstract public class ThrowableItem : Item
             if (ReferenceEquals(_currentInstance, null) && _player.Input.GetButtonDown(GetButton())){
                 _currentInstance = PickUp(_player);
             }
-            else if (!ReferenceEquals(_currentInstance, null) && _player.Input.GetButtonUp(GetButton())){
-                Throw(_player, _currentInstance);
-                _currentInstance = null;
-            }
         }
-        else {
+        else if (ReferenceEquals(_currentInstance, null)){
             _player.DisableGameAction(GetButton());
             _wasReady = false;
+        }
+        else if (_player.Input.GetButtonUp(GetButton())){
+            Throw(_player, _currentInstance);
+            _currentInstance = null;
         }
     }
 }

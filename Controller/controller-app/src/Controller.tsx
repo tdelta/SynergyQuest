@@ -136,20 +136,22 @@ export class Controller extends React.Component<
     );
 
     const playerColor: ColorData = this.props.playerColor;
-    
-    let buttons: JSX.Element[] = [];
 
-    buttons.push(button(
+    const buttons: JSX.Element[] = [];
+
+    buttons.push(
+      button(
         consts.buttonStyles[Button.Attack].name,
         Button.Attack,
         consts.buttonStyles[Button.Attack].dark,
-        consts.buttonStyles[Button.Attack].dark));
+        consts.buttonStyles[Button.Attack].dark
+      )
+    );
     console.log(this.props.enabledGameActions);
-    this.props.enabledGameActions.forEach( (action: Button) =>
-    {
-        console.log(action);
-        let info: ColorData = consts.buttonStyles[action];
-        buttons.push(button(info.name, action, info.dark, info.light));
+    this.props.enabledGameActions.forEach((action: Button) => {
+      console.log(action);
+      const info: ColorData = consts.buttonStyles[action];
+      buttons.push(button(info.name, action, info.dark, info.light));
     });
 
     // Return DOM elements

@@ -8,5 +8,6 @@ public enum Button
     Pull = 1,
     Carry = 2,
     Press = 3,
-    Bomb = 4
+    Bomb = 4,
+    Read = 5
 }

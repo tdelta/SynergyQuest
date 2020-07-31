@@ -24,6 +24,28 @@ public static class BehaviourExtensions
             collider.enabled = false;
         }
     }
+
+
+    // TODO: Refactor to One metod with boolean argument!
+    /**
+     * Ensures a game object does not interact with other game objects without disabling it completely.
+     *
+     * Currently it enables any renderer and 2d collider.
+     */
+    public static void MakeVisible(this MonoBehaviour self)
+    {
+        var renderer = self.GetComponent<Renderer>();
+        if (!ReferenceEquals(renderer, null))
+        {
+            renderer.enabled = true;
+        }
+
+        var collider = self.GetComponent<Collider2D>();
+        if (!ReferenceEquals(collider, null))
+        {
+            collider.enabled = true;
+        }
+    }
     
     /**
      * Destroys a game object after playing a sound once.
