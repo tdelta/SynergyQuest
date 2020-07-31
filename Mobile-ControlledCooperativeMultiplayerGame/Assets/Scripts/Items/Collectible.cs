@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class Collectible : MonoBehaviour
 {
-    [SerializeField] Item item;
+    [SerializeField] private Item item;
+    public Item Item => item;
 
     public Item Collect()
     {

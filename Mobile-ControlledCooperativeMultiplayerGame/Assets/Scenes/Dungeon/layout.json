@@ -81,6 +81,14 @@
         }
       }
     },
+    "D10": {
+      "roomConnections": {
+        "left": {
+          "targetRoom": "D8",
+          "targetDoor": "right"
+        }
+      }
+    },
     "D12": {
       "roomConnections": {
         "up": {

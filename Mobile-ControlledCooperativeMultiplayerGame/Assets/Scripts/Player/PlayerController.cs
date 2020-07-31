@@ -189,8 +189,12 @@ public class PlayerController : EntityController, Throwable
 
     }
 
-    public void Collect(Item item) {
-        _itemController.Collect(item);
+    public void Collect(Collider2D other) {
+        Collectible collectible = other.gameObject.GetComponent<Collectible>();
+        if (!_itemController.HasItem(collectible.Item)){
+            Item item = collectible.Collect();
+            _itemController.Collect(item);
+        }
     }
 
     public void EnableGameAction(Button action) {
@@ -636,8 +640,7 @@ public class PlayerController : EntityController, Throwable
     public void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.CompareTag("Collectible")) {
-          Item item = other.gameObject.GetComponent<Collectible>().Collect();
-          Collect(item);
+          Collect(other);
         }
     }
 

@@ -14,6 +14,16 @@ public class ItemController: MonoBehaviour
       _player = GetComponent<PlayerController>();
   }
 
+  public bool HasItem(Item item)
+  {
+      foreach(Item collectedItem in collectedItems){
+          if (collectedItem.GetType() == item.GetType()){
+              return true;
+          }
+      }
+      return false;
+  }
+  
   public void Collect(Item item)
   {
       collectedItems.AddLast(item);
