@@ -79,6 +79,8 @@ public class PlayerController : EntityController, Throwable
     private PlayerData _data;
     public Input Input => _data.input;
 
+    public LinkedList<Item> CollectedItems => _data.CollectedItems;
+
     /**
      * If the item can be thrown, safe reference to instantiated item
      */
