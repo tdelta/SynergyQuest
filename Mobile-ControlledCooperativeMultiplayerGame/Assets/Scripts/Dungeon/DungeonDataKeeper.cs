@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using UnityEngine;
 
 /**
  * Keeps track of dungeon related runtime data which is persistent across scenes.
@@ -10,6 +11,11 @@ public class DungeonDataKeeper: Singleton<DungeonDataKeeper>
      * Stores activation values of switches
      */
     private Dictionary<string, bool> _persistentSwitchValues = new Dictionary<string, bool>();
+
+    /**
+     * Stores positions of objects
+     */
+    private Dictionary<string, Vector3> _objectPositions  = new Dictionary<string, Vector3>();
     
     /**
      * This set remembers, which keys have been collected
@@ -43,6 +49,36 @@ public class DungeonDataKeeper: Singleton<DungeonDataKeeper>
     public void SaveSwitchActivation(Switch switcher)
     {
         _persistentSwitchValues[switcher.Guid.guid] = switcher.Value;
+    }
+    
+    /**
+     * Returns the saved position of the given object.
+     *
+     * @param position the saved position of the given object will be stored here
+     * @returns true iff a position had been stored
+     */
+    [Pure]
+    public bool GetSavedPosition(Guid guid, out Vector3 position)
+    {
+        return _objectPositions.TryGetValue(guid.guid, out position);
+    }
+    
+    /**
+     * Save the position value of an object
+     */
+    public void SavePosition(Guid guid)
+    {
+        _objectPositions[guid.guid] = guid.transform.position;
+    }
+    
+    /**
+     * Remove the position value of an object, if it had been saved
+     *
+     * @returns true iff there had been a position stored for the given object
+     */
+    public bool RemovePosition(Guid guid)
+    {
+        return _objectPositions.Remove(guid.guid);
     }
 
     /**
