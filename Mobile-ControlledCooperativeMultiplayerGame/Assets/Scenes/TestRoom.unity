@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -197,6 +197,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 637012642312568570, guid: fa42a00a890be7834949b240883a6a9a,
+        type: 3}
+      propertyPath: _guid
+      value: 4ca85bf3-030b-4b57-9ed1-756c7e46a920
+      objectReference: {fileID: 0}
     - target: {fileID: 2551029204875039413, guid: fa42a00a890be7834949b240883a6a9a,
         type: 3}
       propertyPath: m_Name
@@ -278,6 +283,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 637012642312568570, guid: fa42a00a890be7834949b240883a6a9a,
+        type: 3}
+      propertyPath: _guid
+      value: 3b9c26ee-f932-4529-ac02-702ff28cf079
+      objectReference: {fileID: 0}
     - target: {fileID: 2551029204875039413, guid: fa42a00a890be7834949b240883a6a9a,
         type: 3}
       propertyPath: m_Name
@@ -14610,6 +14620,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: SokobanBox
       objectReference: {fileID: 0}
+    - target: {fileID: 8623722076230139295, guid: 6ed7971d71a18372790f27df003fd03d,
+        type: 3}
+      propertyPath: _guid
+      value: d247840d-f0a1-4b6a-9695-207fc7dff811
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6ed7971d71a18372790f27df003fd03d, type: 3}
 --- !u!1001 &2119680064
@@ -14943,6 +14958,11 @@ PrefabInstance:
       propertyPath: doorId
       value: up
       objectReference: {fileID: 0}
+    - target: {fileID: 8915531184313071906, guid: a341e0ab2c77886e2b34ff3a3dd5faa5,
+        type: 3}
+      propertyPath: _guid
+      value: d37fcdc3-5e3c-498e-8a62-651d093874d9
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a341e0ab2c77886e2b34ff3a3dd5faa5, type: 3}
 --- !u!1001 &1653188993914386876
@@ -15085,6 +15105,11 @@ PrefabInstance:
         type: 3}
       propertyPath: doorId
       value: up
+      objectReference: {fileID: 0}
+    - target: {fileID: 8456524778759536316, guid: ff35296422fbd38968f6ee97f2a2f1f9,
+        type: 3}
+      propertyPath: _guid
+      value: 7fbf421c-11a5-4e93-91c7-afcefaa34c60
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ff35296422fbd38968f6ee97f2a2f1f9, type: 3}
@@ -15423,6 +15448,11 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1733987727890565723, guid: 790092c14f520b846b7ce2a8819741bb,
         type: 3}
+    - target: {fileID: 8623722076230139295, guid: 6ed7971d71a18372790f27df003fd03d,
+        type: 3}
+      propertyPath: _guid
+      value: 3c7d2c44-ef73-4e08-9588-df45f998ca4e
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6ed7971d71a18372790f27df003fd03d, type: 3}
 --- !u!1001 &5481500327469454888
@@ -15580,6 +15610,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1118801836}
     m_Modifications:
+    - target: {fileID: 970042819262971797, guid: f0918a3f069a1fdf9b72974b69d0ff01,
+        type: 3}
+      propertyPath: _guid
+      value: 8d34f44a-53bb-4c5a-be40-ac9effd88d24
+      objectReference: {fileID: 0}
     - target: {fileID: 1454303468227003328, guid: f0918a3f069a1fdf9b72974b69d0ff01,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -15667,7 +15702,7 @@ PrefabInstance:
     - target: {fileID: 8153043136341992037, guid: f925feb2d83cd4fc6b55ecd04fed0ebb,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -10
+      value: -11
       objectReference: {fileID: 0}
     - target: {fileID: 8153043136341992037, guid: f925feb2d83cd4fc6b55ecd04fed0ebb,
         type: 3}
@@ -15845,7 +15880,7 @@ PrefabInstance:
     - target: {fileID: 8451649553765607551, guid: 896795d39b1254ea596a70557eeff80c,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -10
+      value: -11
       objectReference: {fileID: 0}
     - target: {fileID: 8451649553765607551, guid: 896795d39b1254ea596a70557eeff80c,
         type: 3}
@@ -15955,6 +15990,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: KeyLockedDoorUp
+      objectReference: {fileID: 0}
+    - target: {fileID: 7499951480425222783, guid: 851c62be9c9c208e6b309f4a280344e0,
+        type: 3}
+      propertyPath: _guid
+      value: 15553b4d-2f20-4467-b0c4-4f2e2ebfec8b
       objectReference: {fileID: 0}
     - target: {fileID: 8600195905482185071, guid: 851c62be9c9c208e6b309f4a280344e0,
         type: 3}

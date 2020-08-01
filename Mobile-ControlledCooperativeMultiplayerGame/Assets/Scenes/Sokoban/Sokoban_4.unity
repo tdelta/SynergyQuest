@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -15306,6 +15306,11 @@ PrefabInstance:
       propertyPath: grid
       value: 
       objectReference: {fileID: 487986683}
+    - target: {fileID: 8201414674152925553, guid: 344ef421a8237c1f78f6cd0a9de1e8b5,
+        type: 3}
+      propertyPath: _guid
+      value: d860eaf7-2a7d-4c62-ac3c-cd58cbcfd6ac
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 344ef421a8237c1f78f6cd0a9de1e8b5, type: 3}
 --- !u!1001 &372288267
@@ -15454,6 +15459,11 @@ PrefabInstance:
       propertyPath: grid
       value: 
       objectReference: {fileID: 487986683}
+    - target: {fileID: 8201414674152925553, guid: 344ef421a8237c1f78f6cd0a9de1e8b5,
+        type: 3}
+      propertyPath: _guid
+      value: f0302e39-5cc4-4f3b-98fe-363c80b70646
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 344ef421a8237c1f78f6cd0a9de1e8b5, type: 3}
 --- !u!156049354 &487986683 stripped
@@ -15541,7 +15551,7 @@ PrefabInstance:
     - target: {fileID: 8153043136341992037, guid: f925feb2d83cd4fc6b55ecd04fed0ebb,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.00000023841858
+      value: -0.00000011920929
       objectReference: {fileID: 0}
     - target: {fileID: 8153043136341992037, guid: f925feb2d83cd4fc6b55ecd04fed0ebb,
         type: 3}
@@ -15701,7 +15711,7 @@ PrefabInstance:
     - target: {fileID: 8451649553765607551, guid: 896795d39b1254ea596a70557eeff80c,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.00000023841858
+      value: -0.00000011920929
       objectReference: {fileID: 0}
     - target: {fileID: 8451649553765607551, guid: 896795d39b1254ea596a70557eeff80c,
         type: 3}
@@ -16061,6 +16071,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 6551985244256730656, guid: 386d38727be60d40796d038f17cd66e9,
+        type: 3}
+      propertyPath: _guid
+      value: e0894a35-c544-45e8-94f6-bde0641cbf88
+      objectReference: {fileID: 0}
     - target: {fileID: 7576144868841865793, guid: 386d38727be60d40796d038f17cd66e9,
         type: 3}
       propertyPath: m_Name
@@ -16288,6 +16303,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 6551985244256730656, guid: 386d38727be60d40796d038f17cd66e9,
+        type: 3}
+      propertyPath: _guid
+      value: 0c7f5f44-fbda-41b1-a20d-1597a2b1e88d
+      objectReference: {fileID: 0}
     - target: {fileID: 7576144868841865793, guid: 386d38727be60d40796d038f17cd66e9,
         type: 3}
       propertyPath: m_Name
