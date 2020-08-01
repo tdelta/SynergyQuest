@@ -21,6 +21,7 @@ public class PlatformTransportable : MonoBehaviour
         // contact with.
         if (other.GetComponent<PlatformController>() is PlatformController platform)
         {
+            Debug.Log($"Added platform for {this.name}");
             PlatformsInContact.Add(platform);
         }
     }

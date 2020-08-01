@@ -14,6 +14,22 @@ public class Throwable : MonoBehaviour
     private HingeJoint2D _hingeJoint2D;
 
     /**
+     * When being carried, we move our rigidbody to a special layer "Carried", so that it does not interact with most
+     * objects (Chasms, Platforms).
+     *
+     * In this field we temporarily store our original layer, so that we can restore it, as soon as we land again
+     * (after throwing).
+     */
+    private int _cachedLayer;
+    /**
+     * Turns out, the movement of the carrying player can be dragged down by the mass of this object when carrying.
+     * Hence, we set our mass to 0 while being carried.
+     * In this field we temporarily store the original mass, so that we can restore it, as soon as this object is being
+     * thrown.
+     */
+    private float _cachedMass;
+
+    /**
      * Event which is invoked if this object has just been picked up by a player
      */
     public event PickedUpAction OnPickedUp;
@@ -92,6 +108,14 @@ public class Throwable : MonoBehaviour
     
     private IEnumerator PickUpCoroutine()
     {
+        // Cache original layer and change layer to "Carried", see description of _cachedLayer field for explanation
+        _cachedLayer = this.gameObject.layer;
+        this.gameObject.layer = LayerMask.NameToLayer("Carried");
+        
+        // Cache original mass and change mass to 0, see description of _cachedMass field for explanation
+        _cachedMass = _physicsEffects.rigidbody2D.mass;
+        _physicsEffects.rigidbody2D.mass = 0;
+        
         _hingeJoint2D.connectedBody = _carrier.Rigidbody2D;
         Physics2D.IgnoreCollision(_collider, _carrier.Collider);
         // temporally change sorting order to draw carried gameobject on top
@@ -112,6 +136,7 @@ public class Throwable : MonoBehaviour
      */
     private IEnumerator ThrowCoroutine(Vector2 direction)
     {
+        _physicsEffects.rigidbody2D.mass = _cachedMass;
         _physicsEffects.ApplyImpulse(10 * direction);
         _hingeJoint2D.connectedBody = null;
         _hingeJoint2D.enabled = false;
@@ -121,6 +146,7 @@ public class Throwable : MonoBehaviour
 
         // restore sorting order & collision between the two players, when player leaves state thrown
         yield return new WaitUntil(() => _physicsEffects.GetImpulse() == Vector2.zero);
+        this.gameObject.layer = _cachedLayer;
         Physics2D.IgnoreCollision(_collider, _carrier.Collider, false);
         _renderer.sortingOrder--;
         

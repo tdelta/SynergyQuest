@@ -38,7 +38,7 @@ public class PhysicsEffects: MonoBehaviour
     private const float frictionCoefficient = 0.7f;
     
     // Rigidbody of the object which we are applying effects to
-    private Rigidbody2D _rigidbody2D;
+    public Rigidbody2D rigidbody2D { get; private set; }
 
     /**
      * One may set a transform as custom origin.
@@ -72,7 +72,7 @@ public class PhysicsEffects: MonoBehaviour
 
     private void Awake()
     {
-        _rigidbody2D = GetComponent<Rigidbody2D>();
+        rigidbody2D = GetComponent<Rigidbody2D>();
         if (_customOrigin != null)
         {
             _lastCustomOriginPosition = _customOrigin.position;
@@ -87,7 +87,7 @@ public class PhysicsEffects: MonoBehaviour
      */
     private Vector2 ComputeFrictionDeceleration()
     {
-        var mass = _rigidbody2D.mass;
+        var mass = rigidbody2D.mass;
         
         var normalForceMagnitude = mass * GravitationalAcceleration;
         var frictionForceMagnitude = frictionCoefficient * normalForceMagnitude;
@@ -102,7 +102,7 @@ public class PhysicsEffects: MonoBehaviour
     public void Teleport(Vector3 position)
     {
         transform.position = position;
-        _rigidbody2D.position = position;
+        rigidbody2D.position = position;
     }
 
     /**
@@ -110,7 +110,7 @@ public class PhysicsEffects: MonoBehaviour
      */
     public void ApplyImpulse(Vector2 impulse)
     {
-        _effectsSpeed += impulse / _rigidbody2D.mass;
+        _effectsSpeed += impulse / rigidbody2D.mass;
     }
 
     /**
@@ -167,13 +167,13 @@ public class PhysicsEffects: MonoBehaviour
 
         nextMovementPosition += _effectsSpeed * Time.deltaTime;
 
-        _rigidbody2D.MovePosition(nextMovementPosition);
+        rigidbody2D.MovePosition(nextMovementPosition);
         // Cache the position the rigidbody is moving towards. We need it when a custom origin has been set, see the
         // `Update` method.
         _lastNextPosition = nextMovementPosition;
         
         // Remember the direction the player wants to move (if the difference between the current and the target position is big enough)
-        var steeringDirection = _lastNextPosition - _rigidbody2D.position;
+        var steeringDirection = _lastNextPosition - rigidbody2D.position;
         _steeringDirection = steeringDirection.magnitude > 0.01 ? steeringDirection.normalized : Vector2.zero;
     }
     
@@ -189,12 +189,12 @@ public class PhysicsEffects: MonoBehaviour
             // We must move the physics body by that amount (hard teleport).
             // We do this in `Update` and not in `FixedUpdate` since the origin can change every frame, not only every
             // physics frame.
-            _rigidbody2D.position += originDelta;
+            rigidbody2D.position += originDelta;
             
             // _lastNextPosition caches the position the rigidbody is currently moving towards.
             // Hence we also need to adjust it and inform the rigidbody:
             _lastNextPosition += originDelta;
-            _rigidbody2D.MovePosition(_lastNextPosition);
+            rigidbody2D.MovePosition(_lastNextPosition);
             
             // Cache the new position of the origin
             _lastCustomOriginPosition = originPosition;
