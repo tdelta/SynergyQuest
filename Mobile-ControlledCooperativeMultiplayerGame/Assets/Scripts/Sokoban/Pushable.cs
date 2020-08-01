@@ -3,7 +3,7 @@
 /**
  * A Pushable can either be resting or be moving
  */
-enum State
+public enum State
 {
     Resting,
     Moving
@@ -53,8 +53,8 @@ public class Pushable : MonoBehaviour
     /**
      * Records whether the box is currently moving or resting
      */
-    private State _state = State.Resting;
-    
+    public State state { get; private set; } = State.Resting;
+
     /**
      * If the box is moving, this records the distance it still has to move before stopping.
      */
@@ -146,7 +146,7 @@ public class Pushable : MonoBehaviour
         
         // If a player has been interacting with this object using the `Pull` button, 
         // and the interaction stopped, we reset the players state and stop caching it.
-        else if (_state == State.Resting && !ReferenceEquals(_pullingPlayer, null))
+        else if (state == State.Resting && !ReferenceEquals(_pullingPlayer, null))
         {
             _pullingPlayer.DisablePulling();
             _pullingPlayer = null;
@@ -156,12 +156,12 @@ public class Pushable : MonoBehaviour
     private void FixedUpdate()
     {
         // Do nothing here, if we are not moving.
-        if (_state != State.Moving) return;
+        if (state != State.Moving) return;
         
         // Stop moving, if we have already the whole distance of one push / pull
         if (Mathf.Approximately(_remainingMoveDistance, 0))
         {
-            _state = State.Resting;
+            state = State.Resting;
             _movementBinder.Unbind(); // If we have been pulled, release the player, so that they are no longer moved along us
             // If the this object is no longer moving, we allow displaying interaction hints again
             _interactive.SuppressSpeechBubble = false;
@@ -197,7 +197,7 @@ public class Pushable : MonoBehaviour
     private bool CanMove(Vector2 directionVec, float moveDistance, float additionalRaycastDistance = 0)
     {
         // We can only make another move if we are currently not moving:
-        if (_state == State.Resting)
+        if (state == State.Resting)
         {
             // We now do a raycast to check for obstacles in the way of the move.
             var boxCenter = (Vector2) transform.position + _boxCollider.offset;
@@ -287,7 +287,7 @@ public class Pushable : MonoBehaviour
         if (CanMove(directionVec, moveDistance, additionalRayCastDistance))
         {
             // See documentation of these fields for an explanation of why we are setting these values.
-            _state = State.Moving;
+            state = State.Moving;
             // While the box is moving, we do not want to display any interaction hints to players
             _interactive.InteractingPlayer?.InteractionSpeechBubble.HideBubble();
             _interactive.SuppressSpeechBubble = true;
@@ -396,7 +396,7 @@ public class Pushable : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D other)
     {
         // If we are not currently at rest (i.e. moving), we ignore collisions
-        if (_state != State.Resting) return;
+        if (state != State.Resting) return;
         // Abort, if we are already tracking a player
         if (!(_inContactPlayer is null)) return;
         // We also do not handle collisions with non-player objects

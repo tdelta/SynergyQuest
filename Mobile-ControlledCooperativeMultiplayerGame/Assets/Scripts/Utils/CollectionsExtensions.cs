@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public static class CollectionsExtensions
@@ -22,6 +24,20 @@ public static class CollectionsExtensions
         {
             list.Resize(minSize);
         }
+    }
+
+    /**
+     * The same as Linq Select, but it filters out any null values after
+     * selecting.
+     */
+    public static IEnumerable<TResult> SelectNotNull<TSource, TResult>(
+        this IEnumerable<TSource> source,
+        Func<TSource, TResult> selector
+    )
+    {
+        return source
+            .Select(selector)
+            .Where(selected => !ReferenceEquals(selected, null));
     }
 
     /**

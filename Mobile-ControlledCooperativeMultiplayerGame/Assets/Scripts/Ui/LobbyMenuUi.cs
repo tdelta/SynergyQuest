@@ -156,8 +156,11 @@ public class LobbyMenuUi : MonoBehaviour
             }
             SharedControllerState.Instance.EnableMenuActions((MenuAction.StartGame, false));
             SharedControllerState.Instance.SetGameState(GameState.Started);
-            
-            DungeonController.Instance.LoadNextRoom();
+
+            DungeonLayout.Instance.LoadDungeon(
+                "Assets/Scenes/Dungeon/layout.json",
+                ControllerServer.Instance.GetInputs().Count
+            );
         }
     }
 

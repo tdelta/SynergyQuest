@@ -13,7 +13,11 @@ public class Switchable : MonoBehaviour
      * Switches which shall be observed.
      */
     [SerializeField] private Switch[] switches = new Switch[0];
-    
+
+    /**
+     * Automatically find all switches in the scene who have a tag of the given name and bind to them
+     */
+    [SerializeField] private string[] autoDiscoveredSwitchTags = new string[0];
     
     /**
      * Event which is invoked if all registered switches are active at the same time.
@@ -38,6 +42,13 @@ public class Switchable : MonoBehaviour
 
     void Awake()
     {
+        // Auto-discover switches by tags and add them to the manually configured ones
+        switches = autoDiscoveredSwitchTags
+            .SelectMany(GameObject.FindGameObjectsWithTag)
+            .Select(gameObject => gameObject.GetComponent<Switch>())
+            .Concat(switches)
+            .ToArray();
+
         // Allocate memory in our caches for every switch
         _switchValues = new bool[switches.Length];
         _switchChangeHandlers = new Switch.ValueChangedAction[switches.Length];

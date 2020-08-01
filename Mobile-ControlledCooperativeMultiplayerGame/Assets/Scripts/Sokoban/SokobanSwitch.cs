@@ -1,7 +1,7 @@
 ﻿using Sokoban;
 using UnityEngine;
 
-public class SwitchController : MonoBehaviour
+public class SokobanSwitch : MonoBehaviour
 {
     [SerializeField] private PlayerColor color = PlayerColor.Any;
     /**
@@ -36,12 +36,13 @@ public class SwitchController : MonoBehaviour
         OnSwitchChanged?.Invoke();
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
+    private void OnTriggerStay2D(Collider2D other)
     {
-        if (other.gameObject.CompareTag("Box")){
-            var box = other.gameObject.GetComponent<Box>();
+        if (!_switch.Value && other.gameObject.CompareTag("Box")){
+            var box = other.GetComponent<Box>();
+            var pushable = other.GetComponent<Pushable>();
             
-            if(box.Color.IsCompatibleWith(this.GetColor())) {
+            if(pushable.state == State.Resting && box.Color.IsCompatibleWith(this.GetColor())) {
                 SetPressed(true);
             }
         }

@@ -199,12 +199,7 @@ public class PlayerController : EntityController
         _healthPoints = maxHealthPoints;
         _playerState = PlayerState.walking;
        
-        SetShirtColor();
-    }
-
-    private void OnValidate()
-    {
-        SetShirtColor();
+        SetShirtColor(this.Color);
     }
 
     // Update is called once per frame
@@ -220,10 +215,10 @@ public class PlayerController : EntityController
 
     }
     
-    private void SetShirtColor()
+    private void SetShirtColor(PlayerColor color)
     {
         var material = GetComponent<Renderer>().material;
-        material.SetColor("_ShirtColor", PlayerColorMethods.ColorToRGB(this.Color));
+        material.SetColor("_ShirtColor", PlayerColorMethods.ColorToRGB(color));
     }
 
     void FixedUpdate ()
