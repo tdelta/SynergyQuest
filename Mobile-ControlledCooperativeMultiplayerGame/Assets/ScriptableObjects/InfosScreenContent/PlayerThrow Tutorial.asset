@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6daee5f13f7462b820959d44cfdbfea, type: 3}
+  m_Name: PlayerThrow Tutorial
+  m_EditorClassIdentifier: 
+  headerText: Player Throw
+  subHeaderText: How to throw an other player
+  pagePrefabs:
+  - {fileID: 3036040520192316623, guid: 33a4ea314f2c0724bab9468227acfb0b, type: 3}
