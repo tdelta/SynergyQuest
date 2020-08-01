@@ -1,20 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class PlatformController : MonoBehaviour
 {
-    public List<WayPointController> wayPoints;
-    public (WayPointController, int) nextWayPoint;
+    [SerializeField] private List<WayPointController> wayPoints = new List<WayPointController>();
+    [SerializeField] private float speed;
 
-    public PlayerController player;
-
-    public float speed;
+    private bool _hasNextWaypoint = false;
+    private (WayPointController, int) _nextWayPoint;
 
     // Start is called before the first frame update
     void Start()
     {
-        nextWayPoint = (wayPoints[0], 0);
+        if (wayPoints.Any())
+        {
+            _hasNextWaypoint = true;
+            _nextWayPoint = (wayPoints[0], 0);
+        }
     }
 
     void FixedUpdate()
@@ -24,18 +28,21 @@ public class PlatformController : MonoBehaviour
 
     private void Move() 
     {
-        WayPointController wayPoint = nextWayPoint.Item1;
+        if (_hasNextWaypoint)
+        {
+            var wayPoint = _nextWayPoint.Item1;
 
-        if (isMoveHorizontalNeeded(wayPoint)) {
-            MoveHorizontal();
-        } 
-        
-        else if (IsMoveVerticalNeeded(wayPoint)){
-            MoveVertical();
-        }
+            if (isMoveHorizontalNeeded(wayPoint)) {
+                MoveHorizontal();
+            } 
+            
+            else if (IsMoveVerticalNeeded(wayPoint)){
+                MoveVertical();
+            }
 
-        else {
-            UpdateNextWayPoint();
+            else {
+                UpdateNextWayPoint();
+            }
         }
     }
 
@@ -44,19 +51,19 @@ public class PlatformController : MonoBehaviour
         if (AreAllWayPointsVisited())
         {
             wayPoints.Reverse();
-            nextWayPoint = (wayPoints[1], 1);
+            _nextWayPoint = (wayPoints[1], 1);
         }
         
         else
         {
-            int nextIndex = nextWayPoint.Item2 + 1;
-            nextWayPoint = (wayPoints[nextIndex], nextIndex);
+            int nextIndex = _nextWayPoint.Item2 + 1;
+            _nextWayPoint = (wayPoints[nextIndex], nextIndex);
         }
     }
 
     private bool AreAllWayPointsVisited()
     {
-        return nextWayPoint.Item2 + 1 >= wayPoints.Count;
+        return _nextWayPoint.Item2 + 1 >= wayPoints.Count;
     }
 
     private bool IsMoveVerticalNeeded(WayPointController wayPoint)
@@ -71,7 +78,7 @@ public class PlatformController : MonoBehaviour
 
     private void MoveHorizontal()
     {
-        WayPointController wayPoint = nextWayPoint.Item1;
+        WayPointController wayPoint = _nextWayPoint.Item1;
         Vector3 deltaPosition = transform.position;
 
         // Need to move Left
@@ -87,7 +94,7 @@ public class PlatformController : MonoBehaviour
 
     private void MoveVertical()
     {
-        WayPointController wayPoint = nextWayPoint.Item1;
+        WayPointController wayPoint = _nextWayPoint.Item1;
         Vector3 deltaPosition = transform.position;
 
         // Need to move Down

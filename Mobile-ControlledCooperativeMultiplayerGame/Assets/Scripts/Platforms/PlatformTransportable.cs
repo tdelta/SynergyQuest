@@ -20,10 +20,9 @@ public class PlatformTransportable : MonoBehaviour
     {
         // If the object we touched is a PlatformController, register it in the list of platforms we are currently in
         // contact with.
-        var maybePlatform = other.GetComponent<PlatformController>();
-        if (maybePlatform != null)
+        if (other.GetComponent<PlatformController>() is PlatformController platform)
         {
-            _platformsInContact.Add(maybePlatform);
+            _platformsInContact.Add(platform);
         }
     }
     
@@ -31,10 +30,9 @@ public class PlatformTransportable : MonoBehaviour
     {
         // If the object we stopped touching is a PlatformController, unregister it from the list of platforms we are
         // currently in contact with.
-        var maybePlatform = other.GetComponent<PlatformController>();
-        if (maybePlatform != null)
+        if (other.GetComponent<PlatformController>() is PlatformController platform)
         {
-            _platformsInContact.Remove(maybePlatform);
+            _platformsInContact.Remove(platform);
         }
     }
 }

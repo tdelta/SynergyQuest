@@ -1208,6 +1208,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: platform (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 8000967896109330678, guid: 6ddd1db0184c15a4d9f279f1f8c6b706,
+        type: 3}
+      propertyPath: wayPoints.Array.size
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6ddd1db0184c15a4d9f279f1f8c6b706, type: 3}
 --- !u!1 &1649477186 stripped
@@ -1447,6 +1452,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: platform
       objectReference: {fileID: 0}
+    - target: {fileID: 8000967896109330678, guid: 6ddd1db0184c15a4d9f279f1f8c6b706,
+        type: 3}
+      propertyPath: wayPoints.Array.size
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6ddd1db0184c15a4d9f279f1f8c6b706, type: 3}
 --- !u!1 &1854911509 stripped
@@ -1493,11 +1503,8 @@ MonoBehaviour:
   spawnEnemiesPerPlayer: 0
   enemies:
   - Type: {fileID: 5481500327407250212, guid: f0c1adf6b4e8d2006a9096257c9a2e80, type: 3}
-    Count: 4
-  customSpawnPoints:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+    Count: 2
+  customSpawnPoints: []
 --- !u!114 &343129517711830943
 MonoBehaviour:
   m_ObjectHideFlags: 0

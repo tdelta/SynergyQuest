@@ -17,11 +17,12 @@ public class EnemySpawn : MonoBehaviour {
     // If true, the configured number of enemies will be spawned for every player
     [SerializeField] private bool spawnEnemiesPerPlayer = false;
     [SerializeField] List<EnemyTypeCountPair> enemies;
+
     /**
      * If this list is non-empty, enemies will be spawned at these points instead
      * of on random tiles
      */
-    [SerializeField] private List<Transform> customSpawnPoints = null;
+    [SerializeField] private List<Transform> customSpawnPoints = new List<Transform>();
 
     private int _emptyRadius = 1;
     private float _totalSpawnTime = 1;
