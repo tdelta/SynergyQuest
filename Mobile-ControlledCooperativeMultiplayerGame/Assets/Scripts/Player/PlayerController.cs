@@ -578,9 +578,9 @@ public class PlayerController : EntityController
         DisplayCoinGauge();
     }
     
-    public void Collect(ItemDescription itemDescription)
+    public bool Collect(ItemDescription itemDescription)
     {
-        _itemController.Collect(itemDescription);
+        return _itemController.Collect(itemDescription);
     }
 
     /**

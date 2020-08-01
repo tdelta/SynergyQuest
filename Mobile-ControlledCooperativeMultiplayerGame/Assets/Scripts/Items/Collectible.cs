@@ -15,11 +15,11 @@ public class Collectible : MonoBehaviour
      * Gives the item of this collectible to a player.
      * It is invoked by the `ContactTrigger` component, as soon as a player touches this object.
      *
-     * The collectible will be destroyed afterwards.
+     * If it was collected, the collectible will be destroyed.
      */
     public void Collect(PlayerController collector)
     {
-        collector.Collect(itemDescription);
-        Destroy(gameObject);
+        if (collector.Collect(itemDescription))
+            Destroy(gameObject);
     }
 }

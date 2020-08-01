@@ -34,13 +34,15 @@ public class ItemController: MonoBehaviour
    * Allows the player to use the given item.
    * This also means, that the item's usage action will be enabled on controllers
    */
-  public void Collect(ItemDescription itemDescription)
+  public bool Collect(ItemDescription itemDescription)
   {
       if (!HasItem(itemDescription))
       {
           _player.CollectedItems.AddLast(itemDescription);
           _player.Input.SetGameAction(itemDescription.UseButton, true);
+          return true;
       }
+      return false;
   }
 
   private void Update()
