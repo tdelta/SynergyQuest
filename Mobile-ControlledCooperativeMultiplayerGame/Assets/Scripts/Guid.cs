@@ -27,10 +27,7 @@ public class Guid : MonoBehaviour
         {
             Debug.LogError("GUID has not been generated in edit mode! Open/edit/create this object in edit mode to generate a GUID");
         }
-    }
-
-    void Start()
-    {
+        
         // If the position of this object had been saved, restore it
         if (DungeonDataKeeper.Instance.GetSavedPosition(this, out var position))
         {

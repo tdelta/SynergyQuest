@@ -300,12 +300,12 @@ PrefabInstance:
     - target: {fileID: 8451649553765607551, guid: 896795d39b1254ea596a70557eeff80c,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -6.332458
+      value: -0.00000047683716
       objectReference: {fileID: 0}
     - target: {fileID: 8451649553765607551, guid: 896795d39b1254ea596a70557eeff80c,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.36354375
+      value: 0.00000011920929
       objectReference: {fileID: 0}
     - target: {fileID: 8451649553765607551, guid: 896795d39b1254ea596a70557eeff80c,
         type: 3}
@@ -1161,12 +1161,12 @@ PrefabInstance:
     - target: {fileID: 8153043136341992037, guid: f925feb2d83cd4fc6b55ecd04fed0ebb,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -6.332458
+      value: -0.00000047683716
       objectReference: {fileID: 0}
     - target: {fileID: 8153043136341992037, guid: f925feb2d83cd4fc6b55ecd04fed0ebb,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.36354375
+      value: 0.00000011920929
       objectReference: {fileID: 0}
     - target: {fileID: 8153043136341992037, guid: f925feb2d83cd4fc6b55ecd04fed0ebb,
         type: 3}
@@ -1957,6 +1957,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: KeyLockedDoorUp Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 7499951480425222783, guid: 851c62be9c9c208e6b309f4a280344e0,
+        type: 3}
+      propertyPath: _guid
+      value: 4749e3ba-5aba-4fb4-9f80-407fce45d67b
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 851c62be9c9c208e6b309f4a280344e0, type: 3}
