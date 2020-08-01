@@ -81,7 +81,7 @@ public class Chasm : MonoBehaviour
                 if (other.GetComponent<PlayerController>() is PlayerController playerController)
                     playerController.InitiateFall();
                 else if (other.GetComponent<Item>() is Item item)
-                    item.Shrink();
+                    item.gameObject.Shrink(new Vector3(0.01f, 0.01f, 0.01f));
             }
         }
     }

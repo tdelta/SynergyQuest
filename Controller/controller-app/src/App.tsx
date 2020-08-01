@@ -5,6 +5,7 @@ import {
   PlayerColor,
   ControllerClient,
   ConnectFailureReason,
+  Button,
 } from 'controller-client-lib';
 import { ConnectScreen } from './ConnectScreen';
 import { LobbyScreen } from './LobbyScreen';
@@ -56,6 +57,7 @@ export interface AppState {
   verticalSliderVal: number;
   enabledMenuActions: Set<MenuAction>;
   gameState: GameState;
+  enabledGameActions: Set<Button>;
 }
 
 /**
@@ -72,6 +74,7 @@ class App extends React.Component<{}, AppState> {
     verticalSliderVal: 0,
     enabledMenuActions: new Set<MenuAction>(),
     gameState: GameState.Lobby,
+    enabledGameActions: new Set<Button>(),
   };
 
   constructor(props: {}) {
@@ -155,6 +158,11 @@ class App extends React.Component<{}, AppState> {
         enabledMenuActions: client.getEnabledMenuActions(),
       });
 
+    client.onSetGameAction = (action: Button, enabled: boolean) =>
+      this.setState({
+        enabledGameActions: client.getEnabledGameActions(),
+      });
+
     client.onGameStateChanged = (state: GameState) =>
       this.setState({
         ...this.state,
@@ -216,6 +224,7 @@ class App extends React.Component<{}, AppState> {
               <Controller
                 client={this.state.connectionStatus.client}
                 playerColor={consts.colors[this.state.color]}
+                enabledGameActions={this.state.enabledGameActions}
                 canPause={this.state.enabledMenuActions.has(
                   MenuAction.PauseGame
                 )}

@@ -1,16 +1,15 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Runtime.Remoting;
 using UnityEngine;
 
 abstract public class Item : MonoBehaviour
 {
-    // must be implemented to realize cooldown
-    public abstract bool Ready();
-
-    // TODO: currently an Item instantiates itself, which is a bit confusing
-    // a better solution would be to introduce an additional class of indirection
-    public abstract Item Instantiate(Vector2 coords);
-
-    // Repeatedly called by a Chasm when an Item falls down
-    public abstract void Shrink();
+    protected ItemDescription ItemDescription { get; private set; }
+    
+    public void Activate(PlayerController player, ItemDescription itemDescription)
+    {
+        ItemDescription = itemDescription;
+        OnActivate(player);
+    }
+    
+    public abstract void OnActivate(PlayerController player);
 }

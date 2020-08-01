@@ -63,7 +63,7 @@ public class LocalInput: MonoBehaviour, Input
                 return UnityEngine.Input.GetKey(keymap.PullKey());
             case Button.Carry:
                 return UnityEngine.Input.GetKey(keymap.CarryKey());
-            case Button.Item:
+            case Button.Bomb:
                 return UnityEngine.Input.GetKey(keymap.ItemKey());
 
         }
@@ -81,7 +81,7 @@ public class LocalInput: MonoBehaviour, Input
                 return UnityEngine.Input.GetKeyDown(keymap.PullKey());
             case Button.Carry:
                 return UnityEngine.Input.GetKeyDown(keymap.CarryKey());
-            case Button.Item:
+            case Button.Bomb:
                 return UnityEngine.Input.GetKeyDown(keymap.ItemKey());
 
         }
@@ -99,7 +99,7 @@ public class LocalInput: MonoBehaviour, Input
                 return UnityEngine.Input.GetKeyUp(keymap.PullKey());
             case Button.Carry:
                 return UnityEngine.Input.GetKeyUp(keymap.CarryKey());
-            case Button.Item:
+            case Button.Bomb:
                 return UnityEngine.Input.GetKeyUp(keymap.ItemKey());
 
         }
@@ -128,6 +128,13 @@ public class LocalInput: MonoBehaviour, Input
     public void PlayVibrationFeedback(List<float> vibrationPattern)
     {
         // Vibration is not supported locally, we do nothing
+    }
+
+    /**
+     * Keys on the keyboard cannot disappear. Do nothing
+     */
+    public void SetGameAction(Button action, bool enabled){
+        return;
     }
 }
 

@@ -1,16 +1,18 @@
 using JetBrains.Annotations;
+using System.Collections.Generic;
 
 public class PlayerData
 {
     public PlayerData(
-        [NotNull] Input input,
-        [CanBeNull] Item item
+        [NotNull] Input input
     )
     {
         _input = input;
-        this.item = item;
     }
     
+    private LinkedList<ItemDescription> _collectedItems = new LinkedList<ItemDescription>();
+    public LinkedList<ItemDescription> CollectedItems => _collectedItems;
+
     private Input _input;
     public Input input => _input;
     public Item item { get; set; }

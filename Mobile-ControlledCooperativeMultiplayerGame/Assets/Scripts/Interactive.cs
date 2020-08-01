@@ -38,10 +38,17 @@ public class Interactive : MonoBehaviour
      * Which button must a player press to interact?
      */
     [SerializeField] private Button button;
+    public Button Button => button;
+    
     /**
      * The kind of interaction that is registered, see enum above.
      */
     [SerializeField] private InteractionType interactionType;
+    
+     /**
+      * Function to perform on interaction with this object
+      */
+     public bool IgnoreCollisions {get; set;} = false;
 
     /**
      * The player which is currently touching this object and who can interact.
@@ -49,7 +56,26 @@ public class Interactive : MonoBehaviour
      *
      * FIXME: We might want to allow multiple players to interact?
      */
-    public PlayerController InteractingPlayer { get; private set; } = null;
+    private PlayerController _interactingPlayer = null;
+    public PlayerController InteractingPlayer {
+        get => _interactingPlayer;
+        private set {
+            if (!ReferenceEquals(value, _interactingPlayer))
+            {
+                if (ReferenceEquals(value, null)) {
+                    // We stopped interacting with something, hence
+                    // we must disable the corresponding interaction on
+                    // the controllers:
+                    _interactingPlayer.DisableGameAction(button);
+                } else {
+                    if (interactionType == InteractionType.Down || interactionType == InteractionType.Hold){
+                        value.EnableGameAction(button);
+                    }
+                }
+            }
+            _interactingPlayer = value;
+        }
+    }
 
     /**
      * Every interactive object can be assigned a specific color so that only players with the right color can
@@ -136,7 +162,7 @@ public class Interactive : MonoBehaviour
         // remember the object as the player who is potentially interacting with this object.
         //
         // See also the `Update` method
-        if (ReferenceEquals(InteractingPlayer, null))
+        if (!IgnoreCollisions && ReferenceEquals(InteractingPlayer, null))
         {
             // Players have a special collider child object `InteractorCollider` for
             // and we use this one to detect collisions with the player.
@@ -189,6 +215,7 @@ public class Interactive : MonoBehaviour
     {
         // If there has been a player touching this object and the object exiting the collision is this player...
         if (
+            !IgnoreCollisions &&
             !ReferenceEquals(InteractingPlayer, null) &&
             other.CompareTag("InteractorCollider") &&
             InteractingPlayer.gameObject == other.GetComponent<InteractorCollider>().Player.gameObject
