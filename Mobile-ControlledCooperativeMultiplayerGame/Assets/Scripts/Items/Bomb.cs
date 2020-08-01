@@ -1,10 +1,9 @@
 using UnityEngine;
 
-public class Bomb : MonoBehaviour
+public class Bomb : Item
 {
     [SerializeField] ParticleSystem sparkEffect;
 
-    bool destroyed = false;
     bool explosion = false;
     readonly int explosionTrigger = Animator.StringToHash("Explode");
 
@@ -12,6 +11,7 @@ public class Bomb : MonoBehaviour
     private PhysicsEffects _effects;
     private Rigidbody2D _rigidbody2D;
     private AudioSource _audioSource;
+    private Throwable _throwable;
 
     void Awake()
     {
@@ -19,13 +19,22 @@ public class Bomb : MonoBehaviour
         _rigidbody2D = GetComponent<Rigidbody2D>();
         _effects = GetComponent<PhysicsEffects>();
         _audioSource = GetComponent<AudioSource>();
+        _throwable = GetComponent<Throwable>();
     }
 
     private void Start()
     {
         _animator.SetTrigger(explosionTrigger);
     }
+    
+    protected override void OnActivate(PlayerController player)
+    {
+        _throwable.Pickup(player);
+    }
 
+    /**
+     * Invoked by the animation controller when the bomb shall start exploding
+     */
     public void Explode()
     {
         _audioSource.Play();
@@ -34,23 +43,23 @@ public class Bomb : MonoBehaviour
         explosion = true;
     }
 
+    /**
+     * Invoked by animation after bomb exploded
+     */
     public void Destroy()
     {
-        // new bomb can only be instantiated when the previous one exploded
-        destroyed = true;
         Destroy(gameObject);
     }
-
-    public bool isDestroyed()
-    {
-      return destroyed;
-    }
     
-    public Bomb Instantiate(Vector2 coords)
+    private void Update()
     {
-      Bomb instance = Instantiate(this, coords, Quaternion.identity);
-      instance.gameObject.SetActive(true);
-      return instance;
+        var carrier = _throwable.Carrier;
+        
+        // If we are currently being carried, we shall be thrown once the player releases the item button
+        if (_throwable.IsBeingCarried && carrier.Input.GetButtonUp(ItemDescription.UseButton))
+        {
+            _throwable.Carrier.ThrowThrowable(_throwable, carrier.ThrowingDirection);
+        }
     }
 
     void FixedUpdate()

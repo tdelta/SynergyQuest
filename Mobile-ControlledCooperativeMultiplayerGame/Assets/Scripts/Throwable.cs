@@ -1,6 +1,10 @@
 using System.Collections;
+using UnityEditor.EventSystems;
 using UnityEngine;
 
+/**
+ * Behavior which allows an object to be picked up and thrown by players.
+ */
 [RequireComponent(typeof(Renderer), typeof(Collider2D), typeof(PhysicsEffects))]
 public class Throwable : MonoBehaviour
 {
@@ -9,15 +13,28 @@ public class Throwable : MonoBehaviour
     private PhysicsEffects _physicsEffects;
     private HingeJoint2D _hingeJoint2D;
 
-    public delegate void PickedUpAction(PlayerController carrier);
+    /**
+     * Event which is invoked if this object has just been picked up by a player
+     */
     public event PickedUpAction OnPickedUp;
+    public delegate void PickedUpAction(PlayerController carrier);
     
-    public delegate void ThrownAction();
+    /**
+     * Event which is invoked if this object has just been thrown by a player
+     */
     public event ThrownAction OnThrown;
+    public delegate void ThrownAction();
     
-    public delegate void LandedAction();
+    /**
+     * Event which is invoked if this object has just landed after being thrown by a player.
+     */
     public event LandedAction OnLanded;
+    public delegate void LandedAction();
 
+    /**
+     * Player which is currently carrying this object.
+     * It is set to null, if the object is not currently being carried
+     */
     private PlayerController _carrier;
     public PlayerController Carrier => _carrier;
 
@@ -33,16 +50,44 @@ public class Throwable : MonoBehaviour
         _hingeJoint2D.enabled = false;
     }
 
+    /**
+     * Let the given player pick up this object.
+     */
     public void Pickup(PlayerController carrier)
     {
-        _carrier = carrier;
-        IsBeingCarried = true;
-        StartCoroutine(PickUpCoroutine());
+        if (!IsBeingCarried)
+        {
+            _carrier = carrier;
+            IsBeingCarried = true;
+            StartCoroutine(PickUpCoroutine());
+        }
+
+        else
+        {
+            Debug.LogWarning("Tried to pick up object, which is already being carried.");
+        }
     }
 
+    /**
+     * If this object is currently being carried by a player,
+     * throw it in the given direction.
+     *
+     * @param direction direction into which this object shall be thrown.
+     *                  You can use `Vector2.zero` to just drop it.
+     *                  You can use `Carrier.ThrowDirection` to throw it in the
+     *                  direction the carrying player is currently walking into.
+     */
     public void Throw(Vector2 direction)
     {
-        StartCoroutine(ThrowCoroutine(direction));
+        if (IsBeingCarried)
+        {
+            StartCoroutine(ThrowCoroutine(direction));
+        }
+
+        else
+        {
+            Debug.LogError("Tried to throw object which is not being carried!");
+        }
     }
     
     private IEnumerator PickUpCoroutine()
