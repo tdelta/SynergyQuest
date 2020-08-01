@@ -15,3 +15,16 @@
 * Created by freesound.org user "FunWithSound"
 * Link: https://freesound.org/people/FunWithSound/sounds/456965/
 * License: CC0
+
+# explosion.ogg
+
+* Created by Iwan Gabovitch submitted by user qubodup to OpenGameArt.Org
+* Link: https://opengameart.org/content/synthesized-explosion
+* License: CC0
+
+# fuse.ogg
+
+* Created by freesound.org user theneedle.tv
+* Link: https://freesound.org/people/theneedle.tv/
+* License: CC0
+* Slightly modded (denoise & cut)

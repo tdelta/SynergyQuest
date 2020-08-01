@@ -8,29 +8,29 @@ public class Bomb : MonoBehaviour
     bool explosion = false;
     readonly int explosionTrigger = Animator.StringToHash("Explode");
 
-    Renderer renderer;
-    Animator animator;
-    PhysicsEffects effects;
-    BoxCollider2D collider;
-    Rigidbody2D rigidbody2D;
+    private Animator _animator;
+    private PhysicsEffects _effects;
+    private Rigidbody2D _rigidbody2D;
+    private AudioSource _audioSource;
 
     void Awake()
     {
-        animator = GetComponent<Animator>();
-        renderer = GetComponent<Renderer>();
-        rigidbody2D = GetComponent<Rigidbody2D>();
-        effects = GetComponent<PhysicsEffects>();
-        collider = GetComponent<BoxCollider2D>();
+        _animator = GetComponent<Animator>();
+        _rigidbody2D = GetComponent<Rigidbody2D>();
+        _effects = GetComponent<PhysicsEffects>();
+        _audioSource = GetComponent<AudioSource>();
     }
 
     private void Start()
     {
-        animator.SetTrigger(explosionTrigger);
+        _animator.SetTrigger(explosionTrigger);
     }
 
     public void Explode()
     {
+        _audioSource.Play();
         sparkEffect.Stop();
+        sparkEffect.GetComponent<AudioSource>().Stop();
         explosion = true;
     }
 
@@ -55,8 +55,8 @@ public class Bomb : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (effects.GetImpulse() != Vector2.zero && !explosion)
-            effects.MoveBody(rigidbody2D.position);
+        if (_effects.GetImpulse() != Vector2.zero && !explosion)
+            _effects.MoveBody(_rigidbody2D.position);
     }
 
     void OnCollisionStay2D(Collision2D other)
