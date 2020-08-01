@@ -50,6 +50,18 @@
         "left": {
           "targetRoom": "D3",
           "targetDoor": "right"
+        },
+        "down": {
+          "targetRoom": "D6",
+          "targetDoor": "up"
+        }
+      }
+    },
+    "D6": {
+      "roomConnections": {
+        "up": {
+          "targetRoom": "D5",
+          "targetDoor": "down"
         }
       }
     },
