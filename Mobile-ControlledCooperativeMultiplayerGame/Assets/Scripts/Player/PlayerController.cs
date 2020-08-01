@@ -31,6 +31,7 @@ public class PlayerController : EntityController
     [SerializeField] private InteractionSpeechBubble interactionSpeechBubble;
     [SerializeField] private Transform carryPosition;
     public Vector3 CarryPosition => carryPosition.position;
+    public Vector3 Center => Collider.bounds.center;
 
     public InteractionSpeechBubble InteractionSpeechBubble => interactionSpeechBubble;
     
@@ -474,7 +475,12 @@ public class PlayerController : EntityController
      * @param player: The player that picks us up
      */
     public void GetPickedUp(PlayerController player){
-        _throwable.Pickup(player);
+        // check if we can carry, or if an object (other than the player) is in the way
+        var direction = player.CarryPosition - player.Center;
+        var collider = Physics2D.Raycast(player.Center, direction, direction.magnitude).collider;
+
+        if (collider == null || collider.gameObject.CompareTag("InteractorCollider"))
+            _throwable.Pickup(player);
     }
 
     /**
@@ -483,7 +489,9 @@ public class PlayerController : EntityController
      * @param player: The player that throws us
      */
     public void GetThrown(PlayerController player){
-        player.ThrowThrowable(_throwable, new Vector2(player.Input.GetHorizontal(), player.Input.GetVertical()));
+        // have to check if we were actually being carried when carry button is released
+        if (_throwable.IsBeingCarried)
+            player.ThrowThrowable(_throwable, new Vector2(player.Input.GetHorizontal(), player.Input.GetVertical()));
     }
 
     /**

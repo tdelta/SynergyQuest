@@ -28,11 +28,14 @@ public class ItemController: MonoBehaviour
 
   private void Update()
   {
+      var direction = _player.CarryPosition - _player.Center;
       foreach (var itemDescription in _player.CollectedItems)
       {
-          if(
+          if (
               _player.Input.GetButtonDown(itemDescription.UseButton) &&
-              !_cooldownFlags.GetOrDefault(itemDescription, false)
+              !_cooldownFlags.GetOrDefault(itemDescription, false) &&
+              // check if we can spawn item, or if an object is in the way
+              Physics2D.Raycast(_player.Center, direction, direction.magnitude).collider == null
           )
           {
               _cooldownFlags[itemDescription] = true;
