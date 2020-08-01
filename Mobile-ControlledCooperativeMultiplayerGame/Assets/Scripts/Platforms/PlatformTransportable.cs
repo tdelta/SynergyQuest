@@ -13,8 +13,7 @@ public class PlatformTransportable : MonoBehaviour
     /**
      * Platforms this game object is currently in contact with
      */
-    private List<PlatformController> _platformsInContact = new List<PlatformController>();
-    public List<PlatformController> PlatformsInContact => _platformsInContact;
+    public HashSet<PlatformController> PlatformsInContact { get; } = new HashSet<PlatformController>();
 
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -22,7 +21,7 @@ public class PlatformTransportable : MonoBehaviour
         // contact with.
         if (other.GetComponent<PlatformController>() is PlatformController platform)
         {
-            _platformsInContact.Add(platform);
+            PlatformsInContact.Add(platform);
         }
     }
     
@@ -32,7 +31,7 @@ public class PlatformTransportable : MonoBehaviour
         // currently in contact with.
         if (other.GetComponent<PlatformController>() is PlatformController platform)
         {
-            _platformsInContact.Remove(platform);
+            PlatformsInContact.Remove(platform);
         }
     }
 }
