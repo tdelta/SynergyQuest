@@ -65,6 +65,18 @@
         }
       }
     },
+    "D7": {
+      "roomConnections": {
+        "up": {
+          "targetRoom": "D8",
+          "targetDoor": "down"
+        },
+        "down": {
+          "targetRoom": "D3",
+          "targetDoor": "up"
+        }
+      }
+    },
     "D8": {
       "roomConnections": {
         "left": {
@@ -97,6 +109,30 @@
       "roomConnections": {
         "left": {
           "targetRoom": "D8",
+          "targetDoor": "right"
+        },
+        "right": {
+          "targetRoom": "D14",
+          "targetDoor": "left"
+        }
+      }
+    },
+    "D14": {
+      "roomConnections": {
+        "left": {
+          "targetRoom": "D10",
+          "targetDoor": "right"
+        },
+        "right": {
+          "targetRoom": "D11",
+          "targetDoor": "left"
+        }
+      }
+    },
+    "D11": {
+      "roomConnections": {
+        "left": {
+          "targetRoom": "D14",
           "targetDoor": "right"
         }
       }
