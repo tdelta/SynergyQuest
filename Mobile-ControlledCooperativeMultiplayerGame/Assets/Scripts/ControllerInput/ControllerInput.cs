@@ -80,8 +80,7 @@ public class ControllerInput: Input
      */
     public event ReconnectAction OnReconnect;
     public delegate void ReconnectAction(ControllerInput input);
-
-
+    
     /**
      * Returns the value of the Joystick position on the vertical axis.
      * 
@@ -136,7 +135,7 @@ public class ControllerInput: Input
     }
 
     /**
-     * Tells the controlled that an action can or cannot be performed
+     * Tells the controller that an action can or cannot be performed
      * (such as reading a sign or pressing a button)
      * 
      * @throws ApplicationError if the controller is currently not connected

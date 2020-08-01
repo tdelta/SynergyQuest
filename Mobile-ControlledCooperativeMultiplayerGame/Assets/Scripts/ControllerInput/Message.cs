@@ -29,7 +29,7 @@ public enum MessageType
     SetMenuActions = 8,      // Set the set of enabled menu actions, sent by game
     MenuActionTriggered = 9, // A menu action has been selected on the controller
     GameStateChanged = 10,   // The state of the game changed, e.g. Lobby -> Game started. Sent by the game 
-    VibrationSequence = 11,   // The game wants the controller to vibrate. Sent by the game
+    VibrationSequence = 11,  // The game wants the controller to vibrate. Sent by the game
     SetGameAction = 12       // Enable / disable a button in the controller UI, sent by game
 }
 

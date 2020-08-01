@@ -9,10 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6faec6f22e014fbfa7206280a474ebc5, type: 3}
-  m_Name: BombDescription
+  m_Script: {fileID: 11500000, guid: d6daee5f13f7462b820959d44cfdbfea, type: 3}
+  m_Name: PlayerThrow Tutorial
   m_EditorClassIdentifier: 
-  itemInstancePrefab: {fileID: 9011477615683419576, guid: 7d69c942768f070d0a89d7d3e995182f,
-    type: 3}
-  useButton: 4
-  cooldown: 3.5
+  headerText: Player Throw
+  subHeaderText: How to throw an other player
+  pagePrefabs:
+  - {fileID: 3036040520192316623, guid: 33a4ea314f2c0724bab9468227acfb0b, type: 3}
