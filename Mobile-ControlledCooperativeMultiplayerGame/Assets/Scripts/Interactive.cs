@@ -46,7 +46,10 @@ public class Interactive : MonoBehaviour
     [SerializeField] private InteractionType interactionType;
     
      /**
-      * Function to perform on interaction with this object
+      * Whether this Interactive shall temporarily ignore collision logic,
+      * i.e. if there is currently a player interacting with this object
+      * and this is set, then the player will still be able to interact, even
+      * if they stop colliding with this object.
       */
      public bool IgnoreCollisions {get; set;} = false;
 
@@ -66,10 +69,10 @@ public class Interactive : MonoBehaviour
                     // We stopped interacting with something, hence
                     // we must disable the corresponding interaction on
                     // the controllers:
-                    _interactingPlayer.DisableGameAction(button);
+                    _interactingPlayer.Input.SetGameAction(button, false);
                 } else {
                     if (interactionType == InteractionType.Down || interactionType == InteractionType.Hold){
-                        value.EnableGameAction(button);
+                        value.Input.SetGameAction(button, true);
                     }
                 }
             }

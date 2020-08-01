@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,6 +28,9 @@ public class PlayerController : EntityController
     [SerializeField] private MultiSound deathSounds;
     [SerializeField] private MultiSound fallingSounds;
     [SerializeField] private InteractionSpeechBubble interactionSpeechBubble;
+    /**
+     * Position where `Throwable`s move when being carried by this player
+     */
     [SerializeField] private Transform carryPosition;
     public Vector3 CarryPosition => carryPosition.position;
 
@@ -57,12 +59,8 @@ public class PlayerController : EntityController
     private int _healthPoints;
 
     public BoxCollider2D Collider { get; private set; }
-
     private Renderer _renderer;
-    public Renderer Renderer => _renderer;
-   
     private ItemController _itemController;
-
     private Throwable _throwable;
 
     /**
@@ -92,7 +90,8 @@ public class PlayerController : EntityController
     private PlayerState _playerState;
 
     /**
-     * Reference to carried object
+     * Reference to carried object.
+     * null, if no object is currently being carried
      */
     private Throwable _carriedThrowable;
     
@@ -108,6 +107,12 @@ public class PlayerController : EntityController
      * but this is a tedious task and can be done within the animator. Maybe remove attribute above (Or keep for debug purpose?).
      */
     public Direction viewDirection;
+    
+    /**
+     * If the player were to throw an item or another player, this is the direction they shall be thrown.
+     * (It depends on the players current movement)
+     */
+    public Vector2 ThrowingDirection => new Vector2(this.Input.GetHorizontal(), this.Input.GetVertical());
     
     /**
      * Caching animation property identifiers and triggers as hashes for better performance
@@ -153,6 +158,10 @@ public class PlayerController : EntityController
     {
         base.Awake();
         _throwable = GetComponent<Throwable>();
+        Collider = GetComponent<BoxCollider2D>();
+        _tintFlashController = GetComponent<TintFlashController>();
+        _renderer = GetComponent<Renderer>();
+        _itemController = GetComponent<ItemController>();
     }
 
     private void OnEnable()
@@ -185,17 +194,16 @@ public class PlayerController : EntityController
 
             PlayerDataKeeper.Instance.RegisterExistingInstance(this, localInput);
         }
-        
-        Collider = GetComponent<BoxCollider2D>();
-        _tintFlashController = GetComponent<TintFlashController>();
-        _renderer = GetComponent<Renderer>();
-        _itemController = GetComponent<ItemController>();
 
         _healthPoints = maxHealthPoints;
         _playerState = PlayerState.walking;
        
-        var material = GetComponent<Renderer>().material;
-        material.SetColor("_ShirtColor", PlayerColorMethods.ColorToRGB(this.Color));
+        SetShirtColor();
+    }
+
+    private void OnValidate()
+    {
+        SetShirtColor();
     }
 
     // Update is called once per frame
@@ -211,36 +219,10 @@ public class PlayerController : EntityController
 
     }
     
-    public void EnableGameAction(Button action) {
-        Input.SetGameAction(action, true);
-    }
-
-    public void DisableGameAction(Button action) {
-        Input.SetGameAction(action, false);
-    }
-
-    bool GetNearPlayer(out PlayerController player)
+    private void SetShirtColor()
     {
-        player = SearchPlayer();
-
-        return !ReferenceEquals(player, null);
-    }
-
-    PlayerController SearchPlayer()
-    {
-        // We want to search in viewing direction
-        var searchDirection = viewDirection.ToVector();
-        var results = Physics2D.RaycastAll(
-            (Vector2) transform.position + Collider.offset,  // Search from middle point of our collider
-            searchDirection,
-            boxPullRange,
-            LayerMask.GetMask("Player")
-        );
-
-        return results
-            .Where(hit => hit.collider.CompareTag("Player"))
-            .Select(hit => hit.collider.GetComponent<PlayerController>())
-            .FirstOrDefault();
+        var material = GetComponent<Renderer>().material;
+        material.SetColor("_ShirtColor", PlayerColorMethods.ColorToRGB(this.Color));
     }
 
     void FixedUpdate ()
@@ -469,7 +451,8 @@ public class PlayerController : EntityController
     }
 
     /**
-     * Used by the interactive component
+     * Lets given player pickup this player.
+     * Invoked by the interactive component.
      *
      * @param player: The player that picks us up
      */
@@ -478,23 +461,23 @@ public class PlayerController : EntityController
     }
 
     /**
+     * Lets given player throw this player.
      * Used by the interactive component
      *
      * @param player: The player that throws us
      */
     public void GetThrown(PlayerController player){
-        player.ThrowThrowable(_throwable, new Vector2(player.Input.GetHorizontal(), player.Input.GetVertical()));
+        player.ThrowThrowable(_throwable, player.ThrowingDirection);
     }
 
     /**
-     * Call this method to throw the carried player into direction (or drop if direction is zero vector)
+     * Call this method to throw the carried object into direction (or drop if direction is zero vector)
      */
     public void ThrowThrowable(Throwable throwable, Vector2 direction)
     {
         _playerState = PlayerState.walking;
         Animator.SetBool(CarryingState, false);
 
-        //Destroy(this.gameObject.GetComponent("HingeJoint2D"));
         throwable.Throw(direction);
     }
 
@@ -589,9 +572,7 @@ public class PlayerController : EntityController
     
     public void Collect(ItemDescription itemDescription)
     {
-        if (!_itemController.HasItem(itemDescription)){
-            _itemController.Collect(itemDescription);
-        }
+        _itemController.Collect(itemDescription);
     }
 
     /**
@@ -645,15 +626,22 @@ public class PlayerController : EntityController
             && fromPlayerToPointDirection == viewDirection;
     }
 
+    /**
+     * Invoked by throwable behavior when player shall carry a `Throwable`.
+     * It adjusts the internal state and animations.
+     */
     public void InitCarryingState(Throwable carriedThrowable)
     {
-        //_playerState = PlayerState.carried;
-        //Animator.SetBool(CarriedState, true);
         _carriedThrowable = carriedThrowable;
         _playerState = PlayerState.carrying;
         Animator.SetBool(CarryingState, true);
     }
 
+    /**
+     * Invoked by OnPickedUp event of `Throwable`, if player is being picked up by another.
+     *
+     * Adjusts animation, internal state and other stuff.
+     */
     private void OnPickedUp(PlayerController carrier)
     {
         Animator.SetBool(CarriedState, true);
@@ -668,22 +656,27 @@ public class PlayerController : EntityController
         }
     }
 
+    /**
+     * Invoked by `OnThrow` event of `Throwable`, if player is being thrown by another.
+     */
     private void OnThrown()
     {
         _carriedThrowable = null;
         _playerState = PlayerState.thrown;
         
         // The collisions are turned off during carrying but we dont want the interactive to react to that
-        GetComponents<Interactive>()
-            .Where(interactive => interactive.Button == Button.Carry)
-            .ToList()
-            .ForEach(interactive => interactive.IgnoreCollisions = false);
+        foreach (var interactive in GetComponents<Interactive>()
+            .Where(interactive => interactive.Button == Button.Carry))
+        {
+            interactive.IgnoreCollisions = false;
+        }
     }
 
+    /**
+     * Invoked by `OnLanded` event of `Throwable`, if player lands after being thrown by another player.
+     */
     private void OnLanded()
     {
-        // according to unity manual equality checks on vectors take floating point inaccuracies into account
-        // https://docs.unity3d.com/ScriptReference/Vector2-operator_eq.html
         Animator.SetBool(CarriedState, false);
         _playerState = PlayerState.walking;
     }

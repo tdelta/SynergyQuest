@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 3794202867393883391}
   - component: {fileID: 9011477615683419576}
-  - component: {fileID: 8067998012873279441}
   - component: {fileID: 4786097448250805338}
   - component: {fileID: -6353092402017249698}
   - component: {fileID: 3794202867393883390}
@@ -54,18 +53,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sparkEffect: {fileID: 7612822685121192602}
---- !u!114 &8067998012873279441
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3794202867393883389}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 912231efc967ebbb5b8c407eb5616993, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &4786097448250805338
 MonoBehaviour:
   m_ObjectHideFlags: 0
