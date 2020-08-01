@@ -32,7 +32,7 @@ using WebSocketSharp.Server;
 public class ControllerServer : BehaviourSingleton<ControllerServer>
 {
     // The maximum number of players/controllers we allow to connect
-    [SerializeField] private int _maxNumPlayers = 2;
+    [SerializeField] private int _maxNumPlayers = 4;
     
     // Accepts websocket connections
     private WebSocketServer _wss;
