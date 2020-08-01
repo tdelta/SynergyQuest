@@ -24,6 +24,9 @@ public static class CollectionsExtensions
         }
     }
 
+    /**
+     * Allows to get value from dictionary or a configurable default value if the given key is not present
+     */
     public static V GetOrDefault<K, V>(this Dictionary<K, V> dictionary, K key, V defaultValue)
     {
         if (dictionary.TryGetValue(key, out var output))
