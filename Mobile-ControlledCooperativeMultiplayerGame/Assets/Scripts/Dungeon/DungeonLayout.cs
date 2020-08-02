@@ -103,7 +103,7 @@ public class DungeonLayout : Singleton<DungeonLayout>
     ) {
         _playerNum = playerNum;
         _data = DungeonLayoutData.FromFile(filePath);
-        _dungeonPath = Path.GetDirectoryName(filePath);
+        _dungeonPath = Path.GetDirectoryName(filePath).Replace('\\', '/');
 
         var roomToLoad = overwriteInitialRoom ?? _data.initialRoom;
         if (doNotLoadScene)
@@ -183,7 +183,7 @@ public class DungeonLayout : Singleton<DungeonLayout>
     {
         var sep = "/";
         
-        var scenePrefixPath = Path.Combine(_dungeonPath, $"rooms{sep}{roomName}{sep}{roomName}");
+        var scenePrefixPath = $"{_dungeonPath}{sep}rooms{sep}{roomName}{sep}{roomName}";
         var scenePath = $"{scenePrefixPath}_P{_playerNum}";
         // If no scene is at the computed path, fall back to a path without a player number
         if (!File.Exists($"{scenePath}.unity"))
