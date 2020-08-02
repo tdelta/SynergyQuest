@@ -155,7 +155,7 @@ export class Controller extends React.Component<
               <div id='boob' className='text' ref={this.boob}>
                 <p id='boobText'> tap and drag to move </p>
               </div>
-              <div className='buttonColumn'>
+              <div className='rightColumn'>
                 <div className='rowContainer' style={{ height: '10%' }}>
                   <div className='controllerMenuContainer'>
                     <button
@@ -186,7 +186,7 @@ export class Controller extends React.Component<
                     />
                   </div>
                 </div>
-                {buttons}
+                <div className='buttonColumn'>{buttons}</div>
               </div>
             </div>
           </div>
