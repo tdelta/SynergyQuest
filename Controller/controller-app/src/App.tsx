@@ -12,6 +12,7 @@ import { LobbyScreen } from './LobbyScreen';
 import { MenuScreen } from './MenuScreen';
 import * as consts from './consts';
 import { Controller } from './Controller';
+import { LoadingScreen } from './LoadingScreen';
 import './App.css';
 
 /**
@@ -207,7 +208,7 @@ class App extends React.Component<{}, AppState> {
         body = <ConnectScreen connect={this.connect} />;
         break;
       case 'Connecting':
-        body = <span>Connecting...</span>;
+        body = <LoadingScreen />;
         break;
       case 'Connected':
         switch (this.state.gameState) {
@@ -241,6 +242,16 @@ class App extends React.Component<{}, AppState> {
             );
             break;
         }
+    }
+
+    if(this.state.failureMessage){
+      // Draw the error on top of the other elements
+      body = <>
+        <div className="errorMessage text">
+          {this.state.failureMessage}
+        </div>
+        {body}
+      </>
     }
 
     return body;

@@ -42,3 +42,17 @@ body {
   justify-content: center;
   align-items: center;
 }
+.errorMessage
+{
+  position: absolute;
+  top: 10pt;
+  align-content: center;
+  display: flex;
+  width: 80%;
+  justify-content: center;
+  background: #EF5350;
+  margin-left: 10%;
+  margin-right: 10%;
+  border-radius: 5pt;
+  padding: 10pt;
+}
