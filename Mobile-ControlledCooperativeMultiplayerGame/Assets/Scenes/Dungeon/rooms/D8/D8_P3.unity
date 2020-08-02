@@ -1225,7 +1225,7 @@ PrefabInstance:
     - target: {fileID: 8451649553765607551, guid: 896795d39b1254ea596a70557eeff80c,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.00000011920929
+      value: -0.00000047683716
       objectReference: {fileID: 0}
     - target: {fileID: 8451649553765607551, guid: 896795d39b1254ea596a70557eeff80c,
         type: 3}
@@ -4620,7 +4620,7 @@ PrefabInstance:
     - target: {fileID: 8153043136341992037, guid: f925feb2d83cd4fc6b55ecd04fed0ebb,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.00000011920929
+      value: -0.00000047683716
       objectReference: {fileID: 0}
     - target: {fileID: 8153043136341992037, guid: f925feb2d83cd4fc6b55ecd04fed0ebb,
         type: 3}
@@ -7884,6 +7884,11 @@ PrefabInstance:
         type: 3}
       propertyPath: room
       value: D8
+      objectReference: {fileID: 0}
+    - target: {fileID: 1817313890251897035, guid: 0e6cfdf97c579c17a83a7a3dd81c47e1,
+        type: 3}
+      propertyPath: playerNum
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1817313890251897036, guid: 0e6cfdf97c579c17a83a7a3dd81c47e1,
         type: 3}
