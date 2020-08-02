@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 /**
@@ -10,6 +11,7 @@ using UnityEngine;
 public class PersistentlyDestructible : MonoBehaviour
 {
     public Guid guid { get; private set; }
+    private bool _applicationHasQuit = false;
 
     private void Awake()
     {
@@ -22,10 +24,15 @@ public class PersistentlyDestructible : MonoBehaviour
         }
     }
 
+    private void OnApplicationQuit()
+    {
+        _applicationHasQuit = true;
+    }
+
     private void OnDestroy()
     {
-        // Mark object as destroyed, but only if it is not being destroyed due to loading another scene
-        if (!SceneController.Instance.IsLoadingScene)
+        // Mark object as destroyed, but only if it is not being destroyed due to loading another scene (or closing the application)
+        if (!_applicationHasQuit && !SceneController.Instance.IsLoadingScene)
         {
             DungeonDataKeeper.Instance.MarkAsDestroyed(this);
         }

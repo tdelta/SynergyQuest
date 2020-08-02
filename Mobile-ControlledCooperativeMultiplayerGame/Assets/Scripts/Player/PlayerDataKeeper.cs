@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 using Debug = UnityEngine.Debug;
 
 /**
@@ -113,7 +114,20 @@ public class PlayerDataKeeper: Singleton<PlayerDataKeeper>
 
     private PlayerController InstantiatePlayerFromData(PlayerData data, Vector3 position)
     {
-        var instance = Object.Instantiate(PlayerPrefabSettings.Instance.PlayerPrefab, position, Quaternion.identity);
+        // Try finding a free position in the current grid to spawn the player
+        // FIXME: Do not hardcode the "Grid" name, but make it configurable
+        var spawnPosition = position;
+        if (GameObject.Find("Tilemap") is GameObject tilemapObj && tilemapObj.GetComponent<Tilemap>() is Tilemap tilemap)
+        {
+            spawnPosition = tilemap.NearestFreeGridPosition(position);
+        }
+        
+        var instance = Object.Instantiate(
+            PlayerPrefabSettings.Instance.PlayerPrefab,
+            spawnPosition,
+            Quaternion.identity
+        );
+        
         instance.Init(data);
 
         return instance;
