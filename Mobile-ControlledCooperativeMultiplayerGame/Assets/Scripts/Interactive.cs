@@ -69,10 +69,10 @@ public class Interactive : MonoBehaviour
                     // We stopped interacting with something, hence
                     // we must disable the corresponding interaction on
                     // the controllers:
-                    _interactingPlayer.Input.SetGameAction(button, false);
+                    _interactingPlayer.Input.EnableButtons((button, false));
                 } else {
                     if (interactionType == InteractionType.Down || interactionType == InteractionType.Hold){
-                        value.Input.SetGameAction(button, true);
+                        value.Input.EnableButtons((button, true));
                     }
                 }
             }

@@ -1,5 +1,3 @@
-
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -133,7 +131,8 @@ public class LocalInput: MonoBehaviour, Input
     /**
      * Keys on the keyboard cannot disappear. Do nothing
      */
-    public void SetGameAction(Button action, bool enabled){
+    public void EnableButtons(params (Button, bool)[] buttonStates)
+    {
         return;
     }
 }

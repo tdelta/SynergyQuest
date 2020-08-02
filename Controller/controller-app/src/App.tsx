@@ -58,7 +58,7 @@ export interface AppState {
   verticalSliderVal: number;
   enabledMenuActions: Set<MenuAction>;
   gameState: GameState;
-  enabledGameActions: Set<Button>;
+  enabledButtons: Set<Button>;
 }
 
 /**
@@ -75,7 +75,7 @@ class App extends React.Component<{}, AppState> {
     verticalSliderVal: 0,
     enabledMenuActions: new Set<MenuAction>(),
     gameState: GameState.Lobby,
-    enabledGameActions: new Set<Button>(),
+    enabledButtons: new Set<Button>(),
   };
 
   constructor(props: {}) {
@@ -159,9 +159,9 @@ class App extends React.Component<{}, AppState> {
         enabledMenuActions: client.getEnabledMenuActions(),
       });
 
-    client.onSetGameAction = (action: Button, enabled: boolean) =>
+    client.onSetEnabledButtons = _ =>
       this.setState({
-        enabledGameActions: client.getEnabledGameActions(),
+        enabledButtons: client.getEnabledButtons(),
       });
 
     client.onGameStateChanged = (state: GameState) =>
@@ -225,7 +225,7 @@ class App extends React.Component<{}, AppState> {
               <Controller
                 client={this.state.connectionStatus.client}
                 playerColor={consts.colors[this.state.color]}
-                enabledGameActions={this.state.enabledGameActions}
+                enabledButtons={this.state.enabledButtons}
                 canPause={this.state.enabledMenuActions.has(
                   MenuAction.PauseGame
                 )}

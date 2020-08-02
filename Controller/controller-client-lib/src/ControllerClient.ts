@@ -101,14 +101,26 @@ export class ControllerClient {
   private color?: PlayerColor;
 
   /**
+   * We cache the last input in these variables so that we can check whether
+   * an input value actually changed before sending it.
+   *
+   * This way we keep the number of sent messages to a minimum.
+   */
+  private joystickVerticalCache: number = 0;
+  private joystickHorizontalCache: number = 0;
+  private pressedButtonsCache: Set<Button> = new Set<Button>();
+
+  /**
    * Set of all currently enabled menu actions.
    */
   private enabledMenuActions: Set<MenuAction> = new Set<MenuAction>();
 
   /**
-   * Set of all currently enabled menu actions. (e.g. pressing a button of reading a sign)
+   * Set of all currently enabled buttons.
+   * (e.g. the read button will only be enabled when the player is in front of
+   *  a sign)
    */
-  private enabledGameActions: Set<Button> = new Set<Button>();
+  private enabledButtons: Set<Button> = new Set<Button>();
 
   /**
    * Current state of the game. E.g. Lobby or Started
@@ -159,9 +171,9 @@ export class ControllerClient {
 
   /**
    * Callback which can be set by users and which is called whenever the game
-   * enables a game action to be displayed as a button in the controller ui
+   * enables/disables some button for the controller.
    */
-  public onSetGameAction: (action: Button, enabled: boolean) => any;
+  public onSetEnabledButtons: (enabledButtons: Set<Button>) => any;
 
   /**
    * Callback which can be set by users and which is called whenever the game
@@ -233,9 +245,19 @@ export class ControllerClient {
     }
 
     this.ensureReady();
-    const msg = MessageFormat.createJoystickMessage(vertical, horizontal);
 
-    this.sendMessage(msg);
+    // Only send new position, if it actually changed
+    if (
+      vertical !== this.joystickVerticalCache ||
+      horizontal !== this.joystickHorizontalCache
+    ) {
+      const msg = MessageFormat.createJoystickMessage(vertical, horizontal);
+
+      this.sendMessage(msg);
+
+      this.joystickVerticalCache = vertical;
+      this.joystickHorizontalCache = horizontal;
+    }
   }
 
   /**
@@ -246,9 +268,19 @@ export class ControllerClient {
    */
   public setButton(button: Button, onOff: boolean) {
     this.ensureReady();
-    const msg = MessageFormat.createButtonMessage(button, onOff);
 
-    this.sendMessage(msg);
+    // Only send button value, if it actually changed
+    if (onOff !== this.pressedButtonsCache.has(button)) {
+      const msg = MessageFormat.createButtonMessage(button, onOff);
+
+      this.sendMessage(msg);
+
+      if (onOff) {
+        this.pressedButtonsCache.add(button);
+      } else {
+        this.pressedButtonsCache.delete(button);
+      }
+    }
   }
 
   /**
@@ -290,13 +322,12 @@ export class ControllerClient {
   }
 
   /**
-   * Returns all game actions (e.g. pressing a button or reading a sign)
-   * which are currently enabled by the game.
-   * Use the `onSetGameAction` event to keep track of when actions are enabled
-   * or disabled.
+   * Returns all buttons which are currently enabled by the game.
+   * Use the `onSetEnabledButtons` event to keep track of when buttons are
+   * enabled or disabled.
    */
-  public getEnabledGameActions(): Set<Button> {
-    return this.enabledGameActions;
+  public getEnabledButtons(): Set<Button> {
+    return this.enabledButtons;
   }
 
   /**
@@ -400,14 +431,9 @@ export class ControllerClient {
         this.onGameStateChanged?.(msg.gameState);
       },
 
-      SetGameActionMessage: msg => {
-        if (msg.enabled) {
-          this.enabledGameActions.add(msg.button);
-        } else if (this.enabledGameActions.has(msg.button)) {
-          this.enabledGameActions.delete(msg.button);
-        }
-
-        this.onSetGameAction?.(msg.button, msg.enabled);
+      SetEnabledButtonsMessage: msg => {
+        this.enabledButtons = new Set(msg.enabledButtons);
+        this.onSetEnabledButtons?.(this.enabledButtons);
       },
 
       VibrationSequenceMessage: msg => {

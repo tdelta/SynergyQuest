@@ -39,16 +39,16 @@ public class ButtonController: MonoBehaviour
     }
 
     void OnTriggerEnter2D(Collider2D other) {
-        if (other.gameObject.tag == "Player") {
+        if (other.gameObject.CompareTag("Player")) {
             var player = other.gameObject.GetComponent<PlayerController>();
-            player.Input.SetGameAction(Button.Press, true);
+            player.Input.EnableButtons((Button.Press, true));
         }
     }
 
     void OnTriggerExit2D(Collider2D other) {
-        if (other.gameObject.tag == "Player") {
+        if (other.gameObject.CompareTag("Player")) {
             var player = other.gameObject.GetComponent<PlayerController>();
-            player.Input.SetGameAction(Button.Press, false);
+            player.Input.EnableButtons((Button.Press, false));
         }
     }
 }

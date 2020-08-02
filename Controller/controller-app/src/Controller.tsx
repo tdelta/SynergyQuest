@@ -9,7 +9,6 @@ import nipplejs, {
 import './Controller.css';
 import fscreen from 'fscreen';
 
-import { ColorData } from './consts';
 import * as consts from './consts';
 
 import { faCompress, faExpand } from '@fortawesome/free-solid-svg-icons';
@@ -120,7 +119,7 @@ export class Controller extends React.Component<
 
   render() {
     // Define button with colors and events for readability
-    const button = (
+    const buildButton = (
       text: string,
       button: Button,
       backgroundColor: string,
@@ -138,24 +137,15 @@ export class Controller extends React.Component<
       </button>
     );
 
-    const playerColor: ColorData = this.props.playerColor;
+    const playerColor: consts.ColorData = this.props.playerColor;
 
-    const buttons: JSX.Element[] = [];
+    const buttons = Array.from(this.props.enabledButtons).map(
+      (button: Button) => {
+        const info: consts.ColorData = consts.buttonStyles[button];
 
-    buttons.push(
-      button(
-        consts.buttonStyles[Button.Attack].name,
-        Button.Attack,
-        consts.buttonStyles[Button.Attack].dark,
-        consts.buttonStyles[Button.Attack].dark
-      )
+        return buildButton(info.name, button, info.dark, info.light);
+      }
     );
-    console.log(this.props.enabledGameActions);
-    this.props.enabledGameActions.forEach((action: Button) => {
-      console.log(action);
-      const info: ColorData = consts.buttonStyles[action];
-      buttons.push(button(info.name, action, info.dark, info.light));
-    });
 
     // Return DOM elements
     return (
@@ -213,8 +203,8 @@ interface ControllerState {
 
 interface ControllerProbs {
   client: ControllerClient;
-  playerColor: ColorData;
-  enabledGameActions: Set<Button>;
+  playerColor: consts.ColorData;
+  enabledButtons: Set<Button>;
   canPause: boolean;
   pause: () => void;
 }

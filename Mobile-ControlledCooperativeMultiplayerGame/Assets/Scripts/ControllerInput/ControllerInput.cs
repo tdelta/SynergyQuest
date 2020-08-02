@@ -59,8 +59,12 @@ public class ControllerInput: Input
     private Dictionary<Button, ButtonPressState> _buttonPressStates = new Dictionary<Button, ButtonPressState>(); 
  
     // We also cache the last special values set by the game
-    // (Attention: They must be resent, if the client temporarily disconnects)
+    // (Attention: They must be re-sent, if the client temporarily disconnects)
     private PlayerColor _playerColor = PlayerColor.Any;
+    private HashSet<Button> _enabledButtons = new HashSet<Button>()
+    { // These buttons are initially enabled 
+        Button.Attack
+    };
 
     /**
      * This event is emitted when the underlying controller loses its connection to the game. The game should be paused
@@ -135,15 +139,47 @@ public class ControllerInput: Input
     }
 
     /**
-     * Tells the controller that an action can or cannot be performed
-     * (such as reading a sign or pressing a button)
+     * Sends the list of currently enabled buttons to the controller.
+     * See also `EnableButtons`.
      * 
      * @throws ApplicationError if the controller is currently not connected
      */
-    public void SetGameAction(Button action, bool enabled)
+    private void SendEnabledButtons()
     {
-        var msg = new Message.SetGameActionMessage(action, enabled);
+        var msg = new Message.SetEnabledButtonsMessage(_enabledButtons.ToList());
         SendMessage(msg);
+    }
+    
+    /**
+     * Tells the controller that certain buttons should or should not be currently available.
+     * (e.g. the Read button should only be shown if the player is standing in front of a sign)
+     *
+     * If the controller is currently not connected, and this method is called, it will be informed about the change
+     * as soon as it reconnects.
+     */
+    public void EnableButtons(params (Button, bool)[] buttonStates)
+    {
+        foreach (var (button, enabled) in buttonStates)
+        {
+            // save the button states to an internal cache, so that they can be re-sent, should the button
+            // temporarily loose connection
+            if (enabled)
+            {
+                _enabledButtons.Add(button);
+            }
+
+            else
+            {
+                _enabledButtons.Remove(button);
+            }
+        }
+        
+        // Only send, if the controller is connected.
+        // Otherwise, the reconnect handler will send them later.
+        if (IsConnected())
+        {
+            SendEnabledButtons();
+        }
     }
 
     /**
@@ -250,6 +286,8 @@ public class ControllerInput: Input
                 //
                 // Player color:
                 SetColor(_playerColor);
+                // enabled Buttons
+                SendEnabledButtons();
                 
                 OnReconnect?.Invoke(this);
 

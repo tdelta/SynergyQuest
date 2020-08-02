@@ -39,7 +39,7 @@ public class ItemController: MonoBehaviour
       if (!HasItem(itemDescription))
       {
           _player.CollectedItems.AddLast(itemDescription);
-          _player.Input.SetGameAction(itemDescription.UseButton, true);
+          _player.Input.EnableButtons((itemDescription.UseButton, true));
           return true;
       }
       return false;
