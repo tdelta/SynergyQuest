@@ -95,6 +95,7 @@ public class PlayerController : EntityController
      * null, if no object is currently being carried
      */
     private Throwable _carriedThrowable;
+    public bool IsCarryingSomething => !ReferenceEquals(_carriedThrowable, null);
     
     /**
      * TODO: To be discussed (from Marc) : Do we need this variable as an class attribute?
@@ -478,30 +479,7 @@ public class PlayerController : EntityController
      */
     public void ThrowThrowable(Throwable throwable, Vector2 direction)
     {
-        _playerState = PlayerState.walking;
-        Animator.SetBool(CarryingState, false);
-
         throwable.Throw(direction);
-    }
-
-    /**
-     * This coroutine is called on the player that is being carried
-     */
-    public IEnumerator PickUpCoroutine(Vector2 ontop, HingeJoint2D joint, BoxCollider2D collider)
-    {
-        joint.connectedBody = Rigidbody2D;
-        _playerState = PlayerState.carried;
-
-        Animator.SetBool(CarriedState, true);
-        Physics2D.IgnoreCollision(collider, Collider);
-        // temporally change sorting order to draw carried gameobject on top
-        _renderer.sortingOrder++;
-        PhysicsEffects.MoveBody(ontop);
-
-        // the joint should be disabled until the carried player moved ontop of the carrying player,
-        // because a joint disallows such movements
-        yield return new WaitForFixedUpdate(); 
-        joint.enabled = true;
     }
 
     /**
@@ -635,9 +613,36 @@ public class PlayerController : EntityController
      */
     public void InitCarryingState(Throwable carriedThrowable)
     {
-        _carriedThrowable = carriedThrowable;
-        _playerState = PlayerState.carrying;
-        Animator.SetBool(CarryingState, true);
+        if (!IsCarryingSomething)
+        {
+            _carriedThrowable = carriedThrowable;
+            _playerState = PlayerState.carrying;
+            Animator.SetBool(CarryingState, true);
+        }
+
+        else
+        {
+            Debug.LogWarning("Can not carry something else while already carrying.");
+        }
+    }
+
+    /**
+     * Invoked by throwable behavior when player shall stop carrying a `Throwable`.
+     * It adjusts the internal state and animations.
+     */
+    public void ExitCarryingState()
+    {
+        if (IsCarryingSomething)
+        {
+            _carriedThrowable = null;
+            _playerState = PlayerState.walking;
+            Animator.SetBool(CarryingState, false);
+        }
+
+        else
+        {
+            Debug.LogWarning("Can not exit carrying state when not carrying anything.");
+        }
     }
 
     /**
@@ -669,7 +674,6 @@ public class PlayerController : EntityController
      */
     private void OnThrown()
     {
-        _carriedThrowable = null;
         _playerState = PlayerState.thrown;
         
         // The collisions are turned off during carrying but we dont want the interactive to react to that

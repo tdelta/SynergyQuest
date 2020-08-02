@@ -73,9 +73,13 @@ public class Throwable : MonoBehaviour
     {
         if (!IsBeingCarried)
         {
-            _carrier = carrier;
-            IsBeingCarried = true;
-            StartCoroutine(PickUpCoroutine());
+            // A player who is already carrying something can not pickup something else
+            if (!carrier.IsCarryingSomething)
+            {
+                _carrier = carrier;
+                IsBeingCarried = true;
+                StartCoroutine(PickUpCoroutine());
+            }
         }
 
         else
@@ -143,6 +147,7 @@ public class Throwable : MonoBehaviour
         _hingeJoint2D.enabled = false;
 
         IsBeingCarried = false;
+        _carrier.ExitCarryingState();
         OnThrown?.Invoke();
 
         // restore sorting order & collision between the two players, when player leaves state thrown
