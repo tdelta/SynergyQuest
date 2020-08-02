@@ -37,7 +37,6 @@ public static class PlayerColorMethods
     public static PlayerColor NextColor(this PlayerColor color, int numPlayers = 4)
     {
         // This code is a bit hard to read but all it does is implement a modulus
-        Debug.Log(numPlayers);
         switch (color)
         {
             case PlayerColor.Any:

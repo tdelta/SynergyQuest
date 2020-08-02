@@ -23,4 +23,5 @@ export const buttonStyles: { [button in Button]: ColorData } = {
   3: { name: 'Press', light: '#ff844c', dark: '#F4511E' },
   4: { name: 'Trow Bomb', light: '#c158dc', dark: '#8E24AA' },
   5: { name: 'Read', light: '#ffe54c', dark: '#ffb300' },
+  6: { name: 'Open', light: '#ec407a', dark: '#c2185b' },
 };

@@ -227,7 +227,15 @@ public class Interactive : MonoBehaviour
             ClearInteractingPlayer();
         }
     }
-    
+
+    private void OnDestroy()
+    {
+        // When this object is destroyed, sometimes OnExitTrigger2D is not executed (for example when changing the scene),
+        // IN that case, we still need to clear up the interaction
+        // (otherwise the player will keep the interaction controller button in the next scene etc.)
+        ClearInteractingPlayer();
+    }
+
     /**
      * Only called in editor, e.g. when changing a property
      */

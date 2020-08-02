@@ -244,14 +244,14 @@ class App extends React.Component<{}, AppState> {
         }
     }
 
-    if(this.state.failureMessage){
+    if (this.state.failureMessage) {
       // Draw the error on top of the other elements
-      body = <>
-        <div className="errorMessage text">
-          {this.state.failureMessage}
-        </div>
-        {body}
-      </>
+      body = (
+        <>
+          <div className='errorMessage text'>{this.state.failureMessage}</div>
+          {body}
+        </>
+      );
     }
 
     return body;

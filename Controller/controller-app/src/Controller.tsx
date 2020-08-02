@@ -46,7 +46,7 @@ export class Controller extends React.Component<
   onJoystickMoved(_evt: EventData, data: JoystickOutputData) {
     const threshold: number = 0.2;
 
-    let force: number = Math.min(data.force * 0.6, 1);
+    const force: number = Math.min(data.force * 0.6, 1);
 
     let horizontal: number;
     let vertical: number;
@@ -55,7 +55,6 @@ export class Controller extends React.Component<
 
       horizontal = Math.cos(angle) * force;
       vertical = Math.sin(angle) * force;
-      
     } else {
       horizontal = 0;
       vertical = 0;

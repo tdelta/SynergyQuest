@@ -12,6 +12,7 @@ export enum Button {
   Press = 3,
   Throw = 4,
   Read = 5,
+  Open = 6,
 }
 
 /**
