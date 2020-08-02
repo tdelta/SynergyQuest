@@ -181,7 +181,7 @@ public class DungeonLayout : Singleton<DungeonLayout>
      */
     private string SceneNameFromRoomName(string roomName)
     {
-        var sep = Path.DirectorySeparatorChar;
+        var sep = "/";
         
         var scenePrefixPath = Path.Combine(_dungeonPath, $"rooms{sep}{roomName}{sep}{roomName}");
         var scenePath = $"{scenePrefixPath}_P{_playerNum}";
