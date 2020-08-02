@@ -136,6 +136,7 @@ public class Throwable : MonoBehaviour
      */
     private IEnumerator ThrowCoroutine(Vector2 direction)
     {
+        this.gameObject.layer = LayerMask.NameToLayer("Thrown");
         _physicsEffects.rigidbody2D.mass = _cachedMass;
         _physicsEffects.ApplyImpulse(10 * direction);
         _hingeJoint2D.connectedBody = null;

@@ -647,6 +647,11 @@ public class PlayerController : EntityController
      */
     private void OnPickedUp(PlayerController carrier)
     {
+        if (!ReferenceEquals(_carriedThrowable, null))
+        {
+            ThrowThrowable(_carriedThrowable, Vector2.zero);
+        }
+        
         Animator.SetBool(CarriedState, true);
         _playerState = PlayerState.carried;
         
