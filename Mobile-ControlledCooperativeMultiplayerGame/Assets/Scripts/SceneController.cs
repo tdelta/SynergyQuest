@@ -27,6 +27,8 @@ public class SceneController : BehaviourSingleton<SceneController>
      */
     private TransitionType _transitionType = TransitionType.None;
 
+    public bool IsLoadingScene { get; private set; } = false;
+
     protected override void OnInstantiate()
     {
         // call the OnSceneLoaded method of this object, as soon as a level is loaded
@@ -81,6 +83,7 @@ public class SceneController : BehaviourSingleton<SceneController>
         TransitionController.Instance.TransitionOutOfScene(transitionType, () =>
         {
             // When the animation completed, load the new scene
+            IsLoadingScene = true;
             SceneManager.LoadScene(sceneName);
         });
     }
@@ -95,6 +98,8 @@ public class SceneController : BehaviourSingleton<SceneController>
         
         // Finish playing the transition animation
         TransitionController.Instance.TransitionIntoScene(_transitionType, () => { });
+
+        IsLoadingScene = false;
         
         // If a callback has been set, invoke it now, since the new scene has finished loading
         _onSceneLoadedCallback?.Invoke();

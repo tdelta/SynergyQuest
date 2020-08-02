@@ -114,6 +114,6 @@ public class GuidComponentDrawer : Editor
             _guidComp = (Guid) target;
         }
        
-        EditorGUILayout.LabelField("Guid:", _guidComp.guid.IsNullOrEmpty() ? "Not created or object is prefab." : _guidComp.guid);
+        EditorGUILayout.LabelField("Guid:", _guidComp.guid.IsNullOrEmpty() ? "Not created or this object is a prefab." : _guidComp.guid);
     }
 }

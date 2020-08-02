@@ -18,6 +18,12 @@ public class DungeonDataKeeper: Singleton<DungeonDataKeeper>
     private Dictionary<string, Vector3> _objectPositions  = new Dictionary<string, Vector3>();
     
     /**
+     * This set remembers objects which have been destroyed and shall stay destroyed when their scene is loaded again.
+     * See also the `PersistentlyDestructible` behavior.
+     */
+    private HashSet<string> _destroyedObjects = new HashSet<string>();
+    
+    /**
      * This set remembers, which keys have been collected
      */
     private HashSet<string> _collectedKeys = new HashSet<string>(); // Key IDs
@@ -96,5 +102,23 @@ public class DungeonDataKeeper: Singleton<DungeonDataKeeper>
     public bool HasKeyBeenCollected(Key key)
     {
         return _collectedKeys.Contains(key.Guid.guid);
+    }
+    
+    /**
+     * Marks an object as persistently destroyed, e.g. it shall not spawn again when reloading its scene.
+     * See also `PersistentlyDestructible` behavior.
+     */
+    public void MarkAsDestroyed(PersistentlyDestructible obj)
+    {
+        _destroyedObjects.Add(obj.guid.guid);
+    }
+
+    /**
+     * True iff the given object had been marked as previously destroyed
+     */
+    [Pure]
+    public bool HasObjectBeenDestroyed(PersistentlyDestructible obj)
+    {
+        return _destroyedObjects.Contains(obj.guid.guid);
     }
 }

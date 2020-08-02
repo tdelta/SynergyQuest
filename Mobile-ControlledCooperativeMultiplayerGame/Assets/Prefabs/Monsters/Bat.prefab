@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 5481500327407250214}
   - component: {fileID: 4188588700924867490}
   - component: {fileID: 2643077272644952694}
-  m_Layer: 0
+  m_Layer: 18
   m_Name: Bat
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -272,7 +272,7 @@ PrefabInstance:
     - target: {fileID: 4098822668328429575, guid: 3a8c965459b39b31abeac92fbb15c6d0,
         type: 3}
       propertyPath: m_Layer
-      value: 0
+      value: 18
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3a8c965459b39b31abeac92fbb15c6d0, type: 3}
@@ -323,7 +323,7 @@ PrefabInstance:
     - target: {fileID: 2966709030660991388, guid: 37e72f8d85c3e48ff94a706cf9f4acd0,
         type: 3}
       propertyPath: m_Layer
-      value: 0
+      value: 18
       objectReference: {fileID: 0}
     - target: {fileID: 5901695804182231811, guid: 37e72f8d85c3e48ff94a706cf9f4acd0,
         type: 3}
