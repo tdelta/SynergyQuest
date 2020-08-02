@@ -1,4 +1,9 @@
 import { PlayerColor, Button } from 'controller-client-lib';
+import RedAvatar from './gfx/avatars/red.png';
+import BlueAvatar from './gfx/avatars/blue.png';
+import GreenAvatar from './gfx/avatars/green.png';
+import YellowAvatar from './gfx/avatars/yellow.png';
+import AnyAvatar from './gfx/avatars/any.png';
 
 export interface ColorData {
   name: string;
@@ -24,4 +29,12 @@ export const buttonStyles: { [button in Button]: ColorData } = {
   4: { name: 'Trow Bomb', light: '#c158dc', dark: '#8E24AA' },
   5: { name: 'Read', light: '#ffe54c', dark: '#ffb300' },
   6: { name: 'Open', light: '#ec407a', dark: '#c2185b' },
+};
+
+export const avatars: { [color in PlayerColor]: string } = {
+  0: RedAvatar,
+  1: BlueAvatar,
+  2: GreenAvatar,
+  3: YellowAvatar,
+  4: AnyAvatar,
 };

@@ -1,4 +1,4 @@
-import { Button, ControllerClient } from 'controller-client-lib';
+import { Button, ControllerClient, PlayerColor } from 'controller-client-lib';
 import React from 'react';
 import nipplejs, {
   JoystickManager,
@@ -8,6 +8,7 @@ import nipplejs, {
 } from 'nipplejs';
 import './Controller.css';
 import fscreen from 'fscreen';
+import PauseSymbol from './gfx/pause.png';
 
 import * as consts from './consts';
 
@@ -119,12 +120,14 @@ export class Controller extends React.Component<
   render() {
     // Define button with colors and events for readability
     const buildButton = (
+      buttonVal: Button,
       text: string,
       button: Button,
       backgroundColor: string,
       borderColor: string
     ) => (
       <button
+        key={buttonVal}
         className='pixelButton text'
         style={{ backgroundColor: backgroundColor, borderColor: borderColor }}
         onMouseDown={_ => this.onButtonChanged(button, true)}
@@ -136,13 +139,17 @@ export class Controller extends React.Component<
       </button>
     );
 
-    const playerColor: consts.ColorData = this.props.playerColor;
+    const maybePlayerColorRaw = this.props.client.getColor();
+    let playerColorRaw = PlayerColor.Any;
+    if (maybePlayerColorRaw != null) {
+      playerColorRaw = maybePlayerColorRaw;
+    }
 
     const buttons = Array.from(this.props.enabledButtons).map(
       (button: Button) => {
         const info: consts.ColorData = consts.buttonStyles[button];
 
-        return buildButton(info.name, button, info.dark, info.light);
+        return buildButton(button, info.name, button, info.dark, info.light);
       }
     );
 
@@ -156,16 +163,21 @@ export class Controller extends React.Component<
                 <p id='boobText'> tap and drag to move </p>
               </div>
               <div className='rightColumn'>
-                <div className='rowContainer' style={{ height: '10%' }}>
+                <div className='rowContainer' style={{ height: '12%' }}>
                   <div className='controllerMenuContainer'>
                     <button
                       className='controllerMenuItem text no-click'
                       style={{
-                        backgroundColor: playerColor.dark,
-                        borderColor: playerColor.light,
+                        backgroundColor: '#e0e0e0', // cplayerColor.dark,
+                        borderColor: '#eeeeee',
+                        alignItems: 'center',
                       }}
                     >
-                      Your Color: {playerColor.name}
+                      <img
+                        className='playerAvatar'
+                        alt='Player Avatar'
+                        src={consts.avatars[playerColorRaw]}
+                      />
                     </button>
                     {this.props.canPause && (
                       <button
@@ -176,7 +188,11 @@ export class Controller extends React.Component<
                         }}
                         onClick={_ => this.props.pause()}
                       >
-                        Pause
+                        <img
+                          className='pauseSymbol'
+                          alt='Pause Game'
+                          src={PauseSymbol}
+                        />
                       </button>
                     )}
                   </div>
