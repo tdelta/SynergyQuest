@@ -1,5 +1,5 @@
 {
-  "initialRoom": "D1",
+  "initialRoom": "D7",
   "rooms": {
     "D1": {
       "roomConnections": {
@@ -34,6 +34,10 @@
         "right": {
           "targetRoom": "D5",
           "targetDoor": "left"
+        },
+        "up": {
+          "targetRoom": "D7",
+          "targetDoor": "down"
         }
       }
     },
