@@ -603,8 +603,7 @@ public class PlayerController : EntityController
         Collider.bounds.DirectionTo(
             bounds, out var dir
         );
-        Debug.Log(dir);
-        Debug.Log(viewDirection);
+        
         return
             Collider.bounds.DirectionTo(
                 bounds, out var fromPlayerToPointDirection

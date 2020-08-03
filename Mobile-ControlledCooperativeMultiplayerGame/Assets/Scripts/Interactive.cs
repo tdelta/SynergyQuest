@@ -158,7 +158,6 @@ public class Interactive : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log("Collision with interactive");
         // If there is not already a player touching this object,
         // if the other object touching this object is a player
         // and if this player has a color compatible with the one of this object,
@@ -166,14 +165,6 @@ public class Interactive : MonoBehaviour
         // remember the object as the player who is potentially interacting with this object.
         //
         // See also the `Update` method
-        Debug.Log(!IgnoreCollisions);
-        Debug.Log(ReferenceEquals(InteractingPlayer, null));
-        Debug.Log(other.gameObject.CompareTag("InteractorCollider"));
-        var maybeInteractingPlayer2 = other.gameObject.GetComponent<InteractorCollider>().Player;
-        Debug.Log(maybeInteractingPlayer2.gameObject != this.gameObject);
-        Debug.Log(Color.IsCompatibleWith(maybeInteractingPlayer2.Color));
-        Debug.Log(IsPlayerFacingThisObject(maybeInteractingPlayer2));
-
         if (!IgnoreCollisions && ReferenceEquals(InteractingPlayer, null))
         {
             // Players have a special collider child object `InteractorCollider` for
