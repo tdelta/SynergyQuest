@@ -376,7 +376,10 @@ enum ButtonValue
     Inactive,
     ButtonDown,
     ButtonHeld,
-    ButtonUp
+    ButtonUp,
+    ButtonUpThenDown, // If button is up and then down in the same frame!
+    ButtonDownThenUp, // If button is down and then up in the same frame!
+    // In the above two cases, GetValueUp and GetValueDown will both return true
 }
 
 class ButtonPressState
@@ -384,6 +387,14 @@ class ButtonPressState
     private ButtonValue _value = ButtonValue.Inactive;
     private int _lastRecalculation = -1;
 
+    /**
+     * It is easier to program the game, if you can ask, whether a button has just been pressed (down),
+     * has been held, or was just released (up).
+     *
+     * However, the client only sends us, whether the button is currently active or not.
+     * We can still derive the above meta-information, by adjusting the button state by comparing its current value
+     * to the value of last frame:
+     */
     private void CheckForFrameUpdate()
     {
         // Only change something, if the current frame changed
@@ -392,9 +403,11 @@ class ButtonPressState
             switch (_value)
             {
                 case ButtonValue.ButtonDown:
+                case ButtonValue.ButtonUpThenDown:
                     _value = ButtonValue.ButtonHeld;
                     break;
                 case ButtonValue.ButtonUp:
+                case ButtonValue.ButtonDownThenUp:
                     _value = ButtonValue.Inactive;
                     break;
             }
@@ -407,50 +420,88 @@ class ButtonPressState
     {
         CheckForFrameUpdate();
 
-        return _value == ButtonValue.ButtonDown || _value == ButtonValue.ButtonHeld;
+        return _value == ButtonValue.ButtonDown || _value == ButtonValue.ButtonHeld || _value == ButtonValue.ButtonUpThenDown || _value == ButtonValue.ButtonDownThenUp;
     }
 
     public bool GetValueDown()
     {
         CheckForFrameUpdate();
 
-        return _value == ButtonValue.ButtonDown;
+        return _value == ButtonValue.ButtonDown || _value == ButtonValue.ButtonUpThenDown || _value == ButtonValue.ButtonDownThenUp;
     }
 
     public bool GetValueUp()
     {
         CheckForFrameUpdate();
 
-        return _value == ButtonValue.ButtonUp;
+        return _value == ButtonValue.ButtonUp || _value == ButtonValue.ButtonUpThenDown || _value == ButtonValue.ButtonDownThenUp;
     }
     
     public void ProcessRawInput(bool rawInputOnOff)
     {
         CheckForFrameUpdate();
-        
-        if (rawInputOnOff)
+
+        // Did the frame change since the last update?
+        if (_lastRecalculation != Time.frameCount)
         {
-            switch (_value)
+            if (rawInputOnOff)
             {
-                case ButtonValue.Inactive:
-                    _value = ButtonValue.ButtonDown;
-                    break;
-                case ButtonValue.ButtonUp:
-                    _value = ButtonValue.ButtonDown;
-                    break;
+                switch (_value)
+                {
+                    case ButtonValue.Inactive:
+                    case ButtonValue.ButtonUp:
+                    case ButtonValue.ButtonDownThenUp:
+                        _value = ButtonValue.ButtonDown;
+                        break;
+                }
+            }
+
+            else
+            {
+                switch (_value)
+                {
+                    case ButtonValue.ButtonDown:
+                    case ButtonValue.ButtonHeld:
+                    case ButtonValue.ButtonUpThenDown:
+                        _value = ButtonValue.ButtonUp;
+                        break;
+                }
             }
         }
 
+        // The frame did not change since the last input was processed
+        // => In this case, we are processing multiple packets for the same button in the same frame
+        //
+        // These packets might contain conflicting information (button pressed and not pressed in the same frame), and
+        // we must unify it here:
         else
         {
-            switch (_value)
+            if (rawInputOnOff)
             {
-                case ButtonValue.ButtonDown:
-                    _value = ButtonValue.ButtonUp;
-                    break;
-                case ButtonValue.ButtonHeld:
-                    _value = ButtonValue.ButtonUp;
-                    break;
+                switch (_value)
+                {
+                    case ButtonValue.Inactive:
+                        _value = ButtonValue.ButtonDown;
+                        break;
+                    case ButtonValue.ButtonUp:
+                    case ButtonValue.ButtonDownThenUp:
+                        _value = ButtonValue.ButtonUpThenDown;
+                        break;
+                }
+            }
+
+            else
+            {
+                switch (_value)
+                {
+                    case ButtonValue.ButtonDown:
+                    case ButtonValue.ButtonHeld:
+                        _value = ButtonValue.ButtonDownThenUp;
+                        break;
+                    case ButtonValue.ButtonUpThenDown:
+                        _value = ButtonValue.ButtonDownThenUp;
+                        break;
+                }
             }
         }
     }
