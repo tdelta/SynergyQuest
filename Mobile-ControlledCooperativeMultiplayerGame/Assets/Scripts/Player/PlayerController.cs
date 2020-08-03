@@ -101,6 +101,7 @@ public class PlayerController : EntityController
      * TODO: To be discussed (from Marc) : Do we need this variable as an class attribute?
      */
     private Vector2 _lookDirection = new Vector2(1,0);
+    public Vector2 LookDirection => _lookDirection;
     
     /**
      * Set by the animator, makes it easier to implement logic which depends on viewDirection
@@ -109,12 +110,14 @@ public class PlayerController : EntityController
      * but this is a tedious task and can be done within the animator. Maybe remove attribute above (Or keep for debug purpose?).
      */
     public Direction viewDirection;
-    
+
     /**
      * If the player were to throw an item or another player, this is the direction they shall be thrown.
-     * (It depends on the players current movement)
      */
-    public Vector2 ThrowingDirection => new Vector2(this.Input.GetHorizontal(), this.Input.GetVertical());
+    public Vector2 ThrowingDirection => _lookDirection.ApproximateDirection().ToVector(); // use the last movement based viewing direction and convert it into the nearest base vector
+
+    [SerializeField] private float throwingDistance = 3.5f;
+    public float ThrowingDistance => throwingDistance;
     
     /**
      * Caching animation property identifiers and triggers as hashes for better performance
@@ -207,7 +210,7 @@ public class PlayerController : EntityController
     protected override void Update()
     {
         base.Update();
-
+        
         // Attacking
         if (Input.GetButtonDown(Button.Attack) && (_playerState == PlayerState.walking || _playerState == PlayerState.attacking)) {
             _playerState = PlayerState.attacking;

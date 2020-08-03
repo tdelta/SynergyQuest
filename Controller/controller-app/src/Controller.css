@@ -59,6 +59,17 @@
   flex-direction: column;
 }
 
+.buttonRow {
+  width: 100%;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: row;
+}
+
+.buttonImage {
+  height: 60%;
+}
+
 #boob {
   height: 100vh;
   width: 50%;

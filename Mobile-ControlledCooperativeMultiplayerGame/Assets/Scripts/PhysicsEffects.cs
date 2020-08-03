@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 /**
@@ -28,14 +30,20 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public class PhysicsEffects: MonoBehaviour
 {
+    public const float AirResistance = 15.0f; // Force, units/(s^2)
+    // Used for throwing stuff. We use slightly higher gravity than usual
+    public const float GravitationalAcceleration = 20.0f; // units/(s^2)
     // Should be 9.81 but 10 will do for us
-    private const float GravitationalAcceleration = 10.0f; // m/(s^2)
+    private const float RealWorldGravitationalAcceleration = 10.0f; // m/(s^2)
     // We do not perform speed manipulations below this threshold to avoid very slow sliding
     private const float MinSpeed = 0.1f;
+    
+    // FIXME: We should put the above constants into a scriptable object
 
     // kinetic / sliding coefficient of friction
     // (https://en.wikipedia.org/wiki/Friction#Coefficient_of_friction)
     private const float frictionCoefficient = 0.7f;
+    public bool FrictionEnabled = true;
     
     // Rigidbody of the object which we are applying effects to
     public Rigidbody2D rigidbody2D { get; private set; }
@@ -62,6 +70,10 @@ public class PhysicsEffects: MonoBehaviour
      * Hence, it can for example be 0 while the entity is moving.
      */
     private Vector2 _effectsSpeed = Vector2.zero;
+    /**
+     * Forces being continuously applied
+     */
+    private List<ForceEffect> _effectsForces = new List<ForceEffect>();
 
     /**
      * Stores the last direction the player intentionally moved into.
@@ -89,7 +101,7 @@ public class PhysicsEffects: MonoBehaviour
     {
         var mass = rigidbody2D.mass;
         
-        var normalForceMagnitude = mass * GravitationalAcceleration;
+        var normalForceMagnitude = mass * RealWorldGravitationalAcceleration;
         var frictionForceMagnitude = frictionCoefficient * normalForceMagnitude;
         var deceleration = frictionForceMagnitude / mass;
         
@@ -113,6 +125,30 @@ public class PhysicsEffects: MonoBehaviour
         _effectsSpeed += impulse / rigidbody2D.mass;
     }
 
+    /**
+     * Applies a force which will be continuosly applied to this object.
+     * 
+     * In contrast to `AddForce` of Rigidbody2D, this class keeps track of the individual forces being applied and
+     * returns a handle to the force effect.
+     * This handle can be used to remove the force later.
+     */
+    public ForceEffect ApplyForce(Vector2 force)
+    {
+        var effect = new ForceEffect(force);
+        _effectsForces.Add(effect);
+
+        return effect;
+    }
+
+    /**
+     * Remove a force.
+     * This also removes any velocity already induced by the force.
+     */
+    public void RemoveForce(ForceEffect forceEffect)
+    {
+        _effectsForces.Remove(forceEffect);
+    }
+    
     /**
      * Sets a transform as coordinate origin for this object.
      * 
@@ -150,14 +186,16 @@ public class PhysicsEffects: MonoBehaviour
      */
     public void MoveBody(Vector2 nextMovementPosition)
     {
-        var frictionDeceleration = ComputeFrictionDeceleration();
-
         // Apply friction
         //
         // Actually, we would need to ensure, that there is no sign change due to friction and clamp at 0, however,
         // together with the minimum speed logic this seems to work for now, as long as deceleration does not get too 
         // high.
-        _effectsSpeed += frictionDeceleration * Time.deltaTime;
+        if (FrictionEnabled)
+        {
+            var frictionDeceleration = ComputeFrictionDeceleration();
+            _effectsSpeed += frictionDeceleration * Time.deltaTime;
+        }
         
         // Avoid slow sliding by defining a minimum effect speed
         if (Mathf.Abs(_effectsSpeed.magnitude) < MinSpeed)
@@ -165,7 +203,18 @@ public class PhysicsEffects: MonoBehaviour
             _effectsSpeed = Vector2.zero;
         }
 
-        nextMovementPosition += _effectsSpeed * Time.deltaTime;
+        var speed = _effectsSpeed;
+        // Compute effect of forces and apply speed induced by them:
+        if (!Mathf.Approximately(rigidbody2D.mass, 0))
+        {
+            foreach (var forceEffect in _effectsForces)
+            {
+                forceEffect.EffectSpeed += forceEffect.Force * Time.deltaTime;
+                speed += forceEffect.EffectSpeed;
+            }
+        }
+
+        nextMovementPosition += speed * Time.deltaTime;
 
         rigidbody2D.MovePosition(nextMovementPosition);
         // Cache the position the rigidbody is moving towards. We need it when a custom origin has been set, see the

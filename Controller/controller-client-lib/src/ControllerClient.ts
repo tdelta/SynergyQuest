@@ -13,6 +13,7 @@ export enum Button {
   Throw = 4,
   Read = 5,
   Open = 6,
+  UseBomb = 7,
 }
 
 /**

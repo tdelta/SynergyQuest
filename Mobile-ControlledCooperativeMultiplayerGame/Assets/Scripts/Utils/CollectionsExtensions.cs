@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 
 public static class CollectionsExtensions
 {
@@ -54,5 +53,33 @@ public static class CollectionsExtensions
         {
             return defaultValue;
         }
+    }
+
+    /**
+     * Returns the element with the maximum value according to the given metric.
+     */
+    public static TSource MaxBy<TSource>(
+        this IEnumerable<TSource> source,
+        Func<TSource, float> metric
+    )
+    {
+        var (max, _) =  source.Aggregate<TSource, (TSource, float)>((default, float.NegativeInfinity), (prevMax, next) =>
+        {
+            var (_, prevValue) = prevMax;
+
+            var currentValue = metric(next);
+
+            if (currentValue > prevValue)
+            {
+                return (next, currentValue);
+            }
+
+            else
+            {
+                return prevMax;
+            }
+        });
+
+        return max;
     }
 }

@@ -119,25 +119,28 @@ export class Controller extends React.Component<
 
   render() {
     // Define button with colors and events for readability
-    const buildButton = (
-      buttonVal: Button,
-      text: string,
-      button: Button,
-      backgroundColor: string,
-      borderColor: string
-    ) => (
-      <button
-        key={buttonVal}
-        className='pixelButton text'
-        style={{ backgroundColor: backgroundColor, borderColor: borderColor }}
-        onMouseDown={_ => this.onButtonChanged(button, true)}
-        onMouseUp={_ => this.onButtonChanged(button, false)}
-        onTouchStart={_ => this.onButtonChanged(button, true)}
-        onTouchEnd={_ => this.onButtonChanged(button, false)}
-      >
-        {text}
-      </button>
-    );
+    const buildButton = (button: Button) => {
+      const info: consts.ColorData = consts.buttonStyles[button];
+
+      return (
+        <button
+          key={button}
+          className='pixelButton text'
+          style={{ backgroundColor: info.dark, borderColor: info.light }}
+          onMouseDown={_ => this.onButtonChanged(button, true)}
+          onMouseUp={_ => this.onButtonChanged(button, false)}
+          onTouchStart={_ => this.onButtonChanged(button, true)}
+          onTouchEnd={_ => this.onButtonChanged(button, false)}
+          onTouchCancel={_ => this.onButtonChanged(button, false)}
+        >
+          {info.image != null ? (
+            <img alt='' className='buttonImage' src={info.image} />
+          ) : (
+            info.name
+          )}
+        </button>
+      );
+    };
 
     const maybePlayerColorRaw = this.props.client.getColor();
     let playerColorRaw = PlayerColor.Any;
@@ -145,13 +148,34 @@ export class Controller extends React.Component<
       playerColorRaw = maybePlayerColorRaw;
     }
 
-    const buttons = Array.from(this.props.enabledButtons).map(
-      (button: Button) => {
-        const info: consts.ColorData = consts.buttonStyles[button];
+    const enabledButtons = Array.from(this.props.enabledButtons);
 
-        return buildButton(button, info.name, button, info.dark, info.light);
-      }
+    const placeholderButton = (
+      <button
+        className='pixelButton text'
+        style={{ backgroundColor: 'grey', borderColor: 'white' }}
+      ></button>
     );
+    const ensurePlaceholder = (buttons: Array<JSX.Element>) => {
+      if (buttons.length === 0) {
+        buttons.push(placeholderButton);
+      }
+    };
+    const enabledItemButtons = enabledButtons
+      .filter(button => consts.itemButtons.has(button))
+      .map(buildButton);
+    const enabledPrimaryButtons = enabledButtons
+      .filter(button => consts.primaryButtons.has(button))
+      .map(buildButton);
+    const enabledSecondaryButtons = enabledButtons
+      .filter(
+        button =>
+          !consts.itemButtons.has(button) && !consts.primaryButtons.has(button)
+      )
+      .map(buildButton);
+    ensurePlaceholder(enabledItemButtons);
+    ensurePlaceholder(enabledPrimaryButtons);
+    ensurePlaceholder(enabledSecondaryButtons);
 
     // Return DOM elements
     return (
@@ -202,7 +226,11 @@ export class Controller extends React.Component<
                     />
                   </div>
                 </div>
-                <div className='buttonColumn'>{buttons}</div>
+                <div className='buttonColumn'>
+                  <div className='buttonRow'>{enabledItemButtons}</div>
+                  <div className='buttonRow'>{enabledPrimaryButtons}</div>
+                  <div className='buttonRow'>{enabledSecondaryButtons}</div>
+                </div>
               </div>
             </div>
           </div>
@@ -222,4 +250,5 @@ interface ControllerProbs {
   enabledButtons: Set<Button>;
   canPause: boolean;
   pause: () => void;
+  displayFailure: (message: string) => void;
 }

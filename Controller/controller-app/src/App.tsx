@@ -85,6 +85,7 @@ class App extends React.Component<{}, AppState> {
     this.startGame = this.startGame.bind(this);
     this.pause = this.pause.bind(this);
     this.triggerMenuAction = this.triggerMenuAction.bind(this);
+    this.displayFailure = this.displayFailure.bind(this);
 
     // Initialize as not connected
     this.state = App.initialState;
@@ -197,6 +198,13 @@ class App extends React.Component<{}, AppState> {
     }
   }
 
+  displayFailure(message: string) {
+    this.setState({
+      ...this.state,
+      failureMessage: message,
+    });
+  }
+
   /**
    * Display different HTML, depending on whether we are connected to a game
    * or not.
@@ -230,6 +238,7 @@ class App extends React.Component<{}, AppState> {
                   MenuAction.PauseGame
                 )}
                 pause={this.pause}
+                displayFailure={this.displayFailure}
               />
             );
             break;

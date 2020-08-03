@@ -92,6 +92,21 @@ public static class DirectionMethods
 
         return true;
     }
+    
+    /**
+     * Given a vector, search for the closest direction it points to.
+     * This is different from the `ToDirection` method, which only works for base vectors (Vector2.up, Vector2.left, ...) 
+     */
+    public static Direction ApproximateDirection(this Vector2 vector)
+    {
+        var directions = (Direction[]) Enum.GetValues(typeof(Direction));
+
+        // Select direction with highest cosine similarity of base vector
+        return directions.MaxBy(direction => Vector2.Dot(
+            direction.ToVector(),
+            vector)
+        );
+    }
 
     /**
      * Given a bounded object, this method returns the direction where it lies relative to this bounds.

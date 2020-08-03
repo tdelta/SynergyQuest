@@ -34,9 +34,12 @@ export class ConnectScreen extends React.Component<
           if (diagnostics.playersWithLostConnection.indexOf(storedName) > -1) {
             this.props.connect(storedName);
           } else {
-            // Otherwise, we do not automatically reconnect and delete the cached
-            // name
-            window.localStorage.removeItem('name');
+            // Otherwise, we do not automatically reconnect, but we can display
+            // the last used name in the input field
+            this.setState({
+              ...this.state,
+              playerName: storedName,
+            });
           }
         } catch (e) {
           console.log(`Failed to retrieve game diagnostics: ${e}`);

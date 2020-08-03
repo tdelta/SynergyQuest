@@ -94,7 +94,7 @@ public class Interactive : MonoBehaviour
 
     public bool IsInteracting
     {
-        get => _isInteracting;
+        get => _isInteracting && !ReferenceEquals(InteractingPlayer, null);
         private set
         {
             // If the value changed and a player is currently interacting with this object, fire the `interactionTriggeredEvent`
@@ -143,11 +143,11 @@ public class Interactive : MonoBehaviour
                     IsInteracting = InteractingPlayer.Input.GetButton(button);
                     break;
             }
-
-            if (IsInteracting)
-            {
-                InteractingPlayer.InteractionSpeechBubble.HideBubble();
-            }
+        }
+        
+        if (IsInteracting)
+        {
+            InteractingPlayer.InteractionSpeechBubble.HideBubble();
         }
     }
 
@@ -228,7 +228,7 @@ public class Interactive : MonoBehaviour
         }
     }
 
-    private void OnDestroy()
+    private void OnDisable()
     {
         // When this object is destroyed, sometimes OnExitTrigger2D is not executed (for example when changing the scene),
         // IN that case, we still need to clear up the interaction

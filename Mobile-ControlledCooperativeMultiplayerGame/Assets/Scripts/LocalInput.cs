@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 /**
@@ -61,8 +62,10 @@ public class LocalInput: MonoBehaviour, Input
                 return UnityEngine.Input.GetKey(keymap.PullKey());
             case Button.Carry:
                 return UnityEngine.Input.GetKey(keymap.CarryKey());
-            case Button.Bomb:
-                return UnityEngine.Input.GetKey(keymap.ItemKey());
+            case Button.Throw:
+                return UnityEngine.Input.GetKey(keymap.ThrowKey());
+            case Button.UseBomb:
+                return UnityEngine.Input.GetKey(keymap.BombKey());
 
         }
 
@@ -79,9 +82,10 @@ public class LocalInput: MonoBehaviour, Input
                 return UnityEngine.Input.GetKeyDown(keymap.PullKey());
             case Button.Carry:
                 return UnityEngine.Input.GetKeyDown(keymap.CarryKey());
-            case Button.Bomb:
-                return UnityEngine.Input.GetKeyDown(keymap.ItemKey());
-
+            case Button.Throw:
+                return UnityEngine.Input.GetKeyDown(keymap.ThrowKey());
+            case Button.UseBomb:
+                return UnityEngine.Input.GetKeyDown(keymap.BombKey());
         }
 
         return false;
@@ -97,9 +101,10 @@ public class LocalInput: MonoBehaviour, Input
                 return UnityEngine.Input.GetKeyUp(keymap.PullKey());
             case Button.Carry:
                 return UnityEngine.Input.GetKeyUp(keymap.CarryKey());
-            case Button.Bomb:
-                return UnityEngine.Input.GetKeyUp(keymap.ItemKey());
-
+            case Button.Throw:
+                return UnityEngine.Input.GetKeyUp(keymap.ThrowKey());
+            case Button.UseBomb:
+                return UnityEngine.Input.GetKeyUp(keymap.BombKey());
         }
 
         return false;
@@ -245,7 +250,7 @@ static class LocalControlModeMethods
         return KeyCode.V;
     }
 
-    public static KeyCode ItemKey(this LocalKeymap mode)
+    public static KeyCode BombKey(this LocalKeymap mode)
     {
         switch (mode)
         {
@@ -255,7 +260,19 @@ static class LocalControlModeMethods
                 return KeyCode.I;
         }
 
-        return KeyCode.V;
+        return KeyCode.B;
     }
 
+    public static KeyCode ThrowKey(this LocalKeymap mode)
+    {
+        switch (mode)
+        {
+            case LocalKeymap.WASD:
+                return KeyCode.T;
+            case LocalKeymap.Arrow:
+                return KeyCode.Z;
+        }
+
+        return KeyCode.T;
+    }
 }

@@ -50,21 +50,10 @@ public class Bomb : Item
     {
         Destroy(gameObject);
     }
-    
-    private void Update()
-    {
-        var carrier = _throwable.Carrier;
-        
-        // If we are currently being carried, we shall be thrown once the player releases the item button
-        if (_throwable.IsBeingCarried && carrier.Input.GetButtonUp(ItemDescription.UseButton))
-        {
-            _throwable.Carrier.ThrowThrowable(_throwable, carrier.ThrowingDirection);
-        }
-    }
 
     void FixedUpdate()
     {
-        if (_effects.GetImpulse() != Vector2.zero && !explosion)
+        if (!explosion)
             _effects.MoveBody(_rigidbody2D.position);
     }
 
