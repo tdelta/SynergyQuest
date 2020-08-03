@@ -598,11 +598,16 @@ public class PlayerController : EntityController
         _presentItemCallback?.Invoke();
     }
 
-    public bool IsLookingAt(Vector3 point)
+    public bool IsLookingAt(Bounds bounds)
     {
+        Collider.bounds.DirectionTo(
+            bounds, out var dir
+        );
+        Debug.Log(dir);
+        Debug.Log(viewDirection);
         return
             Collider.bounds.DirectionTo(
-                point, out var fromPlayerToPointDirection
+                bounds, out var fromPlayerToPointDirection
             )
             && fromPlayerToPointDirection == viewDirection;
     }

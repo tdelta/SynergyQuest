@@ -360,7 +360,7 @@ public class Pushable : MonoBehaviour
             if (other.relativeVelocity.magnitude > minimumPushVelocity)
             {
                 // The player must also be looking towards this object
-                if ( _inContactPlayer.IsLookingAt(_boxCollider.bounds.center) )
+                if ( _inContactPlayer.IsLookingAt(_boxCollider.bounds) )
                 {
                     // The contact normal tells us, from what side the player is colliding with this object.
                     // We can derive the movement direction from it!
