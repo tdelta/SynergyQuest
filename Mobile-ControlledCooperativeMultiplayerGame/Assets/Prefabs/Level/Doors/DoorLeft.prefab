@@ -103,6 +103,7 @@ MonoBehaviour:
   transitionType: 5
   openSprite: {fileID: 21300000, guid: ad7b6a05eabce8af0bd29d7c9d25f166, type: 3}
   closedSprite: {fileID: 21300000, guid: ce216af780ef7f1178efbb9f5b658b1e, type: 3}
+  direction: 2
 --- !u!114 &5614403163359962297
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -116,6 +117,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   switches: []
+  autoDiscoveredSwitchTags: []
 --- !u!114 &6492791223661263314
 MonoBehaviour:
   m_ObjectHideFlags: 0

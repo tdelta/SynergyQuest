@@ -77,6 +77,11 @@ PrefabInstance:
       propertyPath: doorId
       value: down
       objectReference: {fileID: 0}
+    - target: {fileID: 8579012082855823835, guid: 3817f4eb6fc042ec2a795e7683d41038,
+        type: 3}
+      propertyPath: direction
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8579012082855823837, guid: 3817f4eb6fc042ec2a795e7683d41038,
         type: 3}
       propertyPath: m_Name

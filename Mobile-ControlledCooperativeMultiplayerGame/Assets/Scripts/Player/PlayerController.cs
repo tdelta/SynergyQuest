@@ -699,4 +699,12 @@ public class PlayerController : EntityController
         Animator.SetBool(CarriedState, false);
         _playerState = PlayerState.walking;
     }
+
+    public void FaceDirection(Direction direction)
+    {
+        _lookDirection = direction.ToVector();
+        _lookDirection.Normalize();
+        Animator.SetFloat(LookXProperty, _lookDirection.x);
+        Animator.SetFloat(LookYProperty, _lookDirection.y);
+    }
 }

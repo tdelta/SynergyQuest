@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 
 /**
@@ -32,7 +31,7 @@ public class LocalInput: MonoBehaviour, Input
 
     void Update()
     {
-        if (UnityEngine.Input.GetKeyDown(keymap.PauseKey()))
+        if (UnityEngine.Input.GetKeyDown(keymap.PauseKey))
         {
             OnMenuActionTriggered?.Invoke(
                 PauseScreenLauncher.Instance.IsPaused || InfoScreenLauncher.Instance.IsShowingInfoScreen?
@@ -42,11 +41,6 @@ public class LocalInput: MonoBehaviour, Input
         }
     }
     
-    public void SetKeymap(LocalKeymap keymap)
-    {
-        this.keymap = keymap;
-    }
-    
     public void SetColor(PlayerColor color)
     {
         this.color = color;
@@ -54,19 +48,9 @@ public class LocalInput: MonoBehaviour, Input
     
     public bool GetButton(Button button)
     {
-        switch (button)
+        if (keymap.ButtonMappings.TryGetValue(button, out var keyCode))
         {
-            case Button.Attack:
-                return UnityEngine.Input.GetKey(keymap.AttackKey());
-            case Button.Pull:
-                return UnityEngine.Input.GetKey(keymap.PullKey());
-            case Button.Carry:
-                return UnityEngine.Input.GetKey(keymap.CarryKey());
-            case Button.Throw:
-                return UnityEngine.Input.GetKey(keymap.ThrowKey());
-            case Button.UseBomb:
-                return UnityEngine.Input.GetKey(keymap.BombKey());
-
+            return UnityEngine.Input.GetKey(keyCode);
         }
 
         return false;
@@ -74,18 +58,9 @@ public class LocalInput: MonoBehaviour, Input
 
     public bool GetButtonDown(Button button)
     {
-        switch (button)
+        if (keymap.ButtonMappings.TryGetValue(button, out var keyCode))
         {
-            case Button.Attack:
-                return UnityEngine.Input.GetKeyDown(keymap.AttackKey());
-            case Button.Pull:
-                return UnityEngine.Input.GetKeyDown(keymap.PullKey());
-            case Button.Carry:
-                return UnityEngine.Input.GetKeyDown(keymap.CarryKey());
-            case Button.Throw:
-                return UnityEngine.Input.GetKeyDown(keymap.ThrowKey());
-            case Button.UseBomb:
-                return UnityEngine.Input.GetKeyDown(keymap.BombKey());
+            return UnityEngine.Input.GetKeyDown(keyCode);
         }
 
         return false;
@@ -93,18 +68,9 @@ public class LocalInput: MonoBehaviour, Input
     
     public bool GetButtonUp(Button button)
     {
-        switch (button)
+        if (keymap.ButtonMappings.TryGetValue(button, out var keyCode))
         {
-            case Button.Attack:
-                return UnityEngine.Input.GetKeyUp(keymap.AttackKey());
-            case Button.Pull:
-                return UnityEngine.Input.GetKeyUp(keymap.PullKey());
-            case Button.Carry:
-                return UnityEngine.Input.GetKeyUp(keymap.CarryKey());
-            case Button.Throw:
-                return UnityEngine.Input.GetKeyUp(keymap.ThrowKey());
-            case Button.UseBomb:
-                return UnityEngine.Input.GetKeyUp(keymap.BombKey());
+            return UnityEngine.Input.GetKeyUp(keyCode);
         }
 
         return false;
@@ -112,12 +78,12 @@ public class LocalInput: MonoBehaviour, Input
 
     public float GetVertical()
     {
-        return UnityEngine.Input.GetAxis(keymap.VerticalAxis());
+        return UnityEngine.Input.GetAxis(keymap.VerticalAxis);
     }
 
     public float GetHorizontal()
     {
-        return UnityEngine.Input.GetAxis(keymap.HorizontalAxis());
+        return UnityEngine.Input.GetAxis(keymap.HorizontalAxis);
     }
     
     /**
@@ -144,139 +110,4 @@ public class LocalInput: MonoBehaviour, Input
      */
     public void SetCooldownButtons(params (Button, bool)[] buttonStates)
     { }
-}
-
-/**
- * The local keyboard allows for up to two players.
- * This enum encodes the different layouts that can be used.
- */
-public enum LocalKeymap
-{
-    /**
-     * * WASD movement
-     * * Space attack
-     * * c pull
-     * * v carry
-     * * b item
-     */
-    WASD,
-    /**
-     * * arrow key movement
-     * * j attack
-     * * k pull
-     * * l carry
-     * * i item
-     */
-    Arrow
-}
-
-/**
- * These extension methods of `LocalKeyboardLayout` contain the mapping from more "abstract" actions (attack/pull/...)
- * to concrete keys for the different layouts.
- */
-static class LocalControlModeMethods
-{
-    public static string HorizontalAxis(this LocalKeymap mode)
-    {
-        switch (mode)
-        {
-            case LocalKeymap.WASD:
-                return "Horizontal";
-            case LocalKeymap.Arrow:
-                return "HorizontalArrows";
-        }
-
-        return "Horizontal";
-    }
-
-    public static string VerticalAxis(this LocalKeymap mode)
-    {
-        switch (mode)
-        {
-            case LocalKeymap.WASD:
-                return "Vertical";
-            case LocalKeymap.Arrow:
-                return "VerticalArrows";
-        }
-
-        return "Vertical";
-    }
-    
-    public static KeyCode AttackKey(this LocalKeymap mode)
-    {
-        switch (mode)
-        {
-            case LocalKeymap.WASD:
-                return KeyCode.Space;
-            case LocalKeymap.Arrow:
-                return KeyCode.J;
-        }
-
-        return KeyCode.Space;
-    }
-    
-    public static KeyCode PullKey(this LocalKeymap mode)
-    {
-        switch (mode)
-        {
-            case LocalKeymap.WASD:
-                return KeyCode.C;
-            case LocalKeymap.Arrow:
-                return KeyCode.K;
-        }
-
-        return KeyCode.C;
-    }
-
-    public static KeyCode PauseKey(this LocalKeymap keymap)
-    {
-        switch (keymap)
-        {
-            case LocalKeymap.WASD:
-                return KeyCode.R;
-            case LocalKeymap.Arrow:
-                return KeyCode.P;
-        }
-
-        return KeyCode.P;
-    }
-
-    public static KeyCode CarryKey(this LocalKeymap mode)
-    {
-        switch (mode)
-        {
-            case LocalKeymap.WASD:
-                return KeyCode.V;
-            case LocalKeymap.Arrow:
-                return KeyCode.L;
-        }
-
-        return KeyCode.V;
-    }
-
-    public static KeyCode BombKey(this LocalKeymap mode)
-    {
-        switch (mode)
-        {
-            case LocalKeymap.WASD:
-                return KeyCode.B;
-            case LocalKeymap.Arrow:
-                return KeyCode.I;
-        }
-
-        return KeyCode.B;
-    }
-
-    public static KeyCode ThrowKey(this LocalKeymap mode)
-    {
-        switch (mode)
-        {
-            case LocalKeymap.WASD:
-                return KeyCode.T;
-            case LocalKeymap.Arrow:
-                return KeyCode.Z;
-        }
-
-        return KeyCode.T;
-    }
 }

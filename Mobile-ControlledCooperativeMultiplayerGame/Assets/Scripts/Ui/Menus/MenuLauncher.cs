@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 /**
  * Base class for singletons which control menu UI.
@@ -59,6 +60,18 @@ public abstract class MenuLauncher<LauncherType, UiType>: Singleton<LauncherType
 
             else
             {
+                // Make sure an event system is present, otherwise, buttons will not work
+                if (Object.FindObjectOfType<EventSystem>() is null)
+                {
+                    // If none is present, create one
+                    // ReSharper disable once ObjectCreationAsStatement
+                    new GameObject(
+                        "EventSystem",
+                        typeof(EventSystem),
+                        typeof(StandaloneInputModule)
+                    );
+                }
+                
                 // Instantiate UI prefab
                 UiInstance = Object.Instantiate(GetUiPrefab());
                 onUiInstantiated?.Invoke(UiInstance);

@@ -160,9 +160,7 @@ export class Controller extends React.Component<
 
       if (this.props.cooldownButtons.has(button)) {
         return buildCooldownOverlay(buttonElement);
-      }
-
-      else {
+      } else {
         return buttonElement;
       }
     };

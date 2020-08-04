@@ -36,6 +36,12 @@ public class Door : MonoBehaviour
      */
     [SerializeField] private Sprite closedSprite;
 
+    /**
+     * The direction to which this door leads. This direction will be used to determine how the players should be
+     * oriented after entering the next room.
+     */
+    [SerializeField] private Direction direction;
+
     private SpriteRenderer _renderer;
     private AudioSource _audioSource;
     private Switchable _switchable;
@@ -83,6 +89,7 @@ public class Door : MonoBehaviour
     {
         if (_open)
         {
+            PlayerDataKeeper.Instance.LastDoorDirection = this.direction;
             DungeonLayout.Instance.LoadRoomUsingDoor(this);
         }
     }

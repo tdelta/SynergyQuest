@@ -153,6 +153,7 @@ public abstract class PlayerSpawner : MonoBehaviour
 
         player.ClearRespawnHandlers();
         player.OnRespawn += Respawn;
+        OnSpawn(player);
     }
 
     void OnNewController(ControllerInput input)
@@ -184,4 +185,10 @@ public abstract class PlayerSpawner : MonoBehaviour
         // Make spawner visible in the editor by displaying an icon
         Gizmos.DrawIcon(transform.position, "spawnIcon.png", true);
     }
+
+    /**
+     * Invoked whenever a player is spawned. May be overriden.
+     */
+    protected virtual void OnSpawn(PlayerController player)
+    { }
 }

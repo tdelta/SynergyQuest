@@ -43,6 +43,12 @@ public class PlayerDataKeeper: Singleton<PlayerDataKeeper>
     public event NumKeysChangedAction OnNumKeysChanged;
 
     /**
+     * The direction the door was facing which the players entered last.
+     * It will be used to give the players the right orientation when entering the next room
+     */
+    public Direction LastDoorDirection = Direction.Down;
+
+    /**
      * Determines, if the given input instance has been assigned to any player.
      */
     public bool IsInputAssignedToPlayer(Input input)

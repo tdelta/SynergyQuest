@@ -72,6 +72,11 @@ PrefabInstance:
       propertyPath: transitionType
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 6492791223661263315, guid: 6e8f499b85e85ea598f2a46d9d2f22ab,
+        type: 3}
+      propertyPath: direction
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 6492791223661263317, guid: 6e8f499b85e85ea598f2a46d9d2f22ab,
         type: 3}
       propertyPath: m_Name

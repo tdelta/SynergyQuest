@@ -17,4 +17,10 @@ public class DoorSpawner: PlayerSpawner
         // The spawner should only be active, if it belongs to the door which has been used to enter the room
         return DungeonLayout.Instance.SpawnerDoorId == door.DoorId;
     }
+
+    protected override void OnSpawn(PlayerController player)
+    {
+        // Let players face the right direction after passing through this door
+        player.FaceDirection(PlayerDataKeeper.Instance.LastDoorDirection);
+    }
 }
