@@ -65,6 +65,7 @@ public class ControllerInput: Input
     { // These buttons are initially enabled 
         Button.Attack
     };
+    private HashSet<Button> _cooldownButtons = new HashSet<Button>();
 
     /**
      * This event is emitted when the underlying controller loses its connection to the game. The game should be paused
@@ -151,17 +152,20 @@ public class ControllerInput: Input
     }
     
     /**
-     * Tells the controller that certain buttons should or should not be currently available.
+     * Tells the controller that certain buttons should or should not be currently shown.
      * (e.g. the Read button should only be shown if the player is standing in front of a sign)
      *
      * If the controller is currently not connected, and this method is called, it will be informed about the change
      * as soon as it reconnects.
+     *
+     * @param buttonStates pairs of buttons and a boolean. The boolean indicates whether the button shall be enabled or
+     *                     not. The state of buttons which are not passed as parameters will not change.
      */
     public void EnableButtons(params (Button, bool)[] buttonStates)
     {
         foreach (var (button, enabled) in buttonStates)
         {
-            // save the button states to an internal cache, so that they can be re-sent, should the button
+            // save the button states to an internal cache, so that they can be re-sent, should the controller
             // temporarily loose connection
             if (enabled)
             {
@@ -179,6 +183,57 @@ public class ControllerInput: Input
         if (IsConnected())
         {
             SendEnabledButtons();
+        }
+    }
+    
+    /**
+     * Sends the list of buttons which are currently cooling down to the controller.
+     * See also `SetCooldownButtons`.
+     * 
+     * @throws ApplicationError if the controller is currently not connected
+     */
+    private void SendCooldownButtons()
+    {
+        var msg = new Message.SetCooldownButtonsMessage(_cooldownButtons.ToList());
+        SendMessage(msg);
+    }
+    
+    /**
+     * Tells the controller that certain buttons are still enabled, but have currently no effect, since they belong
+     * to an action which has a cooldown timer.
+     * (e.g. you can only get a new bomb every n seconds)
+     *
+     * Ideally, the controller should show the buttons which are cooling down with a fitting visual indicator
+     * (e.g. loading bar etc.)
+     *
+     * If the controller is currently not connected, and this method is called, it will be informed about the change
+     * as soon as it reconnects.
+     * 
+     * @param buttonStates pairs of buttons and a boolean. The boolean indicates whether the button is currently cooling
+     *                     down or not. The state of buttons which are not passed as parameters will not change.
+     */
+    public void SetCooldownButtons(params (Button, bool)[] buttonStates)
+    {
+        foreach (var (button, coolingDown) in buttonStates)
+        {
+            // save the button states to an internal cache, so that they can be re-sent, should the controller
+            // temporarily loose connection
+            if (coolingDown)
+            {
+                _cooldownButtons.Add(button);
+            }
+
+            else
+            {
+                _cooldownButtons.Remove(button);
+            }
+        }
+        
+        // Only send, if the controller is connected.
+        // Otherwise, the reconnect handler will send them later.
+        if (IsConnected())
+        {
+            SendCooldownButtons();
         }
     }
 
@@ -283,11 +338,9 @@ public class ControllerInput: Input
         {
             case ConnectionStatus.Connected:
                 // # Resend state specific to this controller:
-                //
-                // Player color:
                 SetColor(_playerColor);
-                // enabled Buttons
                 SendEnabledButtons();
+                SendCooldownButtons();
                 
                 OnReconnect?.Invoke(this);
 

@@ -59,6 +59,7 @@ export interface AppState {
   enabledMenuActions: Set<MenuAction>;
   gameState: GameState;
   enabledButtons: Set<Button>;
+  cooldownButtons: Set<Button>;
 }
 
 /**
@@ -76,6 +77,7 @@ class App extends React.Component<{}, AppState> {
     enabledMenuActions: new Set<MenuAction>(),
     gameState: GameState.Lobby,
     enabledButtons: new Set<Button>(),
+    cooldownButtons: new Set<Button>(),
   };
 
   constructor(props: {}) {
@@ -165,6 +167,11 @@ class App extends React.Component<{}, AppState> {
         enabledButtons: client.getEnabledButtons(),
       });
 
+    client.onSetCooldownButtons = _ =>
+      this.setState({
+        cooldownButtons: client.getCooldownButtons(),
+      });
+
     client.onGameStateChanged = (state: GameState) =>
       this.setState({
         ...this.state,
@@ -234,6 +241,7 @@ class App extends React.Component<{}, AppState> {
                 client={this.state.connectionStatus.client}
                 playerColor={consts.colors[this.state.color]}
                 enabledButtons={this.state.enabledButtons}
+                cooldownButtons={this.state.cooldownButtons}
                 canPause={this.state.enabledMenuActions.has(
                   MenuAction.PauseGame
                 )}

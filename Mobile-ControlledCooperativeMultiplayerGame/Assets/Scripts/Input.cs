@@ -63,8 +63,18 @@ public interface Input
     /**
      * Enables or disables game buttons on the controller.
      * (For example, this can be used to only let the "Read" button appear if the player is currently standing in front of a sign)
+     *
+     * See the method description of `ControllerInput` for more details.
      */
     void EnableButtons(params (Button, bool)[] buttonStates);
+
+    /**
+     * Marks buttons on the controller as "cooling down".
+     * (For example, bombs can only be used every n seconds. This method can be called to mark the bomb button as "cooling down" during that time)
+     *
+     * See the method description of `ControllerInput` for more details.
+     */
+    void SetCooldownButtons(params (Button, bool)[] buttonStates);
 
     /**
      * Tell the controller to vibrate. This will only have an effect if the controller

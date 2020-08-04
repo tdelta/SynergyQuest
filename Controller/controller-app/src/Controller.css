@@ -68,6 +68,7 @@
 
 .buttonImage {
   height: 60%;
+  image-rendering: crisp-edges;
 }
 
 #boob {
@@ -82,4 +83,29 @@
   width: 10%;
   color: white;
   font-size: 20pt;
+}
+
+.cooldownWrapper {
+  position: relative;
+  width: 100%;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.cooldownOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.cooldownProgressWrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }

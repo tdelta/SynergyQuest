@@ -6,6 +6,7 @@ import nipplejs, {
   EventData,
   JoystickOutputData,
 } from 'nipplejs';
+import { BarLoader as CooldownSpinner } from 'react-spinners';
 import './Controller.css';
 import fscreen from 'fscreen';
 import PauseSymbol from './gfx/pause.png';
@@ -118,11 +119,27 @@ export class Controller extends React.Component<
   }
 
   render() {
+    const buildCooldownOverlay = (inner: JSX.Element) => (
+      <div className='cooldownWrapper'>
+        {inner}
+        <div className='cooldownOverlay'>
+          <div className='cooldownProgressWrapper'>
+            <CooldownSpinner
+              css='background-color: rgba(255, 255, 255, 0.5)'
+              width='100%'
+              height='100%'
+              color='rgba(255, 255, 255, 0.9)'
+            />
+          </div>
+        </div>
+      </div>
+    );
+
     // Define button with colors and events for readability
     const buildButton = (button: Button) => {
       const info: consts.ColorData = consts.buttonStyles[button];
 
-      return (
+      const buttonElement = (
         <button
           key={button}
           className='pixelButton text'
@@ -140,6 +157,14 @@ export class Controller extends React.Component<
           )}
         </button>
       );
+
+      if (this.props.cooldownButtons.has(button)) {
+        return buildCooldownOverlay(buttonElement);
+      }
+
+      else {
+        return buttonElement;
+      }
     };
 
     const maybePlayerColorRaw = this.props.client.getColor();
@@ -153,8 +178,10 @@ export class Controller extends React.Component<
     const placeholderButton = (
       <button
         className='pixelButton text'
-        style={{ backgroundColor: 'grey', borderColor: 'white' }}
-      ></button>
+        style={{ backgroundColor: '#e0e0e0', borderColor: '#f5f5f5' }}
+      >
+        &nbsp;
+      </button>
     );
     const ensurePlaceholder = (buttons: Array<JSX.Element>) => {
       if (buttons.length === 0) {
@@ -248,6 +275,7 @@ interface ControllerProbs {
   client: ControllerClient;
   playerColor: consts.ColorData;
   enabledButtons: Set<Button>;
+  cooldownButtons: Set<Button>;
   canPause: boolean;
   pause: () => void;
   displayFailure: (message: string) => void;

@@ -125,6 +125,16 @@ export class ControllerClient {
   private enabledButtons: Set<Button> = new Set<Button>();
 
   /**
+   * Set of all buttons currently cooling down.
+   * (e.g. bombs can only be used every n seconds. Hence the game informs the
+   *  controller in the meantime, that the the bomb button is cooling down.)
+   *
+   * => Buttons which are cooling down are still enabled, but have no effect
+   *    and should be displayed differently.
+   */
+  private cooldownButtons: Set<Button> = new Set<Button>();
+
+  /**
    * Current state of the game. E.g. Lobby or Started
    */
   private gameState: GameState = GameState.Lobby;
@@ -176,6 +186,13 @@ export class ControllerClient {
    * enables/disables some button for the controller.
    */
   public onSetEnabledButtons: (enabledButtons: Set<Button>) => any;
+
+  /**
+   * Callback which can be set by users and which is called whenever the game
+   * tells the controller that some button is cooling down / not cooling down
+   * anymore
+   */
+  public onSetCooldownButtons: (cooldownButtons: Set<Button>) => any;
 
   /**
    * Callback which can be set by users and which is called whenever the game
@@ -333,6 +350,21 @@ export class ControllerClient {
   }
 
   /**
+   * Set of all buttons currently cooling down.
+   * (e.g. bombs can only be used every n seconds. Hence the game informs the
+   *  controller in the meantime, that the the bomb button is cooling down.)
+   *
+   * => Buttons which are cooling down are still enabled, but have no effect
+   *    and should be displayed differently.
+   *
+   * Use the `onSetCooldownButtons` event to keep track of when buttons are
+   * enabled or disabled.
+   */
+  public getCooldownButtons(): Set<Button> {
+    return this.cooldownButtons;
+  }
+
+  /**
    * Returns the current state of the game. E.g. "Lobby" or "Started".
    * Use the `onGameStateChanged` event to keep track of when the state changes.
    */
@@ -436,6 +468,11 @@ export class ControllerClient {
       SetEnabledButtonsMessage: msg => {
         this.enabledButtons = new Set(msg.enabledButtons);
         this.onSetEnabledButtons?.(this.enabledButtons);
+      },
+
+      SetCooldownButtonsMessage: msg => {
+        this.cooldownButtons = new Set(msg.cooldownButtons);
+        this.onSetCooldownButtons?.(this.cooldownButtons);
       },
 
       VibrationSequenceMessage: msg => {

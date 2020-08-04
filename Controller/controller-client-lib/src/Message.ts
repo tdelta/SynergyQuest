@@ -40,6 +40,9 @@ export namespace MessageFormat {
     VibrationSequence = 11,
     // Enable / disable buttons in the controller UI, sent by game
     SetEnabledButtons = 12,
+    // Mark buttons as "cooling down". The buttons are still enabled, but can
+    // currently not be used, since the action has a cooldown, sent by game
+    SetCooldownButtons = 13,
   }
 
   /**
@@ -121,6 +124,10 @@ export namespace MessageFormat {
 
   export interface SetEnabledButtonsMessage extends Message {
     readonly enabledButtons: Button[];
+  }
+
+  export interface SetCooldownButtonsMessage extends Message {
+    readonly cooldownButtons: Button[];
   }
 
   export interface MenuActionTriggeredMessage extends Message {
@@ -219,6 +226,9 @@ export namespace MessageFormat {
       case MessageType.SetEnabledButtons:
         matcher.SetEnabledButtonsMessage(msg as SetEnabledButtonsMessage);
         break;
+      case MessageType.SetCooldownButtons:
+        matcher.SetCooldownButtonsMessage(msg as SetCooldownButtonsMessage);
+        break;
       case MessageType.VibrationSequence:
         matcher.VibrationSequenceMessage(msg as VibrationSequenceMessage);
         break;
@@ -240,6 +250,7 @@ export namespace MessageFormat {
     readonly MenuActionTriggeredMessage: (_: MenuActionTriggeredMessage) => any;
     readonly GameStateChangedMessage: (_: GameStateChangedMessage) => any;
     readonly SetEnabledButtonsMessage: (_: SetEnabledButtonsMessage) => any;
+    readonly SetCooldownButtonsMessage: (_: SetCooldownButtonsMessage) => any;
     readonly VibrationSequenceMessage: (_: VibrationSequenceMessage) => any;
   }
 
@@ -261,6 +272,7 @@ export namespace MessageFormat {
     MenuActionTriggeredMessage: _ => {},
     GameStateChangedMessage: _ => {},
     SetEnabledButtonsMessage: _ => {},
+    SetCooldownButtonsMessage: _ => {},
     VibrationSequenceMessage: _ => {},
   };
 }

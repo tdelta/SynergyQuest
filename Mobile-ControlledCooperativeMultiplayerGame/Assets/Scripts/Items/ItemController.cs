@@ -67,10 +67,12 @@ public class ItemController: MonoBehaviour
               if (itemDescription.Cooldown > 0)
               {
                   _cooldownFlags[itemDescription] = true;
+                  _player.Input.SetCooldownButtons((itemDescription.UseButton, true));
                   StartCoroutine(
                       CoroutineUtils.Wait(itemDescription.Cooldown, () =>
                       {
                           _cooldownFlags[itemDescription] = false;
+                          _player.Input.SetCooldownButtons((itemDescription.UseButton, false));
                       })
                   );
               }

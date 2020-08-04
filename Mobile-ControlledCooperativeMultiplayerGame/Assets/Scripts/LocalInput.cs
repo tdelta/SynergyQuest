@@ -137,9 +137,13 @@ public class LocalInput: MonoBehaviour, Input
      * Keys on the keyboard cannot disappear. Do nothing
      */
     public void EnableButtons(params (Button, bool)[] buttonStates)
-    {
-        return;
-    }
+    { }
+
+    /**
+     * Keys on the keyboard cannot display a cooldown state. Do nothing.
+     */
+    public void SetCooldownButtons(params (Button, bool)[] buttonStates)
+    { }
 }
 
 /**

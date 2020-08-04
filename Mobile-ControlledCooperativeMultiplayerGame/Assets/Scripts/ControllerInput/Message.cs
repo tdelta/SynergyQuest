@@ -30,7 +30,8 @@ public enum MessageType
     MenuActionTriggered = 9, // A menu action has been selected on the controller
     GameStateChanged = 10,   // The state of the game changed, e.g. Lobby -> Game started. Sent by the game 
     VibrationSequence = 11,  // The game wants the controller to vibrate. Sent by the game
-    SetEnabledButtons = 12   // Enable / disable buttons in the controller UI, sent by game
+    SetEnabledButtons = 12,  // Enable / disable buttons in the controller UI, sent by game
+    SetCooldownButtons = 13  // Mark buttons as "cooling down". The buttons are still enabled, but can currently not be used, since the action has a cooldown, sent by game
 }
 
 /**
@@ -107,6 +108,9 @@ public class Message
 
             case MessageType.SetEnabledButtons:
                 return JsonUtility.FromJson<SetEnabledButtonsMessage>(str);
+                
+            case MessageType.SetCooldownButtons:
+                return JsonUtility.FromJson<SetCooldownButtonsMessage>(str);
             
             case MessageType.VibrationSequence:
                 return JsonUtility.FromJson<VibrationSequenceMessage>(str);
@@ -281,6 +285,26 @@ public class Message
             matcher.SetEnabledButtonsMessage(this);
         }
     }
+    
+    [Serializable]
+    public sealed class SetCooldownButtonsMessage : Message
+    {
+        public List<Button> cooldownButtons;
+
+        public SetCooldownButtonsMessage(List<Button> cooldownButtons)
+            : base(MessageType.SetCooldownButtons)
+        {
+            this.cooldownButtons = cooldownButtons;
+        }
+        
+        /**
+         * See base class method for an explanation.
+         */
+        public override void Match( Matcher matcher )
+        {
+            matcher.SetCooldownButtonsMessage(this);
+        }
+    }
 
     [Serializable]
     public sealed class SetMenuActionsMessage : Message
@@ -387,6 +411,7 @@ public class Message
         public Action<MenuActionTriggeredMessage> MenuActionTriggeredMessage = _ => {};
         public Action<GameStateChangedMessage> GameStateChangedMessage = _ => {};
         public Action<SetEnabledButtonsMessage> SetEnabledButtonsMessage = _ => {};
+        public Action<SetCooldownButtonsMessage> SetCooldownButtonsMessage = _ => {};
         public Action<VibrationSequenceMessage> VibrationSequenceMessage = _ => {};
     }
 
