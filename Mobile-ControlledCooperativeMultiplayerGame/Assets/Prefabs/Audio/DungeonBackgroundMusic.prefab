@@ -65,12 +65,12 @@ PrefabInstance:
     - target: {fileID: 636189072667487746, guid: 1f5cce7558a92e31da5af2d7a403f21d,
         type: 3}
       propertyPath: m_Name
-      value: BackgroundMusic Variant
+      value: DungeonBackgroundMusic
       objectReference: {fileID: 0}
     - target: {fileID: 636189072667487747, guid: 1f5cce7558a92e31da5af2d7a403f21d,
         type: 3}
       propertyPath: m_audioClip
       value: 
-      objectReference: {fileID: 8300000, guid: a1d4b472e243973aea0b001f47d3a7e2, type: 3}
+      objectReference: {fileID: 8300000, guid: a1cb70cdcf55a766f8dd0829e1ef1c63, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1f5cce7558a92e31da5af2d7a403f21d, type: 3}
