@@ -13,7 +13,7 @@
   },
   "scripts": {
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-    "build": "npm run lint ; microbundle-crl --no-compress --format modern,cjs",
+    "build": "npm run lint && microbundle-crl --no-compress --format modern,cjs",
     "start": "microbundle-crl watch --no-compress --format modern,cjs",
     "prepublish": "run-s build",
     "test": "jest",
