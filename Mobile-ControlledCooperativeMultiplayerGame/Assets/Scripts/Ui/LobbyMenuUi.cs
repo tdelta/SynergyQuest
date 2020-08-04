@@ -74,6 +74,15 @@ public class LobbyMenuUi : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        // Allow to quit game in lobby with esc key
+        if (UnityEngine.Input.GetKeyDown(KeyCode.Escape))
+        {
+            SceneController.Instance.QuitGame();
+        }
+    }
+
     /**
      * Callback which is called by the "Not Working?" button in the scene.
      * It displays all local addresses on the screen
