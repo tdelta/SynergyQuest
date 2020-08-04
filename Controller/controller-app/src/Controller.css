@@ -12,6 +12,7 @@
   width: 100%;
   outline: none;
   flex-grow: 1;
+  user-select: none;
 }
 .no-click {
     pointer-events: none;

@@ -37,6 +37,7 @@ input {
   border-bottom: 0.2ex solid #8d5943;
 }
 .pixelbutton {
+  user-select: none;
   padding-top: 0.6ex;
   padding-bottom: 0.6ex;
   padding-left: 0.8em;
