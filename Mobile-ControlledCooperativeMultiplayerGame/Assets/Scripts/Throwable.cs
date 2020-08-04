@@ -187,6 +187,12 @@ public class Throwable : MonoBehaviour
             distance += position.y - carrierPosition.y;
         }
         
+        // Conversely, we remove this distance when throwing upwards
+        else if (direction is Direction.Up)
+        {
+            distance -= position.y - carrierPosition.y;
+        }
+        
         var gravity = -PhysicsEffects.GravitationalAcceleration;
         var airResistance = -PhysicsEffects.AirResistance;
         
