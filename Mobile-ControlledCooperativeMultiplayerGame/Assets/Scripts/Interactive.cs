@@ -156,7 +156,7 @@ public class Interactive : MonoBehaviour
         return player.IsLookingAt(_collider.bounds);
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
+    private void OnTriggerStay2D(Collider2D other)
     {
         // If there is not already a player touching this object,
         // if the other object touching this object is a player

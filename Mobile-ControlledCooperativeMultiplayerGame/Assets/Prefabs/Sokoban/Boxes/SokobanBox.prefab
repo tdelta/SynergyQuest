@@ -54,7 +54,7 @@ MonoBehaviour:
   minimumPushVelocity: 2.5
   speed: 1.2
   inContactTime: 0.3
-  minInteractionOverlap: 0.3
+  minInteractionOverlap: 0
   grid: {fileID: 0}
   pushSound: {fileID: 8300000, guid: 0e7b927626a6536338fc6fc87aac6b41, type: 3}
 --- !u!114 &546161748042274506
