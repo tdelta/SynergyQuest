@@ -61,6 +61,7 @@ public class PlayerDataKeeper: Singleton<PlayerDataKeeper>
      *
      * @param input    input instance with which the player will be controlled
      * @param position position where the player prefab instance will be placed.
+     *                 The z-coordinate will be ignored, we always set it to 0.
      *                 Optional parameter which defaults to (0, 0, 0).
      */
     public PlayerController InstantiateNewPlayer(Input input, Vector3 position = default)
@@ -73,7 +74,10 @@ public class PlayerDataKeeper: Singleton<PlayerDataKeeper>
         var data = new PlayerData(input);
         _playerDatas.Add(data);
 
-        var instance = InstantiatePlayerFromData(data, position);
+        var instance = InstantiatePlayerFromData(
+            data,
+            position
+        );
 
         return instance;
     }
@@ -130,7 +134,8 @@ public class PlayerDataKeeper: Singleton<PlayerDataKeeper>
         
         var instance = Object.Instantiate(
             PlayerPrefabSettings.Instance.PlayerPrefab,
-            spawnPosition,
+            // Ensure, z-coordinate is always 0 for players
+            Vector3.Scale(spawnPosition, new Vector3(1, 1, 0)),
             Quaternion.identity
         );
         
