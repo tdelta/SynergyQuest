@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using UnityEngine;
 
 /**
@@ -54,6 +55,11 @@ public class Switchable : MonoBehaviour
         _switchChangeHandlers = new Switch.ValueChangedAction[switches.Length];
     }
 
+    private void Start()
+    {
+        ComputeActivation();
+    }
+
     private void OnEnable()
     {
         // For every switch which shall be observed, register an event handler
@@ -91,9 +97,16 @@ public class Switchable : MonoBehaviour
     /**
      * Determine, whether all observed switches are currently activated at once
      */
-    bool ComputeActivation()
+    void ComputeActivation()
     {
-        return _switchValues.All(v => v);
+        var oldActivation = _activation;
+        _activation = _switchValues.All(v => v);
+
+        // If the activation state of this component changed, inform all subscribers
+        if (oldActivation != _activation)
+        {
+            OnActivationChanged?.Invoke(_activation);
+        }
     }
 
     /**
@@ -104,13 +117,6 @@ public class Switchable : MonoBehaviour
         // Store the new switch value
         _switchValues[switchIdx] = value;
         // Determine, if now all switches are pressed.
-        var oldActivation = _activation;
-        _activation = ComputeActivation();
-
-        // If the activation state of this component changed, inform all subscribers
-        if (oldActivation != _activation)
-        {
-            OnActivationChanged?.Invoke(_activation);
-        }
+        ComputeActivation();
     }
 }

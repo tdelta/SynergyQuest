@@ -56,12 +56,7 @@ public class Switch : MonoBehaviour
     {
         Guid = GetComponent<Guid>();
         isPersistentAcrossScenes = !(Guid is null) && isPersistentAcrossScenes;
-    }
-
-    void Start()
-    {
-        OnValueChanged?.Invoke(Value);
-
+        
         if (isPersistentAcrossScenes)
         {
             Value = DungeonDataKeeper.Instance.HasSwitchBeenActivated(this, Value);
