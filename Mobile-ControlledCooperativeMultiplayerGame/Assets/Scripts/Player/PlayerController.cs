@@ -457,12 +457,7 @@ public class PlayerController : EntityController
      * @param player: The player that picks us up
      */
     public void GetPickedUp(PlayerController player){
-        // check if we can carry, or if an object (other than the player) is in the way
-        var direction = player.CarryPosition - player.Center;
-        var collider = Physics2D.Raycast(player.Center, direction, direction.magnitude).collider;
-
-        if (collider == null || collider.gameObject.CompareTag("InteractorCollider"))
-            _throwable.Pickup(player);
+        _throwable.Pickup(player);
     }
 
     /**
