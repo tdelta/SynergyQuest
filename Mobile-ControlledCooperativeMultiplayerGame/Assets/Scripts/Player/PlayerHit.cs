@@ -8,13 +8,13 @@ public class PlayerHit : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Enemy"))
         {
-            var enemy = other.gameObject.GetComponent<EnemyController>();
-            enemy.PutDamage(1, (other.transform.position - transform.position).normalized); 
-
             if (other.gameObject.GetComponent<NecromancerController>() is NecromancerController neko) {
                 var player = gameObject.GetComponentInParent(typeof(PlayerController)) as PlayerController;
-                neko.ChangeColor(player.Color);
+                neko.ColorCandidate = player.Color;
             }
+
+            var enemy = other.gameObject.GetComponent<EnemyController>();
+            enemy.PutDamage(1, (other.transform.position - transform.position).normalized); 
         }
         else if (other.gameObject.CompareTag("Switch"))
             other.gameObject.GetComponent<ShockSwitch>().Activate();
