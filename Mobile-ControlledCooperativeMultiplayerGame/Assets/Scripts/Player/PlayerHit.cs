@@ -10,6 +10,11 @@ public class PlayerHit : MonoBehaviour
         {
             var enemy = other.gameObject.GetComponent<EnemyController>();
             enemy.PutDamage(1, (other.transform.position - transform.position).normalized); 
+
+            if (other.gameObject.GetComponent<NecromancerController>() is NecromancerController neko) {
+                var player = gameObject.GetComponentInParent(typeof(PlayerController)) as PlayerController;
+                neko.ChangeColor(player.Color);
+            }
         }
         else if (other.gameObject.CompareTag("Switch"))
             other.gameObject.GetComponent<ShockSwitch>().Activate();
