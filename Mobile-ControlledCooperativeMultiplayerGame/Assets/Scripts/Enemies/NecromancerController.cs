@@ -4,12 +4,22 @@ using UnityEngine;
 
 public class NecromancerController : EnemyController
 {
+    [SerializeField] FireballProjectile fireball;
+    [SerializeField] float launchCoolDown = 1;
+
     readonly int _moveXProperty = Animator.StringToHash("Move X");
+    float _launchTimer;
     Vector2 _offset = new Vector2(0, 0);
     RaycastHit2D[] _hit = new RaycastHit2D[3];
     PlayerColor _currentColor = PlayerColor.Any;
     PlayerController _attackingPlayer;
     bool _attackedByPlayer = false;
+
+    protected override void Start()
+    {
+        base.Start();
+        _launchTimer = launchCoolDown;
+    }
 
     public PlayerController AttackingPlayer
     {
@@ -33,12 +43,30 @@ public class NecromancerController : EnemyController
         return (false, Vector2.zero);
     }
 
+    void LaunchFireball(Vector2 direction)
+    {
+        _launchTimer -= Time.deltaTime;
+
+        if (_launchTimer < 0)
+        {
+
+            var spawnPoint = direction + Rigidbody2D.position;
+            var instance = Instantiate(fireball, spawnPoint, Quaternion.identity) as FireballProjectile;
+            Physics2D.IgnoreCollision(instance.Collider, GetComponent<Collider2D>());
+            instance.Launch(direction);
+            _launchTimer = launchCoolDown;
+        }
+    }
+
     protected override Vector2 ComputeOffset()
     {
         (var playerVisible, var playerDirection) = IsPlayerVisible();
 
         if (playerVisible)
+        {
+            LaunchFireball(playerDirection);
             _offset = Time.deltaTime * directionSpeed * playerDirection;
+        }
         else
             _offset = Time.deltaTime * directionSpeed * direction;
 
