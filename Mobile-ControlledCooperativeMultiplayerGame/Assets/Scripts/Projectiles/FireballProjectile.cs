@@ -13,6 +13,7 @@ public class FireballProjectile : MonoBehaviour
     Animator _animator;
     Rigidbody2D _rigidbody2D;
     PhysicsEffects _physicsEffects;
+    AudioSource _audioSource;
 
     public BoxCollider2D Collider { get; private set; }
 
@@ -21,6 +22,7 @@ public class FireballProjectile : MonoBehaviour
         _animator = GetComponent<Animator>();
         _rigidbody2D = GetComponent<Rigidbody2D>();
         _physicsEffects = GetComponent<PhysicsEffects>();
+        _audioSource = GetComponent<AudioSource>();
         Collider = GetComponent<BoxCollider2D>();
     }
 
@@ -34,6 +36,7 @@ public class FireballProjectile : MonoBehaviour
         // rotate projectile into direction of flight
         transform.up = -direction;
         _direction = direction;
+        _audioSource.Play();
     }
 
     void OnCollisionEnter2D(Collision2D other)
@@ -48,6 +51,14 @@ public class FireballProjectile : MonoBehaviour
 
     void OnHitAnimationComplete()
     {
+        // remove gameobject, but keep it enabled so sounds can continue playing
+        transform.localScale = Vector2.zero;
+        StartCoroutine(DestroyWhenReady());
+    }
+
+    IEnumerator DestroyWhenReady()
+    {       
+        yield return new WaitWhile(() => _audioSource.isPlaying);
         Destroy(gameObject);
     }
 }
