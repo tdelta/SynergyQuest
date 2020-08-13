@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class WayPointController : MonoBehaviour
 {
+    [SerializeField] private float arrivalTime;
+    public float ArrivalTime => arrivalTime;
+
     void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
