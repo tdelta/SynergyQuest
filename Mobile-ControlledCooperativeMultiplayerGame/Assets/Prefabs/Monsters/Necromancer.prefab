@@ -61,6 +61,7 @@ MonoBehaviour:
   coin: {fileID: 7476413430186449276, guid: 4328b41c3928fc341a393f3a479abf6d, type: 3}
   fireball: {fileID: 2864600893969043934, guid: 76a650fe6bc583225acee50373f482e7,
     type: 3}
+  launchCoolDown: 2
 --- !u!114 &5907530198393131452
 MonoBehaviour:
   m_ObjectHideFlags: 0
