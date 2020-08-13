@@ -32,8 +32,8 @@ public class PlayerController : EntityController
      * Position where `Throwable`s move when being carried by this player
      */
     [SerializeField] private Transform carryPosition;
-    public Vector3 CarryPosition => carryPosition.position;
-    public Vector3 Center => Collider.bounds.center;
+    public Vector2 CarryPosition => carryPosition.position;
+    public Vector2 Center => Collider.bounds.center;
 
     public InteractionSpeechBubble InteractionSpeechBubble => interactionSpeechBubble;
     
@@ -335,11 +335,6 @@ public class PlayerController : EntityController
     {
         // ToDo: Adjust height, so that lifeGauge and goldGauge can be displayed concurrently!
         this.coinGauge.GetComponent<CoinGaugeController>().DrawColdCounter(this._data.goldCounter);
-    }
-
-    public Vector2 GetPosition()
-    {
-        return Rigidbody2D.position;
     }
 
     private void Attack()

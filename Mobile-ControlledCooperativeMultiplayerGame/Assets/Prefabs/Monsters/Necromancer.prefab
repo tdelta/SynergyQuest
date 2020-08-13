@@ -59,7 +59,6 @@ MonoBehaviour:
   smokeEffect: {fileID: 24872979894827348}
   hitSounds: {fileID: 2591332168760939140}
   coin: {fileID: 7476413430186449276, guid: 4328b41c3928fc341a393f3a479abf6d, type: 3}
-  viewCone: 60
 --- !u!114 &5907530198393131452
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -247,7 +246,7 @@ PrefabInstance:
     - target: {fileID: 2966709030660991388, guid: 37e72f8d85c3e48ff94a706cf9f4acd0,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5901695804182231811, guid: 37e72f8d85c3e48ff94a706cf9f4acd0,
         type: 3}

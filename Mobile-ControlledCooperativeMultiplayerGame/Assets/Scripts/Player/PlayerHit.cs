@@ -10,7 +10,7 @@ public class PlayerHit : MonoBehaviour
         {
             if (other.gameObject.GetComponent<NecromancerController>() is NecromancerController neko) {
                 var player = gameObject.GetComponentInParent(typeof(PlayerController)) as PlayerController;
-                neko.ColorCandidate = player.Color;
+                neko.AttackingPlayer = player;
             }
 
             var enemy = other.gameObject.GetComponent<EnemyController>();

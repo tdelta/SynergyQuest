@@ -2,43 +2,43 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NecromancerController : EnemyController {
-    [SerializeField] float viewCone = 1;
-
+public class NecromancerController : EnemyController
+{
     readonly int _moveXProperty = Animator.StringToHash("Move X");
     Vector2 _offset = new Vector2(0, 0);
+    RaycastHit2D[] _hit = new RaycastHit2D[3];
     PlayerColor _currentColor = PlayerColor.Any;
-    PlayerColor? _colorCandidate;
+    PlayerController _attackingPlayer;
+    bool _attackedByPlayer = false;
 
-    public PlayerColor ColorCandidate
+    public PlayerController AttackingPlayer
     {
-        set => _colorCandidate = value;
+        set
+        {
+            _attackedByPlayer = true;
+            _attackingPlayer = value;
+        }
     }
 
-    (float, Vector2) FindNearestPlayer() {
-        var players = (PlayerController[]) GameObject.FindObjectsOfType(typeof(PlayerController));
-        Vector2 playerVector = new Vector2(0, 0);
-        float playerAngle = 180;
-
-        foreach (var player in players) {
-            Vector2 position = player.GetPosition();
-            Vector2 target = position - Rigidbody2D.position;
-            float angle = Vector2.Angle(target, _offset);
-
-            if (angle < playerAngle) {
-                playerAngle = angle;
-                playerVector = target;
-            }
+    (bool, Vector2) IsPlayerVisible()
+    {
+        if (_attackingPlayer != null)
+        {
+            var target = _attackingPlayer.Center - Rigidbody2D.position;
+            // if no gameObject blocks line of sight to player
+            if (Physics2D.LinecastNonAlloc(Rigidbody2D.position, _attackingPlayer.Center, _hit) == 2)
+                return (true, target.normalized);
         }
 
-        return (playerAngle, playerVector.normalized);
+        return (false, Vector2.zero);
     }
 
-    protected override Vector2 ComputeOffset() {
-        (var angle, var vector) = FindNearestPlayer();
+    protected override Vector2 ComputeOffset()
+    {
+        (var playerVisible, var playerDirection) = IsPlayerVisible();
 
-        if (_offset != Vector2.zero && angle <= viewCone / 2)
-            _offset = Time.deltaTime * directionSpeed * vector;
+        if (playerVisible)
+            _offset = Time.deltaTime * directionSpeed * playerDirection;
         else
             _offset = Time.deltaTime * directionSpeed * direction;
 
@@ -48,19 +48,24 @@ public class NecromancerController : EnemyController {
 
     protected override bool ChangeHealth(int amount, bool playSounds = true)
     {
-        if (_colorCandidate == null)
+        // if we didn't receive damage from a player apply damage regularly
+        if (!_attackedByPlayer)
             return base.ChangeHealth(amount, playSounds);
-        else if (PlayerColorMethods.IsCompatibleWith(_currentColor, _colorCandidate.Value))
+        // if we received damage from a player apply damage if playercolor is compatible
+        else
         {
-            var material = GetComponent<Renderer>().material;
-            _currentColor = PlayerColorMethods.NextColor(_colorCandidate.Value, PlayerDataKeeper.Instance.NumPlayers);
-            material.SetColor("_CapeColor", PlayerColorMethods.ColorToRGB(_currentColor));
+            _attackedByPlayer = false;
+            if (PlayerColorMethods.IsCompatibleWith(_currentColor, _attackingPlayer.Color))
+            {
+                var material = GetComponent<Renderer>().material;
+                _currentColor = PlayerColorMethods.NextColor(_attackingPlayer.Color,
+                    PlayerDataKeeper.Instance.NumPlayers);
+                material.SetColor("_CapeColor", PlayerColorMethods.ColorToRGB(_currentColor));
 
-            _colorCandidate = null;
-            return base.ChangeHealth(amount, playSounds);
+                return base.ChangeHealth(amount, playSounds);
+            }
         }
 
-        _colorCandidate = null;
         return false;
     }
 }

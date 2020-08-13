@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 
-abstract public class EnemyController : EntityController {
+abstract public class EnemyController : EntityController
+{
     [SerializeField] protected int   healthPoints = 1;
     [SerializeField] protected float directionSpeed = 1;
     [SerializeField] protected float directionChangeTime = 1;
@@ -27,7 +28,8 @@ abstract public class EnemyController : EntityController {
     public delegate void EnemyDied();
     public static event EnemyDied OnDeath;
 
-    protected override void Start() {
+    protected override void Start()
+    {
         base.Start();
         directionTimer = directionChangeTime;
         direction = Random.insideUnitCircle.normalized;
@@ -35,21 +37,30 @@ abstract public class EnemyController : EntityController {
         _tintFlashController = GetComponent<TintFlashController>();
     }
 
-    protected override void Update() {
+    protected override void Update()
+    {
         base.Update();
         directionTimer -= Time.deltaTime;
 
-        if (directionTimer < 0) {
+        if (directionTimer < 0)
+        {
             direction = Random.insideUnitCircle.normalized;
             directionTimer = directionChangeTime;
         }
     }
 
-    void OnCollisionStay2D(Collision2D other) {
-        if (other.gameObject.CompareTag("Player")) {
+    void OnCollisionStay2D(Collision2D other)
+    {
+        if (other.gameObject.CompareTag("Player"))
+        {
             var player = other.gameObject.GetComponent<EntityController>();
             player.PutDamage(damageFactor, (other.transform.position - transform.position).normalized); 
-        } else
+        }
+    }
+
+    void OnCollisionEnter2D(Collision2D other)
+    {
+        if (!other.gameObject.CompareTag("Player") && !!other.gameObject.CompareTag("PlayerHit"))
             direction = -direction;
     }
 
@@ -62,13 +73,15 @@ abstract public class EnemyController : EntityController {
             PlayDamageEffects();
         }
 
-        if (healthPoints <= 0) {
+        if (healthPoints <= 0)
+        {
             isDead = true;
             this.GetComponent<Collider2D>().enabled = false;
             Animator.SetTrigger(deadTrigger);
             dropCoins();
             Destroy(gameObject, 1);
-            if(OnDeath != null){
+            if(OnDeath != null)
+            {
                 OnDeath();
             }
         }
@@ -81,8 +94,10 @@ abstract public class EnemyController : EntityController {
      */
     protected abstract Vector2 ComputeOffset();
     
-    void FixedUpdate() {
-        if (!isDead) {
+    void FixedUpdate()
+    {
+        if (!isDead)
+        {
             Vector2 position = Rigidbody2D.position;
             position += ComputeOffset();
             
@@ -90,7 +105,8 @@ abstract public class EnemyController : EntityController {
         }
     }
 
-    public void ShowParticles() {
+    public void ShowParticles()
+    {
         smokeEffect.Play();
     }
 
