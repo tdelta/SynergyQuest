@@ -31,24 +31,10 @@ public class ButtonController: MonoBehaviour
       }
     }
 
-    void OnPress()
+    public void OnPress()
     {
         _renderer.sprite = PressedButton;
         _pressAnimation = true;
         Effect.OnButtonPressed();
-    }
-
-    void OnTriggerEnter2D(Collider2D other) {
-        if (other.gameObject.CompareTag("Player")) {
-            var player = other.gameObject.GetComponent<PlayerController>();
-            player.Input.EnableButtons((Button.Press, true));
-        }
-    }
-
-    void OnTriggerExit2D(Collider2D other) {
-        if (other.gameObject.CompareTag("Player")) {
-            var player = other.gameObject.GetComponent<PlayerController>();
-            player.Input.EnableButtons((Button.Press, false));
-        }
     }
 }
