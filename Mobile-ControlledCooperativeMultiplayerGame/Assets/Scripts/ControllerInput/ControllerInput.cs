@@ -463,9 +463,7 @@ class ButtonPressState
                 case ButtonValue.ButtonDownThenUp:
                     _value = ButtonValue.Inactive;
                     break;
-            }
-            
-            _lastRecalculation = Time.frameCount;
+            }    
         }
     }
 
@@ -473,6 +471,8 @@ class ButtonPressState
     {
         CheckForFrameUpdate();
 
+        _lastRecalculation = Time.frameCount;
+        
         return _value == ButtonValue.ButtonDown || _value == ButtonValue.ButtonHeld || _value == ButtonValue.ButtonUpThenDown || _value == ButtonValue.ButtonDownThenUp;
     }
 
@@ -480,6 +480,8 @@ class ButtonPressState
     {
         CheckForFrameUpdate();
 
+        _lastRecalculation = Time.frameCount;
+        
         return _value == ButtonValue.ButtonDown || _value == ButtonValue.ButtonUpThenDown || _value == ButtonValue.ButtonDownThenUp;
     }
 
@@ -487,6 +489,8 @@ class ButtonPressState
     {
         CheckForFrameUpdate();
 
+        _lastRecalculation = Time.frameCount;
+        
         return _value == ButtonValue.ButtonUp || _value == ButtonValue.ButtonUpThenDown || _value == ButtonValue.ButtonDownThenUp;
     }
     
@@ -557,5 +561,8 @@ class ButtonPressState
                 }
             }
         }
+
+    _lastRecalculation = Time.frameCount;
+    
     }
 }
