@@ -1937,6 +1937,9 @@ MonoBehaviour:
     Count: 1
   - Type: {fileID: 6235775845409623573, guid: 70fb5d4b16c32a5928ddb9b900ce3af0, type: 3}
     Count: 1
+  - Type: {fileID: 150123518182044965, guid: 8b657144a869fb5ea9b3cb3523a73df7, type: 3}
+    Count: 1
+  customSpawnPoints: []
 --- !u!114 &7624197619055225673
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1963,7 +1966,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c457c33eaa484ddd9aec52891f1086ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _guid: 38d903fc-8d36-4a3e-b1ce-4dab6ae9a8af
+  _guid: 
 --- !u!19719996 &4617749517432785701
 TilemapCollider2D:
   m_ObjectHideFlags: 0

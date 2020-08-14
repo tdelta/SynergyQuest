@@ -12,9 +12,9 @@ GameObject:
   - component: {fileID: 268351232}
   - component: {fileID: 9283753934280254}
   - component: {fileID: 2703046263398990827}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: AttackPointRight
-  m_TagString: Untagged
+  m_TagString: PlayerHit
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -111,9 +111,9 @@ GameObject:
   - component: {fileID: 645781150}
   - component: {fileID: 8933781604585633881}
   - component: {fileID: 7283954946436885052}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: AttackPointTop
-  m_TagString: Untagged
+  m_TagString: PlayerHit
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -211,9 +211,9 @@ GameObject:
   - component: {fileID: 1684417765}
   - component: {fileID: 6566295534855085481}
   - component: {fileID: 5395333289344715738}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: AttackPointBottom
-  m_TagString: Untagged
+  m_TagString: PlayerHit
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -311,9 +311,9 @@ GameObject:
   - component: {fileID: 1894431303}
   - component: {fileID: 8053707630260868602}
   - component: {fileID: 4581795318486904352}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: AttackPointLeft
-  m_TagString: Untagged
+  m_TagString: PlayerHit
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

@@ -8,6 +8,11 @@ public class PlayerHit : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Enemy"))
         {
+            if (other.gameObject.GetComponent<NecromancerController>() is NecromancerController neko) {
+                var player = gameObject.GetComponentInParent(typeof(PlayerController)) as PlayerController;
+                neko.AttackingPlayer = player;
+            }
+
             var enemy = other.gameObject.GetComponent<EnemyController>();
             enemy.PutDamage(1, (other.transform.position - transform.position).normalized); 
         }

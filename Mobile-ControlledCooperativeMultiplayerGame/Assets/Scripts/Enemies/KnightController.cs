@@ -1,41 +1,48 @@
 ﻿using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class KnightController : EnemyController {
+public class KnightController : EnemyController
+{
     [SerializeField] float viewCone = 1;
 
-    readonly int moveXProperty = Animator.StringToHash("Move X");
-    Vector2 offset = new Vector2(0, 0);
+    readonly int _moveXProperty = Animator.StringToHash("Move X");
+    Vector2 _offset = new Vector2(0, 0);
+    RaycastHit2D[] _hit = new RaycastHit2D[3];
 
-    (float, Vector2) FindNearestPlayer() {
-        var players = (PlayerController[]) GameObject.FindObjectsOfType(typeof(PlayerController));
+    (bool, Vector2) FindNearestPlayer()
+    {
         Vector2 playerVector = new Vector2(0, 0);
-        float playerAngle = 180;
+        float minPlayerDistance = Single.PositiveInfinity;
 
-        foreach (var player in players) {
-            Vector2 position = player.GetPosition();
-            Vector2 target = position - Rigidbody2D.position;
-            float angle = Vector2.Angle(target, offset);
+        foreach (var player in GameObject.FindObjectsOfType(typeof(PlayerController)) as PlayerController[])
+        {
+            Vector2 target = player.Center - Rigidbody2D.position;
+            float distance = target.magnitude;
 
-            if (angle < playerAngle) {
-                playerAngle = angle;
+            if (Vector2.Angle(target, _offset) <= viewCone / 2 && distance < minPlayerDistance &&
+                // if no gameObject blocks line of sight to player
+                Physics2D.LinecastNonAlloc(Rigidbody2D.position, player.Center, _hit) == 2)
+            {
+                minPlayerDistance = distance;
                 playerVector = target;
             }
         }
 
-        return (playerAngle, playerVector.normalized);
+        return (!Single.IsInfinity(minPlayerDistance), playerVector.normalized);
     }
 
-    protected override Vector2 ComputeOffset() {
-        (var angle, var vector) = FindNearestPlayer();
+    protected override Vector2 ComputeOffset()
+    {
+        (var playerVisible, var playerDirection) = FindNearestPlayer();
 
-        if (offset != Vector2.zero && angle <= viewCone / 2)
-            offset = Time.deltaTime * directionSpeed * vector;
+        if (_offset != Vector2.zero && playerVisible)
+            _offset = Time.deltaTime * directionSpeed * playerDirection;
         else
-            offset = Time.deltaTime * directionSpeed * direction;
+            _offset = Time.deltaTime * directionSpeed * direction;
 
-        Animator.SetFloat(moveXProperty, offset.x);
-        return offset;
+        Animator.SetFloat(_moveXProperty, _offset.x);
+        return _offset;
     }
 }
