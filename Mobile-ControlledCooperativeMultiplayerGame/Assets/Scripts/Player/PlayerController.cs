@@ -514,6 +514,7 @@ public class PlayerController : EntityController
      */
     public void OnFallAnimationStarted()
     {
+        Collider.enabled = false;
         fallingSounds.PlayOneShot();
     }
 
@@ -522,6 +523,7 @@ public class PlayerController : EntityController
      */
     public void OnFallAnimationComplete()
     {
+        Collider.enabled = true;
         _playerState = PlayerState.walking;
         
         // The falling animation scales the player down.

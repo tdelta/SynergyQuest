@@ -102,12 +102,32 @@ public static class Shapes
         
         clipper.Clear();
         clipper.AddPath(p1, PolyType.ptSubject, true);
-        clipper.AddPath(p2, PolyType.ptClip, true);
+
+        return intersect(p2, clipper);
+    }
+
+    public static Paths Intersection(Paths p1, Path p2, Clipper clipper = null)
+    {
+        if (clipper == null)
+        {
+            clipper = new Clipper();
+        }
+        
+        clipper.Clear();
+        clipper.AddPaths(p1, PolyType.ptSubject, true);
+
+        return intersect(p2, clipper);
+    }
+
+    static Paths intersect(Path p , Clipper clipper)
+    {
+        clipper.AddPath(p, PolyType.ptClip, true);
 
         var solution = new Paths();
         clipper.Execute(ClipType.ctIntersection, solution);
 
         return solution;
+
     }
     
     /**
