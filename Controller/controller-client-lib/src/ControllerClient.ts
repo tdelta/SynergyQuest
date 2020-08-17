@@ -1,6 +1,7 @@
 import WebSocket from 'isomorphic-ws';
 
 import { MessageFormat } from './Message';
+import { boundClass } from 'autobind-decorator';
 
 /**
  * Stores the ids of the different controller buttons
@@ -14,6 +15,7 @@ export enum Button {
   Read = 5,
   Open = 6,
   UseBomb = 7,
+  Exit = 8,
 }
 
 /**
@@ -46,6 +48,11 @@ export enum GameState {
   Lobby = 0,
   Started = 1,
   Menu = 2,
+}
+
+export enum InputMode {
+  Normal = 0,
+  IMUOrientation = 1,
 }
 
 /**
@@ -85,6 +92,7 @@ export enum ConnectFailureReason {
  * For further examples, see the few tests in the folder `__tests__` or the
  * example application `controller-lib-test-app`.
  */
+@boundClass
 export class ControllerClient {
   private socket: WebSocket.WebSocket;
 
@@ -110,6 +118,8 @@ export class ControllerClient {
    */
   private joystickVerticalCache: number = 0;
   private joystickHorizontalCache: number = 0;
+  private imuOrientationVerticalCache: number = 0;
+  private imuOrientationHorizontalCache: number = 0;
   private pressedButtonsCache: Set<Button> = new Set<Button>();
 
   /**
@@ -138,6 +148,8 @@ export class ControllerClient {
    * Current state of the game. E.g. Lobby or Started
    */
   private gameState: GameState = GameState.Lobby;
+
+  private inputMode: InputMode = InputMode.Normal;
 
   /**
    * Callback which can be set by users and which is called if the server
@@ -181,6 +193,8 @@ export class ControllerClient {
    */
   public onGameStateChanged: (state: GameState) => any;
 
+  public onInputModeChanged: (inputMode: InputMode) => any;
+
   /**
    * Callback which can be set by users and which is called whenever the game
    * enables/disables some button for the controller.
@@ -208,17 +222,8 @@ export class ControllerClient {
    * After creating an instance, set the callbacks you want to use and then call
    * the `connect` method.
    */
-  public constructor() {
-    this.ensureReady = this.ensureReady.bind(this);
-    this.sendMessage = this.sendMessage.bind(this);
-    this.handleSocketOpen = this.handleSocketOpen.bind(this);
-    this.handleSocketClose = this.handleSocketClose.bind(this);
-    this.handleSocketError = this.handleSocketError.bind(this);
-    this.handleMessage = this.handleMessage.bind(this);
-    this.setJoystickPosition = this.setJoystickPosition.bind(this);
-    this.setButton = this.setButton.bind(this);
-    this.getColor = this.getColor.bind(this);
-  }
+  // eslint-disable-next-line no-useless-constructor
+  public constructor() {}
 
   /**
    * Connects to the game.
@@ -229,9 +234,9 @@ export class ControllerClient {
    *
    * @param name    Name of the player using this controller
    * @param address The network address where the game is running
-   * @param port    Port where the game is listening for controller connections (optional, default: 4242)
+   * @param port    Port where the game is listening for controller connections (optional, default: 8000)
    **/
-  public connect(name: string, address: string, port: number = 4242) {
+  public connect(name: string, address: string, port: number = 8000) {
     // if the there is already a socket which is not closed or closing...
     if (this.socket?.readyState !== 2 && this.socket?.readyState !== 3) {
       // then close it first
@@ -239,7 +244,7 @@ export class ControllerClient {
     }
 
     // Create a new websocket and connect to the game
-    this.socket = new WebSocket(`ws://${address}:${port}/controllers/`);
+    this.socket = new WebSocket(`wss://${address}:${port}/controllers/`);
 
     // Set all event handlers of the socket to local methods
     this.socket.onopen = (_: Event) => this.handleSocketOpen(name);
@@ -276,6 +281,42 @@ export class ControllerClient {
 
       this.joystickVerticalCache = vertical;
       this.joystickHorizontalCache = horizontal;
+    }
+  }
+
+  /**
+   * Sends a 2d position based on the 3d orientation of the controller device
+   *
+   * @param vertical    2d vertical position interpreted from a 3d rotation
+   *                    position of the controller (roll).
+   *                    Must be a floating point number in [-1; 1]
+   * @param horizontal  2d horizontal position interpreted from a 3d rotation
+   *                    position of the controller (pitch).
+   *                    Must be a floating point number in [-1; 1]
+   */
+  public setImuOrientation(vertical: number, horizontal: number) {
+    if (vertical < -1 || vertical > 1 || horizontal < -1 || horizontal > 1) {
+      throw Error(
+        'Only orientation positions in the interval [-1; 1] are allowed.'
+      );
+    }
+
+    this.ensureReady();
+
+    // Only send new position, if it actually changed
+    if (
+      vertical !== this.imuOrientationVerticalCache ||
+      horizontal !== this.imuOrientationHorizontalCache
+    ) {
+      const msg = MessageFormat.createIMUOrientationMessage(
+        vertical,
+        horizontal
+      );
+
+      this.sendMessage(msg);
+
+      this.imuOrientationVerticalCache = vertical;
+      this.imuOrientationHorizontalCache = horizontal;
     }
   }
 
@@ -325,7 +366,7 @@ export class ControllerClient {
       );
     } else {
       this.ensureReady();
-      var msg = MessageFormat.createMenuActionTriggeredMessage(action);
+      const msg = MessageFormat.createMenuActionTriggeredMessage(action);
 
       this.sendMessage(msg);
     }
@@ -370,6 +411,10 @@ export class ControllerClient {
    */
   public getGameState(): GameState {
     return this.gameState;
+  }
+
+  public getInputMode(): InputMode {
+    return this.inputMode;
   }
 
   /**
@@ -463,6 +508,12 @@ export class ControllerClient {
         this.gameState = msg.gameState;
 
         this.onGameStateChanged?.(msg.gameState);
+      },
+
+      InputModeChangedMessage: msg => {
+        this.inputMode = msg.inputMode;
+
+        this.onInputModeChanged?.(msg.inputMode);
       },
 
       SetEnabledButtonsMessage: msg => {

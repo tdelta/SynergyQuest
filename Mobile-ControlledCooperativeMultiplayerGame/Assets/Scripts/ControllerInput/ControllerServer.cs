@@ -2,7 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using UnityEngine;
-
+using WebSocketSharp.Net;
 using WebSocketSharp.Server;
 
 /**
@@ -34,8 +34,8 @@ public class ControllerServer : BehaviourSingleton<ControllerServer>
     // The maximum number of players/controllers we allow to connect
     [SerializeField] private int _maxNumPlayers = 4;
     
-    // Accepts websocket connections
-    private WebSocketServer _wss;
+    // Accepts websocket connections and serves the controller web page (in production mode)
+    private BaseServer _baseServer;
     // Keeps track of all connections
     private WebSocketSessionManager _wssm;
     // Every connection gets a numeric id. This is the next free id
@@ -66,14 +66,11 @@ public class ControllerServer : BehaviourSingleton<ControllerServer>
      */
     void Awake()
     {
-        Log($"Starting websocket server on port {_port}...");
-        
-        // Bind to all local addresses (0.0.0.0)
-        _wss = new WebSocketServer($"ws://0.0.0.0:{_port}");
+        _baseServer = new BaseServer();
         
         // The `ControllerConnection` class will handle remote controller connections on a different
         // thread.
-        _wss.AddWebSocketService<ControllerConnection>(
+        _baseServer.AddWebSocketService<ControllerConnection>(
             "/controllers",      // we expect connections on the /controllers path
             connection =>
             {
@@ -86,13 +83,13 @@ public class ControllerServer : BehaviourSingleton<ControllerServer>
             });
         
         // Furthermore, we provide a websocket service offering diagnostic data about the game.
-        _wss.AddWebSocketService<DiagnosticsConnection>("/diagnostics");
+        _baseServer.AddWebSocketService<DiagnosticsConnection>("/diagnostics");
 
         // Now we need to get a handle to the session manager which
         // keeps track of all connections, so that we can use it later
         // to send data
         WebSocketServiceHost serviceHost;
-        if (_wss.WebSocketServices.TryGetServiceHost("/controllers", out serviceHost))
+        if (_baseServer.WebSocketServices.TryGetServiceHost("/controllers", out serviceHost))
         {
             _wssm = serviceHost.Sessions;
         }
@@ -102,7 +99,7 @@ public class ControllerServer : BehaviourSingleton<ControllerServer>
             Log("Could not get a hold of the websocket service host. This means we can not send any messages.");
         }
         
-        _wss.Start();
+        _baseServer.Start();
     }
     
     /**
@@ -272,7 +269,7 @@ public class ControllerServer : BehaviourSingleton<ControllerServer>
      */
     private void OnDestroy()
     {
-        _wss.Stop();
+        _baseServer.Stop();
     }
 
     private void Log(String str) {

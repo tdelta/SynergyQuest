@@ -222,7 +222,7 @@ public class PlayerController : EntityController
     private void SetShirtColor(PlayerColor color)
     {
         var material = GetComponent<Renderer>().material;
-        material.SetColor("_ShirtColor", PlayerColorMethods.ColorToRGB(color));
+        material.SetColor("_ShirtColor", color.ToRGB());
     }
 
     void FixedUpdate ()

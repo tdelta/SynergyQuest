@@ -31,7 +31,9 @@ public enum MessageType
     GameStateChanged = 10,   // The state of the game changed, e.g. Lobby -> Game started. Sent by the game 
     VibrationSequence = 11,  // The game wants the controller to vibrate. Sent by the game
     SetEnabledButtons = 12,  // Enable / disable buttons in the controller UI, sent by game
-    SetCooldownButtons = 13  // Mark buttons as "cooling down". The buttons are still enabled, but can currently not be used, since the action has a cooldown, sent by game
+    SetCooldownButtons = 13, // Mark buttons as "cooling down". The buttons are still enabled, but can currently not be used, since the action has a cooldown, sent by game
+    IMUOrientation = 14,     // Orientation of the controller in 3D space (roll and pitch) interpreted as horizontal and vertical movement in 2D space. Sent by controller
+    InputModeChanged = 15,
 }
 
 /**
@@ -85,6 +87,9 @@ public class Message
             case MessageType.Joystick:
                 return JsonUtility.FromJson<JoystickMessage>(str);
             
+            case MessageType.IMUOrientation:
+                return JsonUtility.FromJson<IMUOrientationMessage>(str);
+            
             case MessageType.PlayerColor:
                 return JsonUtility.FromJson<PlayerColorMessage>(str);
             
@@ -105,6 +110,12 @@ public class Message
             
             case MessageType.MenuActionTriggered:
                 return JsonUtility.FromJson<MenuActionTriggeredMessage>(str);
+            
+            case MessageType.GameStateChanged:
+                return JsonUtility.FromJson<GameStateChangedMessage>(str);
+            
+            case MessageType.InputModeChanged:
+                return JsonUtility.FromJson<InputModeChangedMessage>(str);
 
             case MessageType.SetEnabledButtons:
                 return JsonUtility.FromJson<SetEnabledButtonsMessage>(str);
@@ -367,6 +378,26 @@ public class Message
     }
     
     [Serializable]
+    public sealed class InputModeChangedMessage : Message
+    {
+        public InputMode inputMode;
+        
+        public InputModeChangedMessage(InputMode inputMode)
+            : base(MessageType.InputModeChanged)
+        {
+            this.inputMode = inputMode;
+        }
+
+        /**
+         * See base class method for an explanation.
+         */
+        public override void Match( Matcher matcher )
+        {
+            matcher.InputModeChangedMessage(this);
+        }
+    }
+    
+    [Serializable]
     public sealed class VibrationSequenceMessage : Message
     {
         /**
@@ -395,6 +426,28 @@ public class Message
         }
     }
     
+    [Serializable]
+    public sealed class IMUOrientationMessage : Message
+    {
+        public float vertical;
+        public float horizontal;
+        
+        public IMUOrientationMessage(float vertical, float horizontal)
+            : base(MessageType.IMUOrientation)
+        {
+            this.vertical = vertical;
+            this.horizontal = horizontal;
+        }
+        
+        /**
+         * See base class method for an explanation.
+         */
+        public override void Match( Matcher matcher )
+        {
+            matcher.IMUOrientationMessage(this);
+        }
+    }
+    
     /**
      * See `Match` method for an explanation.
      */
@@ -410,9 +463,11 @@ public class Message
         public Action<SetMenuActionsMessage> SetMenuActionsMessage = _ => {};
         public Action<MenuActionTriggeredMessage> MenuActionTriggeredMessage = _ => {};
         public Action<GameStateChangedMessage> GameStateChangedMessage = _ => {};
+        public Action<InputModeChangedMessage> InputModeChangedMessage = _ => {};
         public Action<SetEnabledButtonsMessage> SetEnabledButtonsMessage = _ => {};
         public Action<SetCooldownButtonsMessage> SetCooldownButtonsMessage = _ => {};
         public Action<VibrationSequenceMessage> VibrationSequenceMessage = _ => {};
+        public Action<IMUOrientationMessage> IMUOrientationMessage = _ => {};
     }
 
     /**

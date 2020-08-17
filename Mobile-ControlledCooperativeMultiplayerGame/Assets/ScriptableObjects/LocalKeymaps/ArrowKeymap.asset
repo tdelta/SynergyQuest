@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   horizontalAxis: HorizontalArrows
   verticalAxis: VerticalArrows
+  imuOrientationModifier: 303
   buttonMappings:
   - button: 0
     keyCode: 106
@@ -31,4 +32,6 @@ MonoBehaviour:
     keyCode: 111
   - button: 7
     keyCode: 110
+  - button: 8
+    keyCode: 109
   pauseKey: 112

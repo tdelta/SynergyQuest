@@ -1,4 +1,10 @@
-import { Button, MenuAction, PlayerColor, GameState } from './ControllerClient';
+import {
+  Button,
+  MenuAction,
+  PlayerColor,
+  GameState,
+  InputMode,
+} from './ControllerClient';
 
 /**
  * This namespace describes the format of messages sent between controller and
@@ -43,6 +49,9 @@ export namespace MessageFormat {
     // Mark buttons as "cooling down". The buttons are still enabled, but can
     // currently not be used, since the action has a cooldown, sent by game
     SetCooldownButtons = 13,
+    // Orientation of the controller in 3D space (roll and pitch) interpreted as horizontal and vertical movement in 2D space. Sent by controller
+    IMUOrientation = 14,
+    InputModeChanged = 15,
   }
 
   /**
@@ -90,6 +99,22 @@ export namespace MessageFormat {
   ): JoystickMessage {
     return {
       type: MessageType.Joystick,
+      vertical: vertical,
+      horizontal: horizontal,
+    };
+  }
+
+  export interface IMUOrientationMessage extends Message {
+    readonly vertical: number;
+    readonly horizontal: number;
+  }
+
+  export function createIMUOrientationMessage(
+    vertical: number,
+    horizontal: number
+  ): IMUOrientationMessage {
+    return {
+      type: MessageType.IMUOrientation,
       vertical: vertical,
       horizontal: horizontal,
     };
@@ -147,6 +172,10 @@ export namespace MessageFormat {
     readonly gameState: GameState;
   }
 
+  export interface InputModeChangedMessage extends Message {
+    readonly inputMode: InputMode;
+  }
+
   export interface VibrationSequenceMessage extends Message {
     /**
      * Indicates how the controller shall vibrate.
@@ -199,6 +228,9 @@ export namespace MessageFormat {
       case MessageType.Joystick:
         matcher.JoystickMessage(msg as JoystickMessage);
         break;
+      case MessageType.IMUOrientation:
+        matcher.IMUOrientationMessage(msg as IMUOrientationMessage);
+        break;
       case MessageType.PlayerColor:
         matcher.PlayerColorMessage(msg as PlayerColorMessage);
         break;
@@ -223,6 +255,9 @@ export namespace MessageFormat {
       case MessageType.GameStateChanged:
         matcher.GameStateChangedMessage(msg as GameStateChangedMessage);
         break;
+      case MessageType.InputModeChanged:
+        matcher.InputModeChangedMessage(msg as InputModeChangedMessage);
+        break;
       case MessageType.SetEnabledButtons:
         matcher.SetEnabledButtonsMessage(msg as SetEnabledButtonsMessage);
         break;
@@ -241,6 +276,7 @@ export namespace MessageFormat {
   export interface Matcher {
     readonly ButtonMessage: (_: ButtonMessage) => any;
     readonly JoystickMessage: (_: JoystickMessage) => any;
+    readonly IMUOrientationMessage: (_: IMUOrientationMessage) => any;
     readonly PlayerColorMessage: (_: PlayerColorMessage) => any;
     readonly NameMessage: (_: NameMessage) => any;
     readonly NameTakenMessage: (_: NameTakenMessage) => any;
@@ -249,6 +285,7 @@ export namespace MessageFormat {
     readonly SetMenuActionsMessage: (_: SetMenuActionsMessage) => any;
     readonly MenuActionTriggeredMessage: (_: MenuActionTriggeredMessage) => any;
     readonly GameStateChangedMessage: (_: GameStateChangedMessage) => any;
+    readonly InputModeChangedMessage: (_: InputModeChangedMessage) => any;
     readonly SetEnabledButtonsMessage: (_: SetEnabledButtonsMessage) => any;
     readonly SetCooldownButtonsMessage: (_: SetCooldownButtonsMessage) => any;
     readonly VibrationSequenceMessage: (_: VibrationSequenceMessage) => any;
@@ -263,6 +300,7 @@ export namespace MessageFormat {
   export const defaultMatcher: Matcher = {
     ButtonMessage: _ => {},
     JoystickMessage: _ => {},
+    IMUOrientationMessage: _ => {},
     PlayerColorMessage: _ => {},
     NameMessage: _ => {},
     NameTakenMessage: _ => {},
@@ -271,6 +309,7 @@ export namespace MessageFormat {
     SetMenuActionsMessage: _ => {},
     MenuActionTriggeredMessage: _ => {},
     GameStateChangedMessage: _ => {},
+    InputModeChangedMessage: _ => {},
     SetEnabledButtonsMessage: _ => {},
     SetCooldownButtonsMessage: _ => {},
     VibrationSequenceMessage: _ => {},

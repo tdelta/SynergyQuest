@@ -21,7 +21,7 @@ public class TrapController: MonoBehaviour
     this.Color = color;
 
     _material = GetComponent<Renderer>().material;
-    _material.SetColor("_Color", PlayerColorMethods.ColorToRGB(this.Color));
+    _material.SetColor("_Color", this.Color.ToRGB());
 
     ShowColor();
   }

@@ -12,5 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc90f977cabf4c11a33e8d8b0f87092e, type: 3}
   m_Name: DebugSettings
   m_EditorClassIdentifier: 
-  _localDebugPlayers: []
+  _localDebugPlayers:
+  - color: 1
+    inputPrefab: {fileID: 1573775178793761210, guid: 6172303992b7e6a2c842047a617fdf1b,
+      type: 3}
+  - color: 0
+    inputPrefab: {fileID: 6251779979876397523, guid: 61888bbb05087ffe08413a23369b728b,
+      type: 3}
   _defaultDungeonPlayerNum: 2

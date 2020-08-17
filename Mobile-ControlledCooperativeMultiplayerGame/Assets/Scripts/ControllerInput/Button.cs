@@ -11,5 +11,6 @@ public enum Button
     Throw = 4,
     Read = 5,
     Open = 6,
-    UseBomb = 7
+    UseBomb = 7,
+    Exit = 8
 }

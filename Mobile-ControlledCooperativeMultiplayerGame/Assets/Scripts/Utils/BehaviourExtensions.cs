@@ -1,3 +1,4 @@
+using Cinemachine;
 using UnityEngine;
 
 /**
@@ -24,6 +25,27 @@ public static class BehaviourExtensions
         {
             collider.enabled = visible;
         }
+
+        foreach (var interactive in self.GetComponents<Interactive>())
+        {
+            interactive.enabled = visible;
+        }
+
+        if (self.CompareTag("Player"))
+        {
+            foreach (var cinemachineTargetGroup in Object.FindObjectsOfType<CinemachineTargetGroup>())
+            {
+                if (visible)
+                {
+                    cinemachineTargetGroup.AddMember(self.transform, 1.0f, 0.0f);
+                }
+
+                else
+                {
+                    cinemachineTargetGroup.RemoveMember(self.transform);
+                }
+            }
+        }
     }
 
     public static void MakeInvisible(this GameObject self)
@@ -34,6 +56,19 @@ public static class BehaviourExtensions
     public static void MakeVisible(this GameObject self)
     {
         self.SetVisibility(true);
+    }
+
+    public static void Freeze(this GameObject self, bool freeze = true)
+    {
+        if (self.GetComponent<Rigidbody2D>() is Rigidbody2D body && body != null)
+        {
+            body.simulated = !freeze;
+        }
+    }
+    
+    public static void UnFreeze(this GameObject self)
+    {
+        self.Freeze(false);
     }
     
     /**

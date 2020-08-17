@@ -82,4 +82,52 @@ public static class CollectionsExtensions
 
         return max;
     }
+
+    public static T[] Plus<T>(this T[] array, T newElement)
+    { 
+        var newArray = new T[array.Length + 1];
+        
+        Array.Copy(array, 0, newArray, 0, array.Length);
+        newArray[array.Length] = newElement;
+
+        return newArray;
+    }
+    
+    public static T[] Prepend<T>(this T[] array, T newElement)
+    { 
+        var newArray = new T[array.Length + 1];
+
+        newArray[0] = newElement;
+        Array.Copy(array, 0, newArray, 1, array.Length);
+
+        return newArray;
+    }
+
+    public static T[] RemoveFirst<T>(this T[] array, T value)
+    {
+        var idx = Array.IndexOf(array, value);
+        if (idx >= 0)
+        {
+            return array.RemoveAt(idx);
+        }
+
+        else
+        {
+            return array;
+        }
+    }
+
+    public static T[] RemoveAt<T>(this T[] array, int index)
+    {
+        var newArray = new T[array.Length - 1];
+        
+        Array.Copy(array, 0, newArray, 0, index);
+
+        if (index < array.Length - 1)
+        {
+            Array.Copy(array, index + 1, newArray, index, array.Length - index - 1);
+        }
+
+        return newArray;
+    }
 }

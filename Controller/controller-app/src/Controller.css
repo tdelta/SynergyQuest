@@ -110,3 +110,8 @@
   align-items: center;
   justify-content: center;
 }
+
+canvas {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}

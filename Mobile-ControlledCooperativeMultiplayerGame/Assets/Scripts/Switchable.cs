@@ -43,16 +43,30 @@ public class Switchable : MonoBehaviour
 
     void Awake()
     {
+        BuildSwitches();
+    }
+
+    private void BuildSwitches()
+    {
         // Auto-discover switches by tags and add them to the manually configured ones
         switches = autoDiscoveredSwitchTags
             .SelectMany(GameObject.FindGameObjectsWithTag)
             .Select(gameObject => gameObject.GetComponent<Switch>())
             .Concat(switches)
+            .Distinct() // Have no duplicate switches
             .ToArray();
 
         // Allocate memory in our caches for every switch
         _switchValues = new bool[switches.Length];
         _switchChangeHandlers = new Switch.ValueChangedAction[switches.Length];
+    }
+
+    public void AddSwitches(params Switch[] additionalSwitches)
+    {
+        OnDisable();
+        switches = switches.Concat(additionalSwitches).ToArray();
+        BuildSwitches();
+        OnEnable();
     }
 
     private void Start()
@@ -66,7 +80,7 @@ public class Switchable : MonoBehaviour
         for (int i = 0; i < switches.Length; ++i)
         {
             var switchObj = switches[i];
-            if (switchObj != null)
+            if ( switchObj != null )
             {
                 _switchValues[i] = false;
                 
@@ -87,7 +101,7 @@ public class Switchable : MonoBehaviour
         for (int i = 0; i < switches.Length; ++i)
         {
             var switchObj = switches[i];
-            if (switchObj != null)
+            if (i < _switchChangeHandlers.Length && switchObj != null)
             {
                 switchObj.OnValueChanged -= _switchChangeHandlers[i];
             }

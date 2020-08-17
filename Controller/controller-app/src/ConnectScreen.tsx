@@ -2,6 +2,7 @@ import React from 'react';
 import './ConnectScreen.css';
 import { ReactComponent as Logo } from './gfx/logo_web.svg';
 import { DiagnosticsClient } from 'controller-client-lib';
+import { diagnosticsPort } from './consts';
 
 export class ConnectScreen extends React.Component<
   ConnectScreenProbs,
@@ -26,7 +27,7 @@ export class ConnectScreen extends React.Component<
           // Ask the server, if there are currently players who lost their connection
           const diagnostics = await DiagnosticsClient.getDiagnostics(
             window.location.hostname,
-            4242
+            diagnosticsPort
           );
 
           // If we are one of the players with the lost connection, we immediately

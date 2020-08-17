@@ -4,6 +4,7 @@ export {
   MenuAction,
   PlayerColor,
   GameState,
+  InputMode,
   ConnectFailureReason,
 } from './ControllerClient';
 

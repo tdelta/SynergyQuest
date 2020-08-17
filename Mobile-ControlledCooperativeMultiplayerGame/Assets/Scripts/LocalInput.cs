@@ -16,6 +16,11 @@ public class LocalInput: MonoBehaviour, Input
      * What color these controls shall report. It emulates the color assignment remote controllers undergo
      */
     [SerializeField] private PlayerColor color;
+
+    public InputMode InputMode {
+        get;
+        set;
+    } = InputMode.Normal;
     
     public event MenuActionTriggeredAction OnMenuActionTriggered;
 
@@ -85,7 +90,17 @@ public class LocalInput: MonoBehaviour, Input
     {
         return UnityEngine.Input.GetAxis(keymap.HorizontalAxis);
     }
-    
+
+    public float GetIMUOrientationVertical()
+    {
+        return UnityEngine.Input.GetKey(keymap.ImuOrientationModifier) ? UnityEngine.Input.GetAxis(keymap.VerticalAxis) : 0;
+    }
+
+    public float GetIMUOrientationHorizontal()
+    {
+        return UnityEngine.Input.GetKey(keymap.ImuOrientationModifier) ? UnityEngine.Input.GetAxis(keymap.HorizontalAxis) : 0;
+    }
+
     /**
      * The built-in local controls always return the color they were initialized with.
      */

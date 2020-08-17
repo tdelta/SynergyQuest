@@ -54,6 +54,7 @@
     "dist"
   ],
   "dependencies": {
+    "autobind-decorator": "^2.4.0",
     "isomorphic-ws": "^4.0.1",
     "ws": "^7.3.0"
   }

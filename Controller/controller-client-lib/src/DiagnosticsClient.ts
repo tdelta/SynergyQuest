@@ -1,6 +1,7 @@
 import WebSocket from 'isomorphic-ws';
 
 import { DiagnosticsMessageFormat } from './DiagnosticsMessage';
+import { boundClass } from 'autobind-decorator';
 
 /**
  * Allows to connect to the diagnostics service of a Coop-Dungeon game and
@@ -16,24 +17,25 @@ import { DiagnosticsMessageFormat } from './DiagnosticsMessage';
  * For an usage example, see the `controller-app` or the
  * `controller-lib-test-app`.
  */
+@boundClass
 export class DiagnosticsClient {
   /**
    * Retrieves diagnostic information about a running game.
    *
    * @param address The network address where the game is running
-   * @param port    Port where the game is listening for connections (optional, default: 4242)
+   * @param port    Port where the game is listening for connections (optional, default: 8000)
    * @param timeout time after which to abort if no data has been received from the game yet
    * @returns promise with the diagnostic data
    */
   public static getDiagnostics(
     address: string,
-    port: number = 4242,
+    port: number = 8000,
     timeout: number = 1000
   ): Promise<DiagnosticsMessageFormat.DiagnosticsMessage> {
     var promise = new Promise<DiagnosticsMessageFormat.DiagnosticsMessage>(
       (resolve, reject) => {
         // Connect to game...
-        var socket = new WebSocket(`ws://${address}:${port}/diagnostics/`);
+        var socket = new WebSocket(`wss://${address}:${port}/diagnostics/`);
 
         // This variable will record, whether we already retrieved information
         // from the server and resolved the promise,

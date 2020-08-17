@@ -13,15 +13,14 @@ public class PlatformTransportable : MonoBehaviour
     /**
      * Platforms this game object is currently in contact with
      */
-    public HashSet<PlatformController> PlatformsInContact { get; } = new HashSet<PlatformController>();
+    public HashSet<Platform> PlatformsInContact { get; } = new HashSet<Platform>();
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        // If the object we touched is a PlatformController, register it in the list of platforms we are currently in
+        // If the object we touched is a Platform, register it in the list of platforms we are currently in
         // contact with.
-        if (other.GetComponent<PlatformController>() is PlatformController platform)
+        if (other.GetComponent<Platform>() is Platform platform)
         {
-            Debug.Log($"Added platform for {this.name}");
             PlatformsInContact.Add(platform);
         }
     }
@@ -30,7 +29,7 @@ public class PlatformTransportable : MonoBehaviour
     {
         // If the object we stopped touching is a PlatformController, unregister it from the list of platforms we are
         // currently in contact with.
-        if (other.GetComponent<PlatformController>() is PlatformController platform)
+        if (other.GetComponent<Platform>() is Platform platform)
         {
             PlatformsInContact.Remove(platform);
         }

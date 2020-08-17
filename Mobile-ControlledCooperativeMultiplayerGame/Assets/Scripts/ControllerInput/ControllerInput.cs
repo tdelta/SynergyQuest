@@ -54,6 +54,23 @@ public class ControllerInput: Input
     // We cache the last inputs reported by a controller here
     private float _vertical   = 0.0f;  // vertical joystick position
     private float _horizontal = 0.0f;  // horizontal joystick position
+    
+    private float _imuOrientationVertical   = 0.0f;  // 3D rotation (roll) interpreted as vertical 2d input
+    private float _imuOrientationHorizontal = 0.0f;  // 3D rotation (pitch) interpreted as horitontal 2d input
+
+    private InputMode _inputMode = InputMode.Normal;
+
+    public InputMode InputMode
+    {
+        get => _inputMode;
+        set
+        {
+            _inputMode = value;
+            
+            var msg = new Message.InputModeChangedMessage(value);
+            SendMessage(msg);
+        }
+    }
 
     // Store whether any button is currently pressed
     private Dictionary<Button, ButtonPressState> _buttonPressStates = new Dictionary<Button, ButtonPressState>(); 
@@ -106,6 +123,16 @@ public class ControllerInput: Input
     public float GetHorizontal()
     {
         return _horizontal;
+    }
+
+    public float GetIMUOrientationVertical()
+    {
+        return _imuOrientationVertical;
+    }
+
+    public float GetIMUOrientationHorizontal()
+    {
+        return _imuOrientationHorizontal;
     }
 
     /**
@@ -341,6 +368,7 @@ public class ControllerInput: Input
                 SetColor(_playerColor);
                 SendEnabledButtons();
                 SendCooldownButtons();
+                InputMode = InputMode;
                 
                 OnReconnect?.Invoke(this);
 
@@ -387,6 +415,12 @@ public class ControllerInput: Input
             {
                 _vertical = msg.vertical;
                 _horizontal = msg.horizontal;
+            },
+            
+            IMUOrientationMessage = msg =>
+            {
+                _imuOrientationVertical = msg.vertical;
+                _imuOrientationHorizontal = msg.horizontal;
             },
             
             MenuActionTriggeredMessage = msg =>

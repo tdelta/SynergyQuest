@@ -116,6 +116,12 @@ public class PhysicsEffects: MonoBehaviour
         transform.position = position;
         rigidbody2D.position = position;
     }
+    
+    public void Teleport2D(Vector2 position)
+    {
+        transform.position = new Vector3(position.x, position.y, transform.position.z);
+        rigidbody2D.position = position;
+    }
 
     /**
      * Applies speed changes to an entities movement according to the given impulse.

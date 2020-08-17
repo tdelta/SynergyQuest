@@ -10,7 +10,7 @@ The server part of the Game is implemented by the `ControllerInput` prefab /
 the `ControllerInput.cs` script.
 
 You can quickly test this library by starting the game in the `TestRoom` scene
-with the `ControllerDebugUI` component and running `npm test`.
+with the `ControllerDebugUI` component and running `yarn test`.
 See also the `./__tests__/send.ts` file.
 
 Furthermore, a react testing app which uses this app can be found at
@@ -21,19 +21,19 @@ Furthermore, a react testing app which uses this app can be found at
 Install dependencies:
 
 ```bash
-npm install
+yarn install
 ```
 
 To build the library
 
 ```bash
-npm run build
+yarn build
 ```
 
 To add the library to a node app:
 
 ```bash
-npm install --save path/to/controller-client-lib
+yarn add path/to/controller-client-lib
 ```
 
 For a full usage example see `../controller-lib-test-app`;

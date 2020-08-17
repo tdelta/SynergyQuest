@@ -1,11 +1,12 @@
 import React from 'react';
 import {
+  Button,
+  ConnectFailureReason,
+  ControllerClient,
   GameState,
   MenuAction,
   PlayerColor,
-  ControllerClient,
-  ConnectFailureReason,
-  Button,
+  InputMode,
 } from 'controller-client-lib';
 import { ConnectScreen } from './ConnectScreen';
 import { LobbyScreen } from './LobbyScreen';
@@ -14,6 +15,7 @@ import * as consts from './consts';
 import { Controller } from './Controller';
 import { LoadingScreen } from './LoadingScreen';
 import './App.css';
+import { boundClass } from 'autobind-decorator';
 
 /**
  * The following interfaces form an ADT to track the state of the connection
@@ -58,6 +60,7 @@ export interface AppState {
   verticalSliderVal: number;
   enabledMenuActions: Set<MenuAction>;
   gameState: GameState;
+  inputMode: InputMode;
   enabledButtons: Set<Button>;
   cooldownButtons: Set<Button>;
 }
@@ -65,6 +68,7 @@ export interface AppState {
 /**
  * Main UI class
  */
+@boundClass
 class App extends React.Component<{}, AppState> {
   private static readonly initialState: AppState = {
     connectionStatus: NotConnectedC,
@@ -76,18 +80,13 @@ class App extends React.Component<{}, AppState> {
     verticalSliderVal: 0,
     enabledMenuActions: new Set<MenuAction>(),
     gameState: GameState.Lobby,
+    inputMode: InputMode.Normal,
     enabledButtons: new Set<Button>(),
     cooldownButtons: new Set<Button>(),
   };
 
   constructor(props: {}) {
     super(props);
-
-    this.connect = this.connect.bind(this);
-    this.startGame = this.startGame.bind(this);
-    this.pause = this.pause.bind(this);
-    this.triggerMenuAction = this.triggerMenuAction.bind(this);
-    this.displayFailure = this.displayFailure.bind(this);
 
     // Initialize as not connected
     this.state = App.initialState;
@@ -113,6 +112,7 @@ class App extends React.Component<{}, AppState> {
         connectionStatus: ConnectedC(client),
         failureMessage: undefined,
         gameState: client.getGameState(),
+        inputMode: client.getInputMode(),
       });
     };
 
@@ -178,6 +178,12 @@ class App extends React.Component<{}, AppState> {
         gameState: state,
       });
 
+    client.onInputModeChanged = (inputMode: InputMode) =>
+      this.setState({
+        ...this.state,
+        inputMode: inputMode,
+      });
+
     client.onVibrationRequest = (vibrationPattern: number[]) =>
       window.navigator.vibrate(vibrationPattern);
 
@@ -239,6 +245,7 @@ class App extends React.Component<{}, AppState> {
             body = (
               <Controller
                 client={this.state.connectionStatus.client}
+                inputMode={this.state.inputMode}
                 playerColor={consts.colors[this.state.color]}
                 enabledButtons={this.state.enabledButtons}
                 cooldownButtons={this.state.cooldownButtons}

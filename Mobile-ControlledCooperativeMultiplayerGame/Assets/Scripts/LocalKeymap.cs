@@ -18,6 +18,9 @@ public class LocalKeymap : ScriptableObject
     private string verticalAxis = "Vertical";
     public string VerticalAxis => verticalAxis;
 
+    [SerializeField] private KeyCode imuOrientationModifier = KeyCode.LeftShift;
+    public KeyCode ImuOrientationModifier => imuOrientationModifier;
+
     [SerializeField]
     private ButtonMapping[] buttonMappings =
     {
@@ -29,6 +32,7 @@ public class LocalKeymap : ScriptableObject
         new ButtonMapping(Button.Read, KeyCode.Q),
         new ButtonMapping(Button.Open, KeyCode.E),
         new ButtonMapping(Button.UseBomb, KeyCode.B),
+        new ButtonMapping(Button.Exit, KeyCode.Less),
     };
 
     private Dictionary<Button, KeyCode> _buttonMappingDictCache;

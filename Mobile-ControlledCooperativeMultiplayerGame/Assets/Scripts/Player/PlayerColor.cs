@@ -69,7 +69,7 @@ public static class PlayerColorMethods
     /*
      * Get RGB values for the player colors. Can be displayed in a material
      */
-    public static Color ColorToRGB(PlayerColor color)
+    public static Color ToRGB(this PlayerColor color)
     {
         switch (color)
         {
