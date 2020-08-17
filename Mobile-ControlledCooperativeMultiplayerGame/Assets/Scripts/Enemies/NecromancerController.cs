@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class NecromancerController : EnemyController
 {
@@ -88,7 +86,7 @@ public class NecromancerController : EnemyController
                 var material = GetComponent<Renderer>().material;
                 _currentColor = PlayerColorMethods.NextColor(_attackingPlayer.Color,
                     PlayerDataKeeper.Instance.NumPlayers);
-                material.SetColor("_CapeColor", PlayerColorMethods.ColorToRGB(_currentColor));
+                material.SetColor("_CapeColor", _currentColor.ToRGB());
 
                 return base.ChangeHealth(amount, playSounds);
             }

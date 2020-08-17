@@ -103,9 +103,9 @@ export class OrientationControls extends React.Component<
             <Layer>
               <Text
                 text='Tilt your phone to control the platform!'
-                fontFamily="m6x11"
-                fontSize={0.07*canvasHeight}
-                fill="white"
+                fontFamily='m6x11'
+                fontSize={0.07 * canvasHeight}
+                fill='white'
                 width={canvasWidth}
                 align='center'
                 y={0.1 * canvasHeight}
