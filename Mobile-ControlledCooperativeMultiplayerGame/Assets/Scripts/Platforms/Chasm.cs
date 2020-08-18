@@ -85,6 +85,10 @@ public class Chasm : MonoBehaviour
             }
         }
     }
-    
+
+    public static bool IsOnChasm(Collider2D collider)
+    {
+        return collider.IsTouchingLayers(LayerMask.GetMask("Chasm"));
+    }
 }
 

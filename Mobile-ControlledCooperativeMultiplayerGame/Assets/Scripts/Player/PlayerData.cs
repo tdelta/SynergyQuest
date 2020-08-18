@@ -17,7 +17,20 @@ public class PlayerData
     public Input input => _input;
     public Item item { get; set; }
 
-    public int goldCounter = 0;
+    private int _goldCounter = 0;
+
+    public int GoldCounter
+    {
+        get => _goldCounter;
+        set
+        {
+            _goldCounter = value;
+            OnGoldCounterChanged?.Invoke(value);
+        }
+    }
+
+    public delegate void GoldCounterChangedAction(int goldCounter);
+    public event GoldCounterChangedAction OnGoldCounterChanged;
 
     public string name
     {

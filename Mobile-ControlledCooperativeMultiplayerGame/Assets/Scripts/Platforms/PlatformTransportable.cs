@@ -1,19 +1,27 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 /**
- * This component marks a game object to be able to be transported by a platform, see also `PlatformController`.
+ * This component marks a game object to be able to be transported by a platform, see also `Platform`.
  * 
  * It also keeps track of all platforms the object currently touches so that this information can be used by the `Chasm`
  * class to determine whether a player can not fall down a chasm because they are standing on a platform.
  */
 public class PlatformTransportable : MonoBehaviour
 {
+    private Collider2D _collider;
+    
     /**
      * Platforms this game object is currently in contact with
      */
     public HashSet<Platform> PlatformsInContact { get; } = new HashSet<Platform>();
+
+    private void Awake()
+    {
+        _collider = GetComponent<Collider2D>();
+    }
 
     private void OnTriggerEnter2D(Collider2D other)
     {

@@ -22,6 +22,16 @@ public struct Optional<T>
         return new Optional<T>(default(T), false);
     }
 
+    public bool IsSome()
+    {
+        return this._hasValue;
+    }
+
+    public bool IsNone()
+    {
+        return !IsSome();
+    }
+
     public void Match(
         Action<T> some,
         Action none
@@ -35,6 +45,22 @@ public struct Optional<T>
         else
         {
             none();
+        }
+    }
+    
+    public R Match<R>(
+        Func<T, R> some,
+        Func<R> none
+    )
+    {
+        if (_hasValue)
+        {
+            return some(_value);
+        }
+
+        else
+        {
+            return none();
         }
     }
 }

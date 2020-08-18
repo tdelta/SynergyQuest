@@ -1,38 +1,43 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class CoinGaugeController : MonoBehaviour
 {
-    GameObject goldText;
+    // ToDo: Adjust height, so that lifeGauge and goldGauge can be displayed concurrently!
+    
+    private TextMesh _goldText;
+    private PlayerController _player;
 
-    // Start is called before the first frame update
-    void Start()
+    public void Init(PlayerController player)
     {
-        //goldText = this.gameObject.transform.GetChild(0).gameObject; 
+        _player = player;
+        _player.Data.OnGoldCounterChanged += DrawGoldCounter;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Awake()
     {
-        
+        _goldText = this.gameObject.transform.GetChild(0).gameObject.GetComponent<TextMesh>();
     }
 
-    public void DrawColdCounter(int cold) {
-        goldText = this.gameObject.transform.GetChild(0).gameObject;
+    private void OnDestroy()
+    {
+        if (_player != null)
+        {
+            _player.Data.OnGoldCounterChanged -= DrawGoldCounter;
+        }
+    }
+
+    public void DrawGoldCounter(int gold) {
         this.gameObject.SetActive(true);
-        this.gameObject.transform.GetChild(0);
 
-        TextMesh text = this.goldText.GetComponent<TextMesh>();
-        text.text = cold.ToString();
+        _goldText.text = gold.ToString();
         StartCoroutine(DeactiveCoroutine());
     }
 
-    public IEnumerator DeactiveCoroutine() {
+    IEnumerator DeactiveCoroutine() {
         yield return new WaitForSeconds(2f);
         this.gameObject.SetActive(false);
     }
-
 }
 
 

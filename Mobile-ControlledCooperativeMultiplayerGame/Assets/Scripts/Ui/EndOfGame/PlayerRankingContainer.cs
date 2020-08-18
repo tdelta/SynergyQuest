@@ -17,14 +17,14 @@ public class PlayerRankingContainer : MonoBehaviour
     {
         var playerRankings = PlayerDataKeeper.Instance
             .PlayerDatas
-            .OrderByDescending(data => data.goldCounter)
-            .GroupBy(data => data.goldCounter)
+            .OrderByDescending(data => data.GoldCounter)
+            .GroupBy(data => data.GoldCounter)
             .SelectMany((group, index) =>
                 group.Select(data => new Ranking()
                 {
                     Rank = index + 1,
                     Name = data.name,
-                    Gold = data.goldCounter
+                    Gold = data.GoldCounter
                 })
             )
             .Take(4)

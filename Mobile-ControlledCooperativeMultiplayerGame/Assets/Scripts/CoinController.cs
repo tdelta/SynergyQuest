@@ -5,6 +5,11 @@ public class CoinController : MonoBehaviour
 {
     [SerializeField] private float thrust;
     [SerializeField] private int deactivationTime;
+
+    public void Init(int deactivationTimeOverride)
+    {
+        deactivationTime = deactivationTimeOverride;
+    }
     
     // Start is called before the first frame update
     void Start()

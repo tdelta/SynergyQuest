@@ -1,4 +1,4 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -18,16 +18,17 @@ public enum PlayerState{
 public class PlayerController : EntityController
 {
     [SerializeField] private GameObject lifeGauge;
-    [SerializeField] private GameObject coinGauge;
+    [SerializeField] private CoinGaugeController coinGauge;
     
     [SerializeField] private float speed = 3.0f; // units per second
     [SerializeField] private int maxHealthPoints = 5;
-    [SerializeField] private float boxPullRange;
     [SerializeField] private MultiSound fightingSounds;
     [SerializeField] private MultiSound hitSounds;
     [SerializeField] private MultiSound deathSounds;
     [SerializeField] private MultiSound fallingSounds;
     [SerializeField] private InteractionSpeechBubble interactionSpeechBubble;
+    [SerializeField] private int goldLossOnDeath = 10;
+    [SerializeField] private CoinController coinPrefab;
     /**
      * Position where `Throwable`s move when being carried by this player
      */
@@ -63,6 +64,7 @@ public class PlayerController : EntityController
     private Renderer _renderer;
     private ItemController _itemController;
     private Throwable _throwable;
+    private ChasmContactTracker _chasmContactTracker;
 
     /**
      * Used to briefly flash the player in a certain color. For example red when they are hit.
@@ -81,6 +83,8 @@ public class PlayerController : EntityController
      * All player properties which shall persist across scenes.
      */
     private PlayerData _data;
+    public PlayerData Data => _data;
+    
     public Input Input => _data.input;
 
     public LinkedList<ItemDescription> CollectedItems => _data.CollectedItems;
@@ -162,11 +166,13 @@ public class PlayerController : EntityController
     protected override void Awake()
     {
         base.Awake();
+        
         _throwable = GetComponent<Throwable>();
         Collider = GetComponent<BoxCollider2D>();
         _tintFlashController = GetComponent<TintFlashController>();
         _renderer = GetComponent<Renderer>();
         _itemController = GetComponent<ItemController>();
+        _chasmContactTracker = GetComponent<ChasmContactTracker>();
     }
 
     private void OnEnable()
@@ -199,6 +205,8 @@ public class PlayerController : EntityController
 
             PlayerDataKeeper.Instance.RegisterExistingInstance(this, localInput);
         }
+        
+        coinGauge.Init(this);
 
         _healthPoints = maxHealthPoints;
         _playerState = PlayerState.walking;
@@ -284,6 +292,22 @@ public class PlayerController : EntityController
             {
                 deathSounds.PlayOneShot();
             }
+
+            // If we died, we want to spawn gold on our last position
+            var lostGold = Math.Min(goldLossOnDeath, _data.GoldCounter);
+            _data.GoldCounter -= lostGold;
+            // If we were on a chasm while dying, we want to spawn the gold on the last position on solid ground before
+            // we entered the chasm
+            var goldSpawnPosition = _chasmContactTracker.ChasmEntryPoint.Match(
+                some: lastPosition => lastPosition,
+                none: () => this.Collider.bounds.center
+            );
+            // spawn the gold
+            for (int i = 0; i < lostGold; ++i)
+            {
+                Instantiate(coinPrefab, goldSpawnPosition, Quaternion.identity);
+            }
+            
             OnRespawn?.Invoke(this);
         }
         
@@ -329,12 +353,6 @@ public class PlayerController : EntityController
             );
         
         this.lifeGauge.GetComponent<LifeGauge>().DrawLifeGauge(_healthPoints, maxHealthPoints);
-    }
-
-    private void DisplayCoinGauge()
-    {
-        // ToDo: Adjust height, so that lifeGauge and goldGauge can be displayed concurrently!
-        this.coinGauge.GetComponent<CoinGaugeController>().DrawColdCounter(this._data.goldCounter);
     }
 
     private void Attack()
@@ -540,8 +558,7 @@ public class PlayerController : EntityController
 
     public void IncreaseGoldCounter()
     {
-        _data.goldCounter++;
-        DisplayCoinGauge();
+        _data.GoldCounter++;
     }
     
     public bool Collect(ItemDescription itemDescription)
