@@ -4,6 +4,7 @@ import {
   PlayerColor,
   GameState,
   InputMode,
+  PlayerInfo,
 } from './ControllerClient';
 
 /**
@@ -52,6 +53,8 @@ export namespace MessageFormat {
     // Orientation of the controller in 3D space (roll and pitch) interpreted as horizontal and vertical movement in 2D space. Sent by controller
     IMUOrientation = 14,
     InputModeChanged = 15,
+    // Information about the player (health and gold)
+    PlayerInfo = 16,
   }
 
   /**
@@ -189,6 +192,10 @@ export namespace MessageFormat {
     readonly vibrationPattern: number[];
   }
 
+  export interface PlayerInfoMessage extends Message {
+    readonly playerInfo: PlayerInfo;
+  }
+
   /**
    * Creates an object conforming to the message interfaces from a JSON encoded
    * string representation of it.
@@ -267,6 +274,9 @@ export namespace MessageFormat {
       case MessageType.VibrationSequence:
         matcher.VibrationSequenceMessage(msg as VibrationSequenceMessage);
         break;
+      case MessageType.PlayerInfo:
+        matcher.PlayerInfoMessage(msg as PlayerInfoMessage);
+        break;
     }
   }
 
@@ -289,6 +299,7 @@ export namespace MessageFormat {
     readonly SetEnabledButtonsMessage: (_: SetEnabledButtonsMessage) => any;
     readonly SetCooldownButtonsMessage: (_: SetCooldownButtonsMessage) => any;
     readonly VibrationSequenceMessage: (_: VibrationSequenceMessage) => any;
+    readonly PlayerInfoMessage: (_: PlayerInfoMessage) => any;
   }
 
   /**
@@ -313,5 +324,6 @@ export namespace MessageFormat {
     SetEnabledButtonsMessage: _ => {},
     SetCooldownButtonsMessage: _ => {},
     VibrationSequenceMessage: _ => {},
+    PlayerInfoMessage: _ => {},
   };
 }

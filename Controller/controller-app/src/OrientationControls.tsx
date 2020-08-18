@@ -3,8 +3,14 @@ import './Controller.css';
 import { OrientationInput } from 'sensor-input-lib';
 import { boundClass } from 'autobind-decorator';
 import { Image, Layer, Stage, Text } from 'react-konva';
-import { ControllerClient, Button, PlayerColor } from 'controller-client-lib';
+import {
+  ControllerClient,
+  Button,
+  PlayerColor,
+  PlayerInfo,
+} from 'controller-client-lib';
 import { ControlsHeaderRow } from './ControlsHeaderRow';
+import { InfoBar } from './InfoBar';
 import * as consts from './consts';
 
 @boundClass
@@ -99,6 +105,7 @@ export class OrientationControls extends React.Component<
           />
         </div>
         <div className='rowContainer' style={{ height: '88%' }}>
+          <InfoBar playerInfo={this.props.playerInfo} />
           <Stage width={canvasWidth} height={canvasHeight}>
             <Layer>
               <Text
@@ -142,4 +149,5 @@ interface OrientationControlsProbs {
   enabledButtons: Set<Button>;
   canPause: boolean;
   pause: () => void;
+  playerInfo?: PlayerInfo;
 }

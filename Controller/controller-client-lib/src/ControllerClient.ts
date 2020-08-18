@@ -63,6 +63,11 @@ export enum ConnectFailureReason {
   MaxPlayersReached, // The maximum amount of players is already connected to the game
 }
 
+export interface PlayerInfo {
+  HealthPoints: number;
+  Gold: number;
+}
+
 /**
  * Allows to connect to a Coop-Dungeon game and send controller inputs
  * or receive messages from the game.
@@ -145,6 +150,12 @@ export class ControllerClient {
   private cooldownButtons: Set<Button> = new Set<Button>();
 
   /**
+   * Information about the player (health, gold) that should be
+   * displayed on the controller
+   */
+  private playerInfo?: PlayerInfo = undefined;
+
+  /**
    * Current state of the game. E.g. Lobby or Started
    */
   private gameState: GameState = GameState.Lobby;
@@ -207,6 +218,12 @@ export class ControllerClient {
    * anymore
    */
   public onSetCooldownButtons: (cooldownButtons: Set<Button>) => any;
+
+  /**
+   * Callback which can be set by users and which is called whenever the game
+   * updates information that the controller should display (gold, health)
+   */
+  public onSetPlayerInfo: (playerInfo: PlayerInfo) => any;
 
   /**
    * Callback which can be set by users and which is called whenever the game
@@ -418,6 +435,13 @@ export class ControllerClient {
   }
 
   /**
+   * Returns information about the player (health, gold) that the controller should display
+   */
+  public getPlayerInfo(): PlayerInfo | undefined {
+    return this.playerInfo;
+  }
+
+  /**
    * Returns whether the client is fully connected to a game and can send
    * inputs.
    *
@@ -528,6 +552,11 @@ export class ControllerClient {
 
       VibrationSequenceMessage: msg => {
         this.onVibrationRequest?.(msg.vibrationPattern);
+      },
+
+      PlayerInfoMessage: msg => {
+        this.playerInfo = msg.playerInfo;
+        this.onSetPlayerInfo?.(this.playerInfo);
       },
     });
   }

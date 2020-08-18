@@ -34,6 +34,7 @@ public enum MessageType
     SetCooldownButtons = 13, // Mark buttons as "cooling down". The buttons are still enabled, but can currently not be used, since the action has a cooldown, sent by game
     IMUOrientation = 14,     // Orientation of the controller in 3D space (roll and pitch) interpreted as horizontal and vertical movement in 2D space. Sent by controller
     InputModeChanged = 15,
+    PlayerInfo = 16          // Information about the player (health)
 }
 
 /**
@@ -125,6 +126,9 @@ public class Message
             
             case MessageType.VibrationSequence:
                 return JsonUtility.FromJson<VibrationSequenceMessage>(str);
+
+            case MessageType.PlayerInfo:
+                return JsonUtility.FromJson<PlayerInfoMessage>(str);
         }
 
         return null;
@@ -447,6 +451,29 @@ public class Message
             matcher.IMUOrientationMessage(this);
         }
     }
+        
+    [Serializable]
+    public sealed class PlayerInfoMessage : Message
+    {
+        /**
+         * Used to send data about the player (health, gold) to the controller
+         */
+        public PlayerInfo playerInfo;
+        
+        public PlayerInfoMessage(PlayerInfo info)
+            : base(MessageType.PlayerInfo)
+        {
+            this.playerInfo = info;
+        }
+
+        /**
+         * See base class method for an explanation.
+         */
+        public override void Match( Matcher matcher )
+        {
+            matcher.PlayerInfoMessage(this);
+        }
+    }
     
     /**
      * See `Match` method for an explanation.
@@ -468,6 +495,7 @@ public class Message
         public Action<SetCooldownButtonsMessage> SetCooldownButtonsMessage = _ => {};
         public Action<VibrationSequenceMessage> VibrationSequenceMessage = _ => {};
         public Action<IMUOrientationMessage> IMUOrientationMessage = _ => {};
+        public Action<PlayerInfoMessage> PlayerInfoMessage = _ => {};
     }
 
     /**

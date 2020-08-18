@@ -125,4 +125,10 @@ public class LocalInput: MonoBehaviour, Input
      */
     public void SetCooldownButtons(params (Button, bool)[] buttonStates)
     { }
+
+    /**
+     * The keyboard cannot display information. Do nothing.
+     */
+    public void UpdatePlayerInfo(PlayerInfo info)
+    { }
 }

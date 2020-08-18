@@ -6,6 +6,7 @@ export {
   GameState,
   InputMode,
   ConnectFailureReason,
+  PlayerInfo,
 } from './ControllerClient';
 
 export { DiagnosticsClient } from './DiagnosticsClient';

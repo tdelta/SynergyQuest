@@ -1,4 +1,4 @@
-import { Button, ControllerClient } from 'controller-client-lib';
+import { Button, ControllerClient, PlayerInfo } from 'controller-client-lib';
 import React from 'react';
 import nipplejs, {
   JoystickManager,
@@ -13,6 +13,7 @@ import * as consts from './consts';
 
 import { boundClass } from 'autobind-decorator';
 import { ControlsHeaderRow } from './ControlsHeaderRow';
+import { InfoBar } from './InfoBar';
 
 @boundClass
 export class NormalControls extends React.Component<
@@ -151,6 +152,7 @@ export class NormalControls extends React.Component<
         <div className='rowContainer' style={{ userSelect: 'none' }}>
           <div className='columnContainer'>
             <div className='gameControls'>
+              <InfoBar playerInfo={this.props.playerInfo} />
               <div id='boob' className='text' ref={this.boob}>
                 <p id='boobText'> tap and drag to move </p>
               </div>
@@ -191,4 +193,5 @@ interface NormalControlsProbs {
   playerColor: consts.ColorData;
   canPause: boolean;
   pause: () => void;
+  playerInfo?: PlayerInfo;
 }

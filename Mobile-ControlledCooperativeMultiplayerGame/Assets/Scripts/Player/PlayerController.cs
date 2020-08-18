@@ -21,7 +21,6 @@ public class PlayerController : EntityController
     [SerializeField] private CoinGaugeController coinGauge;
     
     [SerializeField] private float speed = 3.0f; // units per second
-    [SerializeField] private int maxHealthPoints = 5;
     [SerializeField] private MultiSound fightingSounds;
     [SerializeField] private MultiSound hitSounds;
     [SerializeField] private MultiSound deathSounds;
@@ -58,8 +57,6 @@ public class PlayerController : EntityController
      */
     [SerializeField] private SpriteRenderer itemPresentation;
     
-    private int _healthPoints;
-
     public BoxCollider2D Collider { get; private set; }
     private Renderer _renderer;
     private ItemController _itemController;
@@ -208,7 +205,6 @@ public class PlayerController : EntityController
         
         coinGauge.Init(this);
 
-        _healthPoints = maxHealthPoints;
         _playerState = PlayerState.walking;
        
         SetShirtColor(this.Color);
@@ -276,7 +272,7 @@ public class PlayerController : EntityController
         else if (_throwable.IsBeingCarried) {
             _throwable.Carrier.ThrowThrowable(_throwable, Vector2.zero);
         }
-        ChangeHealth(maxHealthPoints);
+        ChangeHealth(PlayerInfo.MAX_HEALTH_POINTS);
     }
 
     protected override bool ChangeHealth(int delta, bool playSounds = true)
@@ -285,9 +281,9 @@ public class PlayerController : EntityController
         if (_playerState == PlayerState.thrown)
             return false;
 
-        _healthPoints += delta;
+        _data.HealthPoints += delta;
 
-        if (_healthPoints <= 0) {
+        if (_data.HealthPoints <= 0) {
             if (playSounds)
             {
                 deathSounds.PlayOneShot();
@@ -352,9 +348,9 @@ public class PlayerController : EntityController
                 0
             );
         
-        this.lifeGauge.GetComponent<LifeGauge>().DrawLifeGauge(_healthPoints, maxHealthPoints);
+        this.lifeGauge.GetComponent<LifeGauge>().DrawLifeGauge(_data.HealthPoints, PlayerInfo.MAX_HEALTH_POINTS);
     }
-
+    
     private void Attack()
     {
         Animator.SetTrigger(AttackTrigger);
@@ -552,7 +548,7 @@ public class PlayerController : EntityController
         GetComponent<SpriteRenderer>().enabled = false;
         
         // Kill the player
-        ChangeHealth(-_healthPoints, false);
+        ChangeHealth(-_data.HealthPoints, false);
     }
 
 

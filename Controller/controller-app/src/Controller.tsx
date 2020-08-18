@@ -1,4 +1,9 @@
-import { Button, ControllerClient, InputMode } from 'controller-client-lib';
+import {
+  Button,
+  ControllerClient,
+  InputMode,
+  PlayerInfo,
+} from 'controller-client-lib';
 import React from 'react';
 import './Controller.css';
 import fscreen from 'fscreen';
@@ -83,6 +88,7 @@ export class Controller extends React.Component<
           canPause={this.props.canPause}
           pause={this.props.pause}
           enabledButtons={this.props.enabledButtons}
+          playerInfo={this.props.playerInfo}
         />
       );
     } else {
@@ -96,6 +102,7 @@ export class Controller extends React.Component<
           playerColor={this.props.playerColor}
           canPause={this.props.canPause}
           pause={this.props.pause}
+          playerInfo={this.props.playerInfo}
         />
       );
     }
@@ -115,4 +122,5 @@ interface ControllerProbs {
   canPause: boolean;
   pause: () => void;
   displayFailure: (message: string) => void;
+  playerInfo?: PlayerInfo;
 }

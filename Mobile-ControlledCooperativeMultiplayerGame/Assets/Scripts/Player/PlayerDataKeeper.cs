@@ -71,7 +71,7 @@ public class PlayerDataKeeper: Singleton<PlayerDataKeeper>
             Debug.LogError("There has already a player been created with that input instance. We will continue, but this is likely an error in the game logic. Did you want to use `InstantiateExistingPlayers` instead?");
         }
         
-        var data = new PlayerData(input);
+        var data = new PlayerData(input, new PlayerInfo());
         _playerDatas.Add(data);
 
         var instance = InstantiatePlayerFromData(
@@ -115,7 +115,7 @@ public class PlayerDataKeeper: Singleton<PlayerDataKeeper>
 
         else
         {
-            playerData = new PlayerData(input);
+            playerData = new PlayerData(input, new PlayerInfo());
             _playerDatas.Add(playerData);
         }
         

@@ -84,6 +84,8 @@ public class ControllerInput: Input
     };
     private HashSet<Button> _cooldownButtons = new HashSet<Button>();
 
+    private PlayerInfo _playerInfo;
+
     /**
      * This event is emitted when the underlying controller loses its connection to the game. The game should be paused
      * when this is emitted until `OnReconnect` is emitted.
@@ -164,6 +166,26 @@ public class ControllerInput: Input
     public bool GetButtonUp(Button b)
     {
         return _buttonPressStates[b].GetValueUp();
+    }
+
+    public void UpdatePlayerInfo(PlayerInfo playerInfo)
+    {
+        this._playerInfo = playerInfo;
+
+        if(IsConnected()){
+            // Otherwise the info will be sent on the next reconnect
+            SendPlayerInfo();
+        }
+    }
+
+    private void SendPlayerInfo()
+    {
+        if (_playerInfo != null)
+        {
+            // The player is assigned to the controller after it connects, so this will be null when the connection is first established.
+            var msg = new Message.PlayerInfoMessage(_playerInfo);
+            SendMessage(msg);
+        }
     }
 
     /**
@@ -342,11 +364,12 @@ public class ControllerInput: Input
      * 
      * Use the `OnNewController` event of the `ControllerServer` class instead to gain a `ControllerInput` instance.
      */
-    public ControllerInput(int playerId, string playerName, ControllerServer server)
+    public ControllerInput(int playerId, string playerName, PlayerInfo playerInfo, ControllerServer server)
     {
         this.PlayerId = playerId;
         this.PlayerName = playerName;
         this._controllerServer = server;
+        this._playerInfo = playerInfo;
         foreach(Button button in Enum.GetValues(typeof(Button))){
             _buttonPressStates.Add(button, new ButtonPressState());
         }
@@ -369,6 +392,7 @@ public class ControllerInput: Input
                 SendEnabledButtons();
                 SendCooldownButtons();
                 InputMode = InputMode;
+                SendPlayerInfo();
                 
                 OnReconnect?.Invoke(this);
 
