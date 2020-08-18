@@ -739,7 +739,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_text: Pick up a purple bomb collectible and a "Throw" button will appear on your
-    phone. Press and hold it to ignite a bomb.
+    phone. Press it to ignite a bomb.
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 25a49c1c0963dc8f6b3c80bb186d4a78, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: 0fa285df202b2c22a8f87734e0f735a6, type: 2}
@@ -808,10 +808,10 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 3036040519124556191}
-    characterCount: 117
+    characterCount: 108
     spriteCount: 0
-    spaceCount: 22
-    wordCount: 23
+    spaceCount: 20
+    wordCount: 21
     linkCount: 0
     lineCount: 3
     pageCount: 1
@@ -1755,7 +1755,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Release the button to throw the bomb in the direction of movement. Bombs
+  m_text: Press the button again to throw the bomb in the direction of view. Bombs
     can be used to destroy brittle obstacles and to hurt monsers. They are powerful,
     but be careful not to hurt yourself or your teammates!
   m_isRightToLeft: 0
@@ -1828,8 +1828,8 @@ MonoBehaviour:
     textComponent: {fileID: 3036040520293875465}
     characterCount: 208
     spriteCount: 0
-    spaceCount: 36
-    wordCount: 37
+    spaceCount: 37
+    wordCount: 38
     linkCount: 0
     lineCount: 5
     pageCount: 1
