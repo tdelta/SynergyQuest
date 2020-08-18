@@ -31,7 +31,8 @@ public enum MessageType
     GameStateChanged = 10,   // The state of the game changed, e.g. Lobby -> Game started. Sent by the game 
     VibrationSequence = 11,  // The game wants the controller to vibrate. Sent by the game
     SetEnabledButtons = 12,  // Enable / disable buttons in the controller UI, sent by game
-    SetCooldownButtons = 13  // Mark buttons as "cooling down". The buttons are still enabled, but can currently not be used, since the action has a cooldown, sent by game
+    SetCooldownButtons = 13, // Mark buttons as "cooling down". The buttons are still enabled, but can currently not be used, since the action has a cooldown, sent by game
+    PlayerInfo = 14          // Information about the player (health)
 }
 
 /**
@@ -114,6 +115,9 @@ public class Message
             
             case MessageType.VibrationSequence:
                 return JsonUtility.FromJson<VibrationSequenceMessage>(str);
+
+            case MessageType.PlayerInfo:
+                return JsonUtility.FromJson<PlayerInfoMessage>(str);
         }
 
         return null;
@@ -395,6 +399,29 @@ public class Message
         }
     }
     
+    [Serializable]
+    public sealed class PlayerInfoMessage : Message
+    {
+        /**
+         * Used to send data about the player (health, gold) to the controller
+         */
+        public PlayerInfo playerInfo;
+        
+        public PlayerInfoMessage(PlayerInfo info)
+            : base(MessageType.PlayerInfo)
+        {
+            this.playerInfo = info;
+        }
+
+        /**
+         * See base class method for an explanation.
+         */
+        public override void Match( Matcher matcher )
+        {
+            matcher.PlayerInfoMessage(this);
+        }
+    }
+    
     /**
      * See `Match` method for an explanation.
      */
@@ -413,6 +440,7 @@ public class Message
         public Action<SetEnabledButtonsMessage> SetEnabledButtonsMessage = _ => {};
         public Action<SetCooldownButtonsMessage> SetCooldownButtonsMessage = _ => {};
         public Action<VibrationSequenceMessage> VibrationSequenceMessage = _ => {};
+        public Action<PlayerInfoMessage> PlayerInfoMessage = _ => {};
     }
 
     /**

@@ -248,7 +248,7 @@ public class ControllerServer : BehaviourSingleton<ControllerServer>
                     name, 
                     connectionId,
                     websocketId,
-                    newPlayerId => new ControllerInput(newPlayerId, name, this)
+                    newPlayerId => new ControllerInput(newPlayerId, name, new PlayerInfo(), this)
                 );
                 newInput.SetStatus(ConnectionStatus.Connected);
                 

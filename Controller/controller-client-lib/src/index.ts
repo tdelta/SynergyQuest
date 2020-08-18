@@ -5,6 +5,7 @@ export {
   PlayerColor,
   GameState,
   ConnectFailureReason,
+  PlayerInfo,
 } from './ControllerClient';
 
 export { DiagnosticsClient } from './DiagnosticsClient';

@@ -1,4 +1,10 @@
-import { Button, MenuAction, PlayerColor, GameState } from './ControllerClient';
+import {
+  Button,
+  MenuAction,
+  PlayerColor,
+  GameState,
+  PlayerInfo,
+} from './ControllerClient';
 
 /**
  * This namespace describes the format of messages sent between controller and
@@ -43,6 +49,8 @@ export namespace MessageFormat {
     // Mark buttons as "cooling down". The buttons are still enabled, but can
     // currently not be used, since the action has a cooldown, sent by game
     SetCooldownButtons = 13,
+    // Information about the player (health and gold)
+    PlayerInfo = 14,
   }
 
   /**
@@ -160,6 +168,10 @@ export namespace MessageFormat {
     readonly vibrationPattern: number[];
   }
 
+  export interface PlayerInfoMessage extends Message {
+    readonly playerInfo: PlayerInfo;
+  }
+
   /**
    * Creates an object conforming to the message interfaces from a JSON encoded
    * string representation of it.
@@ -232,6 +244,9 @@ export namespace MessageFormat {
       case MessageType.VibrationSequence:
         matcher.VibrationSequenceMessage(msg as VibrationSequenceMessage);
         break;
+      case MessageType.PlayerInfo:
+        matcher.PlayerInfoMessage(msg as PlayerInfoMessage);
+        break;
     }
   }
 
@@ -252,6 +267,7 @@ export namespace MessageFormat {
     readonly SetEnabledButtonsMessage: (_: SetEnabledButtonsMessage) => any;
     readonly SetCooldownButtonsMessage: (_: SetCooldownButtonsMessage) => any;
     readonly VibrationSequenceMessage: (_: VibrationSequenceMessage) => any;
+    readonly PlayerInfoMessage: (_: PlayerInfoMessage) => any;
   }
 
   /**
@@ -274,5 +290,6 @@ export namespace MessageFormat {
     SetEnabledButtonsMessage: _ => {},
     SetCooldownButtonsMessage: _ => {},
     VibrationSequenceMessage: _ => {},
+    PlayerInfoMessage: _ => {},
   };
 }

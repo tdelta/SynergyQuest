@@ -30,6 +30,12 @@
   justify-content: center;
 }
 
+.textImage {
+  height: 5vh;
+  width: 5vh;
+  margin: 3pt
+}
+
 .playerAvatar {
   height: 95%;
   image-rendering: crisp-edges;
@@ -73,7 +79,9 @@
 }
 
 #boob {
-  height: 100vh;
+  position: absolute;
+  top: 12%;
+  height: 88%;
   width: 50%;
   background: #43A047;
 }
@@ -84,6 +92,17 @@
   width: 10%;
   color: white;
   font-size: 20pt;
+}
+
+#infoBar {
+  position: absolute;
+  background-color: #e0e0e0;
+  border-color: #f5f5f5;
+  height: 12%;
+  width: 50%;
+  top: 0;
+  color: '#000';
+  justify-content: 'space-between';
 }
 
 .cooldownWrapper {

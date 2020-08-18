@@ -1,4 +1,9 @@
-import { Button, ControllerClient, PlayerColor } from 'controller-client-lib';
+import {
+  Button,
+  ControllerClient,
+  PlayerColor,
+  PlayerInfo,
+} from 'controller-client-lib';
 import React from 'react';
 import nipplejs, {
   JoystickManager,
@@ -11,10 +16,16 @@ import './Controller.css';
 import fscreen from 'fscreen';
 import PauseSymbol from './gfx/pause.png';
 
+import GoldSymbol from './gfx/gold_large.png';
+import HeartSymbol from './gfx/heart_large.png';
+import EmptyHeartSymbol from './gfx/empty_heart_large.png';
+
 import * as consts from './consts';
 
 import { faCompress, faExpand } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+import _ from 'lodash';
 
 export class Controller extends React.Component<
   ControllerProbs,
@@ -118,6 +129,43 @@ export class Controller extends React.Component<
     fscreen.onfullscreenchange = this.onFullscreenChange;
   }
 
+  renderInfo(info: PlayerInfo | undefined): JSX.Element {
+    if (!info) {
+      // No information has been sent yet
+      return (
+        <button className='pixelButton text no-click' id='infoBar'>
+          &nbsp;
+        </button>
+      );
+    }
+
+    let healthPoints = info.HealthPoints;
+    if (healthPoints < 0) {
+      healthPoints = 0;
+    }
+
+    return (
+      <button className='pixelButton text no-click' id='infoBar'>
+        <div style={{ display: 'inline-flex' }}>
+          <img className='textImage' src={GoldSymbol} alt='Coins' />
+          <div style={{ margin: '3pt' }}>{info.Gold}</div>
+        </div>
+        <div>
+          {_.times(healthPoints, () => (
+            <img className='textImage' src={HeartSymbol} alt='Heart' />
+          ))}
+          {_.times(5 - healthPoints, () => (
+            <img
+              className='textImage'
+              src={EmptyHeartSymbol}
+              alt='Empty Heart'
+            />
+          ))}
+        </div>
+      </button>
+    );
+  }
+
   render() {
     const buildCooldownOverlay = (inner: JSX.Element) => (
       <div className='cooldownWrapper'>
@@ -208,8 +256,11 @@ export class Controller extends React.Component<
         <div className='rowContainer' style={{ userSelect: 'none' }}>
           <div className='columnContainer'>
             <div className='gameControls'>
-              <div id='boob' className='text' ref={this.boob}>
-                <p id='boobText'> tap and drag to move </p>
+              <div className='columnContainer' style={{ width: '50%' }}>
+                {this.renderInfo(this.props.playerInfo)}
+                <div id='boob' className='text' ref={this.boob}>
+                  <p id='boobText'> tap and drag to move </p>
+                </div>
               </div>
               <div className='rightColumn'>
                 <div className='rowContainer' style={{ height: '12%' }}>
@@ -277,4 +328,5 @@ interface ControllerProbs {
   canPause: boolean;
   pause: () => void;
   displayFailure: (message: string) => void;
+  playerInfo?: PlayerInfo;
 }

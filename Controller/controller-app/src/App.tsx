@@ -6,6 +6,7 @@ import {
   ControllerClient,
   ConnectFailureReason,
   Button,
+  PlayerInfo,
 } from 'controller-client-lib';
 import { ConnectScreen } from './ConnectScreen';
 import { LobbyScreen } from './LobbyScreen';
@@ -60,6 +61,7 @@ export interface AppState {
   gameState: GameState;
   enabledButtons: Set<Button>;
   cooldownButtons: Set<Button>;
+  playerInfo?: PlayerInfo;
 }
 
 /**
@@ -78,6 +80,7 @@ class App extends React.Component<{}, AppState> {
     gameState: GameState.Lobby,
     enabledButtons: new Set<Button>(),
     cooldownButtons: new Set<Button>(),
+    playerInfo: undefined,
   };
 
   constructor(props: {}) {
@@ -178,6 +181,11 @@ class App extends React.Component<{}, AppState> {
         gameState: state,
       });
 
+    client.onSetPlayerInfo = (playerInfo: PlayerInfo) =>
+      this.setState({
+        playerInfo: playerInfo,
+      });
+
     client.onVibrationRequest = (vibrationPattern: number[]) =>
       window.navigator.vibrate(vibrationPattern);
 
@@ -247,6 +255,7 @@ class App extends React.Component<{}, AppState> {
                 )}
                 pause={this.pause}
                 displayFailure={this.displayFailure}
+                playerInfo={this.state.playerInfo}
               />
             );
             break;

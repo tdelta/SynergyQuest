@@ -89,6 +89,14 @@ public interface Input
      *   alteration.
      */
     void PlayVibrationFeedback(List<float> vibrationPattern);
+
+    /**
+     * Updates information about the player, that a controller can display.
+     * e.g. health and gold.
+     *
+     * @param info the PlayerInfo class contains all information that is synchronized with the controller.
+     */
+    void UpdatePlayerInfo(PlayerInfo info);
 }
 
 public delegate void MenuActionTriggeredAction(MenuAction action);
