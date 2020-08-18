@@ -7,6 +7,7 @@ public class WaypointControlledPlatform : MonoBehaviour
 {
     [SerializeField] private List<WayPointController> wayPoints = new List<WayPointController>();
     [SerializeField] private float speed;
+    [SerializeField] private float endPointWaitTime = 0.0f;
 
     private bool _hasNextWaypoint = false;
     private (WayPointController, int) _nextWayPoint;
@@ -19,6 +20,8 @@ public class WaypointControlledPlatform : MonoBehaviour
             _hasNextWaypoint = true;
             _nextWayPoint = (wayPoints[0], 0);
         }
+        
+        TriggerEndpointWait();
     }
 
     void FixedUpdate()
@@ -52,6 +55,8 @@ public class WaypointControlledPlatform : MonoBehaviour
         {
             wayPoints.Reverse();
             _nextWayPoint = (wayPoints[1], 1);
+            
+            TriggerEndpointWait();
         }
         
         else
@@ -144,4 +149,19 @@ public class WaypointControlledPlatform : MonoBehaviour
         }
     }
 
+    /**
+     * Causes platform delay movement for `endPointWaitTime`.
+     */
+    private void TriggerEndpointWait()
+    {
+        if (endPointWaitTime > 0)
+        {
+            var originalSpeed = speed;
+            speed = 0.0f;
+            StartCoroutine(CoroutineUtils.Wait(endPointWaitTime, () =>
+            {
+                speed = originalSpeed;
+            }));
+        }
+    }
 }

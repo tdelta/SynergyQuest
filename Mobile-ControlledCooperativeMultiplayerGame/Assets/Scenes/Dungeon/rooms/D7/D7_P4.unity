@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 0
+  m_UseShadowmask: 1
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -1114,13 +1114,18 @@ PrefabInstance:
     - target: {fileID: 8000967896109330678, guid: 6ddd1db0184c15a4d9f279f1f8c6b706,
         type: 3}
       propertyPath: speed
-      value: 1
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 8000967896109330678, guid: 6ddd1db0184c15a4d9f279f1f8c6b706,
         type: 3}
       propertyPath: wayPoints.Array.data[3]
       value: 
       objectReference: {fileID: 1792443799}
+    - target: {fileID: 8000967896109330678, guid: 6ddd1db0184c15a4d9f279f1f8c6b706,
+        type: 3}
+      propertyPath: endPointWaitTime
+      value: 1.2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6ddd1db0184c15a4d9f279f1f8c6b706, type: 3}
 --- !u!1 &1145065801
@@ -1316,6 +1321,11 @@ PrefabInstance:
         type: 3}
       propertyPath: speed
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8000967896109330678, guid: 6ddd1db0184c15a4d9f279f1f8c6b706,
+        type: 3}
+      propertyPath: endPointWaitTime
+      value: 1.2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6ddd1db0184c15a4d9f279f1f8c6b706, type: 3}
