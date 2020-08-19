@@ -1,26 +1,76 @@
 import { boundClass } from 'autobind-decorator';
 import { RelativeOrientationSensor } from 'motion-sensors-polyfill';
 
+/**
+ * A 4-dimensional vector that can express rotations
+ */
 type Quaternion = [number, number, number, number];
 
+/**
+ * Angles which describe orientation in 3d space,
+ * see:
+ * https://en.wikipedia.org/wiki/Euler_angles
+ * https://en.wikipedia.org/wiki/Aircraft_principal_axes
+ *
+ * The Generic Sensor Web API supplies us the controller orientation as a
+ * quaternion, however, for our purposes this representation is more suited, see
+ * also `OrientationInput.quaternionToTaitBryan`.
+ */
 interface TaitBryanAngle {
   yaw: number;
   pitch: number;
   roll: number;
 }
 
+/**
+ * Library which allows to easily interpret orientation of a device in 3d space
+ * as 2d directional input using the Generic Sensor Web API:
+ * https://developer.mozilla.org/en-US/docs/Web/API/Sensor_APIs
+ *
+ * We interpret roll as a value on a vertical axis in [-1; 1] and pitch as a
+ * value on a horizontal axis in [-1; 1], see also `TaitBryanAngle`.
+ *
+ * Be aware, that this library only works in a secure context:
+ * https://developer.mozilla.org/en-US/docs/Web/Security/Secure_Contexts/features_restricted_to_secure_contexts
+ *
+ * E.g. all connections must be SSL encrypted.
+ *
+ * Set the callbacks `onWarning`, `onFatelError`, `onActivated` and
+ * `onInputChange` to be informed about changes in the sensor input automatically.
+ */
 @boundClass
 export class OrientationInput {
+  /**
+   * Minimum absolute values for roll and pitch before we start interpreting them.
+   * This way we filter out small unintentional movements of the device.
+   */
   private static readonly PitchThreshold = 0.1;
   private static readonly RollThreshold = 0.05;
+  /**
+   * Maximum absolute values for pitch and roll. Any value above this is
+   * interpreted as 1 or -1 on the horizontal and vertical 2d axes.
+   */
   private static readonly PitchMax = 0.2;
   private static readonly RollMax = 0.3;
 
   private sensor?: RelativeOrientationSensor;
 
+  /**
+   * Interpreted values on the 2d axes
+   * @private
+   */
   private vertical: number = 0;
   private horizontal: number = 0;
+  /**
+   * Raw sensor input
+   * @private
+   */
   private rawQuaternion: Quaternion = [0, 0, 0, 0];
+  /**
+   * Almost raw sensor input, interpreted as Tait-Bryan / Euler angles instead of
+   * an quaternion
+   * @private
+   */
   private rawAngle: TaitBryanAngle = {
     yaw: 0,
     pitch: 0,
@@ -32,6 +82,12 @@ export class OrientationInput {
   public onActivated: () => any = () => {};
   public onInputChange: (vertical: number, horizontal: number) => any = _ => {};
 
+  /**
+   * Acquire the necessary permissions and start reading sensor values.
+   * Set the above callbacks before calling this method.
+   *
+   * Remember to call `stop` when no more input is required.
+   */
   public start() {
     (async () => {
       if (await this.checkPermissions()) {
@@ -45,14 +101,35 @@ export class OrientationInput {
     })();
   }
 
+  /**
+   * Stop reading sensor values.
+   */
   public stop() {
     this.sensor?.stop();
   }
 
+  /**
+   * 3d orientation (roll) interpreted as value on a single axis in [-1; 1].
+   *
+   * Imagine holding the phone in both hands in any orientation
+   * (primary landscape, secondary landscape, portrait).
+   * Tilting the phone so that the upper part goes away from you gives you
+   * increasingly positive values on this axis.
+   * Tilting the upper part towards you gives you negative values.
+   */
   public getVertical(): number {
     return this.vertical;
   }
 
+  /**
+   * 3d orientation (roll) interpreted as value on a single axis in [-1; 1].
+   *
+   * Imagine holding the phone in both hands in any orientation
+   * (primary landscape, secondary landscape, portrait).
+   * Tilting the phone so that the left part goes up and the right part goes
+   * down gives you increasingly positive values on this axis.
+   * The reverse gives you negative values.
+   */
   public getHorizontal(): number {
     return this.horizontal;
   }
@@ -68,7 +145,7 @@ export class OrientationInput {
   private initSensor() {
     this.sensor = new RelativeOrientationSensor({
       frequency: 60,
-      referenceFrame: 'screen',
+      referenceFrame: 'screen', // let the Sensor API automatically handle flipped screen orientations etc.
     });
 
     this.sensor.onerror = this.handleSensorError;
@@ -96,11 +173,14 @@ export class OrientationInput {
 
   handleSensorReading(_: Event) {
     if (this.sensor != null) {
+      // Acquire raw readings
       this.rawQuaternion = this.sensor.quaternion;
+      // Make them more easily interpretable by converting to euler angles
       this.rawAngle = OrientationInput.quaternionToTaitBryan(
         this.rawQuaternion
       );
 
+      // Interpret roll and pitch as 2d axis values, see `GetVertical` and `GetHorizontal`
       const newVertical = OrientationInput.axisValueFromAngle(
         this.rawAngle.roll,
         OrientationInput.RollThreshold,
@@ -182,9 +262,13 @@ export class OrientationInput {
     return true;
   }
 
+  /**
+   * https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles#Quaternion_to_Euler_Angles_Conversion
+   * Slightly adapted, so that roll is flipped around and equal to 0 when phone is flat on table with screen upwards
+   *
+   * @private
+   */
   private static quaternionToTaitBryan(q: Quaternion): TaitBryanAngle {
-    // https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles#Quaternion_to_Euler_Angles_Conversion
-    // Slightly adapted, so that roll is 0 when phone is flat on table with screen upwards
     return {
       yaw: Math.atan2(
         2 * (q[0] * q[1] + q[2] * q[3]),
@@ -198,6 +282,14 @@ export class OrientationInput {
     };
   }
 
+  /**
+   * Interprets an euler angle as a value in [-1; 1]
+   *
+   * @param angle angle to be interpreted
+   * @param threshold the absolute angle must be greater than this to get a result other than 0 (this filters noise)
+   * @param max if the absolute angle is greater or equal than this, you get a maximum / minimum result value (1 or -1) depending on the sign on the angle
+   * @private
+   */
   private static axisValueFromAngle(
     angle: number,
     threshold: number,

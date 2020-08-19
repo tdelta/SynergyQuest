@@ -132,7 +132,7 @@ public class ControllerInput: Input
      * <summary>
      * Returns 3d rotation of controller device interpreted as a 2d vertical input.
      * This is usually implemented by interpreting the "roll" orientation:
-     * <a href="https://en.wikipedia.org/wiki/Aircraft_principal_axes">Euler angles / Tait-Bryan angles</a>
+     * <a href="https://en.wikipedia.org/wiki/Euler_angles">Euler angles / Tait-Bryan angles</a>
      * <a href="https://en.wikipedia.org/wiki/Aircraft_principal_axes">Aircraft principal axes</a>
      * </summary>
      *
@@ -149,7 +149,7 @@ public class ControllerInput: Input
      * <summary>
      * Returns 3d rotation of controller device interpreted as a 2d horizontal input.
      * This is usually implemented by interpreting the "pitch" orientation:
-     * <a href="https://en.wikipedia.org/wiki/Aircraft_principal_axes">Euler angles / Tait-Bryan angles</a>
+     * <a href="https://en.wikipedia.org/wiki/Euler_angles">Euler angles / Tait-Bryan angles</a>
      * <a href="https://en.wikipedia.org/wiki/Aircraft_principal_axes">Aircraft principal axes</a>
      * </summary>
      *

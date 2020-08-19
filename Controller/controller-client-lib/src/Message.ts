@@ -52,6 +52,7 @@ export namespace MessageFormat {
     SetCooldownButtons = 13,
     // Orientation of the controller in 3D space (roll and pitch) interpreted as horizontal and vertical movement in 2D space. Sent by controller
     IMUOrientation = 14,
+    // Hint, which inputs the game currently expects. Sent by game. See also `InputMode`.
     InputModeChanged = 15,
     // Information about the player (health and gold)
     PlayerInfo = 16,

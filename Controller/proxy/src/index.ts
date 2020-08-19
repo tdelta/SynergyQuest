@@ -15,6 +15,8 @@ function errorHandler(
   res.end(`Error occured: ${err.message}`);
 }
 
+// ===== Diverting any websocket traffic to ws://localhost:4242 ====
+
 const websocketProxy = httpProxy.createProxyServer({
   target: 'ws://localhost:4242',
   changeOrigin: true,
@@ -24,6 +26,8 @@ const websocketProxy = httpProxy.createProxyServer({
 websocketProxy.on('error', function (err, req, res) {
   res.end('Error occurred ' + err.message);
 });
+
+// ===== Diverting any "normal" HTTP traffic to 'http://localhost:3000' ====
 
 const webProxy = httpProxy.createProxyServer({
   target: 'http://localhost:3000',
@@ -42,6 +46,8 @@ app.on('error', parent => {
   console.log('some error.');
 });
 
+// ===== Serving a HTTPS server on port 8000 which will divert traffic according to the above sections ====
+
 const server = https.createServer(
   {
     key: fs.readFileSync('../../Certificates/generated/server.key', 'utf8'),
@@ -50,6 +56,7 @@ const server = https.createServer(
   app
 );
 
+// Allow to upgrade normal HTTPS connections to websocket connections and let the proxy handle them
 server.on('upgrade', (req, socket, head) => {
   websocketProxy.ws(req, socket, head, {}, errorHandler);
 });
