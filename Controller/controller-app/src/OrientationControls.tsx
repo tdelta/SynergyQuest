@@ -93,7 +93,14 @@ export class OrientationControls extends React.Component<
 
     return (
       <div className='container' style={{ userSelect: 'none' }}>
-        <div className='rowContainer' style={{ height: '12%' }}>
+        <InfoBar playerInfo={this.props.playerInfo}/>
+        <div className='rowContainer' style={{ 
+            width: '50%',
+            height: '12%',
+            left: '50%',
+            top: '0',
+            position: 'absolute'
+        }}>
           <ControlsHeaderRow
             client={this.props.client}
             isFullscreen={this.props.isFullscreen}
@@ -105,7 +112,6 @@ export class OrientationControls extends React.Component<
           />
         </div>
         <div className='rowContainer' style={{ height: '88%' }}>
-          <InfoBar playerInfo={this.props.playerInfo} />
           <Stage width={canvasWidth} height={canvasHeight}>
             <Layer>
               <Text

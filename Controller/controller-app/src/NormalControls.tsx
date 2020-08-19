@@ -152,9 +152,11 @@ export class NormalControls extends React.Component<
         <div className='rowContainer' style={{ userSelect: 'none' }}>
           <div className='columnContainer'>
             <div className='gameControls'>
-              <InfoBar playerInfo={this.props.playerInfo} />
-              <div id='boob' className='text' ref={this.boob}>
-                <p id='boobText'> tap and drag to move </p>
+              <div className='columnContainer' style={{ width: '50%' }}>
+                <InfoBar playerInfo={this.props.playerInfo} />
+                <div id='boob' className='text' ref={this.boob}>
+                  <p id='boobText'> tap and drag to move </p>
+                </div>
               </div>
               <div className='rightColumn'>
                 <div className='rowContainer' style={{ height: '12%' }}>
