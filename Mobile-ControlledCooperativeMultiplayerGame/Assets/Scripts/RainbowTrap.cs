@@ -31,7 +31,7 @@ public class RainbowTrap : MonoBehaviour
     {
         _ownPath  = Shapes.PathFromCollider(gameObject);
         _material = GetComponent<Renderer>().material;
-        _material.SetColor(TrapColor, PlayerColorMethods.ColorToRGB(color));
+        _material.SetColor(TrapColor, PlayerColorMethods.ToRGB(color));
         
     }
 
@@ -56,7 +56,7 @@ public class RainbowTrap : MonoBehaviour
         {
             _lastColliderOnTrap = null;
             color = PlayerColorMethods.NextColor(color, PlayerDataKeeper.Instance.NumPlayers);
-            _material.SetColor(TrapColor, PlayerColorMethods.ColorToRGB(color));
+            _material.SetColor(TrapColor, PlayerColorMethods.ToRGB(color));
         }
 
     }
@@ -95,7 +95,7 @@ public class RainbowTrap : MonoBehaviour
      */
     IEnumerator HideAndShowAgain()
     {
-      var hiddenColor = PlayerColorMethods.ColorToRGB(color);
+      var hiddenColor = PlayerColorMethods.ToRGB(color);
       hiddenColor.a = 0;
       hidden = true;
       _material.SetColor(TrapColor, hiddenColor);
