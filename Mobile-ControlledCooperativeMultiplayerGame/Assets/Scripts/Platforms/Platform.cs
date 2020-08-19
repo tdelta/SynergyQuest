@@ -1,8 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
+﻿using UnityEngine;
 
+/**
+ * <summary>
+ * This behavior is intended for (moving) platforms on top of <see cref="Chasm"/>s.
+ * It ensures that other objects implementing <see cref="PlatformTransportable"/> and <see cref="PhysicsEffects"/> are
+ * moved along with this object.
+ *
+ * To actually move a platform, additionally use <see cref="WaypointControlledPlatform"/> or
+ * <see cref="PlayerControlledPlatform"/>.
+ * </summary>
+ */
 public class Platform : MonoBehaviour
 {
     private void OnTriggerEnter2D(Collider2D other)

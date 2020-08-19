@@ -1,7 +1,13 @@
-using System;
 using JetBrains.Annotations;
 using UnityEngine;
 
+/**
+ * <summary>
+ * Switch which reacts to players of certain color standing on it.
+ * </summary>
+ * <seealso cref="Switch"/>
+ * <seealso cref="Switchable"/>
+ */
 [RequireComponent(typeof(Switch), typeof(ColorReplacer))]
 public class ColorSwitch : MonoBehaviour
 {
@@ -34,6 +40,7 @@ public class ColorSwitch : MonoBehaviour
 
             if (!ReferenceEquals(_switch, null))
             {
+                // Iff a activating player is set, the switch component shall be activated
                 _switch.Value = !(value is null);
             }
         }

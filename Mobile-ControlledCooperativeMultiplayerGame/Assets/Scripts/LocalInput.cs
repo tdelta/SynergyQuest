@@ -17,6 +17,12 @@ public class LocalInput: MonoBehaviour, Input
      */
     [SerializeField] private PlayerColor color;
 
+    /**
+     * <summary>
+     * What input mode these controls shall report. It emulates the input mode setting of remote controllers,
+     * see also <see cref="InputMode"/>.
+     * </summary>
+     */
     public InputMode InputMode {
         get;
         set;

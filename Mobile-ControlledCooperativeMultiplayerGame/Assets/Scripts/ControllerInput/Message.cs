@@ -33,7 +33,7 @@ public enum MessageType
     SetEnabledButtons = 12,  // Enable / disable buttons in the controller UI, sent by game
     SetCooldownButtons = 13, // Mark buttons as "cooling down". The buttons are still enabled, but can currently not be used, since the action has a cooldown, sent by game
     IMUOrientation = 14,     // Orientation of the controller in 3D space (roll and pitch) interpreted as horizontal and vertical movement in 2D space. Sent by controller
-    InputModeChanged = 15,
+    InputModeChanged = 15,   // Hint, which inputs the game currently expects. Sent by game. See also `InputMode`.
 }
 
 /**

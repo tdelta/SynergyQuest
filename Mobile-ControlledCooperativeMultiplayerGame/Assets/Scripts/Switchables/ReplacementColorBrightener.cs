@@ -1,15 +1,26 @@
 using UnityEngine;
 
+/**
+ * <summary>
+ * The <see cref="ColorReplacer"/> component allows to replace colors in sprites. This component allows to temporarily
+ * brighten this color.
+ * This is for example useful to show that a colored switch activates, e.g. <see cref="ColorSwitch"/>.
+ * </summary>
+ */
 [RequireComponent(typeof(Switchable), typeof(ColorReplacer))]
 public class ReplacementColorBrightener : MonoBehaviour
 {
+    /**
+     * How much shall this component temporarily brighten the replacement color?
+     */
     [SerializeField] private float brightnessDelta = 0.2f;
     
     private Switchable _switchable;
     private ColorReplacer _colorReplacer;
 
-    private Color _originalColor;
-    private Color _brightenedColor;
+    // We cache the colors in these fields
+    private Color _originalColor; // Color used by the ColorReplacer before applying this effect
+    private Color _brightenedColor; // Color when applying this effect.
 
     private void Awake()
     {

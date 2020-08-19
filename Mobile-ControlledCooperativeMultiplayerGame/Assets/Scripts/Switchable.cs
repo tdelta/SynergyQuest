@@ -43,10 +43,15 @@ public class Switchable : MonoBehaviour
 
     void Awake()
     {
-        BuildSwitches();
+        AcquireSwitches();
     }
 
-    private void BuildSwitches()
+    /**
+     * <summary>
+     * Discovers switches activating this component and allocates handlers for changes of their values.
+     * </summary>
+     */
+    private void AcquireSwitches()
     {
         // Auto-discover switches by tags and add them to the manually configured ones
         switches = autoDiscoveredSwitchTags
@@ -65,7 +70,7 @@ public class Switchable : MonoBehaviour
     {
         OnDisable();
         switches = switches.Concat(additionalSwitches).ToArray();
-        BuildSwitches();
+        AcquireSwitches();
         OnEnable();
     }
 

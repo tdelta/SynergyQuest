@@ -273,10 +273,10 @@ public class ControllerServer : BehaviourSingleton<ControllerServer>
     }
 
     private void Log(String str) {
-        Debug.Log("ControllerInput: " + str);
+        Debug.Log($"[ControllerServer] {str}");
     }
     
     private void LogError(String str) {
-        Debug.LogError("ControllerInput: " + str);
+        Debug.LogError($"[ControllerServer] {str}");
     }
 }

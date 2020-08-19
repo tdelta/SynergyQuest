@@ -7,6 +7,9 @@ public class WaypointControlledPlatform : MonoBehaviour
 {
     [SerializeField] private List<WayPointController> wayPoints = new List<WayPointController>();
     [SerializeField] private float speed;
+    /**
+     * Time to wait when a endpoint has been reached before traveling the reverse direction
+     */
     [SerializeField] private float endPointWaitTime = 0.0f;
 
     private bool _hasNextWaypoint = false;
@@ -150,7 +153,9 @@ public class WaypointControlledPlatform : MonoBehaviour
     }
 
     /**
-     * Causes platform delay movement for `endPointWaitTime`.
+     * <summary>
+     * Causes platform to delay movement for `endPointWaitTime`.
+     * </summary>
      */
     private void TriggerEndpointWait()
     {

@@ -83,6 +83,12 @@ public static class CollectionsExtensions
         return max;
     }
 
+    /**
+     * <summary>
+     * Given an array and an element, return a new array containing the elements of the old array plus the given element
+     * appended at the end.
+     * </summary>
+     */
     public static T[] Plus<T>(this T[] array, T newElement)
     { 
         var newArray = new T[array.Length + 1];
@@ -93,6 +99,12 @@ public static class CollectionsExtensions
         return newArray;
     }
     
+    /**
+     * <summary>
+     * Given an array and an element, return a new array containing the elements of the old array plus the given element
+     * prepended at the beginning of the array.
+     * </summary>
+     */
     public static T[] Prepend<T>(this T[] array, T newElement)
     { 
         var newArray = new T[array.Length + 1];
@@ -103,6 +115,14 @@ public static class CollectionsExtensions
         return newArray;
     }
 
+    /**
+     * <summary>
+     * Return a new array containing the elements of the given array but with the first occurence of the given element
+     * removed.
+     * If the given element does not appear in the array, the given array is returned unchanged without creating a new
+     * instance.
+     * </summary>
+     */
     public static T[] RemoveFirst<T>(this T[] array, T value)
     {
         var idx = Array.IndexOf(array, value);
@@ -117,6 +137,12 @@ public static class CollectionsExtensions
         }
     }
 
+    
+    /**
+     * <summary>
+     * Return a new array containing the elements of the given array but without the element at the given index.
+     * </summary>
+     */
     public static T[] RemoveAt<T>(this T[] array, int index)
     {
         var newArray = new T[array.Length - 1];

@@ -1,4 +1,3 @@
-using Cinemachine;
 using UnityEngine;
 
 /**
@@ -33,18 +32,7 @@ public static class BehaviourExtensions
 
         if (self.CompareTag("Player"))
         {
-            foreach (var cinemachineTargetGroup in Object.FindObjectsOfType<CinemachineTargetGroup>())
-            {
-                if (visible)
-                {
-                    cinemachineTargetGroup.AddMember(self.transform, 1.0f, 0.0f);
-                }
-
-                else
-                {
-                    cinemachineTargetGroup.RemoveMember(self.transform);
-                }
-            }
+            self.SetFollowedByCamera(visible);
         }
     }
 
@@ -58,6 +46,13 @@ public static class BehaviourExtensions
         self.SetVisibility(true);
     }
 
+    /**
+     * <summary>
+     * Ensures that a physics controlled entity can no longer move due to physics.
+     * Can also unfreeze by setting the parameter to <c>false</c>
+     * </summary>
+     * <seealso cref="UnFreeze"/>
+     */
     public static void Freeze(this GameObject self, bool freeze = true)
     {
         if (self.GetComponent<Rigidbody2D>() is Rigidbody2D body && body != null)
@@ -66,6 +61,9 @@ public static class BehaviourExtensions
         }
     }
     
+    /**
+     * <seealso cref="Freeze"/>
+     */
     public static void UnFreeze(this GameObject self)
     {
         self.Freeze(false);
