@@ -111,13 +111,7 @@ public class PhysicsEffects: MonoBehaviour
     /**
      * Instantly transports player to new position
      */
-    public void Teleport(Vector3 position)
-    {
-        transform.position = position;
-        rigidbody2D.position = position;
-    }
-    
-    public void Teleport2D(Vector2 position)
+    public void Teleport(Vector2 position)
     {
         transform.position = new Vector3(position.x, position.y, transform.position.z);
         rigidbody2D.position = position;

@@ -4,10 +4,13 @@ using System.Linq;
 using UnityEngine;
 
 /**
- * This component marks a game object to be able to be transported by a platform, see also `Platform`.
+ * <summary>
+ * This component marks a game object to be able to be transported by a platform, see also <see cref="Platform"/>.
  * 
- * It also keeps track of all platforms the object currently touches so that this information can be used by the `Chasm`
- * class to determine whether a player can not fall down a chasm because they are standing on a platform.
+ * It also keeps track of all platforms the object currently touches so that this information can be used by the
+ * <see cref="Chasm"/> class to determine whether a player can not fall down a chasm because they are standing on a
+ * platform.
+ * </summary>
  */
 public class PlatformTransportable : MonoBehaviour
 {
@@ -35,7 +38,7 @@ public class PlatformTransportable : MonoBehaviour
     
     private void OnTriggerExit2D(Collider2D other)
     {
-        // If the object we stopped touching is a PlatformController, unregister it from the list of platforms we are
+        // If the object we stopped touching is a Platform, unregister it from the list of platforms we are
         // currently in contact with.
         if (other.GetComponent<Platform>() is Platform platform)
         {

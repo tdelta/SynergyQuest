@@ -58,8 +58,8 @@ public class ControllerInput: Input
     private float _imuOrientationVertical   = 0.0f;  // 3D rotation (roll) interpreted as vertical 2d input
     private float _imuOrientationHorizontal = 0.0f;  // 3D rotation (pitch) interpreted as horitontal 2d input
 
+    // Hint to controller, what inputs are currently expected
     private InputMode _inputMode = InputMode.Normal;
-
     public InputMode InputMode
     {
         get => _inputMode;
@@ -67,6 +67,7 @@ public class ControllerInput: Input
         {
             _inputMode = value;
             
+            // When input mode is changed, controller must be informed
             var msg = new Message.InputModeChangedMessage(value);
             SendMessage(msg);
         }
@@ -127,11 +128,35 @@ public class ControllerInput: Input
         return _horizontal;
     }
 
+    /**
+     * <summary>
+     * Returns 3d rotation of controller device interpreted as a 2d vertical input.
+     * This is usually implemented by interpreting the "roll" orientation:
+     * <a href="https://en.wikipedia.org/wiki/Aircraft_principal_axes">Euler angles / Tait-Bryan angles</a>
+     * <a href="https://en.wikipedia.org/wiki/Aircraft_principal_axes">Aircraft principal axes</a>
+     * </summary>
+     *
+     * <returns>
+     * The value is in [-1; 1], at least clients are required to only send such values.
+     * </returns>
+     */
     public float GetIMUOrientationVertical()
     {
         return _imuOrientationVertical;
     }
 
+    /**
+     * <summary>
+     * Returns 3d rotation of controller device interpreted as a 2d horizontal input.
+     * This is usually implemented by interpreting the "pitch" orientation:
+     * <a href="https://en.wikipedia.org/wiki/Aircraft_principal_axes">Euler angles / Tait-Bryan angles</a>
+     * <a href="https://en.wikipedia.org/wiki/Aircraft_principal_axes">Aircraft principal axes</a>
+     * </summary>
+     *
+     * <returns>
+     * The value is in [-1; 1], at least clients are required to only send such values.
+     * </returns>
+     */
     public float GetIMUOrientationHorizontal()
     {
         return _imuOrientationHorizontal;

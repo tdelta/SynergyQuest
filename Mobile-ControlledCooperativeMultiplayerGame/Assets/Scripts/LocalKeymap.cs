@@ -18,6 +18,13 @@ public class LocalKeymap : ScriptableObject
     private string verticalAxis = "Vertical";
     public string VerticalAxis => verticalAxis;
 
+    /**
+     * <summary>
+     * If this modifier key is pressed . The vertical and horizontal axis input is used to emulate 3d orientation input.
+     * </summary>
+     * <seealso cref="ControllerInput.GetIMUOrientationVertical"/>
+     * <seealso cref="ControllerInput.GetIMUOrientationHorizontal"/>
+     */
     [SerializeField] private KeyCode imuOrientationModifier = KeyCode.LeftShift;
     public KeyCode ImuOrientationModifier => imuOrientationModifier;
 

@@ -55,7 +55,32 @@ public interface Input
      */
     float GetHorizontal();
 
+    /**
+     * <summary>
+     * Returns 3d rotation of controller device interpreted as a 2d vertical input.
+     * This is usually implemented by interpreting the "roll" orientation:
+     * <a href="https://en.wikipedia.org/wiki/Aircraft_principal_axes">Euler angles / Tait-Bryan angles</a>
+     * <a href="https://en.wikipedia.org/wiki/Aircraft_principal_axes">Aircraft principal axes</a>
+     * </summary>
+     *
+     * <returns>
+     * The value is in [-1; 1], at least clients are required to only send such values.
+     * </returns>
+     */
     float GetIMUOrientationVertical();
+    
+    /**
+     * <summary>
+     * Returns 3d rotation of controller device interpreted as a 2d horizontal input.
+     * This is usually implemented by interpreting the "pitch" orientation:
+     * <a href="https://en.wikipedia.org/wiki/Aircraft_principal_axes">Euler angles / Tait-Bryan angles</a>
+     * <a href="https://en.wikipedia.org/wiki/Aircraft_principal_axes">Aircraft principal axes</a>
+     * </summary>
+     *
+     * <returns>
+     * The value is in [-1; 1], at least clients are required to only send such values.
+     * </returns>
+     */
     float GetIMUOrientationHorizontal();
 
     InputMode InputMode { get; set; }

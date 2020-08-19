@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33b6b1ef7bfe4560b6e244714ef05481, type: 3}
   m_Name: ServerSettings
   m_EditorClassIdentifier: 
-  pathToCertificatePFX: ../Certificates/generated/server.pfx
-  pfxPassword: 
-  documentRoot: controller-app
   httpPort: 8000
   websocketPort: 4242
+  documentRoot: controller-app
   runHttpServerOnlyInProductionMode: 1
   useSSLOnlyInProductionMode: 1
+  pathToCertificatePFX: ../Certificates/generated/server.pfx
+  pfxPassword: 
