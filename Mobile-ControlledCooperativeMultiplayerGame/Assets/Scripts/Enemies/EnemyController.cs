@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using Single = System.Single;
 
 abstract public class EnemyController : EntityController
 {
@@ -15,6 +16,7 @@ abstract public class EnemyController : EntityController
     protected Vector2 direction;
     
     bool isDead;
+    RaycastHit2D[] _hit = new RaycastHit2D[3];
     readonly int deadTrigger = Animator.StringToHash("Dead");
 
     /**
@@ -48,6 +50,29 @@ abstract public class EnemyController : EntityController
             directionTimer = directionChangeTime;
         }
     }
+
+    protected (bool, Vector2) FindNearestPlayer(Vector2 direction, float viewCone)
+    {
+        Vector2 playerVector = new Vector2(0, 0);
+        float minPlayerDistance = Single.PositiveInfinity;
+
+        foreach (var player in GameObject.FindObjectsOfType(typeof(PlayerController)) as PlayerController[])
+        {
+            Vector2 target = player.Center - Rigidbody2D.position;
+            float distance = target.magnitude;
+
+            if (Vector2.Angle(target, direction) <= viewCone / 2 && distance < minPlayerDistance &&
+                // if no gameObject blocks line of sight to player
+                Physics2D.LinecastNonAlloc(Rigidbody2D.position, player.Center, _hit) == 2)
+            {
+                minPlayerDistance = distance;
+                playerVector = target;
+            }
+        }
+
+        return (!Single.IsInfinity(minPlayerDistance), playerVector.normalized);
+    }
+
 
     void OnCollisionStay2D(Collision2D other)
     {
