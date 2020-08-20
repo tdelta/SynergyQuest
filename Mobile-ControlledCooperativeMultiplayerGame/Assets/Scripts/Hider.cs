@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -26,11 +27,36 @@ public class Hider : MonoBehaviour
         _switchable.OnActivationChanged -= OnActivationChanged;
     }
 
+    private void Start()
+    {
+        // Apply the initial activation to all managed objects
+        foreach (var o in objects.Where(o => o != null))
+        {
+            o.SetVisibility(_switchable.Activation);
+        }
+    }
+
     private void OnActivationChanged(bool activation)
     {
         foreach (var o in objects.Where(o => o != null))
         {
-            o.SetVisibility(activation);
+            if (Teleport.SupportsTeleportEffect(o))
+            {
+                if (activation)
+                {
+                    Teleport.TeleportIn(o, Color.cyan);
+                }
+
+                else
+                {
+                    Teleport.TeleportOut(o, Color.cyan);
+                }
+            }
+
+            else
+            {
+                o.SetVisibility(activation);
+            }
         }
     }
 }

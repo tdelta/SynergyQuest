@@ -1,16 +1,19 @@
+using System;
 using UnityEngine;
 
 /**
+ * <summary>
  * Spikes are a zone which can hurt the player, but which can be enabled and disabled by switches.
- * It relies on the `Switchable` component to receive signals from switches which can enable or disable it.
- *
- * The following other components must be present on the same object:
- *
- * - SpriteRenderer
- * - Switchable
- * - BoxCollider2D
- * - AudioSource
+ * It relies on the <see cref="Switchable"/> component to receive signals from switches, <see cref="Switch"/>, which can
+ * enable or disable it.
+ * </summary>
+ * <seealso cref="Switch"/>
+ * <seealso cref="Switchable"/>
  */
+[RequireComponent(typeof(Switchable))]
+[RequireComponent(typeof(SpriteRenderer))]
+[RequireComponent(typeof(BoxCollider2D))]
+[RequireComponent(typeof(AudioSource))]
 public class Spikes : MonoBehaviour
 {
     /**
@@ -55,6 +58,13 @@ public class Spikes : MonoBehaviour
     private void OnDisable()
     {
         _switchable.OnActivationChanged -= OnActivationChanged;
+    }
+
+    private void Start()
+    {
+        // The Switchable component does not trigger this callback by itself for the initial activation when loading the
+        // scene. Hence, we look the initial value up ourselves
+        OnActivationChanged(_switchable.Activation);
     }
 
     private void OnTriggerStay2D(Collider2D other)

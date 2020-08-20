@@ -10,7 +10,7 @@ Material:
   m_Name: TeleportMaterial
   m_Shader: {fileID: -6465566751694194690, guid: b926404fd4551407bad87673b9881cf7,
     type: 3}
-  m_ShaderKeywords: 
+  m_ShaderKeywords: ETC1_EXTERNAL_ALPHA
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -26,5 +26,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - _Progress: 0
+    - _TeleportProgress: 0
     m_Colors:
     - _Color: {r: 0, g: 4.272251, b: 7.999999, a: 0}
+    - _TeleportColor: {r: 0, g: 4.2722516, b: 8, a: 0}

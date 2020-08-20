@@ -46,6 +46,13 @@ public class ReplacementColorBrightener : MonoBehaviour
         _switchable.OnActivationChanged -= OnActivationChanged;
     }
 
+    private void Start()
+    {
+        // The Switchable component does not trigger this callback by itself for the initial activation when loading the
+        // scene. Hence, we look the initial value up ourselves
+        OnActivationChanged(_switchable.Activation);
+    }
+
     void OnActivationChanged(bool activation)
     {
         _colorReplacer.ReplacementColor = activation ? _brightenedColor : _originalColor;
