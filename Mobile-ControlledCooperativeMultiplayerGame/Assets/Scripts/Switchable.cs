@@ -3,10 +3,13 @@ using System.Linq;
 using UnityEngine;
 
 /**
+ * <summary>
  * Utility class which observes the state of switches (see the `Switch` class).
- * It triggers an event, if all registered switches are activated at once.
- *
+ * It is <c>activated</c> iff all registered switches are active.
+ * It triggers an event when the activation changes.
+ * 
  * See example the `DeadManSwitch` for an usage example.
+ * </summary>
  */
 public class Switchable : MonoBehaviour
 {
@@ -21,16 +24,23 @@ public class Switchable : MonoBehaviour
     [SerializeField] private string[] autoDiscoveredSwitchTags = new string[0];
     
     /**
-     * Event which is invoked if all registered switches are active at the same time.
+     * <summary>
+     * Event which is invoked if the activation value changes, see class description.
+     * It is *not* invoked when computing the activation value for the first time in the <c>Awake</c> phase.
+     * If you need the activation value when starting a scene, look up <see cref="Activation"/> in the <c>Start</c>
+     * method of your component.
+     * </summary>
      */
     public event ActivationChangedAction OnActivationChanged;
     public delegate void ActivationChangedAction(bool activation);
 
     /**
+     * <summary>
      * Stores, whether all observed switches are currently active
+     * </summary>
      */
-    private bool _activation = true;
     public bool Activation => _activation;
+    private bool _activation = true;
     
     /**
      * Caches the current value of every switch
@@ -44,6 +54,7 @@ public class Switchable : MonoBehaviour
     void Awake()
     {
         AcquireSwitches();
+        ComputeActivation(suppressCallbacks: true);
     }
 
     /**
@@ -72,11 +83,6 @@ public class Switchable : MonoBehaviour
         switches = switches.Concat(additionalSwitches).ToArray();
         AcquireSwitches();
         OnEnable();
-    }
-
-    private void Start()
-    {
-        ComputeActivation();
     }
 
     private void OnEnable()
@@ -114,15 +120,18 @@ public class Switchable : MonoBehaviour
     }
 
     /**
+     * <summary>
      * Determine, whether all observed switches are currently activated at once
+     * </summary>
+     * <param name="suppressCallbacks">Iff true, no subscribers of the `OnActivationChanged` event will be informed when the activation changes. Default: false</param>
      */
-    void ComputeActivation()
+    void ComputeActivation(bool suppressCallbacks = false)
     {
         var oldActivation = _activation;
         _activation = _switchValues.All(v => v);
 
         // If the activation state of this component changed, inform all subscribers
-        if (oldActivation != _activation)
+        if (!suppressCallbacks && oldActivation != _activation)
         {
             OnActivationChanged?.Invoke(_activation);
         }

@@ -16,6 +16,7 @@ using UnityEngine;
  * The door is closed, if there is a connected switch, which is not triggered.
  * If the door is closed, it does not transition to the next room and its sprite changes accordingly.
  */
+[RequireComponent(typeof(Switchable), typeof(SpriteRenderer), typeof(AudioSource))]
 public class Door : MonoBehaviour
 {
     /**

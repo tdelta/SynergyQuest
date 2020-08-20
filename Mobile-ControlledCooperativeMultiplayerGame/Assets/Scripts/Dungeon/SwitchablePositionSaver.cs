@@ -2,8 +2,14 @@ using System.Linq;
 using UnityEngine;
 
 /**
+ * <summary>
  * Saves the positions of objects persistently across scenes, depending on the state of switches.
  * For example, with this, one can save the positions of Sokoban boxes only, iff the Sokoban was solved correctly.
+ *
+ * It requires the saved objects to have the <see cref="Guid"/> component.
+ * This component only triggers the save/removal of positions. The actual lookup of saved positions is performed by the
+ * <see cref="Guid"/> component.
+ * </summary>
  */
 [RequireComponent(typeof(Switchable))]
 public class SwitchablePositionSaver : MonoBehaviour
@@ -41,6 +47,13 @@ public class SwitchablePositionSaver : MonoBehaviour
             })
             .Concat(objectsToSave)
             .ToArray();
+    }
+
+    private void Start()
+    {
+        // The Switchable component does not trigger this callback by itself for the initial activation when loading the
+        // scene. Hence, we look the initial value up ourselves
+        OnActivationChanged(this._switchable.Activation);
     }
 
     private void OnEnable()

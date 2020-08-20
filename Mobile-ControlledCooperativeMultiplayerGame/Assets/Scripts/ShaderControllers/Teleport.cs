@@ -44,12 +44,24 @@ public class Teleport : MonoBehaviour
     
     void Awake()
     {
-        _material = GetComponent<SpriteRenderer>().material;
-
-        if (!_material.HasProperty(ColorProperty) || !_material.HasProperty(ProgressProperty))
+        if (!SupportsTeleportEffect(this.gameObject))
         {
             Debug.LogError("Trying to apply teleport effect to sprite with a material which does not support teleport effects.");
         }
+        
+        _material = GetComponent<SpriteRenderer>().material;
+    }
+
+    public static bool SupportsTeleportEffect(GameObject obj)
+    {
+        if (obj.TryGetComponent<SpriteRenderer>(out var renderer))
+        {
+            var material = renderer.material;
+
+            return material.HasProperty(ColorProperty) && material.HasProperty(ProgressProperty);
+        }
+
+        else return false;
     }
 
     /**
@@ -70,12 +82,29 @@ public class Teleport : MonoBehaviour
     public static void TeleportOut(GameObject go, Color color, float speed = 0.75f)
     {
         go.Freeze();
-    
-        var instance = go.AddComponent<Teleport>();
+
+        // Is there already a teleport going on?
+        if (go.TryGetComponent(out Teleport instance))
+        {
+            // If so, we can reuse the component.
+            // However, we might need to inverse the progress timer, if the old teleport component played the effect in
+            // the opposite direction.
+            if (!instance._isTeleportingOut)
+            {
+                instance._timer = 1.0f - instance._timer;
+            }
+        }
+        
+        else
+        {
+            // Otherwise, we need to create a new instance
+            instance = go.AddComponent<Teleport>();
+            instance._material.SetFloat(ProgressProperty, 0.0f);
+        }
+        
         instance._speed = speed;
         instance._isTeleportingOut = true;
         instance._material.SetColor(ColorProperty, color);
-        instance._material.SetFloat(ProgressProperty, 0.0f);
     }
     
     /**
@@ -95,11 +124,28 @@ public class Teleport : MonoBehaviour
      */
     public static void TeleportIn(GameObject go, Color color, float speed = 0.75f)
     {
-        var instance = go.AddComponent<Teleport>();
+        // Is there already a teleport going on?
+        if (go.TryGetComponent(out Teleport instance))
+        {
+            // If so, we can reuse the component.
+            // However, we might need to inverse the progress timer, if the old teleport component played the effect in
+            // the opposite direction.
+            if (instance._isTeleportingOut)
+            {
+                instance._timer = 1.0f - instance._timer;
+            }
+        }
+
+        else
+        {
+            // Otherwise, we need to create a new instance
+            instance = go.AddComponent<Teleport>();
+            instance._material.SetFloat(ProgressProperty, 1.0f);
+        }
+        
         instance._speed = speed;
         instance._isTeleportingOut = false;
         instance._material.SetColor(ColorProperty, color);
-        instance._material.SetFloat(ProgressProperty, 1.0f);
         
         go.MakeVisible();
         go.UnFreeze();
@@ -107,12 +153,13 @@ public class Teleport : MonoBehaviour
 
     private void Update()
     {
+        // advance the animation:
+        _timer = Mathf.Min(1.0f, _timer + Time.deltaTime * _speed);
+        
         // If the animation is still running...
         // (it is completed when the `ProgressProperty` reaches 1.0f)
         if (_timer < 1.0f)
         {
-            // advance the animation:
-            _timer = Mathf.Min(1.0f, _timer + Time.deltaTime * _speed);
             _material.SetFloat(
                 ProgressProperty,
                 _isTeleportingOut ?
@@ -123,14 +170,14 @@ public class Teleport : MonoBehaviour
 
         else
         {
-            // Destroy this behaviour when the effect finished
-            Destroy(this);
-            
             // Make object permanently invisible, if this is the teleporting out effect
             if (_isTeleportingOut)
             {
                 this.gameObject.MakeInvisible();
             }
+            
+            // Destroy this behaviour when the effect finished
+            DestroyImmediate(this);
         }
     }
 }

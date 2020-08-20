@@ -15,12 +15,12 @@ public static class BehaviourExtensions
      */
     public static void SetVisibility(this GameObject self, bool visible)
     {
-        if (self.GetComponent<Renderer>() is Renderer renderer)
+        if (self.TryGetComponent<Renderer>(out var renderer))
         {
             renderer.enabled = visible;
         }
 
-        if (self.GetComponent<Collider2D>() is Collider2D collider)
+        if (self.TryGetComponent<Collider2D>(out var collider))
         {
             collider.enabled = visible;
         }

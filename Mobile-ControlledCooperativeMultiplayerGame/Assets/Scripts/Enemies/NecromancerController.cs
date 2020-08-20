@@ -4,6 +4,7 @@ public class NecromancerController : EnemyController
 {
     [SerializeField] FireballProjectile fireball;
     [SerializeField] float launchCoolDown = 1;
+    [SerializeField] float viewCone = 1;
 
     readonly int _moveXProperty = Animator.StringToHash("Move X");
     float _launchTimer;
@@ -58,7 +59,9 @@ public class NecromancerController : EnemyController
 
     protected override Vector2 ComputeOffset()
     {
-        (var playerVisible, var playerDirection) = IsPlayerVisible();
+        var (playerVisible, playerDirection) = IsPlayerVisible();
+        if (!playerVisible)
+          (playerVisible, playerDirection) = FindNearestPlayer(_offset, viewCone);
 
         if (playerVisible)
         {

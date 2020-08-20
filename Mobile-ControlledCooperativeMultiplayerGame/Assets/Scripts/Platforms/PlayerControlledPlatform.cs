@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 /**
@@ -112,6 +113,13 @@ public class PlayerControlledPlatform : MonoBehaviour
     private void OnDisable()
     {
         _switchable.OnActivationChanged -= OnActivationChanged;
+    }
+
+    private void Start()
+    {
+        // The Switchable component does not trigger this callback by itself for the initial activation when loading the
+        // scene. Hence, we look the initial value up ourselves
+        OnActivationChanged(_switchable.Activation);
     }
 
     private void Update()
