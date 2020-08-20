@@ -36,6 +36,15 @@ public class RainbowTrap : MonoBehaviour
     }
 
     /**
+     * Only called in editor, e.g. when changing a property
+     */
+    private void OnValidate()
+    {
+        var material = GetComponent<Renderer>().material;
+        material.SetColor(TrapColor, PlayerColorMethods.ToRGB(color));
+    }
+
+    /**
      * if a player with a comptabile color steps on this trap significantly (share is > 0.5) remember it
      */
     void OnTriggerStay2D(Collider2D other)
