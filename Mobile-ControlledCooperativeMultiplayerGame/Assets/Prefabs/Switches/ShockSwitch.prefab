@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 3705895971656637730}
   - component: {fileID: 3705895971656637731}
   - component: {fileID: 7154230043678852914}
+  - component: {fileID: -141261760492380719}
   m_Layer: 10
   m_Name: ShockSwitch
   m_TagString: Switch
@@ -144,6 +145,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   value: 0
+  isPersistentAcrossScenes: 0
 --- !u!114 &7154230043678852914
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -157,3 +159,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   timeout: 0
+--- !u!114 &-141261760492380719
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3705895971656637728}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a44c29e83814ea9ac22ed17075e81d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  button: 0
+  interactionType: 0
+  AffectsController: 0
+  color: 0
+  interactionTriggeredEvent:
+    m_PersistentCalls:
+      m_Calls: []

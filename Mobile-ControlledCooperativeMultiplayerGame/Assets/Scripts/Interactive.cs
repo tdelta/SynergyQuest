@@ -44,16 +44,23 @@ public class Interactive : MonoBehaviour
      * The kind of interaction that is registered, see enum above.
      */
     [SerializeField] private InteractionType interactionType;
+
+    /**
+     * If true, the button of this interactive should only be enabled, while the player is colliding with it.
+     * If false, the interactive is only used to display a speech bubble
+     */
+    [SerializeField] private bool AffectsController = true;
     
-     /**
+    /**
       * Whether this Interactive shall temporarily ignore collision logic,
       * i.e. if there is currently a player interacting with this object
       * and this is set, then the player will still be able to interact, even
       * if they stop colliding with this object.
       */
-     public bool IgnoreCollisions {get; set;} = false;
+    public bool IgnoreCollisions { get; set; } = false;
 
-    /**
+
+     /**
      * The player which is currently touching this object and who can interact.
      * If multiple players are touching the object, only the first one can interact.
      *
@@ -65,12 +72,12 @@ public class Interactive : MonoBehaviour
         private set {
             if (!ReferenceEquals(value, _interactingPlayer))
             {
-                if (ReferenceEquals(value, null)) {
+                if (ReferenceEquals(value, null) && AffectsController) {
                     // We stopped interacting with something, hence
                     // we must disable the corresponding interaction on
                     // the controllers:
                     _interactingPlayer.Input.EnableButtons((button, false));
-                } else {
+                } else if (AffectsController){
                     if (interactionType == InteractionType.Down || interactionType == InteractionType.Hold){
                         value.Input.EnableButtons((button, true));
                     }

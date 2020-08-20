@@ -147,6 +147,7 @@ public class InteractionSpeechBubble : MonoBehaviour
             {Button.Pull, ("Pull", new Color(0.01171875f, 0.60546875f, 0.89803921568627450980f))},
             {Button.Press, ("Press", new Color(0.957f, 0.318f, 0.118f))},
             {Button.Read, ("Read", new Color(1f, 0.702f, 0f))},
-            {Button.Open, ("Open", new Color(0.76f, 0.094f, 0.357f))}
+            {Button.Open, ("Open", new Color(0.76f, 0.094f, 0.357f))},
+            {Button.Attack, ("Attack", new Color(0.898f, 0.224f, 0.208f))}
         };
 }
