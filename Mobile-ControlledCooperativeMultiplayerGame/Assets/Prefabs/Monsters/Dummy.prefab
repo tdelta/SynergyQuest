@@ -83,6 +83,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e89ceed4394482f9eade6be87a68d82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  FrictionEnabled: 1
 --- !u!212 &7458184417568935829
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -147,10 +148,10 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: 0.5}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
+    pivot: {x: 0.5, y: 0}
     oldSize: {x: 1, y: 1}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
@@ -230,12 +231,12 @@ PrefabInstance:
     - target: {fileID: 8238955357890096599, guid: 37e72f8d85c3e48ff94a706cf9f4acd0,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 4.4360614
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8238955357890096599, guid: 37e72f8d85c3e48ff94a706cf9f4acd0,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.89419526
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 8238955357890096599, guid: 37e72f8d85c3e48ff94a706cf9f4acd0,
         type: 3}
@@ -317,7 +318,7 @@ PrefabInstance:
     - target: {fileID: 4098822668328429570, guid: 3a8c965459b39b31abeac92fbb15c6d0,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4098822668328429570, guid: 3a8c965459b39b31abeac92fbb15c6d0,
         type: 3}
