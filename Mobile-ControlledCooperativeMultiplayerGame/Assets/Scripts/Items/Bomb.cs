@@ -24,7 +24,6 @@ public class Bomb : Item
 
     private void Start()
     {
-        Debug.Log("Die Bombe wird erzeugt");
         _animator.SetTrigger(explosionTrigger);
     }
     
