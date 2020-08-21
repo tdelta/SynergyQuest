@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37603165ee876b6d790a7c6643aeba49, type: 3}
+  m_Name: LeftWallPassageLower
+  m_EditorClassIdentifier: 
+  m_DefaultSprite: {fileID: -6405424738791587875, guid: f14f8b22653167e47a2ed69e2a80a7eb,
+    type: 3}
+  m_DefaultGameObject: {fileID: 0}
+  m_DefaultColliderType: 0
+  m_TilingRules: []
+  siblings:
+  - {fileID: 11400000, guid: 43c0d59849e25b6b1a3f4664ad0f05e9, type: 2}
+  - {fileID: 11400000, guid: a4db29401ea33ffb996f255c126fd2ac, type: 2}
+  - {fileID: 11400000, guid: b020ce4d30eb8807696e0100b31a695b, type: 2}
+  - {fileID: 11400000, guid: e2da07090c63c2e038075e51413b3627, type: 2}

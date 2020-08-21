@@ -10,28 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 37603165ee876b6d790a7c6643aeba49, type: 3}
-  m_Name: WallPassageUpper
+  m_Name: RightWallPassageUpper
   m_EditorClassIdentifier: 
-  m_DefaultSprite: {fileID: -7876792534771822040, guid: f14f8b22653167e47a2ed69e2a80a7eb,
+  m_DefaultSprite: {fileID: -53490186173767741, guid: f14f8b22653167e47a2ed69e2a80a7eb,
     type: 3}
   m_DefaultGameObject: {fileID: 0}
   m_DefaultColliderType: 1
-  m_TilingRules:
-  - m_Id: 0
-    m_Sprites:
-    - {fileID: -506572513291271758, guid: f14f8b22653167e47a2ed69e2a80a7eb, type: 3}
-    m_GameObject: {fileID: 0}
-    m_AnimationSpeed: 1
-    m_PerlinScale: 0.5
-    m_Output: 0
-    m_ColliderType: 1
-    m_RandomTransform: 0
-    m_Neighbors: 01000000
-    m_NeighborPositions:
-    - {x: -1, y: 0, z: 0}
-    m_RuleTransform: 0
+  m_TilingRules: []
   siblings:
   - {fileID: 11400000, guid: 43c0d59849e25b6b1a3f4664ad0f05e9, type: 2}
-  - {fileID: 11400000, guid: 67ee620023682ac1ab99711ae76a9d12, type: 2}
   - {fileID: 11400000, guid: a8b30b518ca0b6c66956890c84823063, type: 2}
   - {fileID: 11400000, guid: 6f292de19bc65ecd6a6b1a0efa5126fc, type: 2}
+  - {fileID: 11400000, guid: 67ee620023682ac1ab99711ae76a9d12, type: 2}
