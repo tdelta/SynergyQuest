@@ -24,6 +24,7 @@ public class Bomb : Item
 
     private void Start()
     {
+        Debug.Log("Die Bombe wird erzeugt");
         _animator.SetTrigger(explosionTrigger);
     }
     
@@ -41,6 +42,12 @@ public class Bomb : Item
         sparkEffect.Stop();
         sparkEffect.GetComponent<AudioSource>().Stop();
         explosion = true;
+
+        // Checks whether the bomb is still carried when it explodes. If so, damage the carrier
+        if (_throwable.IsBeingCarried) {
+            _throwable.Carrier.PutDamage(1, (_throwable.Carrier.transform.position - transform.position).normalized);
+        }
+
     }
 
     /**
