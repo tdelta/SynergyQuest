@@ -13,13 +13,13 @@ public class ItemDescription : ScriptableObject
     /**
      * Prefab which can be used to instantiate the described item
      */
-    [SerializeField] private Item itemInstancePrefab;
+    [SerializeField] private Item itemInstancePrefab = default;
     public Item ItemInstancePrefab => itemInstancePrefab;
 
     /**
      * Which button must a player press to activate the item?
      */
-    [SerializeField] private Button useButton;
+    [SerializeField] private Button useButton = default;
     public Button UseButton => useButton;
 
     /**

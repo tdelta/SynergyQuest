@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class TrapMazeController: Pressable
 {
-  [SerializeField] private TrapController[] Traps;
-  [SerializeField] private int NumPlayers;
+  [SerializeField] private TrapController[] Traps = default;
+  [SerializeField] private int NumPlayers = default;
 
   void RotateColors()
   {

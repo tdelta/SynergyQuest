@@ -11,11 +11,11 @@ public class LocalInput: MonoBehaviour, Input
     /**
      * What keymap to use. Use different `LocalInput` instances with different layouts for multiple players
      */
-    [SerializeField] private LocalKeymap keymap;
+    [SerializeField] private LocalKeymap keymap = default;
     /**
      * What color these controls shall report. It emulates the color assignment remote controllers undergo
      */
-    [SerializeField] private PlayerColor color;
+    [SerializeField] private PlayerColor color = default;
 
     /**
      * <summary>

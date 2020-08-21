@@ -12,6 +12,6 @@ public class PlayerPrefabSettings: ScriptableObjectSingleton<PlayerPrefabSetting
     /**
      * Character prefab object spawned for every controller. Must have a `PlayerController` component
      */
-    [SerializeField] private PlayerController playerPrefab;
+    [SerializeField] private PlayerController playerPrefab = default;
     public PlayerController PlayerPrefab => playerPrefab;
 }

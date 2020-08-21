@@ -9,7 +9,7 @@ public class Collectible : MonoBehaviour
     /**
      * Description of the item which can be obtained when collecting this collectible
      */
-    [SerializeField] private ItemDescription itemDescription;
+    [SerializeField] private ItemDescription itemDescription = default;
 
     /**
      * Gives the item of this collectible to a player.

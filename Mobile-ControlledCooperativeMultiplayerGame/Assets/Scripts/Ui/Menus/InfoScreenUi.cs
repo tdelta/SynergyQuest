@@ -12,26 +12,26 @@ public class InfoScreenUi: MonoBehaviour, MenuUi
     /**
      * UI element displaying the title of the info screen
      */
-    [SerializeField] private TextMeshProUGUI header;
+    [SerializeField] private TextMeshProUGUI header = default;
     /**
      * UI element displaying the subtitle of the info screen
      */
-    [SerializeField] private TextMeshProUGUI subHeader;
+    [SerializeField] private TextMeshProUGUI subHeader = default;
     /**
      * Button which goes back to the previous page
      */
-    [SerializeField] private GameObject backButton;
+    [SerializeField] private GameObject backButton = default;
     /**
      * Text of the button which selects the next page or closes the info screen.
      * The text is changed depending on whether there is a next page.
      */
-    [SerializeField] private TextMeshProUGUI nextButtonText;
+    [SerializeField] private TextMeshProUGUI nextButtonText = default;
     /**
      * UI element which contains the text of the info screen.
      * Its first child is expected to be an element containing the titles.
      * The second child is modified by this class to contain the actual text of the current page.
      */
-    [SerializeField] private GameObject pageContent;
+    [SerializeField] private GameObject pageContent = default;
 
     /**
      * Content displayed in this UI. To be set by the `Init` method.

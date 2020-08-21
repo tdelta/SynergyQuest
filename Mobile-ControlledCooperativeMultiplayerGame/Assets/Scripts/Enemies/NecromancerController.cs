@@ -2,7 +2,7 @@
 
 public class NecromancerController : EnemyController
 {
-    [SerializeField] FireballProjectile fireball;
+    [SerializeField] FireballProjectile fireball = default;
     [SerializeField] float launchCoolDown = 1;
     [SerializeField] float viewCone = 1;
 

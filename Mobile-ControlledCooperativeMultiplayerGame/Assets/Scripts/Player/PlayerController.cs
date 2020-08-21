@@ -17,21 +17,21 @@ public enum PlayerState{
 
 public class PlayerController : EntityController
 {
-    [SerializeField] private GameObject lifeGauge;
-    [SerializeField] private CoinGaugeController coinGauge;
+    [SerializeField] private GameObject lifeGauge = default;
+    [SerializeField] private CoinGaugeController coinGauge = default;
     
     [SerializeField] private float speed = 3.0f; // units per second
-    [SerializeField] private MultiSound fightingSounds;
-    [SerializeField] private MultiSound hitSounds;
-    [SerializeField] private MultiSound deathSounds;
-    [SerializeField] private MultiSound fallingSounds;
-    [SerializeField] private InteractionSpeechBubble interactionSpeechBubble;
+    [SerializeField] private MultiSound fightingSounds = default;
+    [SerializeField] private MultiSound hitSounds = default;
+    [SerializeField] private MultiSound deathSounds = default;
+    [SerializeField] private MultiSound fallingSounds = default;
+    [SerializeField] private InteractionSpeechBubble interactionSpeechBubble = default;
     [SerializeField] private int goldLossOnDeath = 10;
-    [SerializeField] private CoinController coinPrefab;
+    [SerializeField] private CoinController coinPrefab = default;
     /**
      * Position where `Throwable`s move when being carried by this player
      */
-    [SerializeField] private Transform carryPosition;
+    [SerializeField] private Transform carryPosition = default;
     public Vector2 CarryPosition => carryPosition.position;
     public Vector2 Center => Collider.bounds.center;
 
@@ -49,13 +49,13 @@ public class PlayerController : EntityController
      * shall be used for them?
      * Has no effect if remote controls are used.
      */
-    [SerializeField] private LocalInput localInputPrefab;
+    [SerializeField] private LocalInput localInputPrefab = default;
     
     /**
      * There is an animation, in which a player can present an item.
      * The sprite of the item will be displayed by this renderer.
      */
-    [SerializeField] private SpriteRenderer itemPresentation;
+    [SerializeField] private SpriteRenderer itemPresentation = default;
     
     public BoxCollider2D Collider { get; private set; }
     private Renderer _renderer;

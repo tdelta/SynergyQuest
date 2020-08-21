@@ -8,15 +8,17 @@ using UnityEngine.Tilemaps;
 [RequireComponent(typeof(Tilemap), typeof(Switch))]
 public class EnemySpawn : MonoBehaviour {
 
-    [Serializable]
-    struct EnemyTypeCountPair {
-        public EnemyController Type;
-        public int Count;
-    }
+    #pragma warning disable 0649
+        [Serializable]
+        struct EnemyTypeCountPair {
+            public EnemyController Type;
+            public int Count;
+        }
+    #pragma warning restore 0649
 
     // If true, the configured number of enemies will be spawned for every player
     [SerializeField] private bool spawnEnemiesPerPlayer = false;
-    [SerializeField] List<EnemyTypeCountPair> enemies;
+    [SerializeField] List<EnemyTypeCountPair> enemies = default;
 
     /**
      * If this list is non-empty, enemies will be spawned at these points instead

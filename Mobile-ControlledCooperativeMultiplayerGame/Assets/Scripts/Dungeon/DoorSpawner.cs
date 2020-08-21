@@ -10,7 +10,7 @@ public class DoorSpawner: PlayerSpawner
     /**
      * Set this field to the door this spawner belongs to
      */
-    [SerializeField] private Door door;
+    [SerializeField] private Door door = default;
 
     protected override bool IsSpawnerActive()
     {

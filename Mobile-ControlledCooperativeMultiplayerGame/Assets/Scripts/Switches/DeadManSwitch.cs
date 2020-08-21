@@ -16,12 +16,12 @@ public class DeadManSwitch : MonoBehaviour
     /**
      * Sprites to show when the switch is either on or off
      */
-    [SerializeField] private Sprite switchOnSprite;
-    [SerializeField] private Sprite switchOffSprite;
+    [SerializeField] private Sprite switchOnSprite = default;
+    [SerializeField] private Sprite switchOffSprite = default;
     /**
      * Sound to play when switch is used
      */
-    [SerializeField] private AudioClip switchSound;
+    [SerializeField] private AudioClip switchSound = default;
 
     private SpriteRenderer _renderer;
     private Interactive _interactive;

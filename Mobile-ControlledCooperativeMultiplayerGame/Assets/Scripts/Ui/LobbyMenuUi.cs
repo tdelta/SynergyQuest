@@ -18,12 +18,12 @@ using ZXing.QrCode;
  */
 public class LobbyMenuUi : MonoBehaviour
 {
-    [SerializeField] private Canvas _canvas;
-    [SerializeField] private Image _qrCodeImage;
-    [SerializeField] private TextMeshProUGUI _addressValLabel;
-    [SerializeField] private TextMeshProUGUI _joinedPlayersValLabel;
-    [SerializeField] private TextMeshProUGUI _statusValLabel;
-    [SerializeField] private UnityEngine.UI.Button _notWorkingButton;
+    [SerializeField] private Canvas _canvas = default;
+    [SerializeField] private Image _qrCodeImage = default;
+    [SerializeField] private TextMeshProUGUI _addressValLabel = default;
+    [SerializeField] private TextMeshProUGUI _joinedPlayersValLabel = default;
+    [SerializeField] private TextMeshProUGUI _statusValLabel = default;
+    [SerializeField] private UnityEngine.UI.Button _notWorkingButton = default;
     
     // minimum number of players to start the game
     [SerializeField] private int _minNumPlayers = 2;

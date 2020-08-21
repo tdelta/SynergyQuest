@@ -12,7 +12,7 @@ public class Box : MonoBehaviour
     /**
      * Sprites to use, depending on the color
      */
-    [SerializeField] private SokobanSprites sprites;
+    [SerializeField] private SokobanSprites sprites = default;
 
     private Interactive _interactive;
     public PlayerColor Color => _interactive.Color;

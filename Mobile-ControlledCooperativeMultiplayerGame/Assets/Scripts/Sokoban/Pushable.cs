@@ -37,9 +37,9 @@ public class Pushable : MonoBehaviour
     /**
      * The grid in which this box can be moved. Usually you should set this to the grid of the tilemap.
      */
-    [SerializeField] private Grid grid;
+    [SerializeField] private Grid grid = default;
 
-    [SerializeField] private AudioClip pushSound;
+    [SerializeField] private AudioClip pushSound = default;
 
     /**
      * A Pushable should be part of an object with a box collider, a rigidbody and a `MovementBinder`.

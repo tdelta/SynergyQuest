@@ -22,7 +22,7 @@ public class Door : MonoBehaviour
     /**
      * Identifier of this door. Should be the same as the one set in the layout file of the dungeon.
      */
-    [SerializeField] private string doorId;
+    [SerializeField] private string doorId = default;
     /**
      * Which transition animation to play when using the door to switch scenes
      */
@@ -31,17 +31,17 @@ public class Door : MonoBehaviour
     /**
      * Sprite to display if the door is open
      */
-    [SerializeField] private Sprite openSprite;
+    [SerializeField] private Sprite openSprite = default;
     /**
      * Sprite to display if the door is closed
      */
-    [SerializeField] private Sprite closedSprite;
+    [SerializeField] private Sprite closedSprite = default;
 
     /**
      * The direction to which this door leads. This direction will be used to determine how the players should be
      * oriented after entering the next room.
      */
-    [SerializeField] private Direction direction;
+    [SerializeField] private Direction direction = default;
 
     private SpriteRenderer _renderer;
     private AudioSource _audioSource;

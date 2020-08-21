@@ -14,13 +14,13 @@ public abstract class PlayerSpawner : MonoBehaviour
      * If you want the new players to be tracked by a specific camera, assign the camera target group here.
      * If it is not assigned, a CinemachineTargetGroup instance will be searched for automatically.
      */
-    [SerializeField] private CinemachineTargetGroup targetGroup;
+    [SerializeField] private CinemachineTargetGroup targetGroup = default;
 
     /**
      * There can be player instances pre-created in the scene. Especially local instances for debugging.
      * Those instances should be added to a spawner in this field, so that they can be respawned
      */
-    [SerializeField] private PlayerController[] managedPreexistingPlayers;
+    [SerializeField] private PlayerController[] managedPreexistingPlayers = default;
 
     /**
      * In debug mode, for newly connected controllers, we need to give them a colour, since they didn't join via the

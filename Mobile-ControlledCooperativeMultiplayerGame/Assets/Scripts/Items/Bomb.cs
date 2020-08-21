@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Bomb : Item
 {
-    [SerializeField] ParticleSystem sparkEffect;
+    [SerializeField] ParticleSystem sparkEffect = default;
 
     bool explosion = false;
     readonly int explosionTrigger = Animator.StringToHash("Explode");

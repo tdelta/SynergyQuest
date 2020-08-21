@@ -10,7 +10,7 @@ using UnityEngine.Events;
 public class ContactTrigger : MonoBehaviour
 {
      // Event mentioned in the description above
-     [SerializeField] private ContactEvent onContactEvent;
+     [SerializeField] private ContactEvent onContactEvent = default;
 
      private Collider2D _collider;
 
