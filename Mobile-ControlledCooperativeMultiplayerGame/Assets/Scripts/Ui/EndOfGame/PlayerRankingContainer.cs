@@ -4,7 +4,7 @@ using UnityEngine;
 [RequireComponent(typeof(FlexibleGridLayout))]
 public class PlayerRankingContainer : MonoBehaviour
 {
-    [SerializeField] private PlayerScoreScroll playerScoreScrollPrefab;
+    [SerializeField] private PlayerScoreScroll playerScoreScrollPrefab = default;
 
     private FlexibleGridLayout _flexibleGridLayout;
 

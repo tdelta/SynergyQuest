@@ -223,8 +223,8 @@ public class DungeonLayout : Singleton<DungeonLayout>
  */
 class DoorData
 {
-    public string targetRoom;
-    public string targetDoor;
+    public string targetRoom = default;
+    public string targetDoor = default;
 }
 
 /**
@@ -233,7 +233,7 @@ class DoorData
  */
 class DungeonRoomData
 {
-    public Dictionary<string, DoorData> roomConnections;
+    public Dictionary<string, DoorData> roomConnections = default;
 }
 
 /**
@@ -242,8 +242,8 @@ class DungeonRoomData
  */
 class DungeonLayoutData
 {
-    public string initialRoom;
-    public Dictionary<string, DungeonRoomData> rooms;
+    public string initialRoom = default;
+    public Dictionary<string, DungeonRoomData> rooms = default;
 
     /**
      * Loads a dungeon layout definition from a file.

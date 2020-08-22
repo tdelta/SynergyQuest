@@ -7,7 +7,7 @@ public class SokobanSwitch : MonoBehaviour
     /**
      * Sprites to use, depending on the color
      */
-    [SerializeField] private SokobanSprites sprites;
+    [SerializeField] private SokobanSprites sprites = default;
     
 
     private Switch _switch;

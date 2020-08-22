@@ -7,7 +7,7 @@ using UnityEngine;
 public class Hider : MonoBehaviour
 {
     // List of objects which will be made invisible / visible
-    [SerializeField] private List<GameObject> objects;
+    [SerializeField] private List<GameObject> objects = default;
     
     private Switchable _switchable;
 

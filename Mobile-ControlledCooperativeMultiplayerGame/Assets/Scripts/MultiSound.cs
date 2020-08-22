@@ -7,8 +7,8 @@ using Random = UnityEngine.Random;
  */
 public class MultiSound : MonoBehaviour
 {
-    [SerializeField] private AudioClip[] sounds;
-    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip[] sounds = default;
+    [SerializeField] private AudioSource audioSource = default;
 
     private void Start()
     {

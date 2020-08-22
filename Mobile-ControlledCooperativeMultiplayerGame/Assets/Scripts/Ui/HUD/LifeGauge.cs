@@ -14,13 +14,13 @@ public class LifeGauge : MonoBehaviour
     /**
      * Background of the gauge
      */
-    [SerializeField] private GameObject lifeGaugeBg;
+    [SerializeField] private GameObject lifeGaugeBg = default;
     
     /**
      * Sources of heart sprites. Empty hearts are used to draw lost lives.
      */
-    [SerializeField] private ObjectPool heartObjectPool;
-    [SerializeField] private ObjectPool emptyHeartObjectPool;
+    [SerializeField] private ObjectPool heartObjectPool = default;
+    [SerializeField] private ObjectPool emptyHeartObjectPool = default;
 
     private Animator _animator;
 

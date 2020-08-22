@@ -3,9 +3,9 @@ using UnityEngine;
 public class ButtonController: MonoBehaviour
 {
 
-  [SerializeField] private Sprite UnpressedButton;
-  [SerializeField] private Sprite PressedButton;
-  [SerializeField] private Pressable Effect;
+  [SerializeField] private Sprite UnpressedButton = default;
+  [SerializeField] private Sprite PressedButton = default;
+  [SerializeField] private Pressable Effect = default;
 
   private bool _pressAnimation;
   private SpriteRenderer _renderer;

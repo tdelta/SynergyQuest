@@ -3,8 +3,8 @@ using Random = UnityEngine.Random;
 
 public class CoinController : MonoBehaviour
 {
-    [SerializeField] private float thrust;
-    [SerializeField] private int deactivationTime;
+    [SerializeField] private float thrust = default;
+    [SerializeField] private int deactivationTime = default;
 
     public void Init(int deactivationTimeOverride)
     {

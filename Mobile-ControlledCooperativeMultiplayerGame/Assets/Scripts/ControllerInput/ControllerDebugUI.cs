@@ -9,15 +9,15 @@ public class ControllerDebugUI : MonoBehaviour
 {
     private ControllerInput _input;
 
-    [SerializeField] private TextMeshProUGUI _connectionStatusLabel;
+    [SerializeField] private TextMeshProUGUI _connectionStatusLabel = default;
     
-    [SerializeField] private TextMeshProUGUI _verticalValLabel;
+    [SerializeField] private TextMeshProUGUI _verticalValLabel = default;
     
-    [SerializeField] private TextMeshProUGUI _horizontalValLabel;
+    [SerializeField] private TextMeshProUGUI _horizontalValLabel = default;
     
-    [SerializeField] private TextMeshProUGUI _attackValLabel;
+    [SerializeField] private TextMeshProUGUI _attackValLabel = default;
     
-    [SerializeField] private TextMeshProUGUI _pullValLabel;
+    [SerializeField] private TextMeshProUGUI _pullValLabel = default;
 
     public void SetInput(ControllerInput input)
     {

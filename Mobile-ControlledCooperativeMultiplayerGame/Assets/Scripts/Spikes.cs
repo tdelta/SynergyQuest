@@ -19,19 +19,19 @@ public class Spikes : MonoBehaviour
     /**
      * The sprite which is shown when the spikes are active
      */
-    [SerializeField] private Sprite spikesOnSprite;
+    [SerializeField] private Sprite spikesOnSprite = default;
     /**
      * The sprite which is shown when the spikes are retracted
      */
-    [SerializeField] private Sprite spikesOffSprite;
+    [SerializeField] private Sprite spikesOffSprite = default;
     /**
      * Sound which is played when the spikes are activated
      */
-    [SerializeField] private AudioClip spikesUpSound;
+    [SerializeField] private AudioClip spikesUpSound = default;
     /**
      * Sound which is played when the spikes are retracted
      */
-    [SerializeField] private AudioClip spikesDownSound;
+    [SerializeField] private AudioClip spikesDownSound = default;
     /**
      * How much damage the spikes shall deal on contact
      */

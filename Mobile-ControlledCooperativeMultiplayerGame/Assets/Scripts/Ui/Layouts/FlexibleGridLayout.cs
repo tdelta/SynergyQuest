@@ -8,11 +8,11 @@ using UnityEngine.UI;
  */
 public class FlexibleGridLayout: LayoutGroup
 {
-    [SerializeField] private int rows;
-    [SerializeField] private int columns;
-    [SerializeField] private Vector2 cellSize;
-    [SerializeField] private Vector2 spacing;
-    [SerializeField] private FitType fitType;
+    [SerializeField] private int rows = default;
+    [SerializeField] private int columns = default;
+    [SerializeField] private Vector2 cellSize = default;
+    [SerializeField] private Vector2 spacing = default;
+    [SerializeField] private FitType fitType = default;
 
     public int Rows
     {

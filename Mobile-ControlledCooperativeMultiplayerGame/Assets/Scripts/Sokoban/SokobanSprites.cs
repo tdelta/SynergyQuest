@@ -6,17 +6,17 @@ namespace Sokoban
     [CreateAssetMenu(fileName = "SokobanSprites", menuName = "ScriptableObjects/SokobanSprites")]
     public class SokobanSprites : ScriptableObject
     {
-        [SerializeField] private Sprite redBox;
-        [SerializeField] private Sprite blueBox;
-        [SerializeField] private Sprite greenBox;
-        [SerializeField] private Sprite yellowBox;
-        [SerializeField] private Sprite anyBox;
+        [SerializeField] private Sprite redBox = default;
+        [SerializeField] private Sprite blueBox = default;
+        [SerializeField] private Sprite greenBox = default;
+        [SerializeField] private Sprite yellowBox = default;
+        [SerializeField] private Sprite anyBox = default;
         
-        [SerializeField] private Sprite redSwitch;
-        [SerializeField] private Sprite blueSwitch;
-        [SerializeField] private Sprite greenSwitch;
-        [SerializeField] private Sprite yellowSwitch;
-        [SerializeField] private Sprite anySwitch;
+        [SerializeField] private Sprite redSwitch = default;
+        [SerializeField] private Sprite blueSwitch = default;
+        [SerializeField] private Sprite greenSwitch = default;
+        [SerializeField] private Sprite yellowSwitch = default;
+        [SerializeField] private Sprite anySwitch = default;
 
         public Sprite GetBoxSprite(PlayerColor color)
         {

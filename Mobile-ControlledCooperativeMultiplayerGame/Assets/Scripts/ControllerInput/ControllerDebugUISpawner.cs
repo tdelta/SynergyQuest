@@ -8,7 +8,7 @@ using UnityEngine;
  */
 public class ControllerDebugUISpawner : MonoBehaviour
 {
-    [SerializeField] private GameObject _controllerDebugUiPrefab;
+    [SerializeField] private GameObject _controllerDebugUiPrefab = default;
     
     [SerializeField] private Vector3 _nextSpawnLocation = Vector3.zero;
     

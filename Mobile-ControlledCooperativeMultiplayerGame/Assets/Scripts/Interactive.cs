@@ -37,13 +37,13 @@ public class Interactive : MonoBehaviour
     /**
      * Which button must a player press to interact?
      */
-    [SerializeField] private Button button;
+    [SerializeField] private Button button = default;
     public Button Button => button;
     
     /**
      * The kind of interaction that is registered, see enum above.
      */
-    [SerializeField] private InteractionType interactionType;
+    [SerializeField] private InteractionType interactionType = default;
 
     /**
      * If true, the button of this interactive should only be enabled, while the player is colliding with it.
@@ -125,7 +125,7 @@ public class Interactive : MonoBehaviour
     /**
      * Event which is fired, when a player starts interacting with this object
      */
-    [SerializeField] private InteractionEvent interactionTriggeredEvent;
+    [SerializeField] private InteractionEvent interactionTriggeredEvent = default;
 
     private void Awake()
     {

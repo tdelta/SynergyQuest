@@ -13,7 +13,7 @@ public class KeyLock : MonoBehaviour
     /**
      * Sprite of a key. It will be displayed during an animation while opening the lock.
      */
-    [SerializeField] private Sprite keySprite;
+    [SerializeField] private Sprite keySprite = default;
     /**
      * Usually doors use a `ContactTrigger` to detect, whether they shall be opened. Since the player is already in
      * contact with a door while opening its lock, the trigger will not activate by itself, when opening the door.
@@ -21,11 +21,11 @@ public class KeyLock : MonoBehaviour
      * Hence, we use this reference to activate the trigger manually when opening this lock. Otherwise, the player would
      * have to step back from the door and forth again to open it, after unlocking.
      */
-    [SerializeField] private ContactTrigger contactTriggerToReset;
+    [SerializeField] private ContactTrigger contactTriggerToReset = default;
     /**
      * Door which this lock opens.
      */
-    [SerializeField] private Door door;
+    [SerializeField] private Door door = default;
     
     private Switch _switch;
 
