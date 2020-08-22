@@ -609,12 +609,12 @@ public class PlayerController : EntityController
     public bool IsLookingAt(Bounds bounds)
     {
         Collider.bounds.DirectionTo(
-            bounds, out var dir
+            bounds.center, out var dir
         );
         
         return
             Collider.bounds.DirectionTo(
-                bounds, out var fromPlayerToPointDirection
+                bounds.center, out var fromPlayerToPointDirection
             )
             && fromPlayerToPointDirection == viewDirection;
     }
