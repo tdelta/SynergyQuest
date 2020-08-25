@@ -22,6 +22,8 @@ public abstract class PlayerSpawner : MonoBehaviour
      */
     [SerializeField] private PlayerController[] managedPreexistingPlayers = default;
 
+    [SerializeField] private GameObject playerGhost = default;
+
     /**
      * In debug mode, for newly connected controllers, we need to give them a colour, since they didn't join via the
      * lobby which assigns colors. Here we store the next color to assign to a new controller.
@@ -172,12 +174,13 @@ public abstract class PlayerSpawner : MonoBehaviour
 
     private void Respawn(PlayerController player)
     {
-        // Move player to position of the spawner when respawning
-        player.GetComponent<PhysicsEffects>().Teleport(this.transform.position);
-
-        // Make player visible again, if they have been invisible
-        player.GetComponent<SpriteRenderer>().enabled = true;
-        player.Reset();
+        // did we die by falling into a chasm? if so use PlayerSpawner position
+        var ghostSpawnPosition = player.SpriteRenderer.enabled
+          ? player.Collider.bounds.center
+          : transform.position;
+        var prefab = Instantiate(playerGhost, ghostSpawnPosition, Quaternion.identity)
+          .GetComponentInChildren<PlayerGhost>();
+        prefab.Register(player, transform.position);
     }
 
     private void OnDrawGizmos()

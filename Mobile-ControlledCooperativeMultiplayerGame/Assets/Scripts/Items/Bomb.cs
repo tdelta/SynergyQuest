@@ -77,6 +77,8 @@ public class Bomb : Item
                 otherGameobject.GetComponent<ShockSwitch>().Activate();
             else if (otherGameobject.CompareTag("DestroyableWall"))
                 Destroy(otherGameobject);
+            else if (other.gameObject.CompareTag("Ghost"))
+                other.gameObject.GetComponent<PlayerGhost>().Exorcise();
         }
     }
     

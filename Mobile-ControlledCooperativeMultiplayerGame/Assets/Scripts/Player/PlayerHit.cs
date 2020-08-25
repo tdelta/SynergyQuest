@@ -18,5 +18,7 @@ public class PlayerHit : MonoBehaviour
         }
         else if (other.gameObject.CompareTag("Switch"))
             other.gameObject.GetComponent<ShockSwitch>().Activate();
+        else if (other.gameObject.CompareTag("Ghost"))
+            other.gameObject.GetComponent<PlayerGhost>()?.Exorcise();
     }
 }

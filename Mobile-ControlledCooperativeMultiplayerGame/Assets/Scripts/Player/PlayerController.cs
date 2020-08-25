@@ -58,6 +58,7 @@ public class PlayerController : EntityController
     [SerializeField] private SpriteRenderer itemPresentation = default;
     
     public BoxCollider2D Collider { get; private set; }
+    public SpriteRenderer SpriteRenderer { get; private set; }
     private Renderer _renderer;
     private ItemController _itemController;
     private Throwable _throwable;
@@ -166,6 +167,7 @@ public class PlayerController : EntityController
         
         _throwable = GetComponent<Throwable>();
         Collider = GetComponent<BoxCollider2D>();
+        SpriteRenderer = GetComponent<SpriteRenderer>();
         _tintFlashController = GetComponent<TintFlashController>();
         _renderer = GetComponent<Renderer>();
         _itemController = GetComponent<ItemController>();
@@ -283,30 +285,6 @@ public class PlayerController : EntityController
 
         _data.HealthPoints += delta;
 
-        if (_data.HealthPoints <= 0) {
-            if (playSounds)
-            {
-                deathSounds.PlayOneShot();
-            }
-
-            // If we died, we want to spawn gold on our last position
-            var lostGold = Math.Min(goldLossOnDeath, _data.GoldCounter);
-            _data.GoldCounter -= lostGold;
-            // If we were on a chasm while dying, we want to spawn the gold on the last position on solid ground before
-            // we entered the chasm
-            var goldSpawnPosition = _chasmContactTracker.ChasmEntryPoint.Match(
-                some: lastPosition => lastPosition,
-                none: () => this.Collider.bounds.center
-            );
-            // spawn the gold
-            for (int i = 0; i < lostGold; ++i)
-            {
-                Instantiate(coinPrefab, goldSpawnPosition, Quaternion.identity);
-            }
-            
-            OnRespawn?.Invoke(this);
-        }
-        
         // Display some effects when damaged
         if (delta < 0)
         {
@@ -330,6 +308,30 @@ public class PlayerController : EntityController
         {
             DisplayLifeGauge();
         }
+
+        if (_data.HealthPoints <= 0) {
+            if (playSounds)
+            {
+                deathSounds.PlayOneShot();
+            }
+
+            // If we died, we want to spawn gold on our last position
+            var lostGold = Math.Min(goldLossOnDeath, _data.GoldCounter);
+            _data.GoldCounter -= lostGold;
+            // If we were on a chasm while dying, we want to spawn the gold on the last position on solid ground before
+            // we entered the chasm
+            var goldSpawnPosition = _chasmContactTracker.ChasmEntryPoint.Match(
+                some: lastPosition => lastPosition,
+                none: () => this.Collider.bounds.center
+            );
+            // spawn the gold
+            for (int i = 0; i < lostGold; ++i)
+            {
+                Instantiate(coinPrefab, goldSpawnPosition, Quaternion.identity);
+            }
+            
+            OnRespawn?.Invoke(this);
+        }
         return true;
     }
 
@@ -338,7 +340,7 @@ public class PlayerController : EntityController
      */
     private void DisplayLifeGauge()
     {
-        var spriteBounds = this.GetComponent<SpriteRenderer>().bounds.size;
+        var spriteBounds = SpriteRenderer.bounds.size;
         // ToDo: Adjust height, so that lifeGauge and goldGauge can be displayed concurrently!
         // Set relative position of the life gauge so that it appears slightly above the player character
         this.lifeGauge.transform.localPosition =
@@ -503,6 +505,8 @@ public class PlayerController : EntityController
             }
             else if (other.gameObject.CompareTag("Switch"))
                 other.gameObject.GetComponent<ShockSwitch>().Activate();
+            else if (other.gameObject.CompareTag("Ghost"))
+                other.gameObject.GetComponent<PlayerGhost>()?.Exorcise();
         }
     }
 
@@ -547,7 +551,7 @@ public class PlayerController : EntityController
         this.transform.localScale = new Vector3(1, 1, 1);
         
         // Make the player invisible until respawn
-        GetComponent<SpriteRenderer>().enabled = false;
+        SpriteRenderer.enabled = false;
         
         // Kill the player
         ChangeHealth(-_data.HealthPoints, false);
