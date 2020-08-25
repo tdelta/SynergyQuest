@@ -36,7 +36,6 @@ public class FireballProjectile : MonoBehaviour
         // rotate projectile into direction of flight
         transform.up = -direction;
         _direction = direction;
-        _audioSource.Play();
     }
 
     void OnCollisionEnter2D(Collision2D other)
