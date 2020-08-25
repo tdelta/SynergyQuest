@@ -3,10 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
+/**
+ * Responsible to control the ghost of a player. The Exorcise method triggers
+ * the respawning of a dead player
+ */
 public class PlayerGhost : MonoBehaviour
 {
+    // the player the ghost belongs to
     PlayerController _player;
+    // another active player the ghost currently follows
     PlayerController _followedPlayer;
+
     Vector2 _respawnPosition;
     Animator _animator;
     Rigidbody2D _rigidbody2D;
@@ -15,6 +22,7 @@ public class PlayerGhost : MonoBehaviour
     System.Random _rnd = new System.Random();
 
     bool _moveArround;
+    bool _exorcised;
     float RotateSpeed = 2f;
     float Radius = 0.175f;
     float _angle;
@@ -22,7 +30,6 @@ public class PlayerGhost : MonoBehaviour
     float _playerChangeTime = 5;
     float _playerChangeTimer;
 
-    static List<PlayerController> _otherPlayers;
     readonly int MoveXProperty = Animator.StringToHash("Move X");
     readonly int VanishTrigger = Animator.StringToHash("Vanish");
 
@@ -40,14 +47,12 @@ public class PlayerGhost : MonoBehaviour
         _respawnPosition = respawnPosition;
         _player.gameObject.SetActive(false);
         _player.gameObject.SetFollowedByCamera(false);
-        _otherPlayers = FindObjectsOfType<PlayerController>().ToList();
-        _otherPlayers.Remove(_player);
     }
 
     public void Exorcise()
     {
         _animator.SetTrigger(VanishTrigger);
-        _moveArround = false;
+        _exorcised = true;
     }
 
     void OnAppear()
@@ -72,12 +77,16 @@ public class PlayerGhost : MonoBehaviour
     {
         _playerChangeTimer -= Time.deltaTime;
 
-        if (_playerChangeTimer < 0)
+        if (_playerChangeTimer < 0 || !(_followedPlayer?.gameObject.activeSelf ?? false))
         {
-            _followedPlayer = _otherPlayers[_rnd.Next(_otherPlayers.Count)];
+            _followedPlayer = null;
             _playerChangeTimer = _playerChangeTime;
-            // play sound when targeting a potentially new player
-            _audioSource.Play();
+            if (FindObjectsOfType<PlayerController>() is var activePlayers && activePlayers.Count() > 0)
+            {
+                _followedPlayer = activePlayers[_rnd.Next(activePlayers.Count())];
+                // play sound when targeting a potentially new player
+                _audioSource.Play();
+            }
         }
 
         return _followedPlayer;
@@ -86,8 +95,8 @@ public class PlayerGhost : MonoBehaviour
     void FixedUpdate()
     {
 
-        // if we still have living players, move around, else respawn
-        if (_otherPlayers.Any())
+        // if we still have living player to follow, move around, else exorcise/respawn
+        if (!_exorcised && GetFollowedPlayer() is PlayerController followedPlayer)
         {
             if (_moveArround)
             {
@@ -95,7 +104,7 @@ public class PlayerGhost : MonoBehaviour
        
                  var position = _rigidbody2D.position;
                  var rotation = new Vector2(Mathf.Sin(_angle), Mathf.Cos(_angle)) * Radius;
-                 var direction = (GetFollowedPlayer().Center - position) * Time.deltaTime;
+                 var direction = (followedPlayer.Center - position) * Time.deltaTime;
 
                  position += direction + rotation;
                  _physicsEffects.MoveBody(position);
