@@ -2,7 +2,7 @@
 
 public class DebugLoadSceneTrigger : MonoBehaviour
 {
-    [SerializeField] private string sceneToLoad;
+    [SerializeField] private string sceneToLoad = default;
     
     private void OnCollisionEnter2D(Collision2D other)
     {

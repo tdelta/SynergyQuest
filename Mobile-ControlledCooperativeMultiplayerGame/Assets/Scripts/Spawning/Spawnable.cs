@@ -35,7 +35,7 @@ public class Spawnable : MonoBehaviour
      * </summary>
      */
     public event OnRespawnAction OnRespawn;
-    public delegate void OnRespawnAction();
+    public delegate void OnRespawnAction(Vector3 respawnPosition);
     
     private List<Func<Vector3>> _respawnPointProviders = new List<Func<Vector3>>();
 
@@ -87,7 +87,7 @@ public class Spawnable : MonoBehaviour
         // Make visible again(, if we have been invisible)
         this.gameObject.MakeVisible();
         
-        OnRespawn?.Invoke();
+        OnRespawn?.Invoke(respawnPosition);
     }
     
     /**

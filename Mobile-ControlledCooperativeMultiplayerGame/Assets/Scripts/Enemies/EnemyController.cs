@@ -7,8 +7,8 @@ abstract public class EnemyController : EntityController
     [SerializeField] protected float directionSpeed = 1;
     [SerializeField] protected float directionChangeTime = 1;
     [SerializeField] protected int damageFactor = 1;
-    [SerializeField] ParticleSystem smokeEffect;
-    [SerializeField] private MultiSound hitSounds;
+    [SerializeField] ParticleSystem smokeEffect = default;
+    [SerializeField] private MultiSound hitSounds = default;
 
     public GameObject coin;
 

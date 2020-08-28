@@ -17,27 +17,28 @@ public enum PlayerState{
 
 [RequireComponent(typeof(Throwable))]
 [RequireComponent(typeof(BoxCollider2D))]
+[RequireComponent(typeof(SpriteRenderer))]
 [RequireComponent(typeof(TintFlashController))]
 [RequireComponent(typeof(ItemController))]
 [RequireComponent(typeof(ChasmContactTracker))]
 [RequireComponent(typeof(Spawnable))]
 public class PlayerController : EntityController
 {
-    [SerializeField] private GameObject lifeGauge;
-    [SerializeField] private CoinGaugeController coinGauge;
+    [SerializeField] private GameObject lifeGauge = default;
+    [SerializeField] private CoinGaugeController coinGauge = default;
     
     [SerializeField] private float speed = 3.0f; // units per second
-    [SerializeField] private MultiSound fightingSounds;
-    [SerializeField] private MultiSound hitSounds;
-    [SerializeField] private MultiSound deathSounds;
-    [SerializeField] private MultiSound fallingSounds;
-    [SerializeField] private InteractionSpeechBubble interactionSpeechBubble;
+    [SerializeField] private MultiSound fightingSounds = default;
+    [SerializeField] private MultiSound hitSounds = default;
+    [SerializeField] private MultiSound deathSounds = default;
+    [SerializeField] private MultiSound fallingSounds = default;
+    [SerializeField] private InteractionSpeechBubble interactionSpeechBubble = default;
     [SerializeField] private int goldLossOnDeath = 10;
-    [SerializeField] private CoinController coinPrefab;
+    [SerializeField] private CoinController coinPrefab = default;
     /**
      * Position where `Throwable`s move when being carried by this player
      */
-    [SerializeField] private Transform carryPosition;
+    [SerializeField] private Transform carryPosition = default;
     public Vector2 CarryPosition => carryPosition.position;
     public Vector2 Center => Collider.bounds.center;
 
@@ -55,15 +56,17 @@ public class PlayerController : EntityController
      * shall be used for them?
      * Has no effect if remote controls are used.
      */
-    [SerializeField] private LocalInput localInputPrefab;
+    [SerializeField] private LocalInput localInputPrefab = default;
     
     /**
      * There is an animation, in which a player can present an item.
      * The sprite of the item will be displayed by this renderer.
      */
-    [SerializeField] private SpriteRenderer itemPresentation;
+    [SerializeField] private SpriteRenderer itemPresentation = default;
     
     public BoxCollider2D Collider { get; private set; }
+    public SpriteRenderer spriteRenderer { get; private set; }
+    private Renderer _renderer;
     private ItemController _itemController;
     private Throwable _throwable;
     private ChasmContactTracker _chasmContactTracker;
@@ -166,6 +169,7 @@ public class PlayerController : EntityController
         
         _throwable = GetComponent<Throwable>();
         Collider = GetComponent<BoxCollider2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
         _tintFlashController = GetComponent<TintFlashController>();
         _itemController = GetComponent<ItemController>();
         _chasmContactTracker = GetComponent<ChasmContactTracker>();
@@ -178,7 +182,7 @@ public class PlayerController : EntityController
         _throwable.OnThrown += OnThrown;
         _throwable.OnLanded += OnLanded;
 
-        spawnable.OnRespawn += Reset;
+        spawnable.OnRespawn += OnRespawn;
     }
     
     private void OnDisable()
@@ -187,7 +191,7 @@ public class PlayerController : EntityController
         _throwable.OnThrown -= OnThrown;
         _throwable.OnLanded -= OnLanded;
         
-        spawnable.OnRespawn -= Reset;
+        spawnable.OnRespawn -= OnRespawn;
     }
 
     // Start is called before the first frame update
@@ -265,7 +269,7 @@ public class PlayerController : EntityController
             }
     }
 
-    public void Reset()
+    public void OnRespawn(Vector3 respawnPosition)
     {
         // if the player carries another player, release
         if (CarriesSomeone())
@@ -286,6 +290,30 @@ public class PlayerController : EntityController
             return false;
 
         _data.HealthPoints += delta;
+
+        // Display some effects when damaged
+        if (delta < 0)
+        {
+            _tintFlashController.FlashTint(UnityEngine.Color.red, TimeInvincible);
+            if (playSounds)
+            {
+                hitSounds.PlayOneShot();
+            }
+            Input.PlayVibrationFeedback(new List<float>
+            {
+                200
+            });
+        }
+
+        if (delta > 0)
+        {
+            _tintFlashController.FlashTint(UnityEngine.Color.green, 0.5f);
+        }
+
+        if (delta != 0)
+        {
+            DisplayLifeGauge();
+        }
 
         if (_data.HealthPoints <= 0) {
             if (playSounds)
@@ -310,30 +338,6 @@ public class PlayerController : EntityController
 
             spawnable.Respawn();
         }
-        
-        // Display some effects when damaged
-        if (delta < 0)
-        {
-            _tintFlashController.FlashTint(UnityEngine.Color.red, TimeInvincible);
-            if (playSounds)
-            {
-                hitSounds.PlayOneShot();
-            }
-            Input.PlayVibrationFeedback(new List<float>
-            {
-                200
-            });
-        }
-
-        if (delta > 0)
-        {
-            _tintFlashController.FlashTint(UnityEngine.Color.green, 0.5f);
-        }
-
-        if (delta != 0)
-        {
-            DisplayLifeGauge();
-        }
         return true;
     }
 
@@ -342,7 +346,7 @@ public class PlayerController : EntityController
      */
     private void DisplayLifeGauge()
     {
-        var spriteBounds = this.GetComponent<SpriteRenderer>().bounds.size;
+        var spriteBounds = spriteRenderer.bounds.size;
         // ToDo: Adjust height, so that lifeGauge and goldGauge can be displayed concurrently!
         // Set relative position of the life gauge so that it appears slightly above the player character
         this.lifeGauge.transform.localPosition =
@@ -507,6 +511,8 @@ public class PlayerController : EntityController
             }
             else if (other.gameObject.CompareTag("Switch"))
                 other.gameObject.GetComponent<ShockSwitch>().Activate();
+            else if (other.gameObject.CompareTag("Ghost"))
+                other.gameObject.GetComponent<PlayerGhost>()?.Exorcise();
         }
     }
 
@@ -560,7 +566,7 @@ public class PlayerController : EntityController
         this.transform.localScale = new Vector3(1, 1, 1);
         
         // Make the player invisible until respawn
-        GetComponent<SpriteRenderer>().enabled = false;
+        spriteRenderer.enabled = false;
         
         // Kill the player
         ChangeHealth(-_data.HealthPoints, false);
@@ -604,12 +610,12 @@ public class PlayerController : EntityController
     public bool IsLookingAt(Bounds bounds)
     {
         Collider.bounds.DirectionTo(
-            bounds, out var dir
+            bounds.center, out var dir
         );
         
         return
             Collider.bounds.DirectionTo(
-                bounds, out var fromPlayerToPointDirection
+                bounds.center, out var fromPlayerToPointDirection
             )
             && fromPlayerToPointDirection == viewDirection;
     }

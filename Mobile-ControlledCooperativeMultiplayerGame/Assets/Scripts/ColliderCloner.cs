@@ -10,7 +10,7 @@ using UnityEngine;
  */
 public class ColliderCloner : MonoBehaviour
 {
-    [SerializeField] private Collider2D source;
+    [SerializeField] private Collider2D source = default;
 
     /**
      * If true, the `IsTrigger` property of the cloned collider will be overriden

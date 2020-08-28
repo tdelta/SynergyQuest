@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Bomb : Item
 {
-    [SerializeField] ParticleSystem sparkEffect;
+    [SerializeField] ParticleSystem sparkEffect = default;
 
     bool explosion = false;
     readonly int explosionTrigger = Animator.StringToHash("Explode");
@@ -41,6 +41,12 @@ public class Bomb : Item
         sparkEffect.Stop();
         sparkEffect.GetComponent<AudioSource>().Stop();
         explosion = true;
+
+        // Checks whether the bomb is still carried when it explodes. If so, damage the carrier
+        if (_throwable.IsBeingCarried) {
+            _throwable.Carrier.PutDamage(1, (_throwable.Carrier.transform.position - transform.position).normalized);
+        }
+
     }
 
     /**
@@ -71,6 +77,8 @@ public class Bomb : Item
                 otherGameobject.GetComponent<ShockSwitch>().Activate();
             else if (otherGameobject.CompareTag("DestroyableWall"))
                 Destroy(otherGameobject);
+            else if (other.gameObject.CompareTag("Ghost"))
+                other.gameObject.GetComponent<PlayerGhost>().Exorcise();
         }
     }
     

@@ -10,11 +10,11 @@ public class KeyCounterHUD : MonoBehaviour
      * Canvas group which contains all elements of this HUD. It is used to make it invisible, iff the number of keys is
      * 0.
      */
-    [SerializeField] private CanvasGroup panel;
+    [SerializeField] private CanvasGroup panel = default;
     /**
      * Text which will be set to the current number of collected keys
      */
-    [SerializeField] private TextMeshProUGUI counterText;
+    [SerializeField] private TextMeshProUGUI counterText = default;
 
     private void OnEnable()
     {

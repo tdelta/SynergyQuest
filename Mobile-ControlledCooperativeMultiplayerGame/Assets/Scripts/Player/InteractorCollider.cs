@@ -15,6 +15,6 @@ using UnityEngine;
  */
 public class InteractorCollider : MonoBehaviour
 {
-    [SerializeField] private PlayerController player;
+    [SerializeField] private PlayerController player = default;
     public PlayerController Player => player;
 }

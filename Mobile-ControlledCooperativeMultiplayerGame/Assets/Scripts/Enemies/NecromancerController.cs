@@ -3,7 +3,7 @@ using UnityEngine.Serialization;
 
 public class NecromancerController : EnemyController
 {
-    [FormerlySerializedAs("fireball")] [SerializeField] FireballProjectile fireballPrefab;
+    [FormerlySerializedAs("fireball")] [SerializeField] FireballProjectile fireballPrefab = default;
     [SerializeField] float launchCoolDown = 1;
     [SerializeField] float viewCone = 1;
 

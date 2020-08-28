@@ -6,7 +6,7 @@ using UnityEngine;
 public class WaypointControlledPlatform : MonoBehaviour
 {
     [SerializeField] private List<WayPointController> wayPoints = new List<WayPointController>();
-    [SerializeField] private float speed;
+    [SerializeField] private float speed = default;
     /**
      * Time to wait when a endpoint has been reached before traveling the reverse direction
      */

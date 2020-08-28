@@ -109,27 +109,36 @@ public static class DirectionMethods
     }
 
     /**
-     * Given a bounded object, this method returns the direction where it lies relative to this bounds.
+     * Given a point, this method returns the direction where it lies relative to this bounds.
      *
      * @returns false if `other` lies in the center of the bounds, true otherwise
      */
-    public static bool DirectionTo(this Bounds bounds, Bounds other, out Direction direction)
+    public static bool DirectionTo(this Bounds bounds, Vector3 other, out Direction direction)
     {
-        if (bounds.center == other.center)
+        if (bounds.center == other)
         {
             direction = Direction.Down;
             return false;
         }
-        // Added small floats because it seems like the bounds can slightly overlap if the player is moving fast
-        if (!(bounds.min.y + 0.05f > other.max.y || bounds.max.y - 0.05f < other.min.y))
-        {
-            direction = other.center.x < bounds.center.x ? Direction.Left : Direction.Right;
-        }
 
-        else
-        {
-            direction = other.center.y < bounds.center.y ? Direction.Down : Direction.Up;
-        }
+        // We set the center of bounds as the origin of a coordinate system in order to calculate angles
+        var center = new Vector3(bounds.center.x, bounds.center.y, 0);
+        var relativePoint = other - center;
+        relativePoint.z = 0;
+        
+        // Edges of bounds
+        var upperLeft = new Vector3(bounds.min.x, bounds.min.y,0) - center;
+        var upperRight = new Vector3(bounds.max.x, bounds.min.y,0) - center;
+
+        // Angles between edges of bounds and other
+        var upperLeftAngle = Vector3.Angle(upperLeft, relativePoint);
+        var upperRightAngle = Vector3.Angle(upperRight, relativePoint);
+
+
+        if (upperLeftAngle < 90 && upperRightAngle < 90) direction = Direction.Down;
+        else if (upperLeftAngle < 90 && upperRightAngle > 90) direction = Direction.Left;
+        else if (upperLeftAngle > 90 && upperRightAngle < 90) direction = Direction.Right;
+        else direction = Direction.Up;
 
         return true;
     }

@@ -14,7 +14,7 @@ using UnityEngine;
 public class ObjectPool : MonoBehaviour
 {
     // Prefab that is instantiated by this pool
-    [SerializeField] private GameObject prefab;
+    [SerializeField] private GameObject prefab = default;
 
     // We store returned instances here until they are needed again
     private Stack<GameObject> _unusedInstances = new Stack<GameObject>();

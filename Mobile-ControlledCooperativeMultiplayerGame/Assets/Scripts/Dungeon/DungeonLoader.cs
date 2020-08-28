@@ -12,11 +12,11 @@ public class DungeonLoader: MonoBehaviour
     /**
      * Name of the dungeon room the current scene is representing
      */
-    [SerializeField] private string room;
+    [SerializeField] private string room = default;
     /**
      * Path to the JSON layout file describing the dungeon
      */
-    [SerializeField] private string filePath;
+    [SerializeField] private string filePath = default;
     /**
      * Number of players for which the dungeon will be loaded.
      * If set to -1, `DebugSettings.Instance.DefaultDungeonPlayerNum` will be used instead.

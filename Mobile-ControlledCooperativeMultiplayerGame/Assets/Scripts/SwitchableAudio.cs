@@ -9,8 +9,8 @@ using UnityEngine;
 [RequireComponent(typeof(AudioSource), typeof(Switchable))]
 public class SwitchableAudio : MonoBehaviour
 {
-    [SerializeField] private AudioClip initialAudio;
-    [SerializeField] private AudioClip switchedAudio;
+    [SerializeField] private AudioClip initialAudio = default;
+    [SerializeField] private AudioClip switchedAudio = default;
     
     private AudioSource _audioSource;
     private Switchable _switchable;

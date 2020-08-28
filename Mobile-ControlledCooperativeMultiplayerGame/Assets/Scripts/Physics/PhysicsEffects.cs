@@ -45,7 +45,7 @@ public class PhysicsEffects: MonoBehaviour
     public bool FrictionEnabled = true;
     
     // Rigidbody of the object which we are applying effects to
-    public Rigidbody2D rigidbody2D { get; private set; }
+    new public Rigidbody2D rigidbody2D { get; private set; }
 
     /**
      * One may set a transform as custom origin.

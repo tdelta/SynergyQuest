@@ -8,8 +8,8 @@ public class Chest : MonoBehaviour
     /**
      * Sprites to show when the box is either opened or closed
      */
-    [SerializeField] private Sprite chestOpenSprite;
-    [SerializeField] private Sprite chestClosedSprite;
+    [SerializeField] private Sprite chestOpenSprite = default;
+    [SerializeField] private Sprite chestClosedSprite = default;
 
     private Interactive _interactive;
     private SpriteRenderer _renderer;

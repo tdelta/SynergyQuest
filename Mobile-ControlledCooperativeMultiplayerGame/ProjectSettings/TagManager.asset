@@ -14,6 +14,7 @@ TagManager:
   - SokobanSwitch
   - PlayerHit
   - Chasm
+  - Ghost
   layers:
   - Default
   - TransparentFX
@@ -38,7 +39,7 @@ TagManager:
   - ControlledPlatform
   - Barrier
   - Falling
-  - 
+  - Ghost
   - 
   - 
   - 

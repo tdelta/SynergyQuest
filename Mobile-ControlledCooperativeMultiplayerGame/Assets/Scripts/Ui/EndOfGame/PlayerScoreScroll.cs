@@ -10,9 +10,9 @@ public class Ranking
 
 public class PlayerScoreScroll : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI rankingText;
-    [SerializeField] private TextMeshProUGUI playerName;
-    [SerializeField] private TextMeshProUGUI score;
+    [SerializeField] private TextMeshProUGUI rankingText = default;
+    [SerializeField] private TextMeshProUGUI playerName = default;
+    [SerializeField] private TextMeshProUGUI score = default;
     
     public void Init(Ranking ranking)
     {

@@ -19,12 +19,12 @@ public class InteractionSpeechBubble : MonoBehaviour
     /**
      * Text object displayed in bubble 
      */
-    [SerializeField] private TextMeshProUGUI text;
+    [SerializeField] private TextMeshProUGUI text = default;
     
     /**
      * The bubble sprite
      */
-    [SerializeField] private Image image;
+    [SerializeField] private Image image = default;
     /**
      * How long the bubble shall stay at max visibility before starting to fade
      */

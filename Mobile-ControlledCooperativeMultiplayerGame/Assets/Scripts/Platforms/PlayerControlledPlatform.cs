@@ -28,7 +28,7 @@ public class PlayerControlledPlatform : MonoBehaviour
     /**
      * The switch which will activate this platform
      */
-    [SerializeField] private ColorSwitch colorSwitch;
+    [SerializeField] private ColorSwitch colorSwitch = default;
     
     private Switchable _switchable;
     private Rigidbody2D _body;

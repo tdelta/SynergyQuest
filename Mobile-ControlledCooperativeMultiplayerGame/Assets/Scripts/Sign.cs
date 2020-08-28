@@ -6,7 +6,7 @@
 public class Sign : MonoBehaviour
 {
     // Info screen content to display
-    [SerializeField] private InfoScreenContent content;
+    [SerializeField] private InfoScreenContent content = default;
 
     public void Show()
     {
