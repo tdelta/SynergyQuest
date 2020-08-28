@@ -24,6 +24,20 @@ public struct Optional<T>
         _hasValue = hasValue;
     }
 
+    public static Optional<U> FromNullable<U>(U maybeValue)
+        where U: class
+    {
+        if (ReferenceEquals(maybeValue, null))
+        {
+            return Optional<U>.None();
+        }
+        
+        else
+        {
+            return Optional<U>.Some(maybeValue);
+        }
+    }
+
     /**
      * <summary>
      * Creates an instance which wraps a value
@@ -72,18 +86,18 @@ public struct Optional<T>
      * <param name="none">Action which is executed, if this instance does not contain a value.</param>
      */
     public void Match(
-        Action<T> some,
-        Action none
+        Action<T> some = null,
+        Action none = null
     )
     {
         if (_hasValue)
         {
-            some(_value);
+            some?.Invoke(_value);
         }
 
         else
         {
-            none();
+            none?.Invoke();
         }
     }
     
@@ -108,5 +122,47 @@ public struct Optional<T>
         {
             return none();
         }
+    }
+
+    /**
+     * <summary>
+     * If this instance is <c>None</c>, return <c>other</c>.
+     * Otherwise, <c>this</c> is returned.
+     * </summary>
+     */
+    public Optional<T> Else(Optional<T> other)
+    {
+        return _hasValue ? this : other;
+    }
+
+    /**
+     * <summary>
+     * If this instance wraps a value, the given function is applied to it, and the resulting value is returned wrapped
+     * into a new optional.
+     * Otherwise, an instance of <c>None</c> is returned.
+     * </summary>
+     */
+    public Optional<U> Map<U>(Func<T, U> mapper)
+    {
+        if (IsSome())
+        {
+            return Optional<U>.Some(mapper(_value));
+        }
+
+        else
+        {
+            return Optional<U>.None();
+        }
+    }
+
+    /**
+     * <summary>
+     * If this instance is <c>None</c>, return <c>alternative</c>.
+     * Otherwise, the value wrapped into this instance is returned.
+     * </summary>
+     */
+    public T ValueOr(T alternative)
+    {
+        return _hasValue ? _value : alternative;
     }
 }

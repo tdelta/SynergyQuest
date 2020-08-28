@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 /**
@@ -68,6 +67,8 @@ public class PlayerControlledPlatform : MonoBehaviour
                 
                 // the previous player shall appear again at the spot where they vanished: The color switch
                 _player.PhysicsEffects.Teleport(colorSwitch.transform.position);
+                _player.FaceDirection(Direction.Down);
+                
                 Teleport.TeleportIn(_player.gameObject, _player.Color.ToRGB());
             }
             
@@ -138,8 +139,12 @@ public class PlayerControlledPlatform : MonoBehaviour
             // The player can stop controlling the platform by pressing the Exit button
             if (Player.Input.GetButtonUp(Button.Exit))
             {
-                // if the platform will no longer be controlled, we must reenable the switches which can activate it again
+                // if the platform will no longer be controlled, we must reenable the switches which can activate it again.
+                // However, we prevent the color switch triggering this platform from immediately reacting to the
+                // controlling player who will now appear again.
+                colorSwitch.IgnoreContactOnce = Player.gameObject;
                 _switchable.enabled = true;
+                
                 Teleport.TeleportIn(colorSwitch.gameObject, colorSwitch.Color.ToRGB());
                 
                 Player = null;

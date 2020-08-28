@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using ClipperLib;
 using Path = System.Collections.Generic.List<ClipperLib.IntPoint>;
@@ -12,14 +11,16 @@ using Path = System.Collections.Generic.List<ClipperLib.IntPoint>;
  */
 public class RainbowTrap : MonoBehaviour
 {
-    [SerializeField] PlayerColor color = PlayerColor.Blue;
+    [SerializeField] private PlayerColor color = PlayerColor.Blue;
 
-    Material _material;
     Path _ownPath;
     Collider2D _lastColliderOnTrap;
     bool hidden;
     int _tintSpeed = 2;
     int TrapColor = Shader.PropertyToID("_TrapColor");
+
+    private MaterialPropertyBlock _materialPropertyBlock;
+    private Renderer _renderer;
 
     public Path Path => _ownPath;
 
@@ -27,12 +28,24 @@ public class RainbowTrap : MonoBehaviour
     Path _playerShapeBuffer = new Path(new IntPoint[4]);
     Clipper clipper = new Clipper();
 
+    private void SetMaterialColor(Color color)
+    {
+        _renderer.GetPropertyBlock(_materialPropertyBlock);
+        _materialPropertyBlock.SetColor(TrapColor, color);
+        _renderer.SetPropertyBlock(_materialPropertyBlock);
+    }
+
+    private void Awake()
+    {
+        _renderer = GetComponent<Renderer>();
+        _materialPropertyBlock = new MaterialPropertyBlock();
+        
+        SetMaterialColor(color.ToRGB());
+    }
+
     void Start()
     {
         _ownPath  = Shapes.PathFromCollider(gameObject);
-        _material = GetComponent<Renderer>().material;
-        _material.SetColor(TrapColor, PlayerColorMethods.ToRGB(color));
-        
     }
 
     /**
@@ -40,8 +53,17 @@ public class RainbowTrap : MonoBehaviour
      */
     private void OnValidate()
     {
-        var material = GetComponent<Renderer>().material;
-        material.SetColor(TrapColor, PlayerColorMethods.ToRGB(color));
+        if (_materialPropertyBlock == null)
+        {
+            _materialPropertyBlock = new MaterialPropertyBlock();
+        }
+
+        if (_renderer == null)
+        {
+            _renderer = GetComponent<Renderer>();
+        }
+        
+        SetMaterialColor(color.ToRGB());
     }
 
     /**
@@ -64,8 +86,8 @@ public class RainbowTrap : MonoBehaviour
         if (!hidden && other.gameObject.CompareTag("Player") && _lastColliderOnTrap == other)
         {
             _lastColliderOnTrap = null;
-            color = PlayerColorMethods.NextColor(color, PlayerDataKeeper.Instance.NumPlayers);
-            _material.SetColor(TrapColor, PlayerColorMethods.ToRGB(color));
+            color = color.NextColor(PlayerDataKeeper.Instance.NumPlayers);
+            SetMaterialColor(color.ToRGB());
         }
 
     }
@@ -90,7 +112,7 @@ public class RainbowTrap : MonoBehaviour
 
     public bool IsCompatibleWith(PlayerColor color)
     {
-        return !hidden && PlayerColorMethods.IsCompatibleWith(color, this.color);
+        return !hidden && color.IsCompatibleWith(this.color);
     }
 
     public void Hide()
@@ -107,13 +129,13 @@ public class RainbowTrap : MonoBehaviour
       var hiddenColor = PlayerColorMethods.ToRGB(color);
       hiddenColor.a = 0;
       hidden = true;
-      _material.SetColor(TrapColor, hiddenColor);
+      SetMaterialColor(hiddenColor);
       yield return new WaitForSeconds(2);
 
       while (hiddenColor.a < 1)
       {
           hiddenColor.a += _tintSpeed * Time.fixedDeltaTime;
-          _material.SetColor(TrapColor, hiddenColor);
+          SetMaterialColor(hiddenColor);
           yield return new WaitForFixedUpdate();
       }
       hidden = false;

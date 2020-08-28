@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 
 public class NecromancerController : EnemyController
 {
-    [SerializeField] FireballProjectile fireball;
+    [FormerlySerializedAs("fireball")] [SerializeField] FireballProjectile fireballPrefab;
     [SerializeField] float launchCoolDown = 1;
     [SerializeField] float viewCone = 1;
 
@@ -48,11 +49,11 @@ public class NecromancerController : EnemyController
 
         if (_launchTimer < 0)
         {
-
             var spawnPoint = direction + Rigidbody2D.position;
-            var instance = Instantiate(fireball, spawnPoint, Quaternion.identity) as FireballProjectile;
+            
+            var instance = FireballProjectile.Launch(fireballPrefab, spawnPoint, direction);
             Physics2D.IgnoreCollision(instance.Collider, GetComponent<Collider2D>());
-            instance.Launch(direction);
+            
             _launchTimer = launchCoolDown;
         }
     }

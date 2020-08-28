@@ -1,3 +1,4 @@
+using System;
 using JetBrains.Annotations;
 using UnityEngine;
 
@@ -46,6 +47,18 @@ public class ColorSwitch : MonoBehaviour
         }
     }
 
+    /**
+     * <summary>
+     * Set this property to the game object of some player, if this switch shall ignore contact with the player once.
+     * This is useful for example when teleporting a player on top of this switch but the switch shall not be triggered
+     * by the teleport.
+     *
+     * The property is reset to <c>null</c> the next time the player triggers the <see cref="OnTriggerEnter2D"/> event.
+     * </summary>
+     */
+    [NonSerialized]
+    public GameObject IgnoreContactOnce = null;
+
     void Awake()
     {
         _switch = GetComponent<Switch>();
@@ -53,10 +66,17 @@ public class ColorSwitch : MonoBehaviour
     
     private void OnTriggerEnter2D(Collider2D other)
     {
+        // See description of IgnoreContactOnce
+        if (IgnoreContactOnce == other.gameObject)
+        {
+            IgnoreContactOnce = null;
+            return;
+        }
+        
         if (
             _activatingPlayer is null &&
             other.CompareTag("Player") &&
-            other.GetComponent<PlayerController>() is PlayerController player &&
+            other.TryGetComponent<PlayerController>(out var player) &&
             player.Color.IsCompatibleWith(this.Color)
         )
         {

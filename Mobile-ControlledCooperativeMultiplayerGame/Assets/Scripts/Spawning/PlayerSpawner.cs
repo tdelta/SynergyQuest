@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Cinemachine;
 using UnityEngine;
 
@@ -73,12 +72,12 @@ public abstract class PlayerSpawner : MonoBehaviour
 
             Spawn();
             
-            // register local managed player instances for respawning
+            // register local managed player instances for respawning at the position of this object
             if (managedPreexistingPlayers != null)
             {
                 foreach (var player in managedPreexistingPlayers)
                 {
-                    player.OnRespawn += Respawn;
+                    player.spawnable.defaultRespawnPosition = this.transform;
                 }
             }
         }
@@ -142,7 +141,7 @@ public abstract class PlayerSpawner : MonoBehaviour
     
     /**
      * Given a player prefab instance which has just been spawned, assign it to the camera target group and
-     * ensure it is respawned by this spawner.
+     * ensure it is respawned at the position of this spawner.
      */
     private void RegisterSpawnedInstance(PlayerController player)
     {
@@ -151,8 +150,7 @@ public abstract class PlayerSpawner : MonoBehaviour
             targetGroup.AddMember(player.transform, 1, 1);
         }
 
-        player.ClearRespawnHandlers();
-        player.OnRespawn += Respawn;
+        player.spawnable.defaultRespawnPosition = this.transform;
         OnSpawn(player);
     }
 
@@ -168,16 +166,6 @@ public abstract class PlayerSpawner : MonoBehaviour
             var player = PlayerDataKeeper.Instance.InstantiateNewPlayer(input, this.transform.position);
             RegisterSpawnedInstance(player);
         }
-    }
-
-    private void Respawn(PlayerController player)
-    {
-        // Move player to position of the spawner when respawning
-        player.GetComponent<PhysicsEffects>().Teleport(this.transform.position);
-
-        // Make player visible again, if they have been invisible
-        player.GetComponent<SpriteRenderer>().enabled = true;
-        player.Reset();
     }
 
     private void OnDrawGizmos()

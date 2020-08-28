@@ -8,7 +8,7 @@ using UnityEngine;
  * It is <c>activated</c> iff all registered switches are active.
  * It triggers an event when the activation changes.
  * 
- * See example the `DeadManSwitch` for an usage example.
+ * See example the <see cref="DeadManSwitch"/> for an usage example.
  * </summary>
  */
 public class Switchable : MonoBehaviour
@@ -22,11 +22,18 @@ public class Switchable : MonoBehaviour
      * Automatically find all switches in the scene who have a tag of the given name and bind to them
      */
     [SerializeField] private string[] autoDiscoveredSwitchTags = new string[0];
+
+    /**
+     * If this is set, the activation value of this Switchable will never return to <c>false</c> after it has been set
+     * to <c>true</c> once.
+     */
+    [SerializeField] private bool noDeactivation = false;
+    private bool _hasBeenActivatedOnce = false;
     
     /**
      * <summary>
      * Event which is invoked if the activation value changes, see class description.
-     * It is *not* invoked when computing the activation value for the first time in the <c>Awake</c> phase.
+     * It is *not* invoked when computing the activation value for the first time in the <c>OnEnable</c> phase.
      * If you need the activation value when starting a scene, look up <see cref="Activation"/> in the <c>Start</c>
      * method of your component.
      * </summary>
@@ -54,7 +61,6 @@ public class Switchable : MonoBehaviour
     void Awake()
     {
         AcquireSwitches();
-        ComputeActivation(suppressCallbacks: true);
     }
 
     /**
@@ -104,6 +110,8 @@ public class Switchable : MonoBehaviour
                 switchObj.OnValueChanged += _switchChangeHandlers[i];
             }
         }
+        
+        ComputeActivation(suppressCallbacks: true);
     }
 
     private void OnDisable()
@@ -128,7 +136,14 @@ public class Switchable : MonoBehaviour
     void ComputeActivation(bool suppressCallbacks = false)
     {
         var oldActivation = _activation;
-        _activation = _switchValues.All(v => v);
+
+        // If the <c>noDeactivation</c> property is set to true, we no longer change the activation if it has been set to
+        // <c>true</c> once. Otherwise, we update the activation based on the values of the registered switches.
+        if (!noDeactivation || !_hasBeenActivatedOnce)
+        {
+            _activation = _switchValues.All(v => v);
+            _hasBeenActivatedOnce = _activation || _hasBeenActivatedOnce;
+        }
 
         // If the activation state of this component changed, inform all subscribers
         if (!suppressCallbacks && oldActivation != _activation)

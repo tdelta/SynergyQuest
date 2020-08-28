@@ -31,12 +31,22 @@ public class FireballProjectile : MonoBehaviour
         _physicsEffects.MoveBody(_rigidbody2D.position + Time.deltaTime * thrust * _direction);
     }
 
-    public void Launch(Vector2 direction)
+    /**
+     * <summary>
+     * Instantiates a fireball projectile at a certain spawn point and launches into a given direction.
+     * It will also play sounds etc.
+     * </summary>
+     */
+    public static FireballProjectile Launch(FireballProjectile prefab, Vector3 spawnPoint, Vector2 direction)
     {
+        var instance = Instantiate(prefab, spawnPoint, Quaternion.identity);
+        
         // rotate projectile into direction of flight
-        transform.up = -direction;
-        _direction = direction;
-        _audioSource.Play();
+        instance.transform.up = -direction;
+        instance._direction = direction;
+        instance._audioSource.Play();
+
+        return instance;
     }
 
     void OnCollisionEnter2D(Collision2D other)

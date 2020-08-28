@@ -886,6 +886,7 @@ GameObject:
   - component: {fileID: 880494710090650051}
   - component: {fileID: 3679214792177754562}
   - component: {fileID: 7768931307547968082}
+  - component: {fileID: -7487777650963414746}
   - component: {fileID: 4270148256400962764}
   - component: {fileID: 5600992738212453487}
   - component: {fileID: 5518434239108301651}
@@ -973,6 +974,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   button: 2
   interactionType: 0
+  AffectsController: 1
   color: 4
   interactionTriggeredEvent:
     m_PersistentCalls:
@@ -1035,6 +1037,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4fbdff7f06944e3a87e7afdd717464f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &-7487777650963414746
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4270148256400962766}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 412b6be1ade8404ca0119967a156936c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!212 &4270148256400962764

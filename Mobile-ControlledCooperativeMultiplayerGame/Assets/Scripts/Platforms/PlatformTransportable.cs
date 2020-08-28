@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 /**
@@ -14,6 +12,7 @@ using UnityEngine;
  */
 public class PlatformTransportable : MonoBehaviour
 {
+    private Spawnable _spawnable;
     private Collider2D _collider;
     
     /**
@@ -23,14 +22,33 @@ public class PlatformTransportable : MonoBehaviour
 
     private void Awake()
     {
+        _spawnable = GetComponent<Spawnable>();
         _collider = GetComponent<Collider2D>();
+    }
+
+    private void OnEnable()
+    {
+        // If this object has a <see cref="Spawnable"/>, we register to its <c>OnRespawn</c> event.
+        if (!ReferenceEquals(_spawnable, null))
+        {
+            _spawnable.OnRespawn += OnRespawn;
+        }
+    }
+    
+    private void OnDisable()
+    {
+        // If this object has a <see cref="Spawnable"/>, we unregister from its <c>OnRespawn</c> event.
+        if (!ReferenceEquals(_spawnable, null))
+        {
+            _spawnable.OnRespawn -= OnRespawn;
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
         // If the object we touched is a Platform, register it in the list of platforms we are currently in
         // contact with.
-        if (other.GetComponent<Platform>() is Platform platform)
+        if (other.TryGetComponent<Platform>(out var platform))
         {
             PlatformsInContact.Add(platform);
         }
@@ -40,9 +58,34 @@ public class PlatformTransportable : MonoBehaviour
     {
         // If the object we stopped touching is a Platform, unregister it from the list of platforms we are
         // currently in contact with.
-        if (other.GetComponent<Platform>() is Platform platform)
+        if (other.TryGetComponent<Platform>(out var platform))
         {
             PlatformsInContact.Remove(platform);
+        }
+    }
+    
+    /**
+     * <summary>
+     * This method is called, if this object also has a <see cref="Spawnable"/> component and its
+     * <see cref="Spawnable.OnRespawn"/> event is triggered.
+     *
+     * We use this event to manually check for platform contacts on respawn, since the physics event functions of
+     * <see cref="Chasm"/> may be called before the event functions of this behavior.
+     * However, we have to register contacts with <see cref="Platform"/> before <see cref="Chasm"/> does, so we directly
+     * do it on respawn using this method.
+     * </summary>
+     */
+    private void OnRespawn()
+    {
+        var colliderList = new List<Collider2D>();
+        var contactFilter = new ContactFilter2D();
+        contactFilter.NoFilter();
+        
+        _collider.OverlapCollider(contactFilter, colliderList);
+
+        foreach (var collider in colliderList)
+        {
+            OnTriggerEnter2D(collider);
         }
     }
 }

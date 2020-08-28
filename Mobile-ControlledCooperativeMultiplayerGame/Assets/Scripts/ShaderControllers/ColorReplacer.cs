@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.Serialization;
 
 /**
@@ -42,26 +43,44 @@ public class ColorReplacer : MonoBehaviour
         }
     }
 
-    /**
-     * The material which is controlled.
-     */
-    private Material _material;
+    private SpriteRenderer _renderer;
+
+    private MaterialPropertyBlock _materialProperties = null;
     private static readonly int ReplacementColorProperty = Shader.PropertyToID("_ReplacementColor");
     private static readonly int ColorToReplaceProperty = Shader.PropertyToID("_ColorToReplace");
     
     void Awake()
     {
-        _material = GetComponent<SpriteRenderer>().material;
+        PerformReplacement();
+    }
+
+    private void OnValidate()
+    {
         PerformReplacement();
     }
 
     private void PerformReplacement()
     {
-        // ReSharper disable once Unity.NoNullPropagation
-        if (_material != null)
+        EnsureReady();
+        
+        _renderer.GetPropertyBlock(_materialProperties);
+        
+        _materialProperties.SetColor(ColorToReplaceProperty, colorToReplace);
+        _materialProperties.SetColor(ReplacementColorProperty, replacementColor);
+        
+        _renderer.SetPropertyBlock(_materialProperties);
+    }
+
+    private void EnsureReady()
+    {
+        if (ReferenceEquals(_materialProperties, null))
         {
-            _material.SetColor(ColorToReplaceProperty, colorToReplace);
-            _material.SetColor(ReplacementColorProperty, replacementColor);
+            _materialProperties = new MaterialPropertyBlock();
+        }
+
+        if (ReferenceEquals(_renderer, null))
+        {
+            _renderer = GetComponent<SpriteRenderer>();
         }
     }
 }

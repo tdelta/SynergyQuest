@@ -78,9 +78,9 @@ public class Chasm : MonoBehaviour
             if (intersectionArea / playerArea > 0.5)
             {
                 // Get a handle on the player
-                if (other.GetComponent<PlayerController>() is PlayerController playerController)
+                if (other.TryGetComponent<PlayerController>(out var playerController))
                     playerController.InitiateFall();
-                else if (other.GetComponent<Item>() is Item item)
+                else if (other.TryGetComponent<Item>(out var item))
                     item.gameObject.Shrink(new Vector3(0.01f, 0.01f, 0.01f));
             }
         }

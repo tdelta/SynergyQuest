@@ -15,6 +15,12 @@ public enum PlayerState{
     presenting_item
 }
 
+[RequireComponent(typeof(Throwable))]
+[RequireComponent(typeof(BoxCollider2D))]
+[RequireComponent(typeof(TintFlashController))]
+[RequireComponent(typeof(ItemController))]
+[RequireComponent(typeof(ChasmContactTracker))]
+[RequireComponent(typeof(Spawnable))]
 public class PlayerController : EntityController
 {
     [SerializeField] private GameObject lifeGauge;
@@ -36,7 +42,7 @@ public class PlayerController : EntityController
     public Vector2 Center => Collider.bounds.center;
 
     public InteractionSpeechBubble InteractionSpeechBubble => interactionSpeechBubble;
-    
+
     /**
      * If local controls will be used for this character instead of a remote controller, which color should be assigned
      * to this player?
@@ -58,10 +64,10 @@ public class PlayerController : EntityController
     [SerializeField] private SpriteRenderer itemPresentation;
     
     public BoxCollider2D Collider { get; private set; }
-    private Renderer _renderer;
     private ItemController _itemController;
     private Throwable _throwable;
     private ChasmContactTracker _chasmContactTracker;
+    public Spawnable spawnable { get; private set; }
 
     /**
      * Used to briefly flash the player in a certain color. For example red when they are hit.
@@ -136,12 +142,6 @@ public class PlayerController : EntityController
     public PlayerColor Color => Input.GetColor();
 
     /**
-     * Delegate function is filled by the script that does the respawning
-     */
-    public delegate void OnRespawnAction(PlayerController player);
-    public event OnRespawnAction OnRespawn;
-    
-    /**
      * There is an animation in which the player presents an item.
      * This callback will be invoked, when the animation completes.
      * See also the `PresentItem` method.
@@ -167,9 +167,9 @@ public class PlayerController : EntityController
         _throwable = GetComponent<Throwable>();
         Collider = GetComponent<BoxCollider2D>();
         _tintFlashController = GetComponent<TintFlashController>();
-        _renderer = GetComponent<Renderer>();
         _itemController = GetComponent<ItemController>();
         _chasmContactTracker = GetComponent<ChasmContactTracker>();
+        spawnable = GetComponent<Spawnable>();
     }
 
     private void OnEnable()
@@ -177,6 +177,8 @@ public class PlayerController : EntityController
         _throwable.OnPickedUp += OnPickedUp;
         _throwable.OnThrown += OnThrown;
         _throwable.OnLanded += OnLanded;
+
+        spawnable.OnRespawn += Reset;
     }
     
     private void OnDisable()
@@ -184,6 +186,8 @@ public class PlayerController : EntityController
         _throwable.OnPickedUp -= OnPickedUp;
         _throwable.OnThrown -= OnThrown;
         _throwable.OnLanded -= OnLanded;
+        
+        spawnable.OnRespawn -= Reset;
     }
 
     // Start is called before the first frame update
@@ -303,8 +307,8 @@ public class PlayerController : EntityController
             {
                 Instantiate(coinPrefab, goldSpawnPosition, Quaternion.identity);
             }
-            
-            OnRespawn?.Invoke(this);
+
+            spawnable.Respawn();
         }
         
         // Display some effects when damaged
@@ -519,6 +523,10 @@ public class PlayerController : EntityController
             _playerState = PlayerState.falling;
             // If the player is being moved by a platform, they should no longer be moved when falling
             PhysicsEffects.RemoveCustomOrigin();
+            // We place the player at the center of its collider for the falling animation to get a position somewhat
+            // centered around the point where the player entered the chasm
+            PhysicsEffects.Teleport(Collider.bounds.center);
+            
             Animator.SetTrigger(FallTrigger);
         }
     }
@@ -528,7 +536,10 @@ public class PlayerController : EntityController
      */
     public void OnFallAnimationStarted()
     {
-        Collider.enabled = false;
+        // A falling player will be moved on a special layer, so that it does not interact with most other objects while
+        // falling.
+        this.gameObject.layer = LayerMask.NameToLayer("Falling");
+        
         fallingSounds.PlayOneShot();
     }
 
@@ -537,7 +548,9 @@ public class PlayerController : EntityController
      */
     public void OnFallAnimationComplete()
     {
-        Collider.enabled = true;
+        // A falling player will be moved on a special layer, so that it does not interact with most other objects while
+        // falling. We restore the original layer here.
+        this.gameObject.layer = LayerMask.NameToLayer("Player");
         _playerState = PlayerState.walking;
         
         // The falling animation scales the player down.
@@ -562,24 +575,6 @@ public class PlayerController : EntityController
     public bool Collect(ItemDescription itemDescription)
     {
         return _itemController.Collect(itemDescription);
-    }
-
-    /**
-     * If the player dies, they emit the OnRespawn event.
-     * This function removes all subscribers from that event. Usually there is only one subscriber, which is the
-     * (Re-)Spawner.
-     * 
-     * Hence, this method may be used to reset the respawning point.
-     */
-    public void ClearRespawnHandlers()
-    {
-        if (OnRespawn != null)
-        {
-            foreach (var handler in OnRespawn.GetInvocationList())
-            {
-                OnRespawn -= (OnRespawnAction) handler;
-            }
-        }
     }
 
     /**

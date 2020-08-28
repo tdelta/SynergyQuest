@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 /**
@@ -76,11 +75,15 @@ public class PhysicsEffects: MonoBehaviour
     private List<ForceEffect> _effectsForces = new List<ForceEffect>();
 
     /**
-     * Stores the last direction the player intentionally moved into.
+     * <summary>
+     * Stores the last direction the player intentionally moved into. Normalized or zero.
      * (It does not report directions the player has been pushed to by other objects.)
+     * </summary>
      */
-    private Vector2 _steeringDirection = Vector2.zero;
-    public Vector2 SteeringDirection => _steeringDirection;
+    public Vector2 SteeringDirection { get; private set; } = Vector2.zero;
+    
+    private Vector2 _lastPosition = Vector2.zero;
+    public Vector2 MovementDelta { get; private set; } = Vector2.zero;
 
     private void Awake()
     {
@@ -89,6 +92,8 @@ public class PhysicsEffects: MonoBehaviour
         {
             _lastCustomOriginPosition = _customOrigin.position;
         }
+
+        _lastPosition = rigidbody2D.position;
     }
 
     /**
@@ -114,6 +119,8 @@ public class PhysicsEffects: MonoBehaviour
     public void Teleport(Vector2 position)
     {
         transform.position = new Vector3(position.x, position.y, transform.position.z);
+        _lastPosition = position;
+        MovementDelta = Vector2.zero;
         rigidbody2D.position = position;
     }
 
@@ -223,7 +230,7 @@ public class PhysicsEffects: MonoBehaviour
         
         // Remember the direction the player wants to move (if the difference between the current and the target position is big enough)
         var steeringDirection = _lastNextPosition - rigidbody2D.position;
-        _steeringDirection = steeringDirection.magnitude > 0.01 ? steeringDirection.normalized : Vector2.zero;
+        SteeringDirection = steeringDirection.magnitude > 0.01 ? steeringDirection.normalized : Vector2.zero;
     }
     
     private void Update()
@@ -248,6 +255,14 @@ public class PhysicsEffects: MonoBehaviour
             // Cache the new position of the origin
             _lastCustomOriginPosition = originPosition;
         }
+    }
+
+    private void FixedUpdate()
+    {
+        var currentPosition = rigidbody2D.position;
+        
+        MovementDelta = currentPosition - _lastPosition;
+        _lastPosition = currentPosition;
     }
 
     public Vector2 GetImpulse()
