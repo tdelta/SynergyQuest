@@ -18,7 +18,7 @@ public class ColoredAreaEffector : MonoBehaviour
     /**
      * Force to be applied
      */
-    [SerializeField] private Vector2 force;
+    [SerializeField] private Vector2 force = default;
     
     private PlayerColor _unaffectedColor = PlayerColor.Any;
     

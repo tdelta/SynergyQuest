@@ -5,8 +5,9 @@ using UnityEngine;
  * Players have an identifying color, <see cref="PlayerColor"/> which dictates whether or not they can interact with
  * certain objects or not.
  * 
- * This component assigns an identifying color to an object. If the color is changed in the editor, it makes sure other
- * color-controlled components like <see cref="ColorSwitch"/> or <see cref="ColorReplacer"/> use the same color.
+ * This component assigns an identifying color to an object. If the color is changed in the editor, other
+ * color-controlled components like <see cref="ColorSwitch"/> or <see cref="ColorReplacer"/> are programmed to use the
+ * same color.
  *
  * Furthermore, if this object has a <see cref="Renderer"/> which uses an material which supports
  * <see cref="PlayerColorShaderProperty"/>, the property is set to the assigned color.
@@ -15,7 +16,28 @@ using UnityEngine;
 public class Colored : MonoBehaviour
 {
     [SerializeField] private PlayerColor color = PlayerColor.Any;
-    public PlayerColor Color => color;
+
+    public PlayerColor Color
+    {
+        get => color;
+        set
+        {
+            if (color != value)
+            {
+                color = value;
+                SetupShader();
+                OnColorChanged?.Invoke(value);
+            }
+        }
+    }
+
+    /**
+     * <summary>
+     * Event which is invoked whenever the value of <see cref="Color"/> is changed
+     * </summary>
+     */
+    public event ColorChangedAction OnColorChanged;
+    public delegate void ColorChangedAction(PlayerColor newColor);
 
     private void Awake()
     {
@@ -24,17 +46,10 @@ public class Colored : MonoBehaviour
 
     private void OnValidate()
     {
-        if (GetComponent<ColorSwitch>() is ColorSwitch colorSwitch)
-        {
-            colorSwitch.Color = color;
-        }
-
-        if (GetComponent<ColorReplacer>() is ColorReplacer colorReplacer)
-        {
-            colorReplacer.ReplacementColor = color.ToRGB();
-        }
-        
         SetupShader();
+        // Other components like `ColorReplacer` may depend on the color value of this component.
+        // Hence we run the OnValidate methods of all other components, when this component is changed
+        this.ValidateOtherComponents();
     }
 
     private static readonly int PlayerColorShaderProperty = Shader.PropertyToID("_PlayerColor");

@@ -21,7 +21,7 @@ public class SizeLimited : MonoBehaviour
      * If the object of the transform also has a collider, the limiter position is extended by the bounds of the
      * collider.
      */
-    [SerializeField] private Transform rightLimiter;
+    [SerializeField] private Transform rightLimiter = default;
     /**
      * If this property is set, this objects' transform is adjusted, so that its left boundary begins at the position
      * of the given transform.
@@ -29,7 +29,12 @@ public class SizeLimited : MonoBehaviour
      * If the object of the transform also has a collider, the limiter position is extended by the bounds of the
      * collider.
      */
-    [SerializeField] private Transform leftLimiter;
+    [SerializeField] private Transform leftLimiter = default;
+    
+    /**
+     * Size of this object when not stretched/resized
+     */
+    [SerializeField] private Vector2 originalSize = Vector2.one;
 
     /**
      * Cache values set during the <c>Start</c>-phase.
@@ -44,7 +49,6 @@ public class SizeLimited : MonoBehaviour
 
     private float _rightOffset = 0;
     private float _leftOffset = 0;
-    private Vector2 _originalSize;
 
     private float _cachedRight = float.NaN;
     private float _cachedLeft = float.NaN;
@@ -56,14 +60,13 @@ public class SizeLimited : MonoBehaviour
     private void Awake()
     {
         _renderer = GetComponent<SpriteRenderer>();
-        _originalSize = _renderer.sprite.bounds.size;
     }
 
     private void OnValidate()
     {
         Awake();
         Start();
-        UpdateSizeAndPosition();
+        Update();
     }
 
     private void Start()
@@ -76,6 +79,13 @@ public class SizeLimited : MonoBehaviour
 
     private void Update()
     {
+        #if UNITY_EDITOR
+            // When editing, always reset the cached values, since it is not guaranteed, that this object is
+            // reinitialized if something in the scene changes and Update is rerun
+            _cachedLeft = float.NaN;
+            _cachedRight = float.NaN;
+        #endif
+        
         UpdateSizeAndPosition();
     }
 
@@ -90,6 +100,11 @@ public class SizeLimited : MonoBehaviour
             {
                 _rightOffset = -rightCollider.bounds.extents.x;
             }
+
+            else
+            {
+                _rightOffset = 0;
+            }
             
             needsUpdate = true;
         }
@@ -103,6 +118,11 @@ public class SizeLimited : MonoBehaviour
                 _leftOffset = leftCollider.bounds.extents.x;
             }
             
+            else
+            {
+                _leftOffset = 0;
+            }
+            
             needsUpdate = true;
         }
 
@@ -110,20 +130,20 @@ public class SizeLimited : MonoBehaviour
         {
             var position = this.transform.position;
 
-            var rightLimit = position.x + _originalSize.x / 2;
+            var rightLimit = position.x + originalSize.x / 2;
             if (_hasRightLimiter)
             {
                 rightLimit = _cachedRight + _rightOffset;
             }
 
-            var leftLimit = rightLimit - _originalSize.x;
+            var leftLimit = rightLimit - originalSize.x;
             if (_hasLeftLimiter)
             {
                 leftLimit = _cachedLeft + _leftOffset;
             }
 
             position.x = 0.5f * (leftLimit + rightLimit);
-            _scaleBuffer.x = (rightLimit - leftLimit) / _originalSize.x;
+            _scaleBuffer.x = (rightLimit - leftLimit) / originalSize.x;
             
             var transformRef = transform;
             transformRef.position = position;

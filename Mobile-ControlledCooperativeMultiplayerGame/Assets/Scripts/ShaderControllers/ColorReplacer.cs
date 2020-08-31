@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Serialization;
 
 /**
@@ -15,6 +14,9 @@ using UnityEngine.Serialization;
  * </list>
  *
  * E.g. a material using the <c>ColorReplacer</c> shader.
+ *
+ * Furthermore, if the game object using this component also has a <see cref="Colored"/> component, this behaviour will
+ * use the RGB value of <see cref="Colored.Color"/> to override <see cref="ReplacementColor"/>.
  * </summary>
  */
 [RequireComponent(typeof(SpriteRenderer))]
@@ -43,6 +45,21 @@ public class ColorReplacer : MonoBehaviour
         }
     }
 
+    /**
+     * <summary>
+     * Iff set, <see cref="anyOverrideColor"/> will be used instead of the RGB value of <see cref="Colored.Color"/>
+     * to override <see cref="ReplacementColor"/> when this object has a <see cref="Colored"/> component and
+     * <see cref="Colored.Color"/> is <see cref="PlayerColor.Any"/>.
+     *
+     * See also class description.
+     * </summary>
+     */
+    [SerializeField] private bool useAnyOverrideColor = false;
+    /**
+     * See description of <see cref="useAnyOverrideColor"/>.
+     */
+    [SerializeField] private Color anyOverrideColor = PlayerColor.Any.ToRGB();
+    
     private SpriteRenderer _renderer;
 
     private MaterialPropertyBlock _materialProperties = null;
@@ -56,6 +73,13 @@ public class ColorReplacer : MonoBehaviour
 
     private void OnValidate()
     {
+        // If this object has a `Colored` component, use its color instead of the configured ReplacementColor,
+        // see also class description
+        if (TryGetComponent(out Colored colored))
+        {
+            UseColoredOverride(colored.Color);
+        }
+        
         PerformReplacement();
     }
 
@@ -82,5 +106,21 @@ public class ColorReplacer : MonoBehaviour
         {
             _renderer = GetComponent<SpriteRenderer>();
         }
+    }
+
+    /**
+     * <summary>
+     * Adjusts the <see cref="ReplacementColor"/> to the RGB value of the given <c>playerColor</c>.
+     * </summary>
+     * <remarks>
+     * Invoked, with the value of <see cref="Colored.Color"/> by <see cref="OnValidate"/>,
+     * if this object has a <see cref="Colored"/> component.
+     * </remarks>
+     */
+    private void UseColoredOverride(PlayerColor playerColor)
+    {
+        ReplacementColor = playerColor == PlayerColor.Any && useAnyOverrideColor ?
+            anyOverrideColor :
+            playerColor.ToRGB();
     }
 }

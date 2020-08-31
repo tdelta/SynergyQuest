@@ -89,12 +89,12 @@ public class LocalInput: MonoBehaviour, Input
 
     public float GetVertical()
     {
-        return UnityEngine.Input.GetAxis(keymap.VerticalAxis);
+        return UnityEngine.Input.GetKey(keymap.ImuOrientationModifier) ? 0 : UnityEngine.Input.GetAxis(keymap.VerticalAxis);
     }
 
     public float GetHorizontal()
     {
-        return UnityEngine.Input.GetAxis(keymap.HorizontalAxis);
+        return UnityEngine.Input.GetKey(keymap.ImuOrientationModifier) ? 0 : UnityEngine.Input.GetAxis(keymap.HorizontalAxis);
     }
 
     public float GetIMUOrientationVertical()

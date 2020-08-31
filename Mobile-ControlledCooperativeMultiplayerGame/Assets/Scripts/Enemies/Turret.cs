@@ -22,7 +22,7 @@ public class Turret : MonoBehaviour
     /**
      * The projectile to fire
      */
-    [SerializeField] FireballProjectile fireballPrefab;
+    [SerializeField] FireballProjectile fireballPrefab = default;
 
     private Collider2D _collider;
 

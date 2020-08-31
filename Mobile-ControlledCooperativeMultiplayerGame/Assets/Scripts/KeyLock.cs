@@ -22,10 +22,6 @@ public class KeyLock : MonoBehaviour
      * have to step back from the door and forth again to open it, after unlocking.
      */
     [SerializeField] private ContactTrigger contactTriggerToReset = default;
-    /**
-     * Door which this lock opens.
-     */
-    [SerializeField] private Door door = default;
     
     private Switch _switch;
 

@@ -1,3 +1,4 @@
+using System.Reflection;
 using UnityEngine;
 
 /**
@@ -44,4 +45,29 @@ public static class BehaviourExtensions
 
         return dst;
     }
+    
+    
+    #if UNITY_EDITOR
+    /**
+     * <summary>
+     * Invokes the method <c>OnValidate</c> on all other components of the same game object, even if it is private.
+     * However, `OnValidate` will not be invoked on the component calling this method.
+     *
+     * <c>OnValidate</c> must not declare any parameters on all components.
+     * </summary>
+     */
+    public static void ValidateOtherComponents<T>(this T self)
+        where T : MonoBehaviour
+    {
+        foreach (var component in self.GetComponents<MonoBehaviour>())
+        {
+            if (component != self)
+            {
+                var onValidate = component.GetType().GetMethod("OnValidate", BindingFlags.NonPublic | BindingFlags.Instance);
+
+                onValidate?.Invoke(component, new object[0]);
+            }
+        }
+    }
+    #endif
 }

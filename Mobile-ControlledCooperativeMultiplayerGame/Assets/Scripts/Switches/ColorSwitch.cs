@@ -64,6 +64,30 @@ public class ColorSwitch : MonoBehaviour
         _switch = GetComponent<Switch>();
     }
     
+    private void OnEnable()
+    {
+        if (TryGetComponent(out Colored colored))
+        {
+            colored.OnColorChanged += OnPlayerColorChanged;
+        }
+    }
+    
+    private void OnDisable()
+    {
+        if (TryGetComponent(out Colored colored))
+        {
+            colored.OnColorChanged -= OnPlayerColorChanged;
+        }
+    }
+
+    private void OnValidate()
+    {
+        if (TryGetComponent(out Colored colored))
+        {
+            OnPlayerColorChanged(colored.Color);
+        }
+    }
+
     private void OnTriggerEnter2D(Collider2D other)
     {
         // See description of IgnoreContactOnce
@@ -93,5 +117,10 @@ public class ColorSwitch : MonoBehaviour
         {
             ActivatingPlayer = null;
         }
+    }
+
+    private void OnPlayerColorChanged(PlayerColor playerColor)
+    {
+        Color = playerColor;
     }
 }

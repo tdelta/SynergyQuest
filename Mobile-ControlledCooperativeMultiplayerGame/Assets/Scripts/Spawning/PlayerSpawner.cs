@@ -21,8 +21,6 @@ public abstract class PlayerSpawner : MonoBehaviour
      */
     [SerializeField] private PlayerController[] managedPreexistingPlayers = default;
 
-    [SerializeField] private GameObject playerGhost = default;
-
     /**
      * In debug mode, for newly connected controllers, we need to give them a colour, since they didn't join via the
      * lobby which assigns colors. Here we store the next color to assign to a new controller.

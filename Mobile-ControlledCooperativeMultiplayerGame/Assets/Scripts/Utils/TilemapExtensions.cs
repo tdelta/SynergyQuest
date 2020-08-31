@@ -1,4 +1,3 @@
-using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -41,5 +40,27 @@ public static class TilemapExtensions
         }
 
         return position;
+    }
+
+    /**
+     * <summary>
+     * Sometimes the collider of a <see cref="Tilemap"/> are not rebuilt when its contents are changed with
+     * <see cref="Tilemap.SetTile"/> etc. This extension method forces the collider to fix itself.
+     * </summary>
+     */
+    public static void RefreshColliders(this Tilemap tilemap)
+    {
+        if (tilemap.TryGetComponent(out TilemapCollider2D collider))
+        {
+            // Workaround to force regeneration of colliders is disabling and enabling the collider
+            collider.enabled = false;
+            // ReSharper disable once Unity.InefficientPropertyAccess
+            collider.enabled = true;
+        }
+
+        else
+        {
+            Debug.LogError("Can not refresh collider of tilemap, since it does not have a collider.");
+        }
     }
 }

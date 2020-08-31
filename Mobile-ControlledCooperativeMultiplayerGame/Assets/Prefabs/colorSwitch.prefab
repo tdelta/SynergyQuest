@@ -128,7 +128,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   colorToReplace: {r: 0, g: 1, b: 0, a: 1}
-  replacementColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  replacementColor: {r: 1, g: 1, b: 1, a: 1}
+  useAnyOverrideColor: 1
+  anyOverrideColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &1023477077049723376
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -157,6 +159,7 @@ MonoBehaviour:
   switches:
   - {fileID: 1023477077049723373}
   autoDiscoveredSwitchTags: []
+  noDeactivation: 0
 --- !u!114 &-2587709056301723909
 MonoBehaviour:
   m_ObjectHideFlags: 0

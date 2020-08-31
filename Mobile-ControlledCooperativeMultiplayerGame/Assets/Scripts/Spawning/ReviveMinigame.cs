@@ -37,9 +37,12 @@ public class ReviveMinigame : MonoBehaviour
 
     private void OnRespawn(Vector3 respawnPosition)
     {
-        var instance = Instantiate(playerGhostPrefab, respawnPosition, Quaternion.identity)
-          .GetComponentInChildren<PlayerGhost>();
-        
-        instance.Register(_player, transform.position);
+        if (!DebugSettings.Instance.DebugMode || !DebugSettings.Instance.DisableRevivalMinigame)
+        {
+            var instance = Instantiate(playerGhostPrefab, respawnPosition, Quaternion.identity)
+              .GetComponentInChildren<PlayerGhost>();
+            
+            instance.Register(_player, transform.position);
+        }
     }
 }
