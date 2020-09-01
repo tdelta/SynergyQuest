@@ -1,6 +1,6 @@
+using System;
 using System.IO;
 using System.Security.Cryptography.X509Certificates;
-using Boo.Lang.Runtime;
 using UnityEngine;
 
 /**
@@ -29,9 +29,9 @@ public class ServerSettings: ScriptableObjectSingleton<ServerSettings>
      * </summary>
      * <seealso cref="BaseServer"/>
      */
-    public float HttpPort => httpPort;
+    public int HttpPort => httpPort;
     [SerializeField]
-    private float httpPort = 8000;
+    private int httpPort = 8000;
 
     /**
      * <summary>
@@ -42,8 +42,8 @@ public class ServerSettings: ScriptableObjectSingleton<ServerSettings>
      * <seealso cref="BaseServer"/>
      * <seealso cref="runHttpServerOnlyInProductionMode"/>
      */
-    public float WebsocketPort => websocketPort;
-    [SerializeField] private float websocketPort = 4242;
+    public int WebsocketPort => websocketPort;
+    [SerializeField] private int websocketPort = 4242;
     
     /**
      * <summary>
@@ -122,21 +122,34 @@ public class ServerSettings: ScriptableObjectSingleton<ServerSettings>
      */
     public X509Certificate2 RetrieveCertificate()
     {
-        if (File.Exists(pathToCertificatePFX))
+        // FIXME: Eventually this path has to be adjusted to use backslashes in windows systems!
+        #if UNITY_EDITOR
+        var pathToCertificatePfx = pathToCertificatePfxForEditorMode;
+        #else
+        var pathToCertificatePfx = pathToCertificatePfxForBuildMode;
+        #endif
+        pathToCertificatePfx = $"{PathUtils.GetInstallDirectory()}/{pathToCertificatePfx}";
+     
+        if (File.Exists(pathToCertificatePfx))
         {
-            return new X509Certificate2 (pathToCertificatePFX, pfxPassword);
+            return new X509Certificate2 (pathToCertificatePfx, pfxPassword);
         }
 
         else
         {
-            throw new RuntimeException($"Could not find certificate .pfx file at {pathToCertificatePFX}.");
+            throw new ApplicationException($"Could not find certificate .pfx file at {pathToCertificatePfx}.");
         }
     }
     
-    // FIXME: This path will not be accessible in the packaged game. Make the certificate a packageable resource
     /**
      * Certificates must be provided as a PFX file.
+     * This path will be used to locate the file when running in editor mode.
      */
-    [SerializeField] private string pathToCertificatePFX = "../Certificates/generated/server.pfx";
+    [SerializeField] private string pathToCertificatePfxForEditorMode = "../Certificates/generated/server.pfx";
+    /**
+     * Certificates must be provided as a PFX file.
+     * This path will be used to locate the file when running in the Unity Player (Release Build).
+     */
+    [SerializeField] private string pathToCertificatePfxForBuildMode = "Certificates/server.pfx";
     [SerializeField] private string pfxPassword = "";
 }

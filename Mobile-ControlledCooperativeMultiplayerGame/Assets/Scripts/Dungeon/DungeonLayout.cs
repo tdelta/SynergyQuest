@@ -103,8 +103,7 @@ public class DungeonLayout : Singleton<DungeonLayout>
     ) {
         _playerNum = playerNum;
         _data = DungeonLayoutData.FromFile(filePath);
-        _dungeonPath = Path.GetDirectoryName(filePath)
-            .Replace('\\', '/'); // Unity only accepts forward slash for Asset paths, hence we must eliminate "\" on windows systems
+        _dungeonPath = Path.GetDirectoryName(filePath).WinToNixPath();
 
         var roomToLoad = overwriteInitialRoom ?? _data.initialRoom;
         if (doNotLoadScene)

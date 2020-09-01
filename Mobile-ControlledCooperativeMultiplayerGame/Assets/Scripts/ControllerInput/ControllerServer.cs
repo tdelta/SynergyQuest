@@ -50,9 +50,22 @@ public class ControllerServer : BehaviourSingleton<ControllerServer>
     // Then, the main thread of Unity acts as a consumer in the `Update`
     // function.
     private ConcurrentQueue<ConnectionUpdate> _incomingConnectionUpdates = new ConcurrentQueue<ConnectionUpdate>();
+
+    /**
+     * <summary>
+     * See description of <see cref="BaseServer.UsedPort"/>.
+     * </summary>
+     * <exception cref="NullReferenceException">If called before <c>Awake</c> phase completed.</exception>
+     */
+    public int UsedPort => _baseServer.UsedPort;
     
-    // Port the game will listen on for connections from controllers
-    private const short _port = 4242;
+    /**
+     * <summary>
+     * See description of <see cref="BaseServer.UsedProtocol"/>.
+     * </summary>
+     * <exception cref="NullReferenceException">If called before <c>Awake</c> phase completed.</exception>
+     */
+    public string UsedProtocol => _baseServer.UsedProtocol;
 
     /**
      * As soon as a new controller fully connects, this event will emit a `ControllerInput` instance.

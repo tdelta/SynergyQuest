@@ -17,5 +17,6 @@ MonoBehaviour:
   documentRoot: controller-app
   runHttpServerOnlyInProductionMode: 1
   useSSLOnlyInProductionMode: 1
-  pathToCertificatePFX: ../Certificates/generated/server.pfx
+  pathToCertificatePfxForEditorMode: ../Certificates/generated/server.pfx
+  pathToCertificatePfxForBuildMode: Certificates/server.pfx
   pfxPassword: 

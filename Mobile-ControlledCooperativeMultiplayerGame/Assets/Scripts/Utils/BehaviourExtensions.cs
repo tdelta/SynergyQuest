@@ -47,7 +47,6 @@ public static class BehaviourExtensions
     }
     
     
-    #if UNITY_EDITOR
     /**
      * <summary>
      * Invokes the method <c>OnValidate</c> on all other components of the same game object, even if it is private.
@@ -69,5 +68,4 @@ public static class BehaviourExtensions
             }
         }
     }
-    #endif
 }

@@ -288,7 +288,7 @@ public class LobbyMenuUi : MonoBehaviour
      */
     private string BuildAddress(string ip)
     {
-        return $"{ip}:3000";
+        return $"{ControllerServer.Instance.UsedProtocol}://{ip}:{ControllerServer.Instance.UsedPort}";
     }
     
     /**
@@ -301,7 +301,7 @@ public class LobbyMenuUi : MonoBehaviour
      *
      * @returns A sprite. It contains a qr code that encodes "http://{address}". 
      */
-    private Sprite BuildQRCode(string address, int width, int height)
+    private Sprite BuildQRCode(string url, int width, int height)
     {
         var writer = new BarcodeWriter
         {
@@ -314,7 +314,7 @@ public class LobbyMenuUi : MonoBehaviour
             },
         };
         
-        var colorArray = writer.Write($"http://{address}");
+        var colorArray = writer.Write(url);
         
         var tex = new Texture2D(width, height);
         tex.SetPixels32(colorArray);

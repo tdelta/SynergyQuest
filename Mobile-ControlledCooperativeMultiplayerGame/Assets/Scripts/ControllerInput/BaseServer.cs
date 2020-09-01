@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
-using Boo.Lang.Runtime;
 using JetBrains.Annotations;
 using UnityEngine;
 using WebSocketSharp;
@@ -49,6 +48,29 @@ public class BaseServer
     // E.g. "https://0.0.0.0:8000"
     private string _url;
 
+    /**
+     * <summary>
+     * Reports the port used by this server.
+     * </summary>
+     * <remarks>
+     * The used port can differ depending on the <see cref="ServerSettings"/>. See also class description.
+     * </remarks>
+     */
+    public int UsedPort => _usedPort;
+    private int _usedPort = -1;
+
+    /**
+     * <summary>
+     * Reports the protocol used by this server.
+     * </summary>
+     * <remarks>
+     * The used protocol can differ depending on the <see cref="ServerSettings"/>. See also class description.
+     * </remarks>
+     * <example><c>"http"</c> or <c>"https"</c> or <c>"ws"</c> or <c>"wss"</c></example>
+     */
+    public string UsedProtocol => _usedProtocol;
+    private string _usedProtocol = null;
+
     public BaseServer()
     {
         // Whether we should use SSL.
@@ -64,15 +86,15 @@ public class BaseServer
 
         // Determine the protocol depending on the above flags
         // E.g. http(s) or ws(s)
-        var protocol = runHttpServer ? (secure ? "https" : "http") : (secure ? "wss" : "ws");
+        _usedProtocol = runHttpServer ? (secure ? "https" : "http") : (secure ? "wss" : "ws");
 
         // Determine the port to use. If we are running in websocket-only mode, we use a different port so that the
         // replacement HTTP server for development can listen to the main port.
-        var port = runHttpServer ? ServerSettings.Instance.HttpPort : ServerSettings.Instance.WebsocketPort;
+        _usedPort = runHttpServer ? ServerSettings.Instance.HttpPort : ServerSettings.Instance.WebsocketPort;
 
         // Construct the server URL from the above flags
         // E.g. https://0.0.0.0:8000 or ws://0.0.0.0:4242
-        _url = $"{protocol}://{Address}:{port}";
+        _url = $"{_usedProtocol}://{Address}:{_usedPort}";
 
         // Construct websocket-only server, if running in websocket-only (debug) mode
         if (!runHttpServer)
@@ -97,7 +119,8 @@ public class BaseServer
         // Otherwise, construct a server which can serve documents over HTTP and websoockets...
         else
         {
-            var documentRoot = ServerSettings.Instance.DocumentRoot;
+            var documentRoot =
+                $"{PathUtils.GetInstallDirectory()}/{ServerSettings.Instance.DocumentRoot}";
 
             Log(
                 $"Serving websockets and web content on single port. Using the following document root: {documentRoot}");
@@ -188,7 +211,7 @@ public class BaseServer
                 return _wss.WebSocketServices;
             }
 
-            throw new RuntimeException(
+            throw new ApplicationException(
                 "No websocket service provider available. This should never happen and is a programming error."
             );
         }
@@ -220,6 +243,9 @@ public class BaseServer
         {
             // Send 404 error, if there is no such file
             res.StatusCode = (int) HttpStatusCode.NotFound;
+            
+            LogWarning($"Client requested non existent file (404): {path}");
+            
             return;
         }
 
@@ -239,8 +265,6 @@ public class BaseServer
             }
         }
         
-        Debug.Log($"path: {path} extension: {fileExtension} ContentType: {res.ContentType} encoding: {res.ContentEncoding}");
-
         res.ContentLength64 = contents.LongLength;
         res.Close(contents, true);
     }
@@ -248,5 +272,10 @@ public class BaseServer
     private static void Log(String str)
     {
         Debug.Log($"[BaseServer] {str}");
+    }
+    
+    private static void LogWarning(String str)
+    {
+        Debug.LogWarning($"[BaseServer] {str}");
     }
 }
