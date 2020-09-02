@@ -69,7 +69,7 @@ export class ConnectScreen extends React.Component<
 
     const scrollContent1: React.ReactNode = ( // Displayed, when the name has not been entered yet
       <>
-        <p> Welcome to Co-Op Dungeon! Please enter your name: </p>
+        <p> Welcome to Synergy Quest! Please enter your name: </p>
         <form onSubmit={canJoin ? _ => connectAction() : undefined}>
           <input value={this.state.playerName} onChange={this.onNameChange} />
         </form>
