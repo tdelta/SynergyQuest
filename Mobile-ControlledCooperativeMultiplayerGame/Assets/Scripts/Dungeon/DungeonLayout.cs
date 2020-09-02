@@ -86,14 +86,23 @@ public class DungeonLayout : Singleton<DungeonLayout>
     public bool IsUsingDoorAsSpawner => SpawnerDoorId != InvalidDoorId;
 
     /**
+     * <summary>
      * Opens a dungeon layout file and loads the initial room.
-     *
-     * @param filePath             path to the .json layout file
-     * @param playerNum            number of players for which the dungeon shall be loaded
-     * @param overwriteInitialRoom if not null, this room will be loaded initially, instead of the one specified
-     *                             in the layout file
-     * @param doNotLoadScene       if true, the dungeon layout file is loaded, but the current scene is not changed to
-     *                             the initial room
+     * </summary>
+     * <param name="filePath">
+     *     relative path to a .json layout file located in <c>Resources/DungeonLayouts</c>
+     * </param>
+     * <param name="playerNum">
+     *     number of players for which the dungeon shall be loaded
+     * </param>
+     * <param name="overwriteInitialRoom">
+     *     if not null, this room will be loaded initially, instead of the one specified
+     *     in the layout file
+     * </param>
+     * <param name="doNotLoadScene">
+     *     if true, the dungeon layout file is loaded, but the current scene is not changed to
+     *     the initial room
+     * </param>
      */
     public void LoadDungeon(
         string filePath,
@@ -102,7 +111,7 @@ public class DungeonLayout : Singleton<DungeonLayout>
         bool doNotLoadScene = false
     ) {
         _playerNum = playerNum;
-        _data = DungeonLayoutData.FromFile(filePath);
+        _data = DungeonLayoutData.FromResource($"DungeonLayouts/{filePath}");
         _dungeonPath = Path.GetDirectoryName(filePath).WinToNixPath();
 
         var roomToLoad = overwriteInitialRoom ?? _data.initialRoom;
@@ -183,21 +192,13 @@ public class DungeonLayout : Singleton<DungeonLayout>
     {
         var sep = "/";
         
-        var scenePrefixPath = $"{_dungeonPath}{sep}rooms{sep}{roomName}{sep}{roomName}";
+        var scenePrefixPath = $"{_data.scenesPath}{sep}{roomName}{sep}{roomName}";
         var scenePath = $"{scenePrefixPath}_P{_playerNum}";
+        
         // If no scene is at the computed path, fall back to a path without a player number
-        if (!File.Exists($"{scenePath}.unity"))
+        if (SceneUtility.GetBuildIndexByScenePath(scenePath) < 0)
         {
             scenePath = scenePrefixPath;
-        }
-        
-        // If the path starts with the "Assets" folder, we remove it from the path, since Unity will automatically
-        // assume all scene files to be located in the Assets folder and expects paths to be relative to it.
-        var assetsRelPath = $"Assets{sep}";
-        var assetsIdx = scenePath.IndexOf(assetsRelPath);
-        if (assetsIdx != -1)
-        {
-            scenePath = scenePath.Remove(assetsIdx, assetsRelPath.Length);
         }
         
         // Return the full path where the room scene file for the current number of players is expected
@@ -236,22 +237,40 @@ class DungeonRoomData
 }
 
 /**
+ * <summary>
  * Represents the JSON data format for a dungeon layout definition.
- * See the class description of `DungeonLayout` for more information.
+ * See the class description of <see cref="DungeonLayout"/> for more information.
+ * </summary>
  */
 class DungeonLayoutData
 {
+    /**
+     * <summary>
+     * Path to the scene asset folder where all scenes of the dungeon are located.
+     * It must be a relative path inside the "Assets" folder.
+     * </summary>
+     */
+    public string scenesPath = default;
     public string initialRoom = default;
     public Dictionary<string, DungeonRoomData> rooms = default;
 
     /**
-     * Loads a dungeon layout definition from a file.
+     * <summary>
+     * Loads a dungeon layout definition from a layout file.
+     * The layout file must be stored as a resource in the <c>Resources</c> folder and the given path
+     * must be relative to that folder.
+     * </summary>
      */
-    public static DungeonLayoutData FromFile(string filePath)
+    public static DungeonLayoutData FromResource(string filePath)
     {
         // Use the JSON.Net library for loading, since the Unity built in library does not support
         // dictionaries.
-        var layout = JsonConvert.DeserializeObject<DungeonLayoutData>(File.ReadAllText(filePath));
+        var layout = JsonConvert.DeserializeObject<DungeonLayoutData>(
+            Resources.Load<TextAsset>(
+                // Resources must be loaded without file extension
+                $"{Path.GetDirectoryName(filePath).WinToNixPath()}/{Path.GetFileNameWithoutExtension(filePath)}"
+            ).text
+        );
 
         return layout;
     }

@@ -43,5 +43,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9d18ea0428a4759b6ad4db21b4b2e63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  filePath: Assets/Scenes/Dungeon/layout.json
+  room: 
+  filePath: MainDungeon.json
   playerNum: -1

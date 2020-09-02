@@ -44,8 +44,10 @@ public class PhysicsEffects: MonoBehaviour
     private const float frictionCoefficient = 0.7f;
     public bool FrictionEnabled = true;
     
+    #pragma warning disable 0109
     // Rigidbody of the object which we are applying effects to
-    new public Rigidbody2D rigidbody2D { get; private set; }
+    public new Rigidbody2D rigidbody2D { get; private set; }
+    #pragma warning restore 0109
 
     /**
      * One may set a transform as custom origin.

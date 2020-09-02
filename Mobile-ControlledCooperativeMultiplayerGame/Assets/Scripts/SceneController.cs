@@ -68,11 +68,19 @@ public class SceneController : BehaviourSingleton<SceneController>
     }
 
     /**
+     * <summary>
      * Loads any scene by its name. Note however that this bypasses passing any required parameters to scenes.
-     *
-     * @param sceneName      name of the scene to load
-     * @param transitionType the animation to play when changing scenes (optional)
-     * @param callback       callback to invoke, when the new scene has finished loading (optional)
+     * The scene must be added and enabled in the BuildSettings dialog.
+     * </summary>
+     * <param name="sceneName">
+     *     name of the scene to load. May also be a relative path to a scene as shown in the BuildSettings window. (relative to the "Assets" folder and without file extension.
+     * </param>
+     * <param name="transitionType">
+     *     the animation to play when changing scenes (optional)
+     * </param>
+     * <param name="callback">
+     *     callback to invoke, when the new scene has finished loading (optional)
+     * </param>
      */
     public void LoadSceneByName(string sceneName, TransitionType transitionType = TransitionType.None, SceneLoadedCallback callback = null)
     {
@@ -84,6 +92,7 @@ public class SceneController : BehaviourSingleton<SceneController>
         {
             // When the animation completed, load the new scene
             IsLoadingScene = true;
+            
             SceneManager.LoadScene(sceneName);
         });
     }

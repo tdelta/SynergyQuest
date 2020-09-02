@@ -141,15 +141,20 @@ public class ServerSettings: ScriptableObjectSingleton<ServerSettings>
         }
     }
     
+    #pragma warning disable 0414
     /**
      * Certificates must be provided as a PFX file.
      * This path will be used to locate the file when running in editor mode.
      */
+    // ReSharper disable once NotAccessedField.Local
     [SerializeField] private string pathToCertificatePfxForEditorMode = "../Certificates/generated/server.pfx";
     /**
      * Certificates must be provided as a PFX file.
      * This path will be used to locate the file when running in the Unity Player (Release Build).
      */
+    // ReSharper disable once NotAccessedField.Local
     [SerializeField] private string pathToCertificatePfxForBuildMode = "Certificates/server.pfx";
+    #pragma warning restore 0414
+ 
     [SerializeField] private string pfxPassword = "";
 }
