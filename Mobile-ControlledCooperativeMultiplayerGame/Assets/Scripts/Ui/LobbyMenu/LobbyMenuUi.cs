@@ -9,21 +9,26 @@ using ZXing;
 using ZXing.QrCode;
 
 /**
+ * <summary>
  * Manages the LobbyMenu scene which requires players join before the game can be started.
  * It displays the address of the website which serves the controller client software.
  * It also displays this address as a QR code.
  *
  * Since there can be multiple local network addresses, at first it only displays one of them.
  * After a few seconds the users get the option to show all addresses.
+ * </summary>
  */
 public class LobbyMenuUi : MonoBehaviour
 {
-    [SerializeField] private Canvas _canvas = default;
-    [SerializeField] private Image _qrCodeImage = default;
-    [SerializeField] private TextMeshProUGUI _addressValLabel = default;
-    [SerializeField] private TextMeshProUGUI _joinedPlayersValLabel = default;
-    [SerializeField] private TextMeshProUGUI _statusValLabel = default;
-    [SerializeField] private UnityEngine.UI.Button _notWorkingButton = default;
+    [SerializeField] private Canvas canvas = default;
+    [SerializeField] private Image qrCodeImage = default;
+    [SerializeField] private TextMeshProUGUI addressValLabel = default;
+    [SerializeField] private TextMeshProUGUI statusValLabel = default;
+    [SerializeField] private UnityEngine.UI.Button notWorkingButton = default;
+    [SerializeField] private GameObject joinedPlayersList = default;
+    [SerializeField] private JoinedPlayerPanel joinedPlayerPanelPrefab = default;
+    [SerializeField] private GameObject additionalAddressesPanel = default;
+    [SerializeField] private TextMeshProUGUI additionalAddressesLabel = default;
     
     // minimum number of players to start the game
     [SerializeField] private int _minNumPlayers = 2;
@@ -56,11 +61,11 @@ public class LobbyMenuUi : MonoBehaviour
             DisplayStatus();
             
             // We have a button which lets users display all addresses, but by default it is invisible
-            _notWorkingButton.gameObject.SetActive(false);
+            notWorkingButton.gameObject.SetActive(false);
             if (IPs.Count() > 1)
             {
                 // if there is more than 1 address, display the button after a few seconds
-                StartCoroutine("MakeNotWorkingButtonVisible");
+                StartCoroutine(nameof(MakeNotWorkingButtonVisible));
             }
         }
 
@@ -96,7 +101,7 @@ public class LobbyMenuUi : MonoBehaviour
     private IEnumerator MakeNotWorkingButtonVisible()
     {
         yield return new WaitForSeconds(5.0f);
-        _notWorkingButton.gameObject.SetActive(true);
+        notWorkingButton.gameObject.SetActive(true);
     }
 
     /**
@@ -175,8 +180,8 @@ public class LobbyMenuUi : MonoBehaviour
      */
     private void DisplayStatus()
     {
-        _joinedPlayersValLabel.SetText(BuildJoinedPlayersString());
-        _statusValLabel.SetText(BuildStatusString());
+        BuildJoinedPlayersList();
+        statusValLabel.SetText(BuildStatusString());
     }
 
     /**
@@ -190,26 +195,26 @@ public class LobbyMenuUi : MonoBehaviour
     {
         // Derive address strings for the web server from our IPs
         var addresses = IPs.Select(BuildAddress).ToList();
-        
-        string addressesText;
-        if (!_displayAllAddresses)
-        {
-            addressesText = addresses.First();
-        }
 
-        else
+        // Display the addresses as text
+        if (addresses.Any())
         {
-            var orText = String.Join(" or ", addresses);
-            addressesText = $"Try all of these addresses: {orText}";
+            addressValLabel.SetText(addresses.First());
+
+            if (_displayAllAddresses)
+            {
+                additionalAddressesLabel.SetText(
+                    $"Then try these additional addresses:\n{String.Join(" or ", addresses.Skip(1))}"
+                );
+                notWorkingButton.gameObject.SetActive(false);
+                additionalAddressesPanel.SetActive(true);
+            }
         }
             
-        // Display the addresses as text
-        _addressValLabel.SetText(addressesText);
-        
         // Create an QR code which encodes the address:
         // 1. Determine the resolution of the UI element which will display the QR code:
-        var sizeDelta = _qrCodeImage.GetComponent<RectTransform>().sizeDelta;
-        var canvasScale = _canvas.transform.localScale;
+        var sizeDelta = qrCodeImage.GetComponent<RectTransform>().sizeDelta;
+        var canvasScale = canvas.transform.localScale;
         var widthPixels = (int) (sizeDelta.x * canvasScale.x);
         var heightPixels = (int) (sizeDelta.y * canvasScale.y);
         
@@ -217,7 +222,7 @@ public class LobbyMenuUi : MonoBehaviour
         var qrCodeSprite = BuildQRCode(addresses.First(), widthPixels, heightPixels);
 
         // 3. Display it
-        _qrCodeImage.sprite = qrCodeSprite;
+        qrCodeImage.sprite = qrCodeSprite;
     }
 
     /**
@@ -237,20 +242,24 @@ public class LobbyMenuUi : MonoBehaviour
     }
 
     /**
-     * Renders the list of connected player names as a string.
+     * <summary>
+     * Renders a list of connected players using <see cref="JoinedPlayerPanel"/>.
+     * </summary>
      */
-    private string BuildJoinedPlayersString()
+    private void BuildJoinedPlayersList()
     {
-        var playerNames = ControllerServer.Instance.GetInputs().Select(input => input.PlayerName).ToList();
-        if (playerNames.Any())
+        // Delete old list
+        for (int i = 0; i < joinedPlayersList.transform.childCount; ++i)
         {
-            var playerList = String.Join(", ", playerNames);
-            return $"Joined Players: {playerList}";
+            Destroy(joinedPlayersList.transform.GetChild(i).gameObject);
         }
-
-        else
+        joinedPlayersList.transform.DetachChildren();
+        
+        // Build new list (slightly inefficient, but easier to manage)
+        foreach (var joinedPlayerInput in ControllerServer.Instance.GetInputs())
         {
-            return "No one connected yet.";
+            var playerPanelInstance = Instantiate(joinedPlayerPanelPrefab, joinedPlayersList.transform);
+            playerPanelInstance.Init(joinedPlayerInput);
         }
     }
 

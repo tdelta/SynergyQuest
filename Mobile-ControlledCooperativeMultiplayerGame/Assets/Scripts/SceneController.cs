@@ -34,6 +34,16 @@ public class SceneController : BehaviourSingleton<SceneController>
         // call the OnSceneLoaded method of this object, as soon as a level is loaded
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
+    
+    public void LoadMainMenu()
+    {
+        LoadSceneByName("MainMenuScene");
+    }
+    
+    public void LoadPreLobbyInfo()
+    {
+        LoadSceneByName("PreLobbyInfo");
+    }
 
     public void LoadNetworkSetup()
     {
