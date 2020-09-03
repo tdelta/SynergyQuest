@@ -4,9 +4,14 @@ using UnityEngine;
 using UnityEngine.Events;
 
 /**
+ * <summary>
  * Behavior which provides an event which one can subscribe to in the Unity inspector.
  * The event is triggered, as soon as a player comes in contact with this object.
+ *
+ * DEPRECATED: Use <see cref="ContactSwitch"/> instead.
+ * </summary>
  */
+[Obsolete("Use ContactSwitch instead.")]
 public class ContactTrigger : MonoBehaviour
 {
      // Event mentioned in the description above

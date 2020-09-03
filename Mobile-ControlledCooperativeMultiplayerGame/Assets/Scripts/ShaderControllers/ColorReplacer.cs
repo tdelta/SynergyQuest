@@ -68,6 +68,15 @@ public class ColorReplacer : MonoBehaviour
     
     void Awake()
     {
+        EnsureReady();
+        
+        // Make sure, the renderer of this game object even supports the shader effects required by this component
+        if (!_renderer.material.HasProperty(ReplacementColorProperty) ||
+            !_renderer.material.HasProperty(ColorToReplaceProperty))
+        {
+            Debug.LogError("The material / shader of the renderer does not support the properties required by ColorReplacer.", this);
+        }
+        
         PerformReplacement();
     }
 

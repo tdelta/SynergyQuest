@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Linq;
+using UnityEngine;
 
 /**
  * <summary>
@@ -7,7 +9,7 @@
  *
  * You should not directly assign this component to a game object. Instead call the <see cref="TeleportIn"/> and
  * <see cref="TeleportOut"/> methods with the object to apply the effect to any object with a compatible material /
- * shader.
+ * shader. (Child objects will also be animated.)
  *
  * The implementation of the shaders used by this material is based on these videos:
  * <list type="bullet">
@@ -15,8 +17,8 @@
  *   <item><description><a href="https://www.youtube.com/watch?v=dImQy_K5zuk">Video by The Game Dev Shack</a></description></item>
  * </list>
  *
- * This requires the <see cref="SpriteRenderer"/> of the object using this component to use a material which supports
- * the following properties:
+ * This requires the <see cref="SpriteRenderer"/> of the object using this component and / or its child objects to use a
+ * material which supports the following properties:
  * <list type="bullet">
  *   <item><description><c>_TeleportColor</c></description></item>
  *   <item><description><c>_TeleportProgress</c></description></item>
@@ -32,8 +34,10 @@ public class Teleport : MonoBehaviour
     private float _speed = 1.0f;
     private float _timer = 0.0f;
     private bool _isTeleportingOut;
+    private Action _onTeleportCompletedCallback = null;
 
-    private Material _material;
+    // The renderers and their material property blocks of this game object and all child objects
+    private (Renderer, MaterialPropertyBlock)[] _renderersAndMaterialProperties = null;
     
     private static readonly int ColorProperty = Shader.PropertyToID("_TeleportColor");
     /**
@@ -41,20 +45,36 @@ public class Teleport : MonoBehaviour
      * It ranges from 0 to 1.
      */
     private static readonly int ProgressProperty = Shader.PropertyToID("_TeleportProgress");
-    
+
     void Awake()
     {
         if (!SupportsTeleportEffect(this.gameObject))
         {
-            Debug.LogError("Trying to apply teleport effect to sprite with a material which does not support teleport effects.");
+            Debug.LogError(
+                "Trying to apply teleport effect to sprite with a material which does not support teleport effects.");
         }
-        
-        _material = GetComponent<SpriteRenderer>().material;
+
+        // Retrieve the renderers of this game object and all child objects.
+        // Pair each of them up with a material property block, which we can use later to input parameters to the shader
+        _renderersAndMaterialProperties = GetComponentsInChildren<Renderer>()
+            .Select(renderer =>
+                (
+                    renderer,
+                    new MaterialPropertyBlock()
+                )
+            )
+            .ToArray();
     }
 
+    /**
+     * <summary>
+     * Check if the given game object has a renderer with a material / shader which supports this effect.
+     * It does not check child objects!
+     * </summary>
+     */
     public static bool SupportsTeleportEffect(GameObject obj)
     {
-        if (obj.TryGetComponent<SpriteRenderer>(out var renderer))
+        if (obj.TryGetComponent<Renderer>(out var renderer))
         {
             var material = renderer.material;
 
@@ -74,12 +94,20 @@ public class Teleport : MonoBehaviour
      * </summary>
      * <param name="go">Object which shall be teleported away</param>
      * <param name="color">Color of the teleport effect.</param>
+     * <param name="onTeleportCompletedCallback">
+     *     If not set to null, will be invoked as soon as the teleport effect finishes.
+     * </param>
      * <param name="speed">
      *   Speed modifier for the teleport effect.
      *   E.g. use 2.0f for twice the speed and 0.5f for half the speed.
      * </param>
      */
-    public static void TeleportOut(GameObject go, Color color, float speed = 0.75f)
+    public static void TeleportOut(
+        GameObject go,
+        Color color,
+        Action onTeleportCompletedCallback = null,
+        float speed = 0.75f
+    )
     {
         go.Freeze();
 
@@ -99,12 +127,13 @@ public class Teleport : MonoBehaviour
         {
             // Otherwise, we need to create a new instance
             instance = go.AddComponent<Teleport>();
-            instance._material.SetFloat(ProgressProperty, 0.0f);
+            instance.SetProgress(0.0f);
         }
         
         instance._speed = speed;
         instance._isTeleportingOut = true;
-        instance._material.SetColor(ColorProperty, color);
+        instance._onTeleportCompletedCallback = onTeleportCompletedCallback;
+        instance.SetColor(color);
     }
     
     /**
@@ -117,12 +146,20 @@ public class Teleport : MonoBehaviour
      * </summary>
      * <param name="go">Object which shall be teleported in</param>
      * <param name="color">Color of the teleport effect.</param>
+     * <param name="onTeleportCompletedCallback">
+     *     If not set to null, will be invoked as soon as the teleport effect finishes.
+     * </param>
      * <param name="speed">
      *   Speed modifier for the teleport effect.
      *   E.g. use 2.0f for twice the speed and 0.5f for half the speed.
      * </param>
      */
-    public static void TeleportIn(GameObject go, Color color, float speed = 0.75f)
+    public static void TeleportIn(
+        GameObject go,
+        Color color,
+        Action onTeleportCompletedCallback = null,
+        float speed = 0.75f
+    )
     {
         // Is there already a teleport going on?
         if (go.TryGetComponent(out Teleport instance))
@@ -140,12 +177,13 @@ public class Teleport : MonoBehaviour
         {
             // Otherwise, we need to create a new instance
             instance = go.AddComponent<Teleport>();
-            instance._material.SetFloat(ProgressProperty, 1.0f);
+            instance.SetProgress(1.0f);
         }
         
         instance._speed = speed;
         instance._isTeleportingOut = false;
-        instance._material.SetColor(ColorProperty, color);
+        instance._onTeleportCompletedCallback = onTeleportCompletedCallback;
+        instance.SetColor(color);
         
         go.MakeVisible();
         go.UnFreeze();
@@ -160,8 +198,7 @@ public class Teleport : MonoBehaviour
         // (it is completed when the `ProgressProperty` reaches 1.0f)
         if (_timer < 1.0f)
         {
-            _material.SetFloat(
-                ProgressProperty,
+            SetProgress(
                 _isTeleportingOut ?
                     _timer :
                     1.0f - _timer // reverse the effect when teleporting an object in instead of out
@@ -176,8 +213,48 @@ public class Teleport : MonoBehaviour
                 this.gameObject.MakeInvisible();
             }
             
+            // Users can set a callback to be triggered when the teleport effect finishes.
+            // If present, we cache it now before destroying this behavior to invoke it last:
+            var onTeleportCompletedCallback = _onTeleportCompletedCallback;
+            _onTeleportCompletedCallback = null;
+
             // Destroy this behaviour when the effect finished
             DestroyImmediate(this);
+            
+            onTeleportCompletedCallback?.Invoke();
+        }
+    }
+
+    /**
+     * <summary>
+     * Tells the shader how far the animation has progressed for every child object.
+     * </summary>
+     * <param name="progress">How far the animation progressed. Must be in the interval [0; 1]</param>
+     */
+    private void SetProgress(float progress)
+    {
+        foreach (var (renderer, materialProperties) in _renderersAndMaterialProperties)
+        {
+            renderer.GetPropertyBlock(materialProperties);
+            materialProperties.SetFloat(ProgressProperty, progress);
+            
+            renderer.SetPropertyBlock(materialProperties);
+        }
+    }
+    
+    /**
+     * <summary>
+     * Tells the shader how to color the animation for every child object.
+     * </summary>
+     */
+    private void SetColor(Color color)
+    {
+        foreach (var (renderer, materialProperties) in _renderersAndMaterialProperties)
+        {
+            renderer.GetPropertyBlock(materialProperties);
+            materialProperties.SetColor(ColorProperty, color);
+            
+            renderer.SetPropertyBlock(materialProperties);
         }
     }
 }

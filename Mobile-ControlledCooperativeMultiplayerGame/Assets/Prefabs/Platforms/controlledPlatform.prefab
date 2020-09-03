@@ -104,6 +104,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   colorToReplace: {r: 0, g: 1, b: 0, a: 1}
   replacementColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  useAnyOverrideColor: 0
+  anyOverrideColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
 --- !u!114 &5426338831185155473
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -132,6 +134,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   switches: []
   autoDiscoveredSwitchTags: []
+  noDeactivation: 0
 --- !u!50 &5426338831185155474
 Rigidbody2D:
   serializedVersion: 4
@@ -321,7 +324,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: ca7599810eee076c3bc2961977228f46, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

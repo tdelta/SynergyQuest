@@ -19,21 +19,12 @@ public class ReplacementColorBrightener : MonoBehaviour
     private ColorReplacer _colorReplacer;
 
     // We cache the colors in these fields
-    private Color _originalColor; // Color used by the ColorReplacer before applying this effect
-    private Color _brightenedColor; // Color when applying this effect.
+    private Color _beforeActivationColor; // Color used by the ColorReplacer before applying this effect
 
     private void Awake()
     {
         _colorReplacer = GetComponent<ColorReplacer>();
         _switchable = GetComponent<Switchable>();
-
-        _originalColor = _colorReplacer.ReplacementColor;
-        _brightenedColor = new Color(
-            Mathf.Min(1.0f, _originalColor.r + brightnessDelta),
-            Mathf.Min(1.0f, _originalColor.g + brightnessDelta),
-            Mathf.Min(1.0f, _originalColor.b + brightnessDelta),
-            _originalColor.a
-        );
     }
 
     private void OnEnable()
@@ -48,6 +39,8 @@ public class ReplacementColorBrightener : MonoBehaviour
 
     private void Start()
     {
+        _beforeActivationColor = _colorReplacer.ReplacementColor;
+        
         // The Switchable component does not trigger this callback by itself for the initial activation when loading the
         // scene. Hence, we look the initial value up ourselves
         OnActivationChanged(_switchable.Activation);
@@ -55,6 +48,21 @@ public class ReplacementColorBrightener : MonoBehaviour
 
     void OnActivationChanged(bool activation)
     {
-        _colorReplacer.ReplacementColor = activation ? _brightenedColor : _originalColor;
+        if (activation)
+        {
+            _beforeActivationColor = _colorReplacer.ReplacementColor;
+            
+            _colorReplacer.ReplacementColor = new Color(
+                Mathf.Min(1.0f, _beforeActivationColor.r + brightnessDelta),
+                Mathf.Min(1.0f, _beforeActivationColor.g + brightnessDelta),
+                Mathf.Min(1.0f, _beforeActivationColor.b + brightnessDelta),
+                _beforeActivationColor.a
+            );
+        }
+
+        else
+        {
+            _colorReplacer.ReplacementColor = _beforeActivationColor;
+        }
     }
 }

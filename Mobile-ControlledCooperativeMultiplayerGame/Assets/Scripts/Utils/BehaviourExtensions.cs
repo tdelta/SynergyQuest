@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
@@ -7,10 +8,19 @@ using UnityEngine;
 public static class BehaviourExtensions
 {
     /**
+     * <summary>
      * Clones a component at runtime.
      * Code by users "turbanov" and "Shaffe" from the Unity forums: http://answers.unity.com/answers/1118416/view.html
+     * </summary>
+     * <param name="original"><see cref="Component"/> which shall be cloned.</param>
+     * <param name="destination"><see cref="GameObject"/> to which the clone shall be added.</param>
+     * <param name="propertiesToExclude">Names of properties whose value shall not be cloned.</param>
      */
-    public static T CopyComponent<T>(this T original, GameObject destination)
+    public static T CopyComponent<T>(
+        this T original,
+        GameObject destination,
+        params string[] propertiesToExclude
+    )
         where T: Component
     {
         var type = original.GetType();
@@ -35,7 +45,7 @@ public static class BehaviourExtensions
         var props = type.GetProperties();
         foreach (var prop in props)
         {
-            if (!prop.CanWrite || !prop.CanWrite || prop.Name == "name")
+            if (!prop.CanWrite || !prop.CanWrite || prop.Name == "name" || propertiesToExclude.Contains(prop.Name))
             {
                 continue;
             }

@@ -25,12 +25,33 @@ public class ColliderCloner : MonoBehaviour
     private void Awake()
     {
         // Clone collider
-        var copiedComponent = source.CopyComponent(gameObject);
+        Collider2D copiedComponent;
+        
+        // The density property of colliders is special. It can only be assigned for dynamic rigidbodies using auto-mass.
+        // Hence we exclude it, if these conditions do not apply:
+        if (CanDensityBeCloned())
+        {
+            copiedComponent = source.CopyComponent( gameObject );
+        }
+
+        else
+        {
+            copiedComponent = source.CopyComponent(
+                gameObject,
+                nameof(Collider2D.density)
+            );
+        }
 
         // If enabled, override properties
         if (overrideIsTrigger)
         {
             copiedComponent.isTrigger = isTrigger;
         }
+    }
+
+    private bool CanDensityBeCloned()
+    {
+        var attachedRigidbody = source.attachedRigidbody;
+        return attachedRigidbody != null && attachedRigidbody.bodyType == RigidbodyType2D.Dynamic && attachedRigidbody.useAutoMass;
     }
 }
