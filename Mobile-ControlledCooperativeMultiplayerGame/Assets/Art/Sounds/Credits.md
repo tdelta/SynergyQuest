@@ -34,3 +34,10 @@
 * Created by artisticdude, submitted by user Obrebane to OpenGameArt.Org
 * Link: https://opengameart.org/content/inventory-sound-effects
 * License: CC-BY 3.0
+
+# spring.ogg
+
+* Created by OpenGameArt.Org user rubberduck
+* Link: https://opengameart.org/content/100-cc0-sfx
+* Slightly modified: Amplified
+* License: CC0

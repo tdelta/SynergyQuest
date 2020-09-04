@@ -12,7 +12,8 @@ public enum PlayerState{
     carried,
     thrown,
     falling,
-    presenting_item
+    presenting_item,
+    spring_jumping
 }
 
 [RequireComponent(typeof(Throwable))]
@@ -141,6 +142,7 @@ public class PlayerController : EntityController
     private static readonly int CarriedState  = Animator.StringToHash("Carried");
     private static readonly int FallTrigger = Animator.StringToHash("Fall");
     private static readonly int PresentItemTrigger = Animator.StringToHash("PresentItem");
+    private static readonly int SpringJumpState  = Animator.StringToHash("SpringJumping");
 
     public PlayerColor Color => Input.GetColor();
 
@@ -712,5 +714,23 @@ public class PlayerController : EntityController
         _lookDirection.Normalize();
         Animator.SetFloat(LookXProperty, _lookDirection.x);
         Animator.SetFloat(LookYProperty, _lookDirection.y);
+    }
+    
+    /**
+     * <summary>
+     * Adjusts the player sprite so that it visually fits the jump animation performed by <see cref="Spring"/>.
+     * Also adjusts the internal state to indicate, that the player is currently controlled by the <see cref="Spring"/>
+     * behavior and should not move by itself, etc.
+     * </summary>
+     * <param name="onOff">
+     *     The state will be adjusted as stated above if true.
+     *     Otherwise, the sprite adjustments will be reverted and the player state will return to
+     *     <see cref="PlayerState.walking"/>
+     * </param>
+     */
+    public void SetSpringJumpMode(bool onOff)
+    {
+        _playerState = onOff ? PlayerState.spring_jumping : PlayerState.walking;
+        Animator.SetBool(SpringJumpState, onOff);
     }
 }

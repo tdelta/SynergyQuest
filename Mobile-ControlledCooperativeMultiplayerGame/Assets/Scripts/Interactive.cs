@@ -108,6 +108,7 @@ public class Interactive : MonoBehaviour
             if (value != _isInteracting && value)
             {
                 interactionTriggeredEvent?.Invoke(InteractingPlayer);
+                OnInteractionTriggered?.Invoke(InteractingPlayer);
             }
             
             _isInteracting = value;
@@ -123,9 +124,20 @@ public class Interactive : MonoBehaviour
     private Collider2D _collider;
     
     /**
+     * <summary>
+     * Event which is fired, when a player starts interacting with this object
+     *
+     * DEPRECATED: Use <see cref="OnInteractionTriggered"/> instead.
+     * </summary>
+     */
+    [Obsolete("Use OnInteractionTriggered instead.")]
+    [SerializeField] private InteractionEvent interactionTriggeredEvent = default;
+
+    /**
      * Event which is fired, when a player starts interacting with this object
      */
-    [SerializeField] private InteractionEvent interactionTriggeredEvent = default;
+    public event InteractionTriggeredAction OnInteractionTriggered;
+    public delegate void InteractionTriggeredAction(PlayerController player);
 
     private void Awake()
     {
