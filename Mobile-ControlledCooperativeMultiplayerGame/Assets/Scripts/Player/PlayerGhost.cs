@@ -23,8 +23,8 @@ public class PlayerGhost : MonoBehaviour
 
     bool _moveArround;
     bool _exorcised;
-    float RotateSpeed = 2f;
-    float Radius = 0.175f;
+    float RotateSpeed = 1.75f;
+    float Radius = 0.125f;
     float _angle;
 
     float _playerChangeTime = 5;
