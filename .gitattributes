@@ -58,3 +58,6 @@
 *.meta linguist-generated
 *.prefab linguist-generated -text binary merge=unityyamlmerge diff
 *.unity linguist-generated -text binary merge=unityyamlmerge diff
+
+# Generated certificates shall also be handled by lfs
+Certificates/generated/* filter=lfs diff=lfs merge=lfs -text
