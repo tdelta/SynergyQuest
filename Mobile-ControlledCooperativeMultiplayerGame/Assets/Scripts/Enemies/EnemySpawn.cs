@@ -26,6 +26,8 @@ public class EnemySpawn : MonoBehaviour {
      */
     [SerializeField] private List<Transform> customSpawnPoints = new List<Transform>();
 
+    private int _deadEnemies = 0;
+    private int _spawnedEnemies = 0;
     private int _emptyRadius = 1;
     private float _totalSpawnTime = 1;
     private float _spawnTime;
@@ -33,7 +35,6 @@ public class EnemySpawn : MonoBehaviour {
     private Tilemap _tilemap;
     private Switch _switch;
     private System.Random _rand = new System.Random();
-    private List<EnemyController> _spawnedEnemies = new List<EnemyController>();
 
     // Start is called before the first frame update
     void Start()
@@ -47,18 +48,6 @@ public class EnemySpawn : MonoBehaviour {
         if (!_switch.Value)
         {
             StartCoroutine(SpawnEnemies());
-        }
-    }
-
-    void Update()
-    {
-        CheckExit();
-    }
-
-    void CheckExit()
-    {
-        if (_spawnComplete && _spawnedEnemies.All(e => e == null)) {
-            _switch.Value = true;
         }
     }
 
@@ -89,8 +78,9 @@ public class EnemySpawn : MonoBehaviour {
         if (spawnPositions.Count > 0) { // if no spawn position with no collider inside radius exists
             int index = _rand.Next(spawnPositions.Count);
             var instance = Instantiate(obj, spawnPositions[index], Quaternion.identity);
+            instance.OnDeath += OnEnemyDead;
             instance.ShowParticles();
-            _spawnedEnemies.Add(instance);
+            _spawnedEnemies++;
         }
     }
 
@@ -116,4 +106,12 @@ public class EnemySpawn : MonoBehaviour {
             return customSpawnPoints.Select(obj => obj.position).ToList();
         }
     }
+
+    void OnEnemyDead()
+    {
+      _deadEnemies++;
+      if (_deadEnemies == _spawnedEnemies)
+          _switch.Value = true;
+    }
+
 }

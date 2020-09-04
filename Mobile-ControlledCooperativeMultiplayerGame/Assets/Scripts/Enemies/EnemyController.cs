@@ -25,10 +25,10 @@ abstract public class EnemyController : EntityController
     private TintFlashController _tintFlashController;
 
     /**
-     * Used to notify other game elements (door) when a monster dies
+     * used by BossSpawn and EnemySpawn to find out when all enemies are dead to trigger switch
      */
     public delegate void EnemyDied();
-    public static event EnemyDied OnDeath;
+    public event EnemyDied OnDeath;
 
     protected override void Start()
     {
@@ -105,10 +105,7 @@ abstract public class EnemyController : EntityController
             Animator.SetTrigger(deadTrigger);
             dropCoins();
             Destroy(gameObject, 1);
-            if(OnDeath != null)
-            {
-                OnDeath();
-            }
+            OnDeath?.Invoke();
         }
         return true;
     }
