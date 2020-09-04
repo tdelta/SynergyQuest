@@ -93,7 +93,7 @@
           "targetDoor": "left"
         },
         "up": {
-          "targetRoom": "D12",
+          "targetRoom": "D15",
           "targetDoor": "down"
         },
         "down": {
@@ -149,7 +149,7 @@
           "targetDoor": "down"
         },
         "down": {
-          "targetRoom": "D8",
+          "targetRoom": "D15",
           "targetDoor": "up"
         }
       }
@@ -158,6 +158,18 @@
       "roomConnections": {
         "down": {
           "targetRoom": "D12",
+          "targetDoor": "up"
+        }
+      }
+    },
+    "D15": {
+      "roomConnections": {
+        "up": {
+          "targetRoom": "D12",
+          "targetDoor": "down"
+        },
+        "down": {
+          "targetRoom": "D8",
           "targetDoor": "up"
         }
       }

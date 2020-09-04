@@ -27,7 +27,7 @@ public class Spring : MonoBehaviour
     [SerializeField] private float jumpSpeed = 3.0f;
     
     [Tooltip("How much the player will be scaled up when jumping to give the illusion of a high jump.")]
-    [SerializeField] private float jumpMaxScale = 3.0f;
+    [SerializeField] private float jumpMaxScale = 2.0f;
 
     private Animator _animator;
     private Interactive _interactive;
@@ -81,6 +81,10 @@ public class Spring : MonoBehaviour
         var originalLayer = player.gameObject.layer;
         player.gameObject.layer = LayerMask.NameToLayer("Carried");
         
+        // Ensure the player is rendered above everything else
+        var originalSortingOrder = player.spriteRenderer.sortingOrder;
+        player.spriteRenderer.sortingOrder = 999;
+        
         // === 2. Move player linearly to the start point. ===
         var playerTransform = player.transform;
         var currentPosition = (Vector2) playerTransform.position;
@@ -114,9 +118,6 @@ public class Spring : MonoBehaviour
         
         // Inform player object to use a jump sprite
         player.SetSpringJumpMode(true);
-        // Ensure the player is rendered above everything else while jumping 
-        var originalSortingOrder = player.spriteRenderer.sortingOrder;
-        player.spriteRenderer.sortingOrder = 999;
 
         // Calculate, how far the player will jump
         var jumpDistance = ((Vector2) springJumpDestination.transform.position - (Vector2) player.transform.position).magnitude;
