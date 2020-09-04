@@ -1,9 +1,9 @@
-How to run CoOp Dungeon
-=======================
+How to run Synergy Quest
+========================
 
-If you are on Linux, open `CoOpDungeonLinux/CoOpDungeon.x86_64`
+If you are on Linux, open `SynergyQuestLinux/SynergyQuest.x86_64`
 
-If you are on Windows, open `CoOpDungeonWindows/Mobile-ControlledCooperativeMultiplayerGame.exe`
+If you are on Windows, open `SynergyQuestWindows/SynergyQuest.exe`
 
 Troubleshooting
 ===============

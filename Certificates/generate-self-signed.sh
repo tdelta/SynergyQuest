@@ -15,7 +15,7 @@
 CWD=$(pwd)
 LOCAL_CERT_PATH=$CWD/generated
 
-CERT_NAME='localhost (CoOpDungeon local cert)'
+CERT_NAME='localhost (SynergyQuest local cert)'
 ORG_NAME='TeamP09'
 
 # expire after 900 years
@@ -33,7 +33,7 @@ openssl genrsa -out rootCA.key 2048
 
 # -- rootCA.pem --
 
-openssl req -x509 -new -nodes -key rootCA.key -subj "/C=US/ST=CA/O=$ORG_NAME/CN=$CERT_NAME" -sha256 -days $DAYS -out rootCA.pem
+openssl req -x509 -new -nodes -key rootCA.key -subj "/C=DE/ST=Hesse/O=$ORG_NAME/CN=$CERT_NAME" -sha256 -days $DAYS -out rootCA.pem
 
 # -- server.csr.cnf --
 
@@ -45,8 +45,8 @@ default_md = sha256
 distinguished_name = dn
 
 [dn]
-C=US
-ST=CA
+C=DE
+ST=Hesse
 O=$ORG_NAME
 CN=$CERT_NAME
 EOM
