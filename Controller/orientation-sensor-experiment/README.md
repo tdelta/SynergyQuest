@@ -1,4 +1,4 @@
-This react web app serves as a testing ground for [../controller-client-lib](../controller-client-lib).
+This react web app serves as a testing ground for [../sensor-input-lib](../sensor-input-lib).
 It is not necessarily kept up to date with the library and really only intended for experiments
 so it may break occasionally.
 
@@ -7,10 +7,10 @@ See `src/App.tsx` for the main application code.
 
 ## Usage
 
-Build [../controller-client-lib](../controller-client-lib) beforehand.
+Build [../sensor-input-lib](../sensor-input-lib) beforehand.
 
 ```sh
 yarn install
-yarn upgrade ../controller-client-lib
+yarn upgrade ../sensor-input-lib
 yarn start
 ```
