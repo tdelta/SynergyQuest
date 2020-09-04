@@ -7,11 +7,11 @@ It works in the browser and in nodejs (thanks to [isomorphic-ws](https://github.
 See the `ControllerClient` class in [./src/ControllerClient.ts](./src/ControllerClient.ts) for
 documentation.
 
-The server part of the Game is implemented by
-[ControllerServer.cs](../../Game/Assets/Scripts/ControllerInput/ControllerServer.cs),
-[ControllerInput.cs](../../Game/Assets/Scripts/ControllerInput/ControllerInput.cs)
+The server part of the game is implemented by
+[ControllerServer.cs](../../SynergyQuest/Assets/Scripts/ControllerInput/ControllerServer.cs),
+[ControllerInput.cs](../../SynergyQuest/Assets/Scripts/ControllerInput/ControllerInput.cs)
 and the other scripts in
-[../../Game/Assets/Scripts/ControllerInput](../../Game/Assets/Scripts/ControllerInput).
+[../../SynergyQuest/Assets/Scripts/ControllerInput](../../SynergyQuest/Assets/Scripts/ControllerInput).
 Take a look, these files are also quite well documented.
 
 The full controller web app which makes use of this library can be found at

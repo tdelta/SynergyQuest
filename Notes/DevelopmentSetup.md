@@ -123,10 +123,10 @@ Instead you can spawn debug player instances which are controlled by the keyboar
 with a spawner.
 
 This and some other useful settings can be set in the `DebugSettings` of the game.
-Just open [Game/Assets/Resources/DebugSettings.asset](../Game/Assets/Resources/DebugSettings.asset)
+Just open [SynergyQuest/Assets/Resources/DebugSettings.asset](../SynergyQuest/Assets/Resources/DebugSettings.asset)
 in the Unity Editor.
 All settings are explained in the C# script implementing them
-([Game/Assets/Scripts/Settings/DebugSettings.cs](../Game/Assets/Scripts/Settings/DebugSettings.cs)).
+([SynergyQuest/Assets/Scripts/Settings/DebugSettings.cs](../SynergyQuest/Assets/Scripts/Settings/DebugSettings.cs)).
 
 Also check out the other settings files in the same folder.
 
@@ -154,7 +154,7 @@ When adding a new scene, make sure the following criteria are met, since these a
   * there must be a correctly configured DungeonLoader object
   * make sure the doors match the neighboring rooms. E.g. if your room has a gate one one side, the next room should also have a gate, not a door
   * (To learn more about how scenes are connected into a dungeon, read the documentation of
-     [Game/Assets/Scripts/Dungeon/DungeonLayout.cs](../Game/Assets/Scripts/Dungeon/DungeonLayout.cs))
+     [SynergyQuest/Assets/Scripts/Dungeon/DungeonLayout.cs](../SynergyQuest/Assets/Scripts/Dungeon/DungeonLayout.cs))
 * If Sokoban boxes are present:
   * There should usually be a Prefabs/Sokoban/SokobanPositionSaver instance, so that sokoban positions are saved when a riddle is solved
 

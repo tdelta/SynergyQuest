@@ -42,12 +42,12 @@ yarn build
 ### Building the Main Game
 
 1. Build the Controller Web App first.
-2. Open [/Game](../Game) in the Unity Editor and build the project for Linux and / or Windows.
-   For the remainder of the guide we assume the build is saved in `Game/Build/SynergyQuest`.
-3. Create a folder `Game/Build/SynergyQuest/controller-app` and copy all files in `Controller/controller-app/build/*` into there
+2. Open [/SynergyQuest](../SynergyQuest) in the Unity Editor and build the project for Linux and / or Windows.
+   For the remainder of the guide we assume the build is saved in `SynergyQuest/Build/SynergyQuest`.
+3. Create a folder `SynergyQuest/Build/SynergyQuest/controller-app` and copy all files in `Controller/controller-app/build/*` into there
 4. (Optional: Generate SSL certificate used by game.
     This is not strictly required since a pre-built certificate with a ridiculous expiration date (900 years) is already shipped with this repository.
     Still, on Linux systems with openssl installed, a certificate can be built by running `Certificates/generate-self-signed.sh`.)
-5. Create a folder `Game/Build/SynergyQuest/Certificates` and copy `Certficates/generated/server.pfx` into it.
+5. Create a folder `SynergyQuest/Build/SynergyQuest/Certificates` and copy `Certficates/generated/server.pfx` into it.
 6. Done, you can now run the executable produced by Unity
-7. (If you want to distribute the game, put `Game/UsageNotes/ReadMe.txt` also into the folder and ZIP `Game/Build/SynergyQuest`.)
+7. (If you want to distribute the game, put `SynergyQuest/UsageNotes/ReadMe.txt` also into the folder and ZIP `SynergyQuest/Build/SynergyQuest`.)

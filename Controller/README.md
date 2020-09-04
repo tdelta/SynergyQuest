@@ -28,10 +28,10 @@ The typical web app development workflow is hence as follows:
 
 If you still want to serve the web app directly through the main game without the proxy and React
 server, you have to adjust the server settings of the game in
-[Game/Assets/Resource/ServerSettings.asset](../Game/Assets/Resources/ServerSettings.asset)
+[SynergyQuest/Assets/Resource/ServerSettings.asset](../SynergyQuest/Assets/Resources/ServerSettings.asset)
 in the Unity Editor.
-They are explained in [Game/Assets/Scripts/Settings/ServerSettings.cs](../Game/Assets/Scripts/Settings/ServerSettings.cs).
+They are explained in [SynergyQuest/Assets/Scripts/Settings/ServerSettings.cs](../SynergyQuest/Assets/Scripts/Settings/ServerSettings.cs).
 
 You also have to produce a production build of the web app (see [build instructions](../Notes/HowToBuild.md))
 and place it in a folder `controller-app` in the working directory of the Unity Editor.
-This is usually the folder [Game](../Game).
+This is usually the folder [SynergyQuest](../SynergyQuest).
