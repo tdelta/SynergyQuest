@@ -68,8 +68,21 @@ public class PlayerControlledPlatform : MonoBehaviour
                 // the previous player shall appear again at the spot where they vanished: The color switch
                 _player.PhysicsEffects.Teleport(colorSwitch.transform.position);
                 _player.FaceDirection(Direction.Down);
-                
-                Teleport.TeleportIn(_player.gameObject, _player.Color.ToRGB());
+
+                var oldPlayer = _player;
+                Teleport.TeleportIn(
+                    _player.gameObject,
+                    _player.Color.ToRGB(),
+                    () =>
+                    {
+                        // Reenable the ChasmContactTracker of players when they completely reappear.
+                        // See comments further below.
+                        if (oldPlayer.TryGetComponent<ChasmContactTracker>(out var chasmContactTracker))
+                        {
+                            chasmContactTracker.Paused = false;
+                        }
+                    }
+                );
             }
             
             _player = value;
@@ -81,7 +94,15 @@ public class PlayerControlledPlatform : MonoBehaviour
                 _player.Input.InputMode = InputMode.IMUOrientation;
                 // The player should have a button to stop controlling the platform
                 _player.Input.EnableButtons((Button.Exit, true));
-                
+
+                // The player does not leave the chasm while controlling the platform, though they do disappear.
+                // Hence we have to temporarily disable the ChasmContactTracker of players so that it does not falsely
+                // register, that the player has left the chasm
+                if (_player.TryGetComponent<ChasmContactTracker>(out var chasmContactTracker))
+                {
+                    chasmContactTracker.Paused = true;
+                }
+
                 // the player shall disappear, as long as they are controlling the platform
                 Teleport.TeleportOut(_player.gameObject, _player.Color.ToRGB());
             }

@@ -21,7 +21,7 @@ public class PlatformReturner : MonoBehaviour
     [SerializeField] private Collider2D platformPlayerCollider = default;
     
     [Tooltip("The platform must be at least this far from its original position so that the returner triggers a teleport back.")]
-    [SerializeField] private float minimumDistanceFromReturnPoint = 0.5f;
+    [SerializeField] private float minimumDistanceFromReturnPoint = 0.1f;
     
     [Tooltip("The ColorReplacer component is used to color the sprite of this pressure plate. This color is used, when the platform is not far enough away to be returned.")]
     [SerializeField] private Color disabledColor = new Color(0.4f, 0.4f, 0.4f);

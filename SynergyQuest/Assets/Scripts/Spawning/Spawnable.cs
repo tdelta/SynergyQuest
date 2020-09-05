@@ -12,7 +12,7 @@ using UnityEngine;
  * Furthermore, other behaviours can listen to the <see cref="OnRespawn"/> event for example to restore the health of
  * a player etc.
  *
- * The default respawn point must be set as the property <see cref="defaultRespawnPosition"/>.
+ * A default respawn point can be set as the property <see cref="defaultRespawnPosition"/>.
  * Usually this role is fulfilled by <see cref="PlayerSpawner"/>.
  *
  * However, sometimes it may be necessary to provide a custom respawn point very specific to the current situation.
@@ -22,6 +22,9 @@ using UnityEngine;
  * If the special situation no longer applies, such functions can be unregistered using
  * <see cref="RemoveRespawnPointProvider"/>.
  * Is multiple such functions are registered, the one who registered the latest will be used.
+ *
+ * If none of the above methods are used to determine a respawn point, respawn will be performed on the position this
+ * object is currently at, without changing it.
  * </summary>
  * <seealso cref="PlayerSpawner"/>
  */
@@ -56,17 +59,7 @@ public class Spawnable : MonoBehaviour
      */
     public void Respawn()
     {
-        var respawnPosition = DetermineCustomRespawnPosition()
-            .Else(
-                defaultRespawnPosition != null ?
-                    // ReSharper disable once PossibleNullReferenceException
-                    Optional<Vector3>.Some(defaultRespawnPosition.position) :
-                    DebugExtensions.LogErrorWithValue(
-                            "Respawned without having a default spawn point. Continuing on same position, but this should never happen.", 
-                            Optional<Vector3>.None()
-                    )
-            )
-            .ValueOr(this.transform.position);
+        var respawnPosition = DetermineCurrentRespawnPosition();
 
         // Move to position of the spawner when respawning
         if (TryGetComponent(out PhysicsEffects physicsEffects))
@@ -125,5 +118,23 @@ public class Spawnable : MonoBehaviour
         return Optional<Func<Vector3>>
             .FromNullable(_respawnPointProviders.LastOrDefault())
             .Map(provider => provider());
+    }
+
+    /**
+     * <summary>
+     * Returns the current respawn position of this <see cref="Spawnable"/> as determined by the rules outlined in the
+     * class description.
+     * </summary>
+     */
+    public Vector3 DetermineCurrentRespawnPosition()
+    {
+        return DetermineCustomRespawnPosition()
+            .Else(
+                defaultRespawnPosition != null ?
+                    // ReSharper disable once PossibleNullReferenceException
+                    Optional<Vector3>.Some(defaultRespawnPosition.position) :
+                    Optional<Vector3>.None()
+            )
+            .ValueOr(this.transform.position);
     }
 }

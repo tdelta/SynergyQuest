@@ -22,6 +22,13 @@ public class ChasmContactTracker : MonoBehaviour
     public Optional<Vector3> ChasmEntryPoint { get; private set; }
     public bool IsOnChasm => ChasmEntryPoint.IsSome();
 
+    /**
+     * <summary>
+     * While true, this component will not register, whether this object enters or leaves chasms.
+     * </summary>
+     */
+    [NonSerialized] public bool Paused = false;
+
     private Collider2D _collider;
     private Spawnable _spawnable;
 
@@ -52,33 +59,39 @@ public class ChasmContactTracker : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        // If we collided with a chasm...
-        if (other.CompareTag("Chasm"))
+        if (!Paused)
         {
-            // And we do not already have a first entry point to a chasm area...
-            if (ChasmEntryPoint.IsNone())
+            // If we collided with a chasm...
+            if (other.CompareTag("Chasm"))
             {
-                // We remember the current position as the first entry point to the chasm area
-                ChasmEntryPoint = Optional<Vector3>.Some(this.transform.position);
+                // And we do not already have a first entry point to a chasm area...
+                if (ChasmEntryPoint.IsNone())
+                {
+                    // We remember the current position as the first entry point to the chasm area
+                    ChasmEntryPoint = Optional<Vector3>.Some(this.transform.position);
 
-                // Register ourselves at the Spawnable component to provide a custom respawn point
-                _spawnable.AddRespawnPointProvider(ProvideRespawnPoint);
+                    // Register ourselves at the Spawnable component to provide a custom respawn point
+                    _spawnable.AddRespawnPointProvider(ProvideRespawnPoint);
+                }
             }
         }
     }
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        // If we are no longer in contact with any chasm...
-        if (other.CompareTag("Chasm") && !Chasm.IsOnChasm(_collider))
+        if (!Paused)
         {
-            // Forget the first entry point to the chasm we have been in
-            ChasmEntryPoint = Optional<Vector3>.None();
-            // ...and any platforms which might have registered to act as respawn point (see SetRespawningPlatform)
-            _lastRespawningPlatform = null;
+            // If we are no longer in contact with any chasm...
+            if (other.CompareTag("Chasm") && !Chasm.IsOnChasm(_collider))
+            {
+                // Forget the first entry point to the chasm we have been in
+                ChasmEntryPoint = Optional<Vector3>.None();
+                // ...and any platforms which might have registered to act as respawn point (see SetRespawningPlatform)
+                _lastRespawningPlatform = null;
 
-            // Unregister ourselves at the Spawnable component as a provider of custom respawn points
-            _spawnable.RemoveRespawnPointProvider(ProvideRespawnPoint);
+                // Unregister ourselves at the Spawnable component as a provider of custom respawn points
+                _spawnable.RemoveRespawnPointProvider(ProvideRespawnPoint);
+            }
         }
     }
     

@@ -3,9 +3,11 @@ using Cinemachine;
 using UnityEngine;
 
 /**
+ * <summary>
  * Base class for behaviors spawning players.
  * It contains all necessary logic. Sub-classes usually only have to decide whether the spawner is currently active or
- * not (see `IsSpawnerActive` method).
+ * not (see <see cref="IsSpawnerActive"/> method).
+ * </summary>
  */
 public abstract class PlayerSpawner : MonoBehaviour
 {
@@ -20,6 +22,14 @@ public abstract class PlayerSpawner : MonoBehaviour
      * Those instances should be added to a spawner in this field, so that they can be respawned
      */
     [SerializeField] private PlayerController[] managedPreexistingPlayers = default;
+
+    /**
+     * <summary>
+     * If set, players will be respawned at the position of this spawner.
+     * If not set, players will respawn as determined by <see cref="Spawnable"/>.
+     * </summary>
+     */
+    [SerializeField] private bool respawnAtSpawnerPosition = false;
 
     /**
      * In debug mode, for newly connected controllers, we need to give them a colour, since they didn't join via the
@@ -73,7 +83,7 @@ public abstract class PlayerSpawner : MonoBehaviour
             Spawn();
             
             // register local managed player instances for respawning at the position of this object
-            if (managedPreexistingPlayers != null)
+            if (respawnAtSpawnerPosition && managedPreexistingPlayers != null)
             {
                 foreach (var player in managedPreexistingPlayers)
                 {
@@ -150,7 +160,11 @@ public abstract class PlayerSpawner : MonoBehaviour
             targetGroup.AddMember(player.transform, 1, 1);
         }
 
-        player.spawnable.defaultRespawnPosition = this.transform;
+        if (respawnAtSpawnerPosition)
+        {
+            player.spawnable.defaultRespawnPosition = this.transform;
+        }
+        
         OnSpawn(player);
     }
 

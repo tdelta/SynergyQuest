@@ -186,7 +186,6 @@ public class Teleport : MonoBehaviour
         instance.SetColor(color);
         
         go.MakeVisible();
-        go.UnFreeze();
     }
 
     private void Update()
@@ -211,6 +210,12 @@ public class Teleport : MonoBehaviour
             if (_isTeleportingOut)
             {
                 this.gameObject.MakeInvisible();
+            }
+
+            // Otherwise, if they are reappearing / teleporting in, make them able to move again.
+            else
+            {
+                this.gameObject.UnFreeze();
             }
             
             // Users can set a callback to be triggered when the teleport effect finishes.
