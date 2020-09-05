@@ -44,6 +44,11 @@ public class SceneController : BehaviourSingleton<SceneController>
     {
         LoadSceneByName("PreLobbyInfo");
     }
+    
+    public void LoadCredits()
+    {
+        LoadSceneByName("Credits");
+    }
 
     public void LoadNetworkSetup()
     {

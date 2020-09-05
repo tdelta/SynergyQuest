@@ -41,7 +41,9 @@ by [Oleg Dolya a.k.a. Watabou](http://www.watabou.ru/) who have generously allow
 
 Furthermore, additional art, music and sounds have been sourced from many external artists
 through [OpenGameArt.Org](https://opengameart.org) etc.
-All external artists are credited in the game menu and in [CONTRIBUTORS.md](./CONTRIBUTORS.md).
+All external artists are credited in the game menu and in [SynergyQuest/Assets/Resources/ExternalArtCredits.yaml](SynergyQuest/Assets/Resources/ExternalArtCredits.yaml).
+
+TODO: Credit used C# libraries
 
 ## License
 

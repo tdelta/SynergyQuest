@@ -7,7 +7,7 @@
 # ./hurry_up_by_cactusdude.ogg
 
 * Artist: itch.io user cactusdude
-* License: CCA 4.0
+* License: CC-BY 4.0
 * Link: https://cactusdude.itch.io/free-game-soundtrack-by-cactusdude-hurry-up
 
 # ./Quirky Boss Loop.ogg

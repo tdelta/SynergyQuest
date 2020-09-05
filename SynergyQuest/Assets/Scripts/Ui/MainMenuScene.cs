@@ -12,4 +12,9 @@ public class MainMenuScene : MonoBehaviour
     {
         SceneController.Instance.LoadPreLobbyInfo();
     }
+    
+    public void OnCreditsButtonPressed()
+    {
+        SceneController.Instance.LoadCredits();
+    }
 }
