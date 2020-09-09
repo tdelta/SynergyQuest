@@ -4,8 +4,15 @@ using UnityEngine;
 using System.Linq;
 
 /**
- * Responsible to control the ghost of a player. The Exorcise method triggers
+ * <summary>
+ * Responsible to control the ghost of a player as part of the <see cref="ReviveMinigame"/>. The Exorcise method triggers
  * the respawning of a dead player
+ * </summary>
+ * <remarks>
+ * The input mode of the player's controller is changed to <see cref="InputMode.RevivalMinigame"/>, which will display
+ * information regarding the mini-game on the players controller.
+ * </remarks>
+ * <seealso cref="ReviveMinigame"/>
  */
 public class PlayerGhost : MonoBehaviour
 {
@@ -47,6 +54,7 @@ public class PlayerGhost : MonoBehaviour
         _respawnPosition = respawnPosition;
         _player.gameObject.SetActive(false);
         _player.gameObject.SetFollowedByCamera(false);
+        _player.Input.InputMode = InputMode.RevivalMinigame;
     }
 
     public void Exorcise()
@@ -69,6 +77,7 @@ public class PlayerGhost : MonoBehaviour
         // Make player visible again, if they have been invisible
         _player.GetComponent<SpriteRenderer>().enabled = true;
         _player.OnRespawn(_respawnPosition);
+        _player.Input.InputMode = InputMode.Normal;
 
         Destroy(transform.parent.gameObject);
     }

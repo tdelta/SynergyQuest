@@ -16,4 +16,14 @@ public enum InputMode
     Normal = 0,
     // orientation input from IMU sensors is expected. Controller does not need to display joystick or buttons (except the `Exit` button). Menus should still be displayed
     IMUOrientation = 1,
+    /**
+     * <summary>
+     * The player character belonging to this controller has died, and is now undergoing the <see cref="RevivalMinigame"/>.
+     * </summary>
+     * <remarks>
+     * The controller should display information on how to solve the minigame.
+     * The controller does not need to display joystick or buttons. Menus should still be displayed
+     * </remarks>
+     */
+    RevivalMinigame = 2
 }

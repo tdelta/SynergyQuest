@@ -12,6 +12,7 @@ import * as consts from './consts';
 import { boundClass } from 'autobind-decorator';
 import { NormalControls } from './NormalControls';
 import { OrientationControls } from './OrientationControls';
+import { RevivalMinigameControls } from './RevivalMinigameControls';
 
 @boundClass
 export class Controller extends React.Component<
@@ -88,6 +89,19 @@ export class Controller extends React.Component<
     if (this.props.inputMode === InputMode.IMUOrientation) {
       return (
         <OrientationControls
+          client={this.props.client}
+          isFullscreen={this.state.isFullscreen}
+          toggleFullscreen={this.toggleFullscreen}
+          playerColor={this.props.playerColor}
+          canPause={this.props.canPause}
+          pause={this.props.pause}
+          enabledButtons={this.props.enabledButtons}
+          playerInfo={this.props.playerInfo}
+        />
+      );
+    } else if (this.props.inputMode === InputMode.RevivalMinigame) {
+      return (
+        <RevivalMinigameControls
           client={this.props.client}
           isFullscreen={this.state.isFullscreen}
           toggleFullscreen={this.toggleFullscreen}

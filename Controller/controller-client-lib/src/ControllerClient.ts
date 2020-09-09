@@ -66,6 +66,14 @@ export enum InputMode {
   Normal = 0,
   // orientation input from IMU sensors is expected. Controller does not need to display joystick or buttons (except the `Exit` button). Menus should still be displayed
   IMUOrientation = 1,
+  /**
+   * The player character belonging to this controller has died, and is now undergoing the "Revival Minigame".
+   * See also RevivalMinigame class in the main game code.
+   *
+   * The controller should display information on how to solve the minigame.
+   * The controller does not need to display joystick or buttons. Menus should still be displayed
+   */
+  RevivalMinigame = 2,
 }
 
 /**
