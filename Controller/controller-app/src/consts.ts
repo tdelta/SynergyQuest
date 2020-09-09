@@ -115,6 +115,12 @@ export const buttonStyles: { [button in Button]: ColorData } = {
     light: '#c158dc',
     dark: '#8E24AA',
   },
+  9: {
+    name: 'Jump Back',
+    image: undefined,
+    light: '#FF9800',
+    dark: '#F57C00',
+  },
 };
 
 export const avatars: { [color in PlayerColor]: string } = {

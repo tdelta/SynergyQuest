@@ -18,6 +18,8 @@ export class Controller extends React.Component<
   ControllerProbs,
   ControllerState
 > {
+  private orientationIsLocked: boolean = false;
+
   constructor(probs: ControllerProbs) {
     super(probs);
 
@@ -46,7 +48,9 @@ export class Controller extends React.Component<
         // Lock orientation to landscape if possible
         try {
           await window.screen.orientation.lock('landscape-primary');
+          this.orientationIsLocked = true;
         } catch (error) {
+          this.orientationIsLocked = false;
           console.error(`Failed to lock screen to landscape: ${error}`);
         }
       }
@@ -74,7 +78,10 @@ export class Controller extends React.Component<
 
   componentWillUnmount() {
     // Unlock screen orientation, if it was locked before
-    window.screen.orientation.unlock();
+    if (this.orientationIsLocked) {
+      this.orientationIsLocked = false;
+      window.screen.orientation.unlock();
+    }
   }
 
   render() {
