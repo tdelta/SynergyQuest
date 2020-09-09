@@ -17,4 +17,11 @@ public class InteractorCollider : MonoBehaviour
 {
     [SerializeField] private PlayerController player = default;
     public PlayerController Player => player;
+    
+    /**
+     * <summary>
+     * If false, this player will not be able to interact with an <see cref="Interactive"/> object
+     * </summary>
+     */
+    public bool CanInteract = true;
 }
