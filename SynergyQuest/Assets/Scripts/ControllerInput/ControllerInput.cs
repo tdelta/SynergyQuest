@@ -249,6 +249,7 @@ public class ControllerInput: Input
             else
             {
                 _enabledButtons.Remove(button);
+                _buttonPressStates[button].ProcessRawInput(false);
             }
         }
         
@@ -457,7 +458,11 @@ public class ControllerInput: Input
         {
             ButtonMessage = msg =>
             {
-                _buttonPressStates[msg.button].ProcessRawInput(msg.onOff);
+                // Only process button inputs, if they are enabled.
+                if (_enabledButtons.Contains(msg.button))
+                {
+                    _buttonPressStates[msg.button].ProcessRawInput(msg.onOff);
+                }
             },
             
             JoystickMessage = msg =>
@@ -645,7 +650,6 @@ class ButtonPressState
             }
         }
 
-    _lastRecalculation = Time.frameCount;
-    
+        _lastRecalculation = Time.frameCount;
     }
 }
