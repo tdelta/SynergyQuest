@@ -1,11 +1,3 @@
-[req]
-default_bits = 2048
-prompt = no
-default_md = sha256
-distinguished_name = dn
-
-[dn]
-C=DE
-ST=Hesse
-O=TeamP09
-CN=localhost (SynergyQuest local cert)
+version https://git-lfs.github.com/spec/v1
+oid sha256:7fe962bb6399a7cad2cf10127d8931967791d17acf09abff17710b607ffca8e1
+size 151
