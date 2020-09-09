@@ -4,6 +4,8 @@ import https from 'https';
 import fs from 'fs';
 import http from 'http';
 
+import open from 'open';
+
 const app = express();
 
 function errorHandler(
@@ -24,6 +26,18 @@ const websocketProxy = httpProxy.createProxyServer({
 });
 
 websocketProxy.on('error', function (err, req, res) {
+  res.end('Error occurred ' + err.message);
+});
+
+// ===== Diverting React Debug connections to ws://localhost:3000/sockjs-node ====
+
+const reactDevProxy = httpProxy.createProxyServer({
+  target: 'ws://localhost:3000',
+  changeOrigin: true,
+  ws: true,
+});
+
+reactDevProxy.on('error', function (err, req, res) {
   res.end('Error occurred ' + err.message);
 });
 
@@ -58,7 +72,13 @@ const server = https.createServer(
 
 // Allow to upgrade normal HTTPS connections to websocket connections and let the proxy handle them
 server.on('upgrade', (req, socket, head) => {
-  websocketProxy.ws(req, socket, head, {}, errorHandler);
+  // If its a sockjs connection, it must be the React dev tools trying to reach the server.
+  if (req.url === '/sockjs-node') {
+    reactDevProxy.ws(req, socket, head, {}, errorHandler);
+  } else {
+    // Otherwise, divert to game server
+    websocketProxy.ws(req, socket, head, {}, errorHandler);
+  }
 });
 
 server.on('error', err => {
@@ -67,3 +87,10 @@ server.on('error', err => {
 });
 
 server.listen(8000);
+
+// Open react app in browser
+open('https://localhost:8000').then(_ => {});
+
+console.log(
+  '\n\n=================\nView the web app at "https://localhost:8000".\n=================\n\n'
+);

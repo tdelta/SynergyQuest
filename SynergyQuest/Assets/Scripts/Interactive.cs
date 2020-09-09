@@ -143,12 +143,19 @@ public class Interactive : MonoBehaviour
     {
         _collider = GetComponent<Collider2D>();
     }
-
+    
     private void Update()
     {
         // If a player is currently touching this object...
         if (!ReferenceEquals(InteractingPlayer, null))
         {
+            // Maybe the player can no longer interact, then we have to abort all interaction
+            if (!InteractingPlayer.InteractorCollider.CanInteract)
+            {
+                ClearInteractingPlayer();
+                return;
+            }
+            
             // Determine whether the player is pressing the interaction button in the right way:
             switch (interactionType)
             {
@@ -162,11 +169,11 @@ public class Interactive : MonoBehaviour
                     IsInteracting = InteractingPlayer.Input.GetButton(button);
                     break;
             }
-        }
-        
-        if (IsInteracting)
-        {
-            InteractingPlayer.InteractionSpeechBubble.HideBubble();
+            
+            if (IsInteracting)
+            {
+                InteractingPlayer.InteractionSpeechBubble.HideBubble();
+            }
         }
     }
 
@@ -192,8 +199,10 @@ public class Interactive : MonoBehaviour
             // See the class description of `InteractorCollider` for more information
             if (other.gameObject.CompareTag("InteractorCollider"))
             {
-                var maybeInteractingPlayer = other.gameObject.GetComponent<InteractorCollider>().Player;
+                var interactorCollider = other.gameObject.GetComponent<InteractorCollider>();
+                var maybeInteractingPlayer = interactorCollider.Player;
                 if (
+                    interactorCollider.CanInteract &&
                     maybeInteractingPlayer.gameObject != this.gameObject && // do not interact with self
                     Color.IsCompatibleWith(maybeInteractingPlayer.Color) &&
                     IsPlayerFacingThisObject(maybeInteractingPlayer)

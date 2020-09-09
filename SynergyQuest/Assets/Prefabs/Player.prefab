@@ -951,6 +951,7 @@ MonoBehaviour:
   deathSounds: {fileID: 7435980175288186188}
   fallingSounds: {fileID: 2582344011964161507}
   interactionSpeechBubble: {fileID: 4160230175974552178}
+  interactorCollider: {fileID: 3016661478870034866}
   goldLossOnDeath: 10
   coinPrefab: {fileID: 7476413430186449264, guid: 4328b41c3928fc341a393f3a479abf6d,
     type: 3}
@@ -1265,6 +1266,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 4270148256400962765}
+  CanInteract: 1
 --- !u!61 &5822153046544148961
 BoxCollider2D:
   m_ObjectHideFlags: 0

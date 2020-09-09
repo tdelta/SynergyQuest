@@ -12,12 +12,15 @@ import * as consts from './consts';
 import { boundClass } from 'autobind-decorator';
 import { NormalControls } from './NormalControls';
 import { OrientationControls } from './OrientationControls';
+import { RevivalMinigameControls } from './RevivalMinigameControls';
 
 @boundClass
 export class Controller extends React.Component<
   ControllerProbs,
   ControllerState
 > {
+  private orientationIsLocked: boolean = false;
+
   constructor(probs: ControllerProbs) {
     super(probs);
 
@@ -46,7 +49,9 @@ export class Controller extends React.Component<
         // Lock orientation to landscape if possible
         try {
           await window.screen.orientation.lock('landscape-primary');
+          this.orientationIsLocked = true;
         } catch (error) {
+          this.orientationIsLocked = false;
           console.error(`Failed to lock screen to landscape: ${error}`);
         }
       }
@@ -74,13 +79,29 @@ export class Controller extends React.Component<
 
   componentWillUnmount() {
     // Unlock screen orientation, if it was locked before
-    window.screen.orientation.unlock();
+    if (this.orientationIsLocked) {
+      this.orientationIsLocked = false;
+      window.screen.orientation.unlock();
+    }
   }
 
   render() {
     if (this.props.inputMode === InputMode.IMUOrientation) {
       return (
         <OrientationControls
+          client={this.props.client}
+          isFullscreen={this.state.isFullscreen}
+          toggleFullscreen={this.toggleFullscreen}
+          playerColor={this.props.playerColor}
+          canPause={this.props.canPause}
+          pause={this.props.pause}
+          enabledButtons={this.props.enabledButtons}
+          playerInfo={this.props.playerInfo}
+        />
+      );
+    } else if (this.props.inputMode === InputMode.RevivalMinigame) {
+      return (
+        <RevivalMinigameControls
           client={this.props.client}
           isFullscreen={this.state.isFullscreen}
           toggleFullscreen={this.toggleFullscreen}

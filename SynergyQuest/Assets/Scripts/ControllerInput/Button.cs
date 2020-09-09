@@ -12,5 +12,6 @@ public enum Button
     Read = 5,
     Open = 6,
     UseBomb = 7,
-    Exit = 8
+    Exit = 8,
+    JumpBack = 9 // used by Springs, see also Spring behaviour
 }

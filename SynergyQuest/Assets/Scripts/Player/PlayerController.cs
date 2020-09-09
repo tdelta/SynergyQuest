@@ -34,6 +34,7 @@ public class PlayerController : EntityController
     [SerializeField] private MultiSound deathSounds = default;
     [SerializeField] private MultiSound fallingSounds = default;
     [SerializeField] private InteractionSpeechBubble interactionSpeechBubble = default;
+    [SerializeField] private InteractorCollider interactorCollider = default;
     [SerializeField] private int goldLossOnDeath = 10;
     [SerializeField] private CoinController coinPrefab = default;
     /**
@@ -44,6 +45,7 @@ public class PlayerController : EntityController
     public Vector2 Center => Collider.bounds.center;
 
     public InteractionSpeechBubble InteractionSpeechBubble => interactionSpeechBubble;
+    public InteractorCollider InteractorCollider => interactorCollider;
 
     /**
      * If local controls will be used for this character instead of a remote controller, which color should be assigned

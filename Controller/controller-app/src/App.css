@@ -11,6 +11,7 @@ html {
 }
 
 body {
+  font-family: "m6x11";
   margin: 0;
   padding: 0;
 }
@@ -50,7 +51,7 @@ body {
   display: flex;
   width: 80%;
   justify-content: center;
-  background: #EF5350;
+  background: #ef5350;
   margin-left: 10%;
   margin-right: 10%;
   border-radius: 5pt;

@@ -30,23 +30,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ea17c150-330d-4a97-b383-441aafdb5cb9" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../controller-app/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../controller-app/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../controller-app/yarn.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../controller-app/yarn.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Mobile-ControlledCooperativeMultiplayerGame/Assets/Prefabs/Projectiles/Fireball.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/../../Mobile-ControlledCooperativeMultiplayerGame/Assets/Prefabs/Projectiles/Fireball.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Mobile-ControlledCooperativeMultiplayerGame/Assets/Scenes/RainbowTrap/2Players.unity" beforeDir="false" afterPath="$PROJECT_DIR$/../../Mobile-ControlledCooperativeMultiplayerGame/Assets/Scenes/RainbowTrap/2Players.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Mobile-ControlledCooperativeMultiplayerGame/Assets/Scenes/platforms/PlayerControlled.unity" beforeDir="false" afterPath="$PROJECT_DIR$/../../Mobile-ControlledCooperativeMultiplayerGame/Assets/Scenes/platforms/PlayerControlled.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Mobile-ControlledCooperativeMultiplayerGame/Assets/Scripts/Colored.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../Mobile-ControlledCooperativeMultiplayerGame/Assets/Scripts/Colored.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Mobile-ControlledCooperativeMultiplayerGame/Assets/Scripts/Enemies/NecromancerController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../Mobile-ControlledCooperativeMultiplayerGame/Assets/Scripts/Enemies/NecromancerController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Mobile-ControlledCooperativeMultiplayerGame/Assets/Scripts/PhysicsEffects.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Mobile-ControlledCooperativeMultiplayerGame/Assets/Scripts/PhysicsEffects.cs.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Mobile-ControlledCooperativeMultiplayerGame/Assets/Scripts/Platforms/PlayerControlledPlatform.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../Mobile-ControlledCooperativeMultiplayerGame/Assets/Scripts/Platforms/PlayerControlledPlatform.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Mobile-ControlledCooperativeMultiplayerGame/Assets/Scripts/Projectiles/FireballProjectile.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../Mobile-ControlledCooperativeMultiplayerGame/Assets/Scripts/Projectiles/FireballProjectile.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Mobile-ControlledCooperativeMultiplayerGame/Assets/Scripts/RainbowTrap.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../Mobile-ControlledCooperativeMultiplayerGame/Assets/Scripts/RainbowTrap.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Mobile-ControlledCooperativeMultiplayerGame/Assets/Scripts/ShaderControllers/ColorReplacer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../Mobile-ControlledCooperativeMultiplayerGame/Assets/Scripts/ShaderControllers/ColorReplacer.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Mobile-ControlledCooperativeMultiplayerGame/Assets/Scripts/Switchable.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../Mobile-ControlledCooperativeMultiplayerGame/Assets/Scripts/Switchable.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Mobile-ControlledCooperativeMultiplayerGame/Assets/Scripts/Switches/ColorSwitch.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../Mobile-ControlledCooperativeMultiplayerGame/Assets/Scripts/Switches/ColorSwitch.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Mobile-ControlledCooperativeMultiplayerGame/ProjectSettings/Physics2DSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/../../Mobile-ControlledCooperativeMultiplayerGame/ProjectSettings/Physics2DSettings.asset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../Mobile-ControlledCooperativeMultiplayerGame/ProjectSettings/TagManager.asset" beforeDir="false" afterPath="$PROJECT_DIR$/../../Mobile-ControlledCooperativeMultiplayerGame/ProjectSettings/TagManager.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../controller-app/src/App.css" beforeDir="false" afterPath="$PROJECT_DIR$/../controller-app/src/App.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../controller-app/src/Controller.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../controller-app/src/Controller.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../controller-client-lib/src/ControllerClient.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../controller-client-lib/src/ControllerClient.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -102,6 +89,7 @@
       <workItem from="1597499580298" duration="3770000" />
       <workItem from="1597665672548" duration="21998000" />
       <workItem from="1598133274495" duration="606000" />
+      <workItem from="1599653724407" duration="6823000" />
     </task>
     <servers />
   </component>
@@ -129,26 +117,78 @@
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
     <state x="741" y="289" width="428" height="476" key="FileChooserDialogImpl/0.0.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1597853204208" />
-    <state width="467" height="284" key="GridCell.Tab.0.bottom" timestamp="1598161188874">
+    <state width="385" height="297" key="GridCell.Tab.0.bottom" timestamp="1599670820078">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
     <state width="947" height="284" key="GridCell.Tab.0.bottom/0.0.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1597853206669" />
     <state width="467" height="284" key="GridCell.Tab.0.bottom/0.0.1920.1080@0.0.1920.1080" timestamp="1598161188874" />
-    <state width="467" height="284" key="GridCell.Tab.0.center" timestamp="1598161188874">
+    <state width="385" height="297" key="GridCell.Tab.0.bottom/0.1080.1368.768/0.0.1920.1080@0.0.1920.1080" timestamp="1599670820078" />
+    <state width="385" height="297" key="GridCell.Tab.0.center" timestamp="1599670820078">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
     <state width="947" height="284" key="GridCell.Tab.0.center/0.0.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1597853206669" />
     <state width="467" height="284" key="GridCell.Tab.0.center/0.0.1920.1080@0.0.1920.1080" timestamp="1598161188874" />
-    <state width="467" height="284" key="GridCell.Tab.0.left" timestamp="1598161188874">
+    <state width="385" height="297" key="GridCell.Tab.0.center/0.1080.1368.768/0.0.1920.1080@0.0.1920.1080" timestamp="1599670820078" />
+    <state width="385" height="297" key="GridCell.Tab.0.left" timestamp="1599670820078">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
     <state width="947" height="284" key="GridCell.Tab.0.left/0.0.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1597853206669" />
     <state width="467" height="284" key="GridCell.Tab.0.left/0.0.1920.1080@0.0.1920.1080" timestamp="1598161188874" />
-    <state width="467" height="284" key="GridCell.Tab.0.right" timestamp="1598161188874">
+    <state width="385" height="297" key="GridCell.Tab.0.left/0.1080.1368.768/0.0.1920.1080@0.0.1920.1080" timestamp="1599670820078" />
+    <state width="385" height="297" key="GridCell.Tab.0.right" timestamp="1599670820078">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
     <state width="947" height="284" key="GridCell.Tab.0.right/0.0.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1597853206669" />
     <state width="467" height="284" key="GridCell.Tab.0.right/0.0.1920.1080@0.0.1920.1080" timestamp="1598161188874" />
+    <state width="385" height="297" key="GridCell.Tab.0.right/0.1080.1368.768/0.0.1920.1080@0.0.1920.1080" timestamp="1599670820078" />
+    <state width="1437" height="350" key="GridCell.Tab.1.bottom" timestamp="1599656855366">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state width="1437" height="350" key="GridCell.Tab.1.bottom/0.1080.1368.768/0.0.1920.1080@0.0.1920.1080" timestamp="1599656855366" />
+    <state width="1437" height="350" key="GridCell.Tab.1.center" timestamp="1599656855366">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state width="1437" height="350" key="GridCell.Tab.1.center/0.1080.1368.768/0.0.1920.1080@0.0.1920.1080" timestamp="1599656855366" />
+    <state width="1437" height="350" key="GridCell.Tab.1.left" timestamp="1599656855366">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state width="1437" height="350" key="GridCell.Tab.1.left/0.1080.1368.768/0.0.1920.1080@0.0.1920.1080" timestamp="1599656855366" />
+    <state width="1437" height="350" key="GridCell.Tab.1.right" timestamp="1599656855366">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state width="1437" height="350" key="GridCell.Tab.1.right/0.1080.1368.768/0.0.1920.1080@0.0.1920.1080" timestamp="1599656855366" />
+    <state width="1437" height="350" key="GridCell.Tab.2.bottom" timestamp="1599656855366">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state width="1437" height="350" key="GridCell.Tab.2.bottom/0.1080.1368.768/0.0.1920.1080@0.0.1920.1080" timestamp="1599656855366" />
+    <state width="1437" height="350" key="GridCell.Tab.2.center" timestamp="1599656855366">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state width="1437" height="350" key="GridCell.Tab.2.center/0.1080.1368.768/0.0.1920.1080@0.0.1920.1080" timestamp="1599656855366" />
+    <state width="1437" height="350" key="GridCell.Tab.2.left" timestamp="1599656855366">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state width="1437" height="350" key="GridCell.Tab.2.left/0.1080.1368.768/0.0.1920.1080@0.0.1920.1080" timestamp="1599656855366" />
+    <state width="1437" height="350" key="GridCell.Tab.2.right" timestamp="1599656855366">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state width="1437" height="350" key="GridCell.Tab.2.right/0.1080.1368.768/0.0.1920.1080@0.0.1920.1080" timestamp="1599656855366" />
+    <state width="1437" height="350" key="GridCell.Tab.3.bottom" timestamp="1599656855367">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state width="1437" height="350" key="GridCell.Tab.3.bottom/0.1080.1368.768/0.0.1920.1080@0.0.1920.1080" timestamp="1599656855367" />
+    <state width="1437" height="350" key="GridCell.Tab.3.center" timestamp="1599656855367">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state width="1437" height="350" key="GridCell.Tab.3.center/0.1080.1368.768/0.0.1920.1080@0.0.1920.1080" timestamp="1599656855367" />
+    <state width="1437" height="350" key="GridCell.Tab.3.left" timestamp="1599656855367">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state width="1437" height="350" key="GridCell.Tab.3.left/0.1080.1368.768/0.0.1920.1080@0.0.1920.1080" timestamp="1599656855367" />
+    <state width="1437" height="350" key="GridCell.Tab.3.right" timestamp="1599656855367">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state width="1437" height="350" key="GridCell.Tab.3.right/0.1080.1368.768/0.0.1920.1080@0.0.1920.1080" timestamp="1599656855367" />
     <state x="926" y="166" key="SettingsEditor" timestamp="1597499708491">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
@@ -157,10 +197,11 @@
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
     <state x="622" y="254" key="run.anything.popup/0.0.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1597706376804" />
-    <state x="1007" y="255" width="672" height="678" key="search.everywhere.popup" timestamp="1597687420339">
+    <state x="1007" y="255" width="672" height="678" key="search.everywhere.popup" timestamp="1599654615510">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
     <state x="1007" y="255" width="672" height="678" key="search.everywhere.popup/0.0.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1597687420339" />
     <state x="1007" y="255" width="672" height="678" key="search.everywhere.popup/0.0.1920.1080@0.0.1920.1080" timestamp="1597503463200" />
+    <state x="1007" y="255" width="672" height="678" key="search.everywhere.popup/0.1080.1368.768/0.0.1920.1080@0.0.1920.1080" timestamp="1599654615510" />
   </component>
 </project>

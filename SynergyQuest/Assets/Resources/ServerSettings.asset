@@ -15,8 +15,8 @@ MonoBehaviour:
   httpPort: 8000
   websocketPort: 4242
   documentRoot: controller-app
-  runHttpServerOnlyInProductionMode: 0
-  useSSLOnlyInProductionMode: 0
+  runHttpServerOnlyInProductionMode: 1
+  useSSLOnlyInProductionMode: 1
   pathToCertificatePfxForEditorMode: ../Certificates/generated/server.pfx
   pathToCertificatePfxForBuildMode: Certificates/server.pfx
   pfxPassword: 

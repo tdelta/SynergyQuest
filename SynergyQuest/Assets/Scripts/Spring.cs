@@ -74,12 +74,17 @@ public class Spring : MonoBehaviour
      */
     private IEnumerator AnimateSpringJump(PlayerController player)
     {
+        // === 0. While in use, no other player shall use this Spring ===
+        _interactive.enabled = false;
+        
         // === 1. Adjust the player object so that it will not interact with other objects during the jump ===
         player.PhysicsEffects.enabled = false;
         player.PhysicsEffects.rigidbody2D.simulated = false;
 
         var originalLayer = player.gameObject.layer;
         player.gameObject.layer = LayerMask.NameToLayer("Carried");
+
+        player.InteractorCollider.CanInteract = false;
         
         // Ensure the player is rendered above everything else
         var originalSortingOrder = player.spriteRenderer.sortingOrder;
@@ -181,6 +186,8 @@ public class Spring : MonoBehaviour
         }
         
         // === 4. Remove all adjustments to the player object ===
+        player.InteractorCollider.CanInteract = true;
+        
         player.transform.SetParent(originalParent);
         player.transform.position = scalingParent.transform.position;
         Destroy(scalingParent);
@@ -192,5 +199,8 @@ public class Spring : MonoBehaviour
         player.PhysicsEffects.rigidbody2D.simulated = true;
 
         player.gameObject.layer = originalLayer;
+
+        // === 5. reenable interactions with this spring ===
+        _interactive.enabled = true;
     }
 }
