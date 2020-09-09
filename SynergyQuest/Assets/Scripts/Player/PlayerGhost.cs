@@ -76,7 +76,7 @@ public class PlayerGhost : MonoBehaviour
         _player.PhysicsEffects.Teleport(_respawnPosition);
         // Make player visible again, if they have been invisible
         _player.GetComponent<SpriteRenderer>().enabled = true;
-        _player.OnRespawn(_respawnPosition);
+        _player.OnRespawn(_respawnPosition, Spawnable.RespawnReason.Other);
         _player.Input.InputMode = InputMode.Normal;
 
         Destroy(transform.parent.gameObject);

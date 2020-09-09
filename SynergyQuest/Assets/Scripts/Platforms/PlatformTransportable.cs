@@ -75,7 +75,7 @@ public class PlatformTransportable : MonoBehaviour
      * do it on respawn using this method.
      * </summary>
      */
-    private void OnRespawn(Vector3 respawnPosition)
+    private void OnRespawn(Vector3 respawnPosition, Spawnable.RespawnReason reason)
     {
         var colliderList = new List<Collider2D>();
         var contactFilter = new ContactFilter2D();

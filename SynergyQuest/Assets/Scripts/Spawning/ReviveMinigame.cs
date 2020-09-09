@@ -2,7 +2,7 @@ using UnityEngine;
 
 /**
  * <summary>
- * Instead of directly respawning, this behaviour turns players into ghosts when respawning, see
+ * Instead of directly respawning, this behaviour turns players into ghosts when respawning due to death, see
  * <see cref="PlayerGhost"/>.
  * </summary>
  * <remarks>
@@ -36,9 +36,12 @@ public class ReviveMinigame : MonoBehaviour
         _spawnable.OnRespawn -= OnRespawn;
     }
 
-    private void OnRespawn(Vector3 respawnPosition)
+    private void OnRespawn(Vector3 respawnPosition, Spawnable.RespawnReason reason)
     {
-        if (!DebugSettings.Instance.DebugMode || !DebugSettings.Instance.DisableRevivalMinigame)
+        if (
+            reason == Spawnable.RespawnReason.Death &&
+            (!DebugSettings.Instance.DebugMode || !DebugSettings.Instance.DisableRevivalMinigame)
+        )
         {
             var instance = Instantiate(playerGhostPrefab, respawnPosition, Quaternion.identity)
               .GetComponentInChildren<PlayerGhost>();

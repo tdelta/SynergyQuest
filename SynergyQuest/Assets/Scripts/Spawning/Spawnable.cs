@@ -31,6 +31,15 @@ using UnityEngine;
 public class Spawnable : MonoBehaviour
 {
     [NonSerialized] [CanBeNull] public Transform defaultRespawnPosition;
+
+    /**
+     * Encodes, why an object is respawned
+     */
+    public enum RespawnReason
+    {
+        Death,
+        Other
+    }
     
     /**
      * <summary>
@@ -38,7 +47,7 @@ public class Spawnable : MonoBehaviour
      * </summary>
      */
     public event OnRespawnAction OnRespawn;
-    public delegate void OnRespawnAction(Vector3 respawnPosition);
+    public delegate void OnRespawnAction(Vector3 respawnPosition, RespawnReason reason);
     
     private List<Func<Vector3>> _respawnPointProviders = new List<Func<Vector3>>();
 
@@ -57,7 +66,7 @@ public class Spawnable : MonoBehaviour
      * This method will also make this object visible using <see cref="GameObjectExtensions.MakeVisible"/>.
      * </summary>
      */
-    public void Respawn()
+    public void Respawn(RespawnReason reason = RespawnReason.Other)
     {
         var respawnPosition = DetermineCurrentRespawnPosition();
 
@@ -80,7 +89,7 @@ public class Spawnable : MonoBehaviour
         // Make visible again(, if we have been invisible)
         this.gameObject.MakeVisible();
         
-        OnRespawn?.Invoke(respawnPosition);
+        OnRespawn?.Invoke(respawnPosition, reason);
     }
     
     /**

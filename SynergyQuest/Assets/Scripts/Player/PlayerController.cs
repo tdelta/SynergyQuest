@@ -273,7 +273,7 @@ public class PlayerController : EntityController
             }
     }
 
-    public void OnRespawn(Vector3 respawnPosition)
+    public void OnRespawn(Vector3 respawnPosition, Spawnable.RespawnReason reason)
     {
         // if the player carries another player, release
         if (CarriesSomeone())
@@ -284,7 +284,11 @@ public class PlayerController : EntityController
         else if (_throwable.IsBeingCarried) {
             _throwable.Carrier.ThrowThrowable(_throwable, Vector2.zero);
         }
-        ChangeHealth(PlayerInfo.MAX_HEALTH_POINTS);
+
+        if (_data.HealthPoints <= 0)
+        {
+            ChangeHealth(PlayerInfo.MAX_HEALTH_POINTS);
+        }
     }
 
     protected override bool ChangeHealth(int delta, bool playSounds = true)
@@ -340,7 +344,7 @@ public class PlayerController : EntityController
                 Instantiate(coinPrefab, goldSpawnPosition, Quaternion.identity);
             }
 
-            spawnable.Respawn();
+            spawnable.Respawn(Spawnable.RespawnReason.Death);
         }
         return true;
     }
@@ -571,9 +575,17 @@ public class PlayerController : EntityController
         
         // Make the player invisible until respawn
         spriteRenderer.enabled = false;
+
+        var originalHealth = _data.HealthPoints;
+        // Remove some health from player for falling
+        ChangeHealth(-1, false);
         
-        // Kill the player
-        ChangeHealth(-_data.HealthPoints, false);
+        // Respawn them, if there health did not get down to zero
+        // (which would respawn them anyway)
+        if (originalHealth > 0)
+        {
+            spawnable.Respawn();
+        }
     }
 
 
