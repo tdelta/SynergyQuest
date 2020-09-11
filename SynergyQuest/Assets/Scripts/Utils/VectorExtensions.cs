@@ -28,4 +28,14 @@ public static class VectorExtensions
             lhs.z
         );
     }
+
+    /**
+     * <summary>
+     * Returns component with maximum value (i.e. x or y).
+     * </summary>
+     */
+    public static float MaxComponent(this Vector2 self)
+    {
+        return Mathf.Max(self.x, self.y);
+    }
 }

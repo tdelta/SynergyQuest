@@ -102,18 +102,27 @@ public static class GameObjectExtensions
      * <summary>
      * Can set all <see cref="CinemachineTargetGroup"/>s to either follow or not follow an object.
      * </summary>
+     * <param name="followed">Whether the object shall be followed by cameras.</param>
+     * <param name="radius">
+     *     Radius around every object which must be included in the camera view.
+     *     If set to NaN (default), the bounds of a <see cref="Collider2D"/> component will be used, if present.
+     *     If there is also no <see cref="Collider2D"/>, then 0.0f will be used.
+     * </param>
      */
-    public static void SetFollowedByCamera(this GameObject self, bool followed)
+    public static void SetFollowedByCamera(this GameObject self, bool followed, float radius = float.NaN)
     {
         if (followed)
         {
             foreach (var cameraTargetGroup in Object.FindObjectsOfType<CinemachineTargetGroup>())
             {
-                var radius = 0.0f;
-                if (self.GetComponent<Collider2D>() is Collider2D collider && collider != null)
+                if (float.IsNaN(radius))
                 {
-                    var bounds = collider.bounds;
-                    radius = Mathf.Max(bounds.extents.x, bounds.extents.y);
+                    radius = 0.0f;
+                    if (self.GetComponent<Collider2D>() is Collider2D collider && collider != null)
+                    {
+                        var bounds = collider.bounds;
+                        radius = Mathf.Max(bounds.extents.x, bounds.extents.y);
+                    }
                 }
                 
                 cameraTargetGroup.AddMember(

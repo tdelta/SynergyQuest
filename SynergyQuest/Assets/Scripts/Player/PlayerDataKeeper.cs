@@ -5,9 +5,13 @@ using UnityEngine.Tilemaps;
 using Debug = UnityEngine.Debug;
 
 /**
- * Keeps track of all player data which is persistent across scenes, see also `PlayerData` class.
- * It also allows to instantiate player prefabs from that data. The used prefab can be set in the
- * `PlayerPrefabSettings` scriptable object singleton.
+ * <summary>
+ * Keeps track of all player data which is persistent across scenes, see also <see cref="PlayerData"/> class.
+ * </summary>
+ * <remarks>
+ * It also allows to instantiate player prefabs from player data. The used prefab can be set in the
+ * <see cref="PrefabSettings"/> scriptable object singleton.
+ * </remarks>
  */
 public class PlayerDataKeeper: Singleton<PlayerDataKeeper>
 {
@@ -133,7 +137,7 @@ public class PlayerDataKeeper: Singleton<PlayerDataKeeper>
         }
         
         var instance = Object.Instantiate(
-            PlayerPrefabSettings.Instance.PlayerPrefab,
+            PrefabSettings.Instance.PlayerPrefab,
             // Ensure, z-coordinate is always 0 for players
             Vector3.Scale(spawnPosition, new Vector3(1, 1, 0)),
             Quaternion.identity

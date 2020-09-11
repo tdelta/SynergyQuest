@@ -2,16 +2,19 @@ using System;
 using UnityEngine;
 
 /**
+ * <summary>
  * Screen overlay HUD which displays information shared by all players (e.g. number of collected keys).
- *
- * It is a singleton. The prefab which is used to instantiate it, can be configured in the `SharedHUDSettings`
+ * </summary>
+ * <remarks>
+ * It is a singleton. The prefab which is used to instantiate it, can be configured in the <see cref="PrefabSettings"/>.
+ * </remarks>
  */
 public class SharedHUD : MonoBehaviour
 {
     private static readonly Lazy<SharedHUD> _instance = new Lazy<SharedHUD>(() =>
     {
         // Instantiate te prefab defined in the `SharedHUDSettings`
-        var instance = Instantiate(SharedHUDSettings.Instance.sharedHudPrefab);
+        var instance = Instantiate(PrefabSettings.Instance.SharedHudPrefab);
         
         // make sure the game object can survive loading other scenes
         DontDestroyOnLoad(instance);

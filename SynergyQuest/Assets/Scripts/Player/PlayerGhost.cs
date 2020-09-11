@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using System.Linq;
 
 /**
@@ -17,7 +15,8 @@ using System.Linq;
 public class PlayerGhost : MonoBehaviour
 {
     // the player the ghost belongs to
-    PlayerController _player;
+    public PlayerController Player { get; private set; }
+
     // another active player the ghost currently follows
     PlayerController _followedPlayer;
 
@@ -50,11 +49,11 @@ public class PlayerGhost : MonoBehaviour
 
     public void Register(PlayerController player, Vector2 respawnPosition)
     {
-        _player = player;
+        Player = player;
         _respawnPosition = respawnPosition;
-        _player.gameObject.SetActive(false);
-        _player.gameObject.SetFollowedByCamera(false);
-        _player.Input.InputMode = InputMode.RevivalMinigame;
+        Player.gameObject.SetActive(false);
+        Player.gameObject.SetFollowedByCamera(false);
+        Player.Input.InputMode = InputMode.RevivalMinigame;
     }
 
     public void Exorcise()
@@ -70,14 +69,14 @@ public class PlayerGhost : MonoBehaviour
 
     void OnVanish()
     {
-        _player.gameObject.SetActive(true);
-        _player.gameObject.SetFollowedByCamera(true);
+        Player.gameObject.SetActive(true);
+        Player.gameObject.SetFollowedByCamera(true);
         // Move player to position of the spawner when respawning
-        _player.PhysicsEffects.Teleport(_respawnPosition);
+        Player.PhysicsEffects.Teleport(_respawnPosition);
         // Make player visible again, if they have been invisible
-        _player.GetComponent<SpriteRenderer>().enabled = true;
-        _player.OnRespawn(_respawnPosition, Spawnable.RespawnReason.Other);
-        _player.Input.InputMode = InputMode.Normal;
+        Player.GetComponent<SpriteRenderer>().enabled = true;
+        Player.OnRespawn(_respawnPosition, Spawnable.RespawnReason.Other);
+        Player.Input.InputMode = InputMode.Normal;
 
         Destroy(transform.parent.gameObject);
     }

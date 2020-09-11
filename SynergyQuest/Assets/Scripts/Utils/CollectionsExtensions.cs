@@ -40,6 +40,23 @@ public static class CollectionsExtensions
     }
 
     /**
+     * <summary>
+     * Returns all but the last element of a collection.
+     * Returns empty enumerable, if the collection was empty.
+     * </summary>
+     * <remarks>
+     * The implementation currently is simple, but incredibly inefficient, do not use for large collections.
+     * In .NET Standard 2.1 there is <c>SkipLast</c> which should be used instead of this, if this project is ported to
+     * .NET standard 2.1 at some point in time.
+     * </remarks>
+     */
+    public static IEnumerable<T> Init<T>(this IEnumerable<T> self)
+    {
+        // Incredibly inefficient, see remark in above comments:
+        return self.Reverse().Skip(1).Reverse();
+    }
+
+    /**
      * Allows to get value from dictionary or a configurable default value if the given key is not present
      */
     public static V GetOrDefault<K, V>(this Dictionary<K, V> dictionary, K key, V defaultValue)

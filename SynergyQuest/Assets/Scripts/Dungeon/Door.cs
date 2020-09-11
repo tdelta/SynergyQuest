@@ -1,20 +1,28 @@
-using System;
+using System.Linq;
 using UnityEngine;
 
 /**
+ * <summary>
+ * Controls doors between dungeon rooms.
  * This behavior should be placed on every door of a dungeon room.
- * 
- * It records the ID of the door, which is used by the `DungeonLayout` class to determine which room lies behind the
- * door.
- * Also it provides a method to load this room. This behavior may be used in conjunction with the `ContactTrigger`
- * behavior to trigger this method when a player touches the door.
+ * </summary>
+ * <remarks>
+ * This behaviour records the ID of the door, which is used by the <see cref="DungeonLayout"/> class to determine which
+ * room lies behind the door.
+ * Also it provides a method to load this room. This behavior may be used in conjunction with the
+ * <see cref="ContactTrigger"/> behavior to trigger this method when a player touches the door.
  *
  * Furthermore, a transition type can be defined, which determines the transition animation to use when loading the next
- * room. See also the `TransitionController` and `SceneController` singletons.
+ * room. See also the <see cref="TransitionController"/> and <see cref="SceneController"/> singletons.
  *
- * A door can be open or closed. Objects using this behavior must also add a `Switchable` component to it.
+ * A door can be open or closed. Objects using this behavior must also add a <see cref="Switchable"/> component to it.
  * The door is closed, if there is a connected switch, which is not triggered.
  * If the door is closed, it does not transition to the next room and its sprite changes accordingly.
+ *
+ * If a player is currently undergoing the <see cref="ReviveMinigame"/> after dying, a door can also not be used to
+ * transition to the next scene, until all players are alive again. Instead, a speech bubble with a hint is displayed
+ * using <see cref="SpeechBubble"/>.
+ * </remarks>
  */
 [RequireComponent(typeof(Switchable), typeof(SpriteRenderer), typeof(AudioSource))]
 public class Door : MonoBehaviour
@@ -90,8 +98,30 @@ public class Door : MonoBehaviour
     {
         if (_open)
         {
-            PlayerDataKeeper.Instance.LastDoorDirection = this.direction;
-            DungeonLayout.Instance.LoadRoomUsingDoor(this);
+            var playersInRevivalMinigame = ReviveMinigame.GetPlayersInMinigame();
+
+            // Did some players die and are currently part of the ReviveMinigame?
+            // In this case, display a hint and dont switch scenes
+            if (playersInRevivalMinigame.Any())
+            {
+                // Get the name of all players in the minigame (and color their name in their player color)
+                var playerNames = playersInRevivalMinigame
+                    .Select(player => $"<color=#{ColorUtility.ToHtmlStringRGB(player.Color.ToRGB())}>{player.Data.name}</color>")
+                    .ToArray();
+                
+                var init = string.Join(", ", playerNames.Init());
+                var playerListString = init.Any() ? $"{init} and {playerNames.Last()}" : playerNames.Last();
+
+                // Display a speech bubble with a hint: All players must be alive to enter the next scene
+                SpeechBubble.Display(this.transform.position, $"Revive {playerListString} before leaving!", 3.0f);
+            }
+
+            // Otherwise we can switch scenes
+            else
+            {
+                PlayerDataKeeper.Instance.LastDoorDirection = this.direction;
+                DungeonLayout.Instance.LoadRoomUsingDoor(this);
+            }
         }
     }
 

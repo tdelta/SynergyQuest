@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 
 /**
@@ -48,5 +49,17 @@ public class ReviveMinigame : MonoBehaviour
             
             instance.Register(_player, transform.position);
         }
+    }
+
+    /**
+     * <summary>
+     * Returns an array of all players who died and who are currently undergoing the minigame (= they are ghosts).
+     * </summary>
+     */
+    public static PlayerController[] GetPlayersInMinigame()
+    {
+        return FindObjectsOfType<PlayerGhost>()
+            .Select(ghost => ghost.Player)
+            .ToArray();
     }
 }

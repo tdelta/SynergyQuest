@@ -9,8 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dd4dbea5189e48a2b8358176b1edfb3a, type: 3}
-  m_Name: SharedHUDSettings
+  m_Script: {fileID: 11500000, guid: 345533ccb5d645dea9b16b3e4b9f275e, type: 3}
+  m_Name: PrefabSettings
   m_EditorClassIdentifier: 
   sharedHudPrefab: {fileID: 168881653670607474, guid: a06b38bd593907720aaeba672f62a83e,
+    type: 3}
+  playerPrefab: {fileID: 4270148256400962765, guid: 13eca49289d50674d8f5a3616579a440,
+    type: 3}
+  speechBubblePrefab: {fileID: 1021851771959791967, guid: d0c51527aaa1eb4f08f5470d22b9d45f,
     type: 3}
