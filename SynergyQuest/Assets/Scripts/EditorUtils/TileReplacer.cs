@@ -28,6 +28,7 @@ public class TileReplacer : MonoBehaviour
          * </summary>
          */
         [HideInInspector] [SerializeField] private bool replacementWasPerformed = false;
+        public bool ReplacementWasPerformed => replacementWasPerformed;
 
         void Start()
         {
@@ -47,7 +48,7 @@ public class TileReplacer : MonoBehaviour
             
             // Let editor know, we are about to perform changes to an object, so that an Undo action is available to the
             // user
-            Undo.RecordObject(tilemap, "Adapted Tilemap to door.");
+            Undo.RecordObjects(new UnityEngine.Object[] {tilemap, this}, "Adapted Tilemap to door.");
             
             // In which cell of the tilemap are we located?
             var position = tilemap.WorldToCell(tileCenterPosition.position);
@@ -100,9 +101,12 @@ class TileReplacerEditor : Editor {
         DrawDefaultInspector();
         
         #if UNITY_EDITOR
+            var tileReplacer = (TileReplacer) target;
+            GUILayout.Toggle(tileReplacer.ReplacementWasPerformed, "Replacement has been performed.");
+                
             if (GUILayout.Button("Perform replacement (again)"))
             {
-                ((TileReplacer) target).PerformReplacement();
+                tileReplacer.PerformReplacement();
             }
         #endif
     }

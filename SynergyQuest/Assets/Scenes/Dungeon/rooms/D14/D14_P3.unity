@@ -443,6 +443,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: GateRight Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 7136383845380907358, guid: c6243668618dad348b6e0a3bed70c661,
+        type: 3}
+      propertyPath: replacementWasPerformed
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c6243668618dad348b6e0a3bed70c661, type: 3}
 --- !u!4 &231078036 stripped
@@ -2532,7 +2537,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 12
+  m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
 --- !u!1001 &1228378199
 PrefabInstance:
@@ -2706,6 +2711,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 3629302855894732112}
     m_Modifications:
+    - target: {fileID: 3122801544036306588, guid: 6e8f499b85e85ea598f2a46d9d2f22ab,
+        type: 3}
+      propertyPath: replacementWasPerformed
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6492791223661263312, guid: 6e8f499b85e85ea598f2a46d9d2f22ab,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -10480,7 +10490,7 @@ Transform:
   m_Children:
   - {fileID: 3629302855894732112}
   m_Father: {fileID: 0}
-  m_RootOrder: 14
+  m_RootOrder: 16
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!483693784 &5673619513599136809
 TilemapRenderer:

@@ -384,7 +384,7 @@ PrefabInstance:
     - target: {fileID: 8451649553765607551, guid: 896795d39b1254ea596a70557eeff80c,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.00000035762787
+      value: -0.00000023841858
       objectReference: {fileID: 0}
     - target: {fileID: 8451649553765607551, guid: 896795d39b1254ea596a70557eeff80c,
         type: 3}
@@ -445,6 +445,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 3629302855894732112}
     m_Modifications:
+    - target: {fileID: 3122801544036306588, guid: 6e8f499b85e85ea598f2a46d9d2f22ab,
+        type: 3}
+      propertyPath: replacementWasPerformed
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6492791223661263312, guid: 6e8f499b85e85ea598f2a46d9d2f22ab,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -892,7 +897,7 @@ PrefabInstance:
     - target: {fileID: 8153043136341992037, guid: f925feb2d83cd4fc6b55ecd04fed0ebb,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.00000035762787
+      value: -0.00000023841858
       objectReference: {fileID: 0}
     - target: {fileID: 8153043136341992037, guid: f925feb2d83cd4fc6b55ecd04fed0ebb,
         type: 3}
@@ -1033,6 +1038,11 @@ PrefabInstance:
       propertyPath: switches.Array.data[0]
       value: 
       objectReference: {fileID: 343129517711830943}
+    - target: {fileID: 5766270366607281290, guid: c0ce54a6e2e38b95ca27ba6896754d00,
+        type: 3}
+      propertyPath: replacementWasPerformed
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c0ce54a6e2e38b95ca27ba6896754d00, type: 3}
 --- !u!4 &1450578482 stripped
