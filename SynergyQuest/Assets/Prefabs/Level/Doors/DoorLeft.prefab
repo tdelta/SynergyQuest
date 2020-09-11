@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 6492791223661263314}
   - component: {fileID: 369577788392298309}
   - component: {fileID: -7548976898990533325}
+  - component: {fileID: 3122801544036306588}
   m_Layer: 10
   m_Name: DoorLeft
   m_TagString: Untagged
@@ -34,6 +35,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 7587271599717125924}
+  - {fileID: 9182907407554082090}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -118,6 +120,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   switches: []
   autoDiscoveredSwitchTags: []
+  noDeactivation: 0
 --- !u!114 &6492791223661263314
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -266,6 +269,64 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &3122801544036306588
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6492791223661263317}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f957429e92f43ceb1b77b0babf75134, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tilemap: {fileID: 0}
+  tileCenterPosition: {fileID: 9182907407554082090}
+  replacements:
+  - positionDelta: {x: 0, y: 1}
+    zPosition: 2
+    replacementTile: {fileID: 11400000, guid: b020ce4d30eb8807696e0100b31a695b, type: 2}
+  - positionDelta: {x: 0, y: 0}
+    zPosition: 2
+    replacementTile: {fileID: 11400000, guid: 11d914b583f3e0da48c23059e5d3aa86, type: 2}
+  - positionDelta: {x: 0, y: 1}
+    zPosition: 0
+    replacementTile: {fileID: 11400000, guid: 2e89d7b7c663645beb8791d4e182263f, type: 2}
+  - positionDelta: {x: 0, y: 0}
+    zPosition: 0
+    replacementTile: {fileID: 11400000, guid: 2e89d7b7c663645beb8791d4e182263f, type: 2}
+  replacementWasPerformed: 0
+--- !u!1 &7390813017268316637
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 9182907407554082090}
+  m_Layer: 10
+  m_Name: tileCenter
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &9182907407554082090
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7390813017268316637}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.5, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 6492791223661263312}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8068288195756245066
 GameObject:
   m_ObjectHideFlags: 0
@@ -311,4 +372,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetGroup: {fileID: 0}
   managedPreexistingPlayers: []
+  respawnAtSpawnerPosition: 0
   door: {fileID: 6492791223661263315}

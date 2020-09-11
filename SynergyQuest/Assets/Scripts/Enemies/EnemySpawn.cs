@@ -31,7 +31,6 @@ public class EnemySpawn : MonoBehaviour {
     private int _emptyRadius = 1;
     private float _totalSpawnTime = 1;
     private float _spawnTime;
-    private bool _spawnComplete;
     private Tilemap _tilemap;
     private Switch _switch;
     private System.Random _rand = new System.Random();
@@ -68,8 +67,6 @@ public class EnemySpawn : MonoBehaviour {
                 yield return new WaitForSeconds(_spawnTime);
             }
         }
-        
-        _spawnComplete = true;
     }
 
     void SpawnWithRandomPosition(EnemyController obj)

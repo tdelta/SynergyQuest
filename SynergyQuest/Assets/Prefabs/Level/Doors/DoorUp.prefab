@@ -1,5 +1,35 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3980101508582859069
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8352816944593828106}
+  m_Layer: 10
+  m_Name: tileCenter
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8352816944593828106
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3980101508582859069}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.5, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 8579012082855823832}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5477023575224088904
 GameObject:
   m_ObjectHideFlags: 0
@@ -45,6 +75,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetGroup: {fileID: 0}
   managedPreexistingPlayers: []
+  respawnAtSpawnerPosition: 0
   door: {fileID: 8579012082855823835}
 --- !u!1 &8579012082855823837
 GameObject:
@@ -61,6 +92,7 @@ GameObject:
   - component: {fileID: 8579012082855823834}
   - component: {fileID: 2897151793173817165}
   - component: {fileID: 1120973052600944343}
+  - component: {fileID: 3287507798450342772}
   m_Layer: 10
   m_Name: DoorUp
   m_TagString: Untagged
@@ -80,6 +112,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1607347332195902603}
+  - {fileID: 8352816944593828106}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -149,6 +182,7 @@ MonoBehaviour:
   transitionType: 2
   openSprite: {fileID: 21300000, guid: a10558efc39441496951b0fb8c80f755, type: 3}
   closedSprite: {fileID: 21300000, guid: 1ebc37e2cccb9d3a79e10586924ea3fc, type: 3}
+  direction: 0
 --- !u!114 &4026202368482378476
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -162,6 +196,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   switches: []
+  autoDiscoveredSwitchTags: []
+  noDeactivation: 0
 --- !u!114 &8579012082855823834
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -310,3 +346,31 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &3287507798450342772
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8579012082855823837}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f957429e92f43ceb1b77b0babf75134, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tilemap: {fileID: 0}
+  tileCenterPosition: {fileID: 8352816944593828106}
+  replacements:
+  - positionDelta: {x: 1, y: 0}
+    zPosition: 2
+    replacementTile: {fileID: 11400000, guid: e2da07090c63c2e038075e51413b3627, type: 2}
+  - positionDelta: {x: -1, y: 0}
+    zPosition: 2
+    replacementTile: {fileID: 11400000, guid: b020ce4d30eb8807696e0100b31a695b, type: 2}
+  - positionDelta: {x: 1, y: 0}
+    zPosition: 0
+    replacementTile: {fileID: 11400000, guid: 2e89d7b7c663645beb8791d4e182263f, type: 2}
+  - positionDelta: {x: -1, y: 0}
+    zPosition: 0
+    replacementTile: {fileID: 11400000, guid: 2e89d7b7c663645beb8791d4e182263f, type: 2}
+  originalTiles: []

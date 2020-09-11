@@ -12,6 +12,59 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: 2.078
       objectReference: {fileID: 0}
+    - target: {fileID: 3287507798450342772, guid: 3817f4eb6fc042ec2a795e7683d41038,
+        type: 3}
+      propertyPath: replacements.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3287507798450342772, guid: 3817f4eb6fc042ec2a795e7683d41038,
+        type: 3}
+      propertyPath: replacements.Array.data[0].positionDelta.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3287507798450342772, guid: 3817f4eb6fc042ec2a795e7683d41038,
+        type: 3}
+      propertyPath: replacements.Array.data[1].positionDelta.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3287507798450342772, guid: 3817f4eb6fc042ec2a795e7683d41038,
+        type: 3}
+      propertyPath: replacements.Array.data[1].replacementTile
+      value: 
+      objectReference: {fileID: 11400000, guid: 9319a9fc39a7d033694343971bd212c8,
+        type: 2}
+    - target: {fileID: 3287507798450342772, guid: 3817f4eb6fc042ec2a795e7683d41038,
+        type: 3}
+      propertyPath: replacements.Array.data[0].replacementTile
+      value: 
+      objectReference: {fileID: 11400000, guid: 2c7ff12f59903debfb73cca0067ba05b,
+        type: 2}
+    - target: {fileID: 3287507798450342772, guid: 3817f4eb6fc042ec2a795e7683d41038,
+        type: 3}
+      propertyPath: replacements.Array.data[2].positionDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3287507798450342772, guid: 3817f4eb6fc042ec2a795e7683d41038,
+        type: 3}
+      propertyPath: replacements.Array.data[2].positionDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3287507798450342772, guid: 3817f4eb6fc042ec2a795e7683d41038,
+        type: 3}
+      propertyPath: replacements.Array.data[2].zPosition
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3287507798450342772, guid: 3817f4eb6fc042ec2a795e7683d41038,
+        type: 3}
+      propertyPath: replacements.Array.data[2].replacementTile
+      value: 
+      objectReference: {fileID: 11400000, guid: 2e89d7b7c663645beb8791d4e182263f,
+        type: 2}
+    - target: {fileID: 8352816944593828106, guid: 3817f4eb6fc042ec2a795e7683d41038,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8579012082855823832, guid: 3817f4eb6fc042ec2a795e7683d41038,
         type: 3}
       propertyPath: m_LocalPosition.x

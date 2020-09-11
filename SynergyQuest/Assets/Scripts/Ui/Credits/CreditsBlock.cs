@@ -10,12 +10,12 @@ using WebSocketSharp;
  */
 public class CreditsBlock : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI authorValue;
-    [SerializeField] private TextMeshProUGUI fileValue;
-    [SerializeField] private TextMeshProUGUI licenseValue;
-    [SerializeField] private TextMeshProUGUI descriptionValue;
-    [SerializeField] private TextMeshProUGUI modificationsValue;
-    [SerializeField] private TextMeshProUGUI linkValue;
+    [SerializeField] private TextMeshProUGUI authorValue = default;
+    [SerializeField] private TextMeshProUGUI fileValue = default;
+    [SerializeField] private TextMeshProUGUI licenseValue = default;
+    [SerializeField] private TextMeshProUGUI descriptionValue = default;
+    [SerializeField] private TextMeshProUGUI modificationsValue = default;
+    [SerializeField] private TextMeshProUGUI linkValue = default;
 
     public void Init(string filePath, CreditsEntry entry)
     {
