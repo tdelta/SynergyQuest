@@ -1,0 +1,21 @@
+{
+  "short_name": "Controller",
+  "name": "Mobile Controller for Multiplayer Dungeon Game",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/ico"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "orientation": "landscape",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
