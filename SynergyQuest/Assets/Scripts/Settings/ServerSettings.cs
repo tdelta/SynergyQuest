@@ -12,6 +12,7 @@ using UnityEngine;
  *     <item><description>A HTTP(S) server serving the controller web app (production only, in debug mode, an external web server suited for debugging should be used).</description></item>
  *     <item><description>A websocket service which can be used to communicate controller input and settings</description></item>
  *     <item><description>A websocket service which can be used to communicate diagnostic information about the game state.</description></item>
+ *     <item><description>A HTTP server serving a special web app which guides users through SSL warnings which are caused when using self-signed certificates</description></item>
  * </list>
  * </summary>
  * <seealso cref="ScriptableObjectSingleton{T}"/>
@@ -19,20 +20,22 @@ using UnityEngine;
  * <seealso cref="ControllerServer"/>
  * <seealso cref="ControllerConnection"/>
  * <seealso cref="DiagnosticsConnection"/>.
+ * <seealso cref="SslWarningInfoServer"/>.
  */
 [CreateAssetMenu(fileName = "ServerSettings", menuName = "ScriptableObjects/ServerSettings")]
 public class ServerSettings: ScriptableObjectSingleton<ServerSettings>
 {
     /**
      * <summary>
-     * Port on which the HTTP server shall be served.
+     * Port on which the HTTP(S) server for the main controller web app shall run.
      * </summary>
      * <seealso cref="BaseServer"/>
      */
-    public int HttpPort => httpPort;
+    public int ControllerAppPort => controllerAppPort;
+    [Header("Controller Web App Server Settings")]
     [SerializeField]
-    private int httpPort = 8000;
-
+    private int controllerAppPort = 8000;
+    
     /**
      * <summary>
      * Port on which the websocket services shall be served.
@@ -47,18 +50,18 @@ public class ServerSettings: ScriptableObjectSingleton<ServerSettings>
     
     /**
      * <summary>
-     * Path of the web-based controller app which is served by `BaseServer` in production mode.
+     * Path of the web-based controller app which is served by <see cref="BaseServer"/> in production mode.
      * Build the controller app with `yarn build` and ship the resulting contents with the game at the path given here.
      * </summary>
      * <seealso cref="BaseServer"/>
      * <seealso cref="RunHttpServerOnlyInProductionMode"/>
      */
-    public string DocumentRoot => documentRoot;
-    [SerializeField] private string documentRoot = "controller-app";
+    public string ControllerAppDocumentRoot => controllerAppDocumentRoot;
+    [SerializeField] private string controllerAppDocumentRoot = "controller-app";
     
     /**
      * <summary>
-     * When being shipped, the game of course has to serve the controller web app itself.
+     * When being shipped, the game of course has to serve the main controller web app itself.
      * However, during debugging, it is oftentimes advisable to use an external web server suited to this task, e.g.
      * the one provided by <c>react-scripts</c>.
      *
@@ -70,7 +73,7 @@ public class ServerSettings: ScriptableObjectSingleton<ServerSettings>
      */
     public bool RunHttpServerOnlyInProductionMode => runHttpServerOnlyInProductionMode;
     [SerializeField] private bool runHttpServerOnlyInProductionMode = true;
-
+    
     /**
      * <summary>
      * The remote controllers require the web app to be served over SSL encrypted connections.
@@ -157,4 +160,45 @@ public class ServerSettings: ScriptableObjectSingleton<ServerSettings>
     #pragma warning restore 0414
  
     [SerializeField] private string pfxPassword = "";
+    
+    /**
+     * <summary>
+     * Port on which the HTTP server for <see cref="SslWarningInfoServer"/> shall run.
+     * </summary>
+     * <seealso cref="SslWarningInfoServer"/>
+     */
+    public int SslWarningInfoAppPort => sslWarningInfoAppPort;
+    [Header("SSL Warning Info Web App Server Settings")]
+    [SerializeField]
+    private int sslWarningInfoAppPort = 8080;
+
+    /**
+     * <summary>
+     * Path to a production build of the "ssl-warning-info" web app which guides users through SSL warnings caused by
+     * self-signed certificates. Those warnings can appear when serving the main controller web app through SSL.
+     * 
+     * The "ssl-warning-info" web app is served by <see cref="SslWarningInfoServer"/> in production mode.
+     * Build the "ssl-warning-info" app with `yarn build` and ship the resulting contents with the game at the path
+     * given here.
+     * </summary>
+     * <seealso cref="SslWarningInfoAppPort"/>
+     */
+    public string SslWarningInfoDocumentRoot => sslWarningInfoDocumentRoot;
+    [SerializeField] private string sslWarningInfoDocumentRoot = "ssl-warning-info";
+
+    /**
+     * <summary>
+     * Whether the "ssl-warning-info" web app Whould only be served in production mode.
+     * If <c>false</c>, it is also served in debug mode.
+     * </summary>
+     * <remarks>
+     * The "ssl-warning-info" web app guides users through SSL warnings caused by
+     * self-signed certificates. Those warnings can appear when serving the main controller web app through SSL.
+     * 
+     * The "ssl-warning-info" web app is served by <see cref="SslWarningInfoServer"/>.
+     * </remarks>
+     * <seealso cref="SslWarningInfoAppPort"/>
+     */
+    public bool RunSslWarningInfoAppOnlyInProductionMode => runSslWarningInfoAppOnlyInProductionMode;
+    [SerializeField] private bool runSslWarningInfoAppOnlyInProductionMode= true;
 }

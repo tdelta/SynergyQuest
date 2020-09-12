@@ -4,7 +4,10 @@ This folder contains the projects to build the controller web app.
 
 * [controller-client-lib](./controller-client-lib) contains the code to communicate with the main game
 * [sensor-input-lib](./sensor-input-lib) abstracts over the 3D orientation of a phone and converts it into 2D directions which can be used as input to the game
-* [controller-app](./controller-app) is the actual web app built in React and depends on the two libraries above
+* [controller-app](./controller-app) is the actual main controller web app built in React and depends on the two libraries above
+* [ssl-warning-info](./ssl-warning-info) is a small React web app which guides users through SSL certificate errors.
+  This one is needed, since usually self-signed certificates must be used when serving the main controller web app
+  over SSL.
 
 Furthermore, though the game contains a http server to serve the web app, it is rather
 inconvenient to use during development. Hence, by default, the http server is disabled when
@@ -13,13 +16,13 @@ instead which is more suited for development.
 Still, the game needs to serve websockets so that the phone controllers can establish a connection to it.
 
 Thus, a proxy program at [./proxy](./proxy) is included in this repository.
-When being run, it serves a web server at the normal game port
+When being run, it serves a web server at the normal controller app port
 ([https://localhost:8000](https://localhost:8000)) and redirects all "normal" HTTP requests to
 the React server, while redirecting websocket requests to the game.
 
 The typical web app development workflow is hence as follows:
 
-1. Run [controller-client-lib](./controller-client-lib)
+1. Run [controller-app](./controller-app)
 2. Run the main game in the Unity editor
 3. Run the [proxy](./proxy)
 4. Start developing

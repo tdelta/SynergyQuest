@@ -184,9 +184,7 @@ class App extends React.Component<{}, AppState> {
       </Carousel>
     );
 
-    this.renderedPages = carousel.props.children.filter(
-      (x: any) => x
-    ).length;
+    this.renderedPages = carousel.props.children.filter((x: any) => x).length;
 
     return (
       <>

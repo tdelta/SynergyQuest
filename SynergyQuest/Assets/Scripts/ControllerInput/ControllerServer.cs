@@ -6,20 +6,24 @@ using WebSocketSharp.Net;
 using WebSocketSharp.Server;
 
 /**
+ * <summary>
  * This class accepts (websocket) connections of game controllers and
  * manages these connections.
- * For every fully connected controller, a `ControllerInput` instance is
- * emitted by the `OnNewController` event of this class.
+ * It also servers the main controller web app using <see cref="BaseServer"/>.
+ * </summary>
+ * <remarks>
+ * For every fully connected controller, a <see cref="ControllerInput"/> instance is
+ * emitted by the <see cref="OnNewController"/> event of this class.
  * You should listen to the event and use the produced input instances in your
  * game logic since they give access to the individual game controllers
  * on a high-level.
  *
  * Furthermore, a websocket service is provided offering diagnostic information
- * about the game, see also the `DiagnosticsConnection` class.
+ * about the game, see also the <see cref="DiagnosticsConnection"/> class.
  * 
  * Internally, this class uses a websocket connection to the controller over
  * which JSON messages are exchanged. For the format of the JSON messages,
- * see the `Message` class hierarchy and the `DiagnosticsMessage` class.
+ * see the <see cref="Message"/> class hierarchy and the <see cref="DiagnosticsMessage"/> class.
  * Since the native C# WebSocket functionalities which are required for
  * servers (a compatible HTTPListener implementation) do not ship with the .NET
  * runtime of the current version of Unity (at least not on Linux), we use
@@ -28,6 +32,7 @@ using WebSocketSharp.Server;
  * You should ensure that the Update function of this script is
  * executed before all other ones in the Script Execution Order project
  * settings, but that should have already been done.
+ * </remarks>
  */
 public class ControllerServer : BehaviourSingleton<ControllerServer>
 {

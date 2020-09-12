@@ -12,7 +12,8 @@ using WebSocketSharp.Server;
  * <summary>
  * Implements a local HTTP(S) server which serves websockets and the web based controller software.
  * Remember to call <c>Start</c> and <c>Stop</c> on an instance of this class.
- *
+ * </summary>
+ * <remarks>
  * Most settings are controlled by the <c>ServerSettings</c> scriptable object, e.g.
  * 
  * * Whether SSL is used and where the certificate is located
@@ -31,7 +32,11 @@ using WebSocketSharp.Server;
  *
  * Also be aware, that regarding websockets, this class only provides access to the websocket-sharp framework for
  * implementing websockets. The websockets are actually managed by the <c>ControllerServer</c> class.
- * </summary>
+ *
+ * Furthermore, when using self-signed certificates with this server, this might generate browser warnings.
+ * To guide users through this process, a special web app which informs about these warnings is also served in
+ * production mode by <see cref="SslWarningInfoServer"/>.
+ * </remarks>
  */
 public class BaseServer
 {
@@ -90,7 +95,7 @@ public class BaseServer
 
         // Determine the port to use. If we are running in websocket-only mode, we use a different port so that the
         // replacement HTTP server for development can listen to the main port.
-        _usedPort = runHttpServer ? ServerSettings.Instance.HttpPort : ServerSettings.Instance.WebsocketPort;
+        _usedPort = runHttpServer ? ServerSettings.Instance.ControllerAppPort : ServerSettings.Instance.WebsocketPort;
 
         // Construct the server URL from the above flags
         // E.g. https://0.0.0.0:8000 or ws://0.0.0.0:4242
@@ -120,7 +125,7 @@ public class BaseServer
         else
         {
             var documentRoot =
-                $"{PathUtils.GetInstallDirectory()}/{ServerSettings.Instance.DocumentRoot}";
+                $"{PathUtils.GetInstallDirectory()}/{ServerSettings.Instance.ControllerAppDocumentRoot}";
 
             Log(
                 $"Serving websockets and web content on single port. Using the following document root: {documentRoot}");
@@ -145,14 +150,14 @@ public class BaseServer
 
     public void Start()
     {
-        Log($"Starting server on {_url}...");
+        Log($"Starting main server on {_url}...");
         _wss?.Start();
         _httpServerBackend?.Start();
     }
 
     public void Stop()
     {
-        Log($"Stopping server...");
+        Log($"Stopping main server...");
         _wss?.Stop();
         _httpServerBackend?.Stop();
     }

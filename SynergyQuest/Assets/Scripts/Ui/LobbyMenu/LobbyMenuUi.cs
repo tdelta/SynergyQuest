@@ -10,13 +10,17 @@ using ZXing.QrCode;
 
 /**
  * <summary>
- * Manages the LobbyMenu scene which requires players join before the game can be started.
- * It displays the address of the website which serves the controller client software.
+ * Manages the LobbyMenu scene which requires players to join before the game can be started.
+ * </summary>
+ * <remarks>
+ * It displays the address of the website which serves the main controller web app.
  * It also displays this address as a QR code.
+ * If the "ssl-warning-info" app should be run (see <see cref="SslWarningInfoServer"/>) it displays its
+ * address instead. This web app will eventually redirect to the main controller web app.
  *
  * Since there can be multiple local network addresses, at first it only displays one of them.
  * After a few seconds the users get the option to show all addresses.
- * </summary>
+ * </remarks>
  */
 public class LobbyMenuUi : MonoBehaviour
 {
@@ -293,11 +297,27 @@ public class LobbyMenuUi : MonoBehaviour
     }
 
     /**
-     * Given a IP address, return the address where the web page resides which serves the controller client software.
+     * Given a local IP address, return the address where the web page resides which serves the main controller web app
+     * or the "ssl-warning-info" web app, see class description.
      */
     private string BuildAddress(string ip)
     {
-        return $"{ControllerServer.Instance.UsedProtocol}://{ip}:{ControllerServer.Instance.UsedPort}";
+        string usedProtocol;
+        string usedPort;
+        
+        if (SslWarningInfoServer.Instance.MustBeUsed())
+        {
+            usedProtocol = SslWarningInfoServer.Instance.UsedProtocol;
+            usedPort = SslWarningInfoServer.Instance.UsedPort.ToString();
+        }
+
+        else
+        {
+            usedProtocol = ControllerServer.Instance.UsedProtocol;
+            usedPort = ControllerServer.Instance.UsedPort.ToString();
+        }
+        
+        return $"{usedProtocol}://{ip}:{usedPort}";
     }
     
     /**
