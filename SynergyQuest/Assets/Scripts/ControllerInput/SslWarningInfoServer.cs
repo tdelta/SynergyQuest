@@ -89,10 +89,10 @@ public class SslWarningInfoServer: BehaviourSingleton<SslWarningInfoServer>
      */
     public bool MustBeUsed()
     {
-        // If the ssl-warning-info web app shall only be served in production mode, then this server shall only be
-        // running if we are executing in debug mode.
-        // Otherwise, always execute it:
-        return !ServerSettings.Instance.RunSslWarningInfoAppOnlyInProductionMode | DebugSettings.Instance.DebugMode;
+        // If the ssl-warning-info web app shall only be served in production mode, then this server shall not
+        // run if we are executing in debug mode.
+        // If we are executing in production mode, it must run.
+        return !DebugSettings.Instance.DebugMode | !ServerSettings.Instance.RunSslWarningInfoAppOnlyInProductionMode;
     }
     
     public SslWarningInfoServer()
