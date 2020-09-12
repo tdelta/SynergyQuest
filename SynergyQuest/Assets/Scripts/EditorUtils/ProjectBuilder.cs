@@ -20,11 +20,45 @@ using Debug = UnityEngine.Debug;
 public class ProjectBuilder
 {
     // === Paths and other constants needed for building ===
-    #if UNITY_EDITOR_WIN
-        private const string YarnExecutable = "yarn.exe"
-    #else
-        private const string YarnExecutable = "yarn";
-    #endif
+    private static string YarnExecutable {
+        get {
+            #if UNITY_EDITOR_WIN
+                // try to find yarn on PATH
+                string yarnExecutable = null;
+                
+                var envDir = Environment.GetEnvironmentVariable("PATH");
+                foreach (var path in envDir.Split(Path.PathSeparator))
+                {
+                    var fullPath = Path.Combine(path, "yarn.cmd");
+
+                    if (File.Exists(fullPath))
+                    {
+                        yarnExecutable = fullPath;
+                    }
+                }
+
+                if (yarnExecutable == null)
+                {
+                    var errorMsg =
+                        "Can not find yarn. Please install yarn so that it is available on the system PATH. See also https://classic.yarnpkg.com/en/docs/install/#windows-stable";
+
+                    EditorUtility.DisplayDialog(
+                        "yarn not found",
+                        errorMsg,
+                        "Ok"
+                    );
+                    
+                    throw new ApplicationException(
+                        errorMsg
+                    );
+                }
+
+                return yarnExecutable;
+            #else
+                return "yarn";
+            #endif
+        }
+    }
     
     // ReSharper disable once PossibleNullReferenceException
     private static readonly Lazy<string> ProjectDir = new Lazy<string>(() => Directory.GetParent(Application.dataPath).Parent.FullName);
@@ -109,7 +143,7 @@ public class ProjectBuilder
             
             CopyCertificateFiles(WindowsBuildDirectory.Value);
             
-            CopyReadme(LinuxBuildDirectory.Value);
+            CopyReadme(WindowsBuildDirectory.Value);
         }
 
         catch
@@ -299,7 +333,8 @@ public class ProjectBuilder
             FileName = executable,
             Arguments = args,
             UseShellExecute = false,
-            RedirectStandardError = true
+            RedirectStandardError = true,
+            WindowStyle = ProcessWindowStyle.Hidden,
         };
 
         process.StartInfo = startInfo;
