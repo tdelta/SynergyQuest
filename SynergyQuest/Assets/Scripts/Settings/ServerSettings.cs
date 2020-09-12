@@ -127,9 +127,9 @@ public class ServerSettings: ScriptableObjectSingleton<ServerSettings>
     {
         // FIXME: Eventually this path has to be adjusted to use backslashes in windows systems!
         #if UNITY_EDITOR
-        var pathToCertificatePfx = pathToCertificatePfxForEditorMode;
+        var pathToCertificatePfx = PathToCertificatePfxForEditorMode;
         #else
-        var pathToCertificatePfx = pathToCertificatePfxForBuildMode;
+        var pathToCertificatePfx = PathToCertificatePfxForBuildMode;
         #endif
         pathToCertificatePfx = $"{PathUtils.GetInstallDirectory()}/{pathToCertificatePfx}";
      
@@ -150,12 +150,14 @@ public class ServerSettings: ScriptableObjectSingleton<ServerSettings>
      * This path will be used to locate the file when running in editor mode.
      */
     // ReSharper disable once NotAccessedField.Local
+    public string PathToCertificatePfxForEditorMode => pathToCertificatePfxForEditorMode;
     [SerializeField] private string pathToCertificatePfxForEditorMode = "../Certificates/generated/server.pfx";
     /**
      * Certificates must be provided as a PFX file.
      * This path will be used to locate the file when running in the Unity Player (Release Build).
      */
     // ReSharper disable once NotAccessedField.Local
+    public string PathToCertificatePfxForBuildMode => pathToCertificatePfxForBuildMode;
     [SerializeField] private string pathToCertificatePfxForBuildMode = "Certificates/server.pfx";
     #pragma warning restore 0414
  

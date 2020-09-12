@@ -19,7 +19,7 @@ public class PrefabSettings : ScriptableObjectSingleton<PrefabSettings>
      * <seealso cref="SharedHUD"/>
      */
     public SharedHUD SharedHudPrefab => sharedHudPrefab;
-    [SerializeField] private SharedHUD sharedHudPrefab;
+    [SerializeField] private SharedHUD sharedHudPrefab = default;
     
     /**
      * <summary>

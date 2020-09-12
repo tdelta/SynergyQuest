@@ -88,6 +88,7 @@ public class TileReplacement
     public TileBase replacementTile = default;
 }
 
+#if UNITY_EDITOR
 /**
  * <summary>
  * Custom inspector GUI for the <see cref="TileReplacer"/> behaviour.
@@ -100,14 +101,13 @@ class TileReplacerEditor : Editor {
     {
         DrawDefaultInspector();
         
-        #if UNITY_EDITOR
-            var tileReplacer = (TileReplacer) target;
-            GUILayout.Toggle(tileReplacer.ReplacementWasPerformed, "Replacement has been performed.");
-                
-            if (GUILayout.Button("Perform replacement (again)"))
-            {
-                tileReplacer.PerformReplacement();
-            }
-        #endif
+        var tileReplacer = (TileReplacer) target;
+        GUILayout.Toggle(tileReplacer.ReplacementWasPerformed, "Replacement has been performed.");
+            
+        if (GUILayout.Button("Perform replacement (again)"))
+        {
+            tileReplacer.PerformReplacement();
+        }
     }
 }
+#endif
