@@ -4,14 +4,30 @@ using UnityEngine;
 public class CoinGaugeController : MonoBehaviour
 {
     // ToDo: Adjust height, so that lifeGauge and goldGauge can be displayed concurrently!
-    
+
+    [SerializeField] private Renderer[] renderers = default;
+
     private TextMesh _goldText;
     private PlayerController _player;
+
+    private bool _subscribedToGoldCounterChange = false;
+
+    private void SetVisiblility(bool visible)
+    {
+        foreach (var renderer in renderers)
+        {
+            renderer.enabled = visible;
+        }
+    }
 
     public void Init(PlayerController player)
     {
         _player = player;
-        _player.Data.OnGoldCounterChanged += DrawGoldCounter;
+        if (!_subscribedToGoldCounterChange)
+        {
+            _player.Data.OnGoldCounterChanged += DrawGoldCounter;
+            _subscribedToGoldCounterChange = true;
+        }
     }
 
     private void Awake()
@@ -19,16 +35,31 @@ public class CoinGaugeController : MonoBehaviour
         _goldText = this.gameObject.transform.GetChild(0).gameObject.GetComponent<TextMesh>();
     }
 
-    private void OnDestroy()
+    private void Start()
     {
-        if (_player != null)
+        SetVisiblility(false);
+    }
+
+    private void OnEnable()
+    {
+        if (!_subscribedToGoldCounterChange && _player != null)
         {
-            _player.Data.OnGoldCounterChanged -= DrawGoldCounter;
+            _player.Data.OnGoldCounterChanged += DrawGoldCounter;
+            _subscribedToGoldCounterChange = true;
         }
     }
 
-    public void DrawGoldCounter(int gold) {
-        this.gameObject.SetActive(true);
+    private void OnDisable()
+    {
+        if (_subscribedToGoldCounterChange && _player != null)
+        {
+            _player.Data.OnGoldCounterChanged -= DrawGoldCounter;
+            _subscribedToGoldCounterChange = false;
+        }
+    }
+
+    private void DrawGoldCounter(int gold) {
+        SetVisiblility(true);
 
         _goldText.text = gold.ToString();
         StartCoroutine(DeactiveCoroutine());
@@ -36,7 +67,7 @@ public class CoinGaugeController : MonoBehaviour
 
     IEnumerator DeactiveCoroutine() {
         yield return new WaitForSeconds(2f);
-        this.gameObject.SetActive(false);
+        SetVisiblility(false);
     }
 }
 
