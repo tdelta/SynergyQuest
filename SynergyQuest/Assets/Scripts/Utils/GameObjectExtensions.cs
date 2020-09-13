@@ -118,7 +118,12 @@ public static class GameObjectExtensions
                 if (float.IsNaN(radius))
                 {
                     radius = 0.0f;
-                    if (self.GetComponent<Collider2D>() is Collider2D collider && collider != null)
+                    if (self.TryGetComponent(out PlayerController _))
+                    {
+                        radius = CameraSettings.Instance.PlayerInclusionRadius;
+                    }
+                    
+                    else if (self.TryGetComponent(out Collider2D collider))
                     {
                         var bounds = collider.bounds;
                         radius = Mathf.Max(bounds.extents.x, bounds.extents.y);
