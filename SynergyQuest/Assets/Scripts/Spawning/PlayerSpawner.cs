@@ -157,7 +157,7 @@ public abstract class PlayerSpawner : MonoBehaviour
     {
         if (targetGroup != null)
         {
-            targetGroup.AddMember(player.transform, 1, 1);
+            targetGroup.AddMember(player.transform, 1, CameraSettings.Instance.PlayerInclusionRadius);
         }
 
         if (respawnAtSpawnerPosition)
