@@ -77,9 +77,10 @@ section 7 of GPLv3 apply. In short (informal):
   [Watabou](http://www.watabou.ru/) from the
   [Shattered Pixel Dungeon](https://github.com/00-Evan/shattered-pixel-dungeon)
   and [Pixel Dungeon](https://github.com/watabou/pixel-dungeon) games
-  which are licensed under GPLv3. Similar permission as the above has been
+  which are licensed under GPLv3. Similar permission as the above have been
   granted by 00-Evan and Watabou to convey these assets with the Unity engine
   when combined with this work.
+  Please see the complete note regarding their permission in [LICENSE.md](./LICENSE.md).
 
-Details see [LICENSE.md].
+Details see [LICENSE.md](./LICENSE.md).
 
