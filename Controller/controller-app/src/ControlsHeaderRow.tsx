@@ -5,7 +5,11 @@ import PauseSymbol from './gfx/pause.png';
 
 import * as consts from './consts';
 
-import { faCompress, faExpand } from '@fortawesome/free-solid-svg-icons';
+import {
+  faCompress,
+  faExpand,
+  faMapSigns,
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { boundClass } from 'autobind-decorator';
 
@@ -56,26 +60,27 @@ export class ControlsHeaderRow extends React.Component<
               <img className='pauseSymbol' alt='Pause Game' src={PauseSymbol} />
             </button>
           )}
-          {this.props.canExit && (
-            <button
-              className='controllerMenuItem text'
-              style={{
-                backgroundColor: consts.buttonStyles[Button.Exit].dark,
-                borderColor: consts.buttonStyles[Button.Exit].light,
-              }}
-              onMouseDown={_ => this.props.client.setButton(Button.Exit, true)}
-              onMouseUp={_ => this.props.client.setButton(Button.Exit, false)}
-              onTouchStart={_ => this.props.client.setButton(Button.Exit, true)}
-              onTouchEnd={_ => this.props.client.setButton(Button.Exit, false)}
-              onTouchCancel={_ =>
-                this.props.client.setButton(Button.Exit, false)
-              }
-            >
-              Exit Platform
-            </button>
-          )}
+          <button
+            className='controllerMenuItem text'
+            style={{
+              backgroundColor: consts.buttonStyles[Button.Exit].dark,
+              borderColor: consts.buttonStyles[Button.Exit].light,
+            }}
+            onMouseDown={_ => this.props.client.setButton(Button.Exit, true)}
+            onMouseUp={_ => this.props.client.setButton(Button.Exit, false)}
+            onTouchStart={_ => this.props.client.setButton(Button.Exit, true)}
+            onTouchEnd={_ => this.props.client.setButton(Button.Exit, false)}
+            onTouchCancel={_ => this.props.client.setButton(Button.Exit, false)}
+          >
+            Exit Platform
+          </button>
         </div>
-        <div id='fullscreenButton' onClick={this.props.toggleFullscreen}>
+        {this.props.canShowMap && (
+          <div className='iconButton' onClick={this.props.showMap}>
+            <FontAwesomeIcon icon={faMapSigns} />
+          </div>
+        )}
+        <div className='iconButton' onClick={this.props.toggleFullscreen}>
           <FontAwesomeIcon
             icon={this.props.isFullscreen ? faCompress : faExpand}
           />
@@ -94,5 +99,7 @@ interface ControlsHeaderRowProps {
   playerColor: consts.ColorData;
   canPause: boolean;
   pause: () => void;
+  canShowMap: boolean;
+  showMap: () => void;
   canExit: boolean;
 }

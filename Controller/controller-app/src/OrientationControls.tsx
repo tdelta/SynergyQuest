@@ -111,6 +111,8 @@ export class OrientationControls extends React.Component<
             playerColor={this.props.playerColor}
             canPause={this.props.canPause}
             pause={this.props.pause}
+            canShowMap={this.props.canShowMap}
+            showMap={this.props.showMap}
             canExit={this.props.enabledButtons.has(Button.Exit)}
           />
         </div>
@@ -158,5 +160,7 @@ interface OrientationControlsProbs {
   enabledButtons: Set<Button>;
   canPause: boolean;
   pause: () => void;
+  canShowMap: boolean;
+  showMap: () => void;
   playerInfo?: PlayerInfo;
 }

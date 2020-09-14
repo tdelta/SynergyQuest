@@ -167,6 +167,8 @@ export class NormalControls extends React.Component<
                     playerColor={this.props.playerColor}
                     canPause={this.props.canPause}
                     pause={this.props.pause}
+                    canShowMap={this.props.canShowMap}
+                    showMap={this.props.showMap}
                     canExit={false}
                   />
                 </div>
@@ -195,5 +197,7 @@ interface NormalControlsProbs {
   playerColor: consts.ColorData;
   canPause: boolean;
   pause: () => void;
+  canShowMap: boolean;
+  showMap: () => void;
   playerInfo?: PlayerInfo;
 }

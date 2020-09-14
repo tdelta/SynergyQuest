@@ -1974,7 +1974,7 @@ MonoBehaviour:
   m_PreferredWidth: -1
   m_PreferredHeight: -1
   m_FlexibleWidth: -1
-  m_FlexibleHeight: -1
+  m_FlexibleHeight: 0
   m_LayoutPriority: 1
 --- !u!1 &6209796806445507702
 GameObject:
@@ -2882,12 +2882,12 @@ PrefabInstance:
     - target: {fileID: 3036040520192316618, guid: 80ae46ac8aa9150a2b6018987156821f,
         type: 3}
       propertyPath: cellSize.x
-      value: 765.07745
+      value: 728.6918
       objectReference: {fileID: 0}
     - target: {fileID: 3036040520192316618, guid: 80ae46ac8aa9150a2b6018987156821f,
         type: 3}
       propertyPath: cellSize.y
-      value: 294.30875
+      value: 318.85013
       objectReference: {fileID: 0}
     - target: {fileID: 3036040520192316623, guid: 80ae46ac8aa9150a2b6018987156821f,
         type: 3}

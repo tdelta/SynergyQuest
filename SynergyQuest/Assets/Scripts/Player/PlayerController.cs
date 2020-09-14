@@ -232,7 +232,6 @@ public class PlayerController : EntityController
             _playerState = PlayerState.attacking;
             Attack();
         }
-
     }
     
     private void SetShirtColor(PlayerColor color)
