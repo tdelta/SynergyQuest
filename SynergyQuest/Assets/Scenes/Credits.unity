@@ -153,10 +153,10 @@ RectTransform:
   m_Father: {fileID: 299139286}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 887.8709, y: -22.9753}
-  m_SizeDelta: {x: 1775.7418, y: 29.9506}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &95687928
 MonoBehaviour:
@@ -205,7 +205,7 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 34.2
+  m_fontSize: 36.7
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -359,6 +359,7 @@ GameObject:
   - component: {fileID: 338622097}
   - component: {fileID: 338622100}
   - component: {fileID: 338622099}
+  - component: {fileID: 338622098}
   m_Layer: 5
   m_Name: Text (TMP) (1)
   m_TagString: Untagged
@@ -385,6 +386,18 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 1000}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &338622098
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 338622096}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2d9c579683c4517b09bde239cd6aaa3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &338622099
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -411,37 +424,38 @@ MonoBehaviour:
     has been programmed by
 
 
-    * Jonas Belouadi (github.com/potamides)
-
-    * Marc
-    Arnold (github.com/m-arnold)
-
-    * Martin Kerscher (github.com/didge-rydu)
+    * Jonas Belouadi (<u><link="https://github.com/potamides">github.com/potamides</link></u>)
 
     *
-    Anton Haubner (github.com/ahbnr)
+    Marc Arnold (<u><link="https://github.com/m-arnold">github.com/m-arnold</link></u>)
+
+    *
+    Martin Kerscher (<u><link="https://github.com/didge-rydu">github.com/didge-rydu</link></u>)
+
+    *
+    Anton Haubner (<u><link="https://github.com/ahbnr">github.com/ahbnr</link></u>)
 
 
-    using the Unity engine: unity.com
+    using
+    the Unity engine: unity.com
 
 
-    Special
-    thanks to Evan Debenham a.k.a. 00-Evan and Oleg Dolya a.k.a. Watabou for allowing
-    us to use the art of "Shattered Pixel Dungeon" and "Pixel Dungeon" as main art
-    for our game:
+    Special thanks to Evan Debenham a.k.a. 00-Evan
+    and Oleg Dolya a.k.a. Watabou for allowing us to use the art of "Shattered Pixel
+    Dungeon" and "Pixel Dungeon" as main art for our game:
 
 
     * shatteredpixel.com
 
-    * pixeldungeon.watabou.ru
+    *
+    pixeldungeon.watabou.ru
 
 
-    TODO:
-    Credit used C# libraries
+    TODO: Credit used C# libraries
 
 
-    Additionally, graphics, music and sound of the
-    following external authors has also been included:'
+    Additionally,
+    graphics, music and sound of the following external authors has also been included:'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 25a49c1c0963dc8f6b3c80bb186d4a78, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: 0fa285df202b2c22a8f87734e0f735a6, type: 2}
@@ -469,7 +483,7 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 48.6
+  m_fontSize: 47.1
   m_fontSizeBase: 50
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -514,8 +528,8 @@ MonoBehaviour:
     spriteCount: 0
     spaceCount: 101
     wordCount: 109
-    linkCount: 0
-    lineCount: 21
+    linkCount: 4
+    lineCount: 22
     pageCount: 1
     materialCount: 1
   m_isUsingLegacyAnimationComponent: 0
@@ -1715,7 +1729,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1432961791}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.58719635
+  m_Size: 0.6209926
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -1955,10 +1969,10 @@ RectTransform:
   m_Father: {fileID: 701968876}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 887.8709, y: -22.9753}
-  m_SizeDelta: {x: 1775.7418, y: 29.9506}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1602116998
 MonoBehaviour:
@@ -2007,7 +2021,7 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 34.2
+  m_fontSize: 36.7
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -2114,8 +2128,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 879.3709, y: 0}
-  m_SizeDelta: {x: 1758.7418, y: 0}
+  m_AnchoredPosition: {x: 839.4481, y: 0}
+  m_SizeDelta: {x: 1678.8962, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1700427544
 MonoBehaviour:
