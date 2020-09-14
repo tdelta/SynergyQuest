@@ -19,4 +19,9 @@ public class MenuPrefabSettings : ScriptableObjectSingleton<MenuPrefabSettings>
     
     // Prefab of the info screen UI
     public InfoScreenUi infoScreenUiPrefab;
+
+    // Prefab of the map screen UI
+    [FormerlySerializedAs("mapControllerPrefab")]
+    [SerializeField] private MapScreenUi mapScreenUiPrefab;
+    public MapScreenUi MapScreenUiPrefab => mapScreenUiPrefab;
 }

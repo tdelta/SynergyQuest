@@ -14,7 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pauseScreenUiPrefab: {fileID: 1087559894583305118, guid: feaa00fabc60083399abe8fc20e9ae37,
     type: 3}
-  closeGameScreenUi: {fileID: 7281591264406191480, guid: 40f0cc588026a6826bc9665f0e34f6a1,
+  quitGameScreenUi: {fileID: 7281591264406191480, guid: 40f0cc588026a6826bc9665f0e34f6a1,
     type: 3}
   infoScreenUiPrefab: {fileID: 6209796805964198337, guid: 9a82700d1a7285030baa5a7003259c99,
+    type: 3}
+  mapControllerPrefab: {fileID: 4772640485473434840, guid: 3ae04f139217f4e9285adaf0033d9982,
     type: 3}

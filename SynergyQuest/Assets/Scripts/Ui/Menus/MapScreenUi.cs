@@ -1,37 +1,44 @@
-using System;
-using System.Data;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
-public class MapController : MonoBehaviour
+/**
+ * <summary>
+ * Controls the UI of the map screen.
+ * It gives an overview over the dungeon layout.
+ * </summary>
+ * <remarks>
+ * To actually launch the map screen, see the <see cref="MapScreenLauncher"/> singleton.
+ * </remarks>
+ * <seealso cref="Map"/>
+ * <seealso cref="DungeonLayout"/>
+ */
+public class MapScreenUi : MonoBehaviour, MenuUi
 {
-
-    [SerializeField] private GameObject RoomViewPrefab;
+    [FormerlySerializedAs("RoomViewPrefab")]
+    [SerializeField] private GameObject roomViewPrefab = default;
+    [SerializeField] private GridLayoutGroup grid = default;
 
     private Map map = new Map();
-    
-    public void Awake()
-    {
-        map.ParseDungeon();
-    }
-
-    private void Start()
-    {
-        DrawMap();
-    }
 
     /**
      * TODO: Does not support slanted connections between rooms
      */
     private void DrawMap()
     {
-        var grid = GetComponent<GridLayoutGroup>();
         // Force all layout groups to calculate their sizes so that we can retrieve the space we can draw in
         Canvas.ForceUpdateCanvases();
+        var parent = grid.transform.parent.GetComponent<LayoutGroup>();
+        parent.CalculateLayoutInputHorizontal();
+        parent.CalculateLayoutInputVertical();
+
+        var parentTransform = parent.GetComponent<RectTransform>();
         
-        var parentRect = ((RectTransform) grid.transform.parent).rect;
+        LayoutRebuilder.ForceRebuildLayoutImmediate(parentTransform);
         
-        var availableSpace = Mathf.Min(parentRect.width, parentRect.height);
+        var parentRect = ((RectTransform) parent.transform).rect;
+        
+        var availableSpace = Mathf.Min(parentRect.width, parentRect.height) - 100;
         var cellSize = availableSpace / Mathf.Max(map.RowCount, map.ColumnCount);
 
         grid.constraint = GridLayoutGroup.Constraint.FixedRowCount;
@@ -43,7 +50,7 @@ public class MapController : MonoBehaviour
         {
             foreach (var room in row)
             {
-                var roomView = Instantiate(RoomViewPrefab, transform);
+                var roomView = Instantiate(roomViewPrefab, grid.transform);
                 roomView.transform.localScale = new Vector3(
                     cellSize / ((RectTransform) roomView.transform).rect.width,
                     cellSize / ((RectTransform) roomView.transform).rect.height,
@@ -73,6 +80,39 @@ public class MapController : MonoBehaviour
 
                 }, () => { });
             }
+        }
+    }
+
+    public void OnResumePressed()
+    {
+        MapScreenLauncher.Instance.Close();
+    }
+
+    public void OnLaunch()
+    {
+        map.ParseDungeon();
+        DrawMap();
+        
+        // When the pause screen UI is opened, give remote controllers the capability to close the pause screen and resume the game
+        SharedControllerState.Instance.EnableMenuActions(
+            (MenuAction.ResumeGame, true)
+        );
+    }
+
+    public void OnClose()
+    {
+        SharedControllerState.Instance.EnableMenuActions(
+            (MenuAction.ResumeGame, false)
+        );
+    }
+
+    public void OnMenuActionTriggered(MenuAction action)
+    {
+        switch (action)
+        {
+            case MenuAction.ResumeGame:
+                OnResumePressed();
+                break;
         }
     }
 }

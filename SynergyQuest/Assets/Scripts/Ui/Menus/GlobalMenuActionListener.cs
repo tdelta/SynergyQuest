@@ -32,7 +32,7 @@ public class GlobalMenuActionListener: BehaviourSingleton<GlobalMenuActionListen
                 PauseScreenLauncher.Instance.Launch();
                 break;
             case MenuAction.ShowMap:
-                InfoScreenLauncher.Instance.Launch(MapPrefabSettings.Instance.MapInfoScreenContent);
+                MapScreenLauncher.Instance.Launch();
                 break;
         }
     }
