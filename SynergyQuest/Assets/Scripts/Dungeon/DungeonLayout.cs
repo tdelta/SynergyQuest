@@ -51,6 +51,8 @@ public class DungeonLayout : Singleton<DungeonLayout>
      * Data loaded from the JSON layout file
      */
     private DungeonLayoutData _data;
+    public DungeonLayoutData Data => _data;
+
     /**
      * Path to the folder containing the dungeon files
      */
@@ -160,6 +162,16 @@ public class DungeonLayout : Singleton<DungeonLayout>
             throw new InvalidOperationException("Can not load room using the given door, since the layout file seems to be inconsistent as it does not contain the current room.");
         }
     }
+    
+    /**
+     * Convert room name to scene name and return its data in the layout
+     *
+     * @param roomName    name of the room to find
+     */
+    public DungeonRoomData GetRoomByName(string roomName)
+    {
+        return _data.rooms[SceneNameFromRoomName(roomName)];
+    }
 
     /**
      * Loads a specific room in the layout by its name.
@@ -221,7 +233,7 @@ public class DungeonLayout : Singleton<DungeonLayout>
  * Represents the JSON data format for a door definition.
  * See the class description of `DungeonLayout` for more information.
  */
-class DoorData
+public class DoorData
 {
     public string targetRoom = default;
     public string targetDoor = default;
@@ -231,7 +243,7 @@ class DoorData
  * Represents the JSON data format for a room definition.
  * See the class description of `DungeonLayout` for more information.
  */
-class DungeonRoomData
+public class DungeonRoomData
 {
     public Dictionary<string, DoorData> roomConnections = default;
 }
@@ -242,7 +254,7 @@ class DungeonRoomData
  * See the class description of <see cref="DungeonLayout"/> for more information.
  * </summary>
  */
-class DungeonLayoutData
+public class DungeonLayoutData
 {
     /**
      * <summary>

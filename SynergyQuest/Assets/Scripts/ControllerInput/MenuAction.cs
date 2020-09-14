@@ -11,4 +11,5 @@ public enum MenuAction
     Back = 5,
     Yes = 6,
     No = 7,
+    ShowMap = 8,
 }

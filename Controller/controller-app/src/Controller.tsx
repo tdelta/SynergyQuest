@@ -95,6 +95,8 @@ export class Controller extends React.Component<
           playerColor={this.props.playerColor}
           canPause={this.props.canPause}
           pause={this.props.pause}
+          canShowMap={this.props.canShowMap}
+          showMap={this.props.showMap}
           enabledButtons={this.props.enabledButtons}
           playerInfo={this.props.playerInfo}
         />
@@ -108,6 +110,8 @@ export class Controller extends React.Component<
           playerColor={this.props.playerColor}
           canPause={this.props.canPause}
           pause={this.props.pause}
+          canShowMap={this.props.canShowMap}
+          showMap={this.props.showMap}
           enabledButtons={this.props.enabledButtons}
           playerInfo={this.props.playerInfo}
         />
@@ -123,6 +127,8 @@ export class Controller extends React.Component<
           playerColor={this.props.playerColor}
           canPause={this.props.canPause}
           pause={this.props.pause}
+          canShowMap={this.props.canShowMap}
+          showMap={this.props.showMap}
           playerInfo={this.props.playerInfo}
         />
       );
@@ -142,6 +148,8 @@ interface ControllerProbs {
   cooldownButtons: Set<Button>;
   canPause: boolean;
   pause: () => void;
+  canShowMap: boolean;
+  showMap: () => void;
   displayFailure: (message: string) => void;
   playerInfo?: PlayerInfo;
 }

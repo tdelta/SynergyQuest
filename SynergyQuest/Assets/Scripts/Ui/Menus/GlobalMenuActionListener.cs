@@ -41,6 +41,9 @@ public class GlobalMenuActionListener: BehaviourSingleton<GlobalMenuActionListen
             case MenuAction.PauseGame:
                 PauseScreenLauncher.Instance.Launch();
                 break;
+            case MenuAction.ShowMap:
+                MapScreenLauncher.Instance.Launch();
+                break;
         }
     }
 }
