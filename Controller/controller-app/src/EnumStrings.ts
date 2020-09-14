@@ -12,3 +12,4 @@ menuActionStrings.set(MenuAction.Next, 'Next');
 menuActionStrings.set(MenuAction.Back, 'Back');
 menuActionStrings.set(MenuAction.Yes, 'Yes');
 menuActionStrings.set(MenuAction.No, 'No');
+menuActionStrings.set(MenuAction.ShowMap, 'Map');
