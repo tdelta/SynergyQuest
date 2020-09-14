@@ -20,7 +20,8 @@ public class SharedControllerState: BehaviourSingleton<SharedControllerState>
     
     private HashSet<MenuAction> _enabledMenuActions = new HashSet<MenuAction>()
     { // These actions are initially enabled 
-        MenuAction.PauseGame
+        MenuAction.PauseGame,
+        MenuAction.ShowMap
     };
     
     /**

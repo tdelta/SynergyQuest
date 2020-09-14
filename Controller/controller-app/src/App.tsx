@@ -211,6 +211,10 @@ class App extends React.Component<{}, AppState> {
     this.triggerMenuAction(MenuAction.PauseGame);
   }
 
+  showMap() {
+    this.triggerMenuAction(MenuAction.ShowMap);
+  }
+
   triggerMenuAction(action: MenuAction) {
     if (this.state.connectionStatus.kind === 'Connected') {
       const client = this.state.connectionStatus.client;
@@ -261,6 +265,10 @@ class App extends React.Component<{}, AppState> {
                   MenuAction.PauseGame
                 )}
                 pause={this.pause}
+                canShowMap={this.state.enabledMenuActions.has(
+                  MenuAction.ShowMap
+                )}
+                showMap={this.showMap}
                 displayFailure={this.displayFailure}
                 playerInfo={this.state.playerInfo}
               />

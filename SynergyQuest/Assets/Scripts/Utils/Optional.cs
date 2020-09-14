@@ -165,4 +165,18 @@ public struct Optional<T>
     {
         return _hasValue ? _value : alternative;
     }
+     
+    /**
+     * Returns true if the value fulfills a predicate and false if there is no value
+     *
+     * <param name="predicate">Predicate to fulfill</param>
+     */
+    public bool Fulfills(Func<T, bool> predicate)
+    {
+        if (_hasValue)
+        {
+            return predicate(_value);
+        }
+        return false;
+    }
 }
