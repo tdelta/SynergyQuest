@@ -11,6 +11,11 @@ public class DungeonDataKeeper: Singleton<DungeonDataKeeper>
      * Stores activation values of switches
      */
     private Dictionary<string, bool> _persistentSwitchValues = new Dictionary<string, bool>();
+    
+    /**
+     * Stores whether chests have been opened or not
+     */
+    private Dictionary<string, bool> _persistentChestValues = new Dictionary<string, bool>();
 
     /**
      * Stores positions of objects
@@ -55,6 +60,36 @@ public class DungeonDataKeeper: Singleton<DungeonDataKeeper>
     public void SaveSwitchActivation(Switch switcher)
     {
         _persistentSwitchValues[switcher.Guid.guid] = switcher.Value;
+    }
+    
+    /**
+     * Returns whether a chest has been opened or not, if the value has been saved with
+     * SaveChestActivation.
+     *
+     * @param chest        chest for which the state shall be looked up
+     * @param defaultValue if no data has been saved for the given chest, this value is returned.
+     *                     (optional, default false)
+     */
+    [Pure]
+    public bool HasChestBeenOpened(Chest chest, bool defaultValue = false)
+    {
+        if (_persistentChestValues.TryGetValue(chest.Guid.guid, out var value))
+        {
+            return value;
+        }
+
+        else
+        {
+            return defaultValue;
+        }
+    }
+    
+    /**
+     * Save whether a chest has been opened or not
+     */
+    public void SaveChestActivation(Chest chest, bool value)
+    {
+        _persistentChestValues[chest.Guid.guid] = value;
     }
     
     /**

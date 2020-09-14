@@ -360,6 +360,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Chest (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 8275791820451325494, guid: d9e76d5cce349534b85b46af22a2812d,
+        type: 3}
+      propertyPath: _guid
+      value: 0dd3dfc9-941e-4244-aca0-21ab77e473f5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d9e76d5cce349534b85b46af22a2812d, type: 3}
 --- !u!4 &624815992 stripped
@@ -15965,6 +15970,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Chest
+      objectReference: {fileID: 0}
+    - target: {fileID: 8275791820451325494, guid: d9e76d5cce349534b85b46af22a2812d,
+        type: 3}
+      propertyPath: _guid
+      value: 74bab55b-480e-43db-bfa8-3152f5bd5f99
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d9e76d5cce349534b85b46af22a2812d, type: 3}

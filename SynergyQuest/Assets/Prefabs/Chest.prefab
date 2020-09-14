@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 7318493404974826618}
   - component: {fileID: 7318493404974826613}
   - component: {fileID: 7318493404974826614}
+  - component: {fileID: 8275791820451325494}
   m_Layer: 0
   m_Name: Chest
   m_TagString: Untagged
@@ -99,6 +100,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   button: 6
   interactionType: 0
+  AffectsController: 1
   color: 4
   interactionTriggeredEvent:
     m_PersistentCalls:
@@ -142,8 +144,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   chestOpenSprite: {fileID: 21300000, guid: 6a80d82f0f7bd844fbda6ac2551988e2, type: 3}
-  chestClosedSprite: {fileID: 7306274148607722714, guid: 1ab1d8b28db1b19d3ab36fd5fadaf09f,
-    type: 3}
   coin: {fileID: 7476413430186449276, guid: 4328b41c3928fc341a393f3a479abf6d, type: 3}
   amountOfCoins: 10
   spawnCoinsWithDelay: 1
+--- !u!114 &8275791820451325494
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7318493404974826617}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c457c33eaa484ddd9aec52891f1086ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _guid: 

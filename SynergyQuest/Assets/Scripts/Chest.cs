@@ -1,7 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
+[RequireComponent(typeof(Guid))]
+[RequireComponent(typeof(Interactive))]
+[RequireComponent(typeof(SpriteRenderer))]
 public class Chest : MonoBehaviour
 {
     /**
@@ -11,23 +12,53 @@ public class Chest : MonoBehaviour
 
     private Interactive _interactive;
     private SpriteRenderer _renderer;
+    public Guid Guid { get; private set; }
 
-    public GameObject coin;
-    public int amountOfCoins;
+    private bool _hasBeenOpened = false;
 
-    public bool spawnCoinsWithDelay;
+    [SerializeField] private GameObject coin;
+    [SerializeField] private int amountOfCoins;
+
+    [SerializeField] private bool spawnCoinsWithDelay;
 
     private void Awake()
     {    
         _renderer = GetComponent<SpriteRenderer>();
         _interactive = GetComponent<Interactive>();
+        Guid = GetComponent<Guid>();
+    }
+
+    private void Start()
+    {
+        // Determine, if this chest has already been opened
+        _hasBeenOpened = DungeonDataKeeper.Instance.HasChestBeenOpened(this);
+        // If so, open it
+        if (_hasBeenOpened)
+        {
+            _renderer.sprite = chestOpenSprite;
+            _interactive.enabled = false;
+        }
+    }
+
+    private void OnEnable()
+    {
+        _interactive.OnInteractionTriggered += OnInteractionTriggered;
     }
     
-    // Update is called once per frame
-    void Update()
-    {  
-        if (_interactive.IsInteracting) {
+    private void OnDisable()
+    {
+        _interactive.OnInteractionTriggered -= OnInteractionTriggered;
+    }
+
+    void OnInteractionTriggered(PlayerController _)
+    {
+        if (!_hasBeenOpened)
+        {
             // Open the chest
+            _hasBeenOpened = true;
+            // remember that the chest has been opened across levels
+            DungeonDataKeeper.Instance.SaveChestActivation(this, true);
+            
             _renderer.sprite = chestOpenSprite;
             _interactive.SuppressSpeechBubble = true;
             _interactive.enabled = false;
