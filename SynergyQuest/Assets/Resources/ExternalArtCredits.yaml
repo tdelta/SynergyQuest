@@ -1,50 +1,55 @@
 # This file credits all authors of art that was not specifically made for
 # this game and sourced from OpenGameArt.Org etc.
 #
-# FIXME: This file is not complete yet!
+# Furthermore, the main graphics used by this game stem from the games
+# Shattered Pixel Dungeon and Pixel Dungeon by 00-Evan and Watabou.
+# Please see the readme and license files in the root directory for further information
+# on the licensing of these assets.
+#
+# All art not mentioned here has been originally made for this game by the authors and is
+# licensed under CC-BY 4.0.
 
 Art/Fonts/m6x11.ttf:
   author: Daniel Linssen
   description: pixel font
   license: free with attribution
   link: https://managore.itch.io/m6x11
-Art/Music/hurry_up_by_cactusdude:
+
+Art/Music/hurry_up_by_cactusdude.ogg:
   author: itch.io user cactusdude
   description: background music "hurry up"
   license: CC-BY 4.0
   link: https://cactusdude.itch.io/free-game-soundtrack-by-cactusdude-hurry-up
+
 Art/Music/puzzle-1-*.mp3:
   author: Przemysław Sikorski / OpenGameArt.Org user rezoner
   description: Background music for puzzles
   license: CC-BY 3.0
   link: https://opengameart.org/content/puzzle-tune-1
+
 Art/Music/Quirky Boss Loop.ogg:
   author: Tim Beek
   description: Background music for fights
   license: free / credit is appreciated
   link: https://timbeek.itch.io/free-retro-boss-music
+
 Art/Music/Victory1.mp3:
   author: Alex Smith / OpenGameArt.Org user cynicmusic
   description: Success sound
   license: CC0
   link: https://opengameart.org/content/victory-theme-for-rpg
+  
 Art/Sounds/Monsters/Bat/qubodupSqueakyRat*.ogg:
   author: Iwan 'qubodup' Gabovitch
   description: Bat monster sounds
   license: CC0
   link: https://opengameart.org/content/squeaky-rat
 
-Art/Sprites/Coins/spin_coin_big_strip6.png:
+Art/Sprites/Coins/spin_coin*.png:
   author: Yevhen Danchenko aka OpenGameArt.Org user truezipp
   description: Spin coin sprite
   license: CC0
   link: https://opengameart.org/content/pixel-coins-asset
-
-Art/Sprites/Environment/ShatteredPixelDungeon/*:
-  author: Evan Debenham (00-Evan) and Watabou
-  description: Assets from "Shattered Pixel Dungeon"
-  license: GPLv3
-  link: https://github.com/00-Evan/shattered-pixel-dungeon
 
 Art/Sprites/Interactive/lever*.png:
   author: Miloslav Číž aka OpenGameArt.Org user drummyfish
@@ -100,15 +105,10 @@ Art/Sounds/Monsters/Knight/monster-*.ogg:
   license: CC0
   link: https://opengameart.org/content/monster-sound-pack-volume-1
 
-Art/Sounds/Monsters/Slime/monster-*.ogg:
+Art/Sounds/Monsters/Slime/impactsplat*.ogg:
   author: independent.nu
   description: Slime sounds
-  license: CC0
-  link: https://opengameart.org/content/8-wet-squish-slurp-impacts
-
-Art/Sounds/Monsters/Slime/monster-*.ogg:
-  author: independent.nu
-  description: Slime sounds
+  modifications: Converted from flac to ogg
   license: CC0
   link: https://opengameart.org/content/8-wet-squish-slurp-impacts
 
@@ -147,3 +147,171 @@ Art/Sounds/Switch/switch*:
   description: Switch sounds (Modified)
   license: CC0
   link: https://opengameart.org/content/stove-switch
+  
+Art/Sprites/Items/explosion.png:
+  author: OpenGameArt.Org users qubodup and shimobayashi
+  description: Explosion animation
+  license: CC-BY 3.0
+  link: https://opengameart.org/content/bomb-explosion-animation
+
+Art/Sprites/Player/heart.png:
+  author: DontMind8.blogspot.com
+  description: Heart sprite
+  license: CC-BY 4.0
+  link: https://opengameart.org/content/heart-pixel-art
+
+Art/Sprites/Player/empty-heart.png:
+  author: DontMind8.blogspot.com
+  description: Empty heart sprite
+  license: CC-BY 4.0
+  modifications: Converted to monochrome
+  link: https://opengameart.org/content/heart-pixel-art
+  
+Art/Sprites/Environment/colorbox.png:
+  author: Armando Montero aka OpenGameArt.Org user ArMM1998
+  description: Sokoban boxes
+  modifications: Extracted from tilesets and recolored
+  license: CC0
+  link: https://opengameart.org/content/zelda-like-tilesets-and-sprites
+
+Art/Sprites/Player/character.png:
+  author: Armando Montero aka OpenGameArt.Org user ArMM1998
+  description: player character
+  modifications: Extended sword etc. Recoloring at runtime.
+  license: CC0
+  link: https://opengameart.org/content/zelda-like-tilesets-and-sprites
+  
+Art/Sprites/colorbox.png:
+  author: Armando Montero aka OpenGameArt.Org user ArMM1998
+  description: Sokoban boxes and npc
+  modifications: Recolored and sword added to NPC
+  license: CC0
+  link: https://opengameart.org/content/zelda-like-tilesets-and-sprites
+  
+Art/Sprites/Player/red.png:
+  author: Armando Montero aka OpenGameArt.Org user ArMM1998
+  description: npc character
+  modifications: Recolored
+  license: CC0
+  link: https://opengameart.org/content/zelda-like-tilesets-and-sprites
+  
+Art/Sprites/Ui/wall128x128.png:
+  author: OpenGameArt.Org user GrumpyDiamond
+  description: Seamless Wall
+  license: CC0
+  link: https://opengameart.org/content/seamless-wall
+  
+Art/Sprites/Items/bomb*.png:
+  author: OpenGameArt.Org user IndigoFenix
+  description: Bomb sprites
+  license: CC0
+  link: https://opengameart.org/content/bomb-2
+
+Art/Sprites/Environment/ShatteredPixelDungeon/**/*:
+  author: Evan Debenham (00-Evan) and Oleg Dolya (Watabou)
+  description: Graphics from "(Shattered) Pixel Dungeon"
+  license: GPLv3
+  link: https://github.com/00-Evan/shattered-pixel-dungeon and https://github.com/watabou/pixel-dungeon
+  
+Art/Sprites/menu_button.png:
+  author: Evan Debenham (00-Evan) and Oleg Dolya (Watabou)
+  description: Menu buttons from "(Shattered) Pixel Dungeon"
+  license: GPLv3
+  link: https://github.com/00-Evan/shattered-pixel-dungeon and https://github.com/watabou/pixel-dungeon
+
+Art/Sprites/Interactive/shock_switch.png:
+  author: Evan Debenham (00-Evan)
+  description: Switch animation sprite / pylon
+  license: GPLv3
+  link: https://github.com/00-Evan/shattered-pixel-dungeon
+  
+Art/Sprites/Environment/button.png:
+  author: Evan Debenham (00-Evan)
+  description: Altar tile / button
+  license: GPLv3
+  link: https://github.com/00-Evan/shattered-pixel-dungeon
+
+Art/Sprites/specks.png:
+  author: Evan Debenham (00-Evan) and Oleg Dolya (Watabou)
+  description: Effect sprites "(Shattered) Pixel Dungeon"
+  license: GPLv3
+  link: https://github.com/00-Evan/shattered-pixel-dungeon and https://github.com/watabou/pixel-dungeon
+
+Art/Sprites/chrome.png:
+  author: Evan Debenham (00-Evan) and Oleg Dolya (Watabou)
+  description: UI sprites "(Shattered) Pixel Dungeon"
+  license: GPLv3
+  link: https://github.com/00-Evan/shattered-pixel-dungeon and https://github.com/watabou/pixel-dungeon
+
+Art/Sprites/Enemies/bat.png:
+  author: Evan Debenham (00-Evan) and Oleg Dolya (Watabou)
+  description: Bat sprite from "(Shattered) Pixel Dungeon"
+  license: GPLv3
+  link: https://github.com/00-Evan/shattered-pixel-dungeon and https://github.com/watabou/pixel-dungeon
+  
+Art/Sprites/Enemies/necromancer.png:
+  author: Evan Debenham (00-Evan)
+  description: Necromancer sprite from "Shattered Pixel Dungeon"
+  license: GPLv3
+  link: https://github.com/00-Evan/shattered-pixel-dungeon
+  
+Art/Sprites/Enemies/slime.png:
+  author: Evan Debenham (00-Evan)
+  description: Slime sprite from "Shattered Pixel Dungeon"
+  license: GPLv3
+  link: https://github.com/00-Evan/shattered-pixel-dungeon
+  
+Art/Sprites/Enemies/knight.png:
+  author: Evan Debenham (00-Evan) and Oleg Dolya (Watabou)
+  description: Dwarf king sprite from "(Shattered) Pixel Dungeon"
+  license: GPLv3
+  link: https://github.com/00-Evan/shattered-pixel-dungeon and https://github.com/watabou/pixel-dungeon
+  
+Art/Sprites/items.png:
+  author: Evan Debenham (00-Evan) and Oleg Dolya (Watabou)
+  description: Item sprites from "(Shattered) Pixel Dungeon"
+  license: GPLv3
+  link: https://github.com/00-Evan/shattered-pixel-dungeon and https://github.com/watabou/pixel-dungeon
+
+Art/Sprites/Player/ghost.png:
+  author: Evan Debenham (00-Evan) and Oleg Dolya (Watabou)
+  description: Ghost sprite from "(Shattered) Pixel Dungeon"
+  license: GPLv3
+  link: https://github.com/00-Evan/shattered-pixel-dungeon and https://github.com/watabou/pixel-dungeon
+  
+Art/Sounds/Player/ghost.mp3:
+  author: Evan Debenham (00-Evan) and Oleg Dolya (Watabou)
+  description: Ghost sound from "(Shattered) Pixel Dungeon"
+  license: GPLv3
+  link: https://github.com/00-Evan/shattered-pixel-dungeon and https://github.com/watabou/pixel-dungeon
+  
+Art/Sprites/Projectiles/fireball.png:
+  author: Evan Debenham (00-Evan) and Oleg Dolya (Watabou)
+  description: Fireball sprite from "(Shattered) Pixel Dungeon"
+  license: GPLv3
+  link: https://github.com/00-Evan/shattered-pixel-dungeon and https://github.com/watabou/pixel-dungeon
+
+Art/Sounds/Projectiles/fireball.mp3:
+  author: Evan Debenham (00-Evan)
+  description: Gas sound from "Shattered Pixel Dungeon"
+  license: GPLv3
+  link: https://github.com/00-Evan/shattered-pixel-dungeon
+
+Art/Sprites/Interactive/platform.png:
+  author: Evan Debenham (00-Evan) and Oleg Dolya (Watabou)
+  description: Platform sprite built from "(Shattered) Pixel Dungeon" tilesets
+  license: GPLv3
+  link: https://github.com/00-Evan/shattered-pixel-dungeon and https://github.com/watabou/pixel-dungeon
+
+Art/Sprites/OpenChest.png:
+  author: Evan Debenham (00-Evan) and Oleg Dolya (Watabou)
+  description: Chest sprite from "(Shattered) Pixel Dungeon"
+  modifications: Modified to opened chest
+  license: GPLv3
+  link: https://github.com/00-Evan/shattered-pixel-dungeon and https://github.com/watabou/pixel-dungeon
+
+Art/Sprites/Interactive/sign.png:
+  author: Evan Debenham (00-Evan) and Oleg Dolya (Watabou)
+  description: Sign sprite from "(Shattered) Pixel Dungeon"
+  license: GPLv3
+  link: https://github.com/00-Evan/shattered-pixel-dungeon and https://github.com/watabou/pixel-dungeon
