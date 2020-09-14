@@ -64,6 +64,9 @@ public class LocalKeymap : ScriptableObject
 
     [SerializeField] private KeyCode pauseKey = KeyCode.R;
     public KeyCode PauseKey => pauseKey;
+    
+    [SerializeField] private KeyCode mapKey = KeyCode.Alpha1;
+    public KeyCode MapKey => mapKey;
 }
 
 [Serializable]

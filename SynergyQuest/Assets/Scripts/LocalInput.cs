@@ -50,6 +50,11 @@ public class LocalInput: MonoBehaviour, Input
                     : MenuAction.PauseGame
             );
         }
+        
+        if (UnityEngine.Input.GetKeyDown(keymap.MapKey))
+        {
+            OnMenuActionTriggered?.Invoke(MenuAction.ShowMap);
+        }
     }
     
     public void SetColor(PlayerColor color)
