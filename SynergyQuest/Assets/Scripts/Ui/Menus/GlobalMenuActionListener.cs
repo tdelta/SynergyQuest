@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 /**
@@ -17,6 +18,15 @@ public class GlobalMenuActionListener: BehaviourSingleton<GlobalMenuActionListen
     private void OnEnable()
     {
         SharedControllerState.Instance.OnMenuActionTriggered += OnMenuActionTriggered;
+    }
+
+    private void Update()
+    {
+        // The games should always be able to pause when escape is pressed, even without a phone controller
+        if (UnityEngine.Input.GetKeyDown(KeyCode.Escape))
+        {
+            OnMenuActionTriggered(MenuAction.PauseGame);
+        }
     }
 
     private void OnDisable()
