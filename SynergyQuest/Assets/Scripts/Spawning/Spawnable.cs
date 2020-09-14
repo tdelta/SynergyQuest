@@ -146,17 +146,16 @@ public class Spawnable : MonoBehaviour
 
     /**
      * <summary>
-     * If custom respawn point providers have been registered, it returns a respawn point produced by the one which
-     * registered last. Otherwise it returns <see cref="Optional{T}.None"/>.
+     * If custom respawn point providers have been registered, it returns the one provider with the highest priority who
+     * registered last. Otherwise it returns <see cref="Optional{T}.None"/>
      *
      * See class description for further explanation.
      * </summary>
      */
-    private Optional<Vector3> DetermineCustomRespawnPosition()
+    public Optional<Func<Vector3>> DetermineCurrentRespawnProvider()
     {
         return Optional<Func<Vector3>>
-            .FromNullable(_respawnPointProviders.LastOrDefault().Value?.LastOrDefault())
-            .Map(provider => provider());
+            .FromNullable(_respawnPointProviders.LastOrDefault().Value?.LastOrDefault());
     }
 
     /**
@@ -167,7 +166,8 @@ public class Spawnable : MonoBehaviour
      */
     public Vector3 DetermineCurrentRespawnPosition()
     {
-        return DetermineCustomRespawnPosition()
+        return DetermineCurrentRespawnProvider()
+            .Map(provider => provider())
             .Else(
                 defaultRespawnPosition != null ?
                     // ReSharper disable once PossibleNullReferenceException

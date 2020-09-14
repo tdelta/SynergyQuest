@@ -2,8 +2,8 @@ using UnityEngine;
 
 /**
  * <summary>
- * Ensures a <see cref="Spawnable"/> is respawned at the point where it was last picked up, if it is also a
- * <see cref="Throwable"/> and died when landing shortly after a throw.
+ * Ensures a <see cref="Spawnable"/> is respawned at the position of the player who picked it up last, if it is also a
+ * <see cref="Throwable"/> and died shortly after landing after a throw.
  * </summary>
  */
 [RequireComponent(typeof(Spawnable))]
@@ -12,20 +12,21 @@ public class ThrowRespawnHandler : MonoBehaviour
 {
     private Spawnable _spawnable;
     private Throwable _throwable;
-    
+
     /**
-     * Caches the last point, where this throwable object was picked up
+     * Caches the last player, who picked up this throwable object
      */
-    private Vector3 _pickupPoint = Vector3.zero;
+    private PlayerController _carrier = null;
     
     /**
      * <summary>
-     * Provides the last pickup point as respawn point to <see cref="Throwable"/> while this object is being thrown
+     * Provides the position of the player who last picked up this object as respawn point to <see cref="Throwable"/>
+     * while this object is being thrown
      * </summary>
      */
     private Vector3 ProvideRespawnPoint()
     {
-        return _pickupPoint;
+        return _carrier.transform.position;
     }
 
     private void Awake()
@@ -49,14 +50,14 @@ public class ThrowRespawnHandler : MonoBehaviour
     /**
      * <summary>
      * Called when this object is being picked up to throw.
-     * Caches the pickup point and provides it to <see cref="Spawnable"/> as respawn point.
+     * Caches the player picking it up and provides their position to <see cref="Spawnable"/> as respawn point.
      * </summary>
      * <seealso cref="Throwable.OnPickedUp"/>
      * <seealso cref="Spawnable.AddRespawnPointProvider"/>
      */
     void OnPickedUp(PlayerController carrier)
     {
-        _pickupPoint = carrier.transform.position;
+        _carrier = carrier;
         _spawnable.AddRespawnPointProvider(
             ProvideRespawnPoint,
             1 // over-rule Chasm as respawn point provider
