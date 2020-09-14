@@ -67,10 +67,10 @@ RectTransform:
   m_Father: {fileID: 6176728999964314586}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 250, y: -22.5}
+  m_SizeDelta: {x: 500, y: 28.999998}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &188831477661420787
 CanvasRenderer:
@@ -357,7 +357,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: you are at the blue marking
+  m_text: you are at the red marking
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 25a49c1c0963dc8f6b3c80bb186d4a78, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: 0fa285df202b2c22a8f87734e0f735a6, type: 2}
@@ -426,7 +426,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 6209796805229558824}
-    characterCount: 27
+    characterCount: 26
     spriteCount: 0
     spaceCount: 5
     wordCount: 6
@@ -844,7 +844,7 @@ GameObject:
   - component: {fileID: 6209796805964198350}
   - component: {fileID: 4772640485473434840}
   m_Layer: 5
-  m_Name: MapScreen
+  m_Name: MapScreenUi
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

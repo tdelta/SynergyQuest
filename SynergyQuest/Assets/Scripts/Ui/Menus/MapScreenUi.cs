@@ -70,7 +70,7 @@ public class MapScreenUi : MonoBehaviour, MenuUi
                     if (r.name == DungeonLayout.Instance.CurrentRoom)
                     {
                         // Room is current room => Indicate through special color
-                        roomCenterView.GetComponent<Image>().color = Color.blue;
+                        roomCenterView.GetComponent<Image>().color = new Color(0.827f, 0.239f, 0.125f);
                     }
                     
                     if (r.HasLeftConnection()) roomLeftView.GetComponent<Image>().enabled = true;
