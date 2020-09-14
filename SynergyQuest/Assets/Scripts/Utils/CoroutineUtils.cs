@@ -17,4 +17,16 @@ public static class CoroutineUtils
         yield return new WaitForSeconds(seconds);
         callback();
     }
+
+    /**
+     * <summary>
+     * Waits until the physics loop completed at least once.
+     * </summary>
+     */
+    public static IEnumerator WaitUntilPhysicsStepCompleted(Callback callback)
+    {
+        yield return new WaitForFixedUpdate();
+        yield return new WaitForFixedUpdate();
+        callback();
+    }
 }

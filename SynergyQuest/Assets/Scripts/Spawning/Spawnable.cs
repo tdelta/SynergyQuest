@@ -49,7 +49,7 @@ public class Spawnable : MonoBehaviour
     public event OnRespawnAction OnRespawn;
     public delegate void OnRespawnAction(Vector3 respawnPosition, RespawnReason reason);
     
-    private List<Func<Vector3>> _respawnPointProviders = new List<Func<Vector3>>();
+    private SortedDictionary<int, List<Func<Vector3>>> _respawnPointProviders = new SortedDictionary<int, List<Func<Vector3>>>();
 
     /**
      * <summary>
@@ -70,6 +70,16 @@ public class Spawnable : MonoBehaviour
     {
         var respawnPosition = DetermineCurrentRespawnPosition();
 
+        RespawnAt(respawnPosition, reason);
+    }
+
+    /**
+     * <summary>
+     * Same as <see cref="Respawn"/> but respawns at the given position.
+     * </summary>
+     */
+    public void RespawnAt(Vector3 respawnPosition, RespawnReason reason = RespawnReason.Other)
+    {
         // Move to position of the spawner when respawning
         if (TryGetComponent(out PhysicsEffects physicsEffects))
         {
@@ -93,25 +103,45 @@ public class Spawnable : MonoBehaviour
     }
     
     /**
+     * <summary>
      * Register a custom function to provide respawn points, see class description.
+     * </summary>
+     * <param name="priority">
+     *     Providers with higher priority are selected first, even if a provider with a lower
+     *     priority has been added at a later point in time.
+     * </param>
      */
-    public void AddRespawnPointProvider(Func<Vector3> provider)
+    public void AddRespawnPointProvider(Func<Vector3> provider, int priority = 0)
     {
-        if (_respawnPointProviders.Contains(provider))
+        if (_respawnPointProviders.TryGetValue(priority, out var list))
         {
-            _respawnPointProviders.Remove(provider);
+            if (!list.Contains(provider))
+            {
+                list.Add(provider);
+            }
         }
-        
-        _respawnPointProviders.Add(provider);
+
+        else
+        {
+            _respawnPointProviders.Add(priority, new List<Func<Vector3>> {provider});
+        }
     }
 
     
     /**
+     * <summary>
      * Unregister a custom function providing respawn points, see class description.
+     * </summary>
+     * <param name="priority">
+     *     this parameter must match the value provided when calling <see cref="AddRespawnPointProvider"/>.
+     * </param>
      */
-    public void RemoveRespawnPointProvider(Func<Vector3> provider)
+    public void RemoveRespawnPointProvider(Func<Vector3> provider, int priority = 0)
     {
-        _respawnPointProviders.Remove(provider);
+        if (_respawnPointProviders.TryGetValue(priority, out var list))
+        {
+            list.Remove(provider);
+        }
     }
 
     /**
@@ -125,7 +155,7 @@ public class Spawnable : MonoBehaviour
     private Optional<Vector3> DetermineCustomRespawnPosition()
     {
         return Optional<Func<Vector3>>
-            .FromNullable(_respawnPointProviders.LastOrDefault())
+            .FromNullable(_respawnPointProviders.LastOrDefault().Value?.LastOrDefault())
             .Map(provider => provider());
     }
 
