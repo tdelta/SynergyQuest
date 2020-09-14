@@ -1,4 +1,5 @@
 using System;
+using System.Data;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,8 +13,11 @@ public class MapController : MonoBehaviour
     public void Awake()
     {
         map.ParseDungeon();
+    }
+
+    private void Start()
+    {
         DrawMap();
-        Debug.Log("Map Awake");
     }
 
     /**
@@ -22,13 +26,29 @@ public class MapController : MonoBehaviour
     private void DrawMap()
     {
         var grid = GetComponent<GridLayoutGroup>();
-        Debug.Log(grid);
-        grid.constraintCount = map.RoomMap.Count;
+        // Force all layout groups to calculate their sizes so that we can retrieve the space we can draw in
+        Canvas.ForceUpdateCanvases();
+        
+        var parentRect = ((RectTransform) grid.transform.parent).rect;
+        
+        var availableSpace = Mathf.Min(parentRect.width, parentRect.height);
+        var cellSize = availableSpace / Mathf.Max(map.RowCount, map.ColumnCount);
+
+        grid.constraint = GridLayoutGroup.Constraint.FixedRowCount;
+        grid.constraintCount = map.RowCount;
+        
+        grid.cellSize = new Vector2(cellSize, cellSize);
+        
         foreach (var row in map.RoomMap)
         {
             foreach (var room in row)
             {
                 var roomView = Instantiate(RoomViewPrefab, transform);
+                roomView.transform.localScale = new Vector3(
+                    cellSize / ((RectTransform) roomView.transform).rect.width,
+                    cellSize / ((RectTransform) roomView.transform).rect.height,
+                    1
+                );
                 
                 var roomLeftView = roomView.transform.GetChild(0);
                 var roomRightView = roomView.transform.GetChild(1);
@@ -54,27 +74,5 @@ public class MapController : MonoBehaviour
                 }, () => { });
             }
         }
-    }
-
-
-    private BoundsInt GetBounds(String sceneName)
-    {
-        return new BoundsInt(1,1,1,1,1,1);
-        /*2
-        var async = SceneManager.LoadSceneAsync(DungeonLayout.Instance.SceneNameFromRoomName(sceneName));
-        async.allowSceneActivation = false;
-        var scene = SceneManager.GetSceneByName(DungeonLayout.Instance.SceneNameFromRoomName(sceneName));
-        GameObject[] gameObjects = scene.GetRootGameObjects();
-
-        Tilemap tilemap = null;
-        foreach (var gameObject in gameObjects)
-        {
-            tilemap = gameObject.GetComponentInChildren(typeof(Tilemap)) as Tilemap;
-            if(tilemap != null) break;
-        }
-
-        SceneManager.UnloadSceneAsync(sceneName);
-        return tilemap.cellBounds;
-        */
     }
 }

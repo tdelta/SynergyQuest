@@ -4,11 +4,16 @@ using System.Linq;
 using UnityEngine;
 
 /**
+ * <summary>
  * Contains a 2D List of "cells" that can be used to draw a dungeon map
+ * </summary>
  */
 public class Map
 {
     public List<List<Optional<DungeonRoomViewData>>> RoomMap = new List<List<Optional<DungeonRoomViewData>>>();
+
+    public int RowCount { get; private set; }
+    public int ColumnCount { get; private set; }
 
     /**
      * Parse the loaded dungeon layout into a 2D grid
@@ -29,8 +34,9 @@ public class Map
 
         RoomMap.Reverse();
         ReassignCoordinates();
-        
-        Debug.Log("Map Rows: "+RoomMap.Count);
+
+        RowCount = RoomMap.Count;
+        ColumnCount = RoomMap.Select(row => row.Count).Max();
     }
 
     private void ParseDungeonRec(DungeonRoomViewData roomData)
