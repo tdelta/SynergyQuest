@@ -3742,6 +3742,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Chest (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 7318493404974826619, guid: d9e76d5cce349534b85b46af22a2812d,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: ca7599810eee076c3bc2961977228f46, type: 2}
     - target: {fileID: 8275791820451325494, guid: d9e76d5cce349534b85b46af22a2812d,
         type: 3}
       propertyPath: _guid
@@ -5290,6 +5295,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Chest
       objectReference: {fileID: 0}
+    - target: {fileID: 7318493404974826619, guid: d9e76d5cce349534b85b46af22a2812d,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: ca7599810eee076c3bc2961977228f46, type: 2}
     - target: {fileID: 8275791820451325494, guid: d9e76d5cce349534b85b46af22a2812d,
         type: 3}
       propertyPath: _guid
@@ -11050,7 +11060,7 @@ Transform:
   m_Children:
   - {fileID: 3629302855894732112}
   m_Father: {fileID: 0}
-  m_RootOrder: 18
+  m_RootOrder: 19
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!483693784 &5673619513599136809
 TilemapRenderer:
