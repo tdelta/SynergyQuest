@@ -74,6 +74,19 @@ public class PlayerController : EntityController
     private Throwable _throwable;
     private ChasmContactTracker _chasmContactTracker;
     public Spawnable spawnable { get; private set; }
+    
+    /**
+     * Caches the respawn provider at the point in time where this player was falling down a chasm.
+     * We need to remember it, since some time can pass between starting the falling animation and respawn.
+     */
+    private Optional<Func<Vector3>> _fallRespawnProvider = Optional<Func<Vector3>>.None();
+    /**
+     * Caches the respawn position at the point in time where this player was falling down a chasm.
+     * We need to remember it, since some time can pass between starting the falling animation and respawn.
+     *
+     * It is used as a fallback for <see cref="_fallRespawnProvider"/>.
+     */
+    private Optional<Vector3> _fallRespawnFallback = Optional<Vector3>.None();
 
     /**
      * Used to briefly flash the player in a certain color. For example red when they are hit.
@@ -343,7 +356,7 @@ public class PlayerController : EntityController
                 Instantiate(coinPrefab, goldSpawnPosition, Quaternion.identity);
             }
 
-            spawnable.Respawn(Spawnable.RespawnReason.Death);
+            Respawn(Spawnable.RespawnReason.Death);
         }
         return true;
     }
@@ -522,7 +535,7 @@ public class PlayerController : EntityController
                 other.gameObject.GetComponent<PlayerGhost>()?.Exorcise();
         }
     }
-
+    
     /**
      * Call this to let the player fall
      * (play animation, sound and let player die)
@@ -533,6 +546,10 @@ public class PlayerController : EntityController
     {
         if (_playerState != PlayerState.falling && _playerState != PlayerState.thrown)
         {
+            // Cache respawn position at the point in time where the fall has been initiated
+            _fallRespawnProvider = spawnable.DetermineCurrentRespawnProvider();
+            _fallRespawnFallback = Optional<Vector3>.Some(spawnable.DetermineCurrentRespawnPosition());
+            
             _playerState = PlayerState.falling;
             // If the player is being moved by a platform, they should no longer be moved when falling
             PhysicsEffects.RemoveCustomOrigin();
@@ -583,8 +600,12 @@ public class PlayerController : EntityController
         // (which would respawn them anyway)
         if (originalHealth > 0)
         {
-            spawnable.Respawn();
+            Respawn();
         }
+        
+        // Delete custom fall respawn point cache
+        _fallRespawnProvider = Optional<Func<Vector3>>.None();
+        _fallRespawnFallback = Optional<Vector3>.None();
     }
 
 
@@ -745,5 +766,30 @@ public class PlayerController : EntityController
     {
         _playerState = onOff ? PlayerState.spring_jumping : PlayerState.walking;
         Animator.SetBool(SpringJumpState, onOff);
+    }
+    
+    /**
+     * <summary>
+     * Performs a respawn using <see cref="Spawnable"/>.
+     * If a custom respawn point has been cached in <see cref="_fallRespawnProvider"/> or
+     * <see cref="_fallRespawnFallback"/> it is used. Otherwise, respawn provided by <see cref="Spawnable"/> is used
+     * as is.
+     * </summary>
+     */
+    void Respawn(Spawnable.RespawnReason reason = Spawnable.RespawnReason.Other)
+    {
+        var maybeRespawnPoint = _fallRespawnProvider
+            .Map(provider => provider())
+            .Else(_fallRespawnFallback);
+
+        if (maybeRespawnPoint.IsNone())
+        {
+            spawnable.Respawn(reason);
+        }
+
+        else
+        {
+            spawnable.RespawnAt(maybeRespawnPoint.ValueOr(Vector3.zero), reason);
+        }
     }
 }

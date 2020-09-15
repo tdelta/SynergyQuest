@@ -95,14 +95,16 @@ public class MapScreenUi : MonoBehaviour, MenuUi
         
         // When the pause screen UI is opened, give remote controllers the capability to close the pause screen and resume the game
         SharedControllerState.Instance.EnableMenuActions(
-            (MenuAction.ResumeGame, true)
+            (MenuAction.ResumeGame, true),
+            (MenuAction.ShowMap, false)
         );
     }
 
     public void OnClose()
     {
         SharedControllerState.Instance.EnableMenuActions(
-            (MenuAction.ResumeGame, false)
+            (MenuAction.ResumeGame, false),
+            (MenuAction.ShowMap, true)
         );
     }
 

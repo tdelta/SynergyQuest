@@ -16,6 +16,7 @@ const menuActionDisplayOrder = [
   MenuAction.Back,
   MenuAction.No,
   MenuAction.Yes,
+  MenuAction.ShowMap,
 ];
 
 export class MenuScreen extends React.Component<

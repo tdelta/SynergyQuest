@@ -51,7 +51,7 @@
   "scripts": {
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "start": "yarn lint && cross-env BROWSER=none react-scripts start",
-    "build": "npm run lint && react-scripts build",
+    "build": "yarn lint && react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

@@ -40,50 +40,68 @@ export class ControlsHeaderRow extends React.Component<
               backgroundColor: '#e0e0e0', // cplayerColor.dark,
               borderColor: '#eeeeee',
               alignItems: 'center',
+              backgroundImage: `url(${consts.avatars[playerColorRaw]})`,
+              backgroundSize: 'auto 95%',
+              backgroundRepeat: 'no-repeat',
+              backgroundPosition: 'center',
             }}
-          >
-            <img
-              className='playerAvatar'
-              alt='Player Avatar'
-              src={consts.avatars[playerColorRaw]}
-            />
-          </button>
+          />
           {this.props.canPause && (
             <button
               className='controllerMenuItem text'
               style={{
                 backgroundColor: '#c2185b',
                 borderColor: '#e91e63',
+                backgroundImage: `url(${PauseSymbol})`,
+                backgroundSize: 'auto 50%',
+                backgroundRepeat: 'no-repeat',
+                backgroundPosition: 'center',
               }}
               onClick={_ => this.props.pause()}
+            />
+          )}
+          {this.props.canExit && (
+            <button
+              className='controllerMenuItem text'
+              style={{
+                backgroundColor: consts.buttonStyles[Button.Exit].dark,
+                borderColor: consts.buttonStyles[Button.Exit].light,
+              }}
+              onMouseDown={_ => this.props.client.setButton(Button.Exit, true)}
+              onMouseUp={_ => this.props.client.setButton(Button.Exit, false)}
+              onTouchStart={_ => this.props.client.setButton(Button.Exit, true)}
+              onTouchEnd={_ => this.props.client.setButton(Button.Exit, false)}
+              onTouchCancel={_ =>
+                this.props.client.setButton(Button.Exit, false)
+              }
             >
-              <img className='pauseSymbol' alt='Pause Game' src={PauseSymbol} />
+              Exit Platform
+            </button>
+          )}
+          {this.props.canShowMap && (
+            <button
+              className='controllerMenuItem text'
+              style={{
+                backgroundColor: '#c2185b',
+                borderColor: '#e91e63',
+              }}
+              onClick={this.props.showMap}
+            >
+              <FontAwesomeIcon icon={faMapSigns} />
             </button>
           )}
           <button
             className='controllerMenuItem text'
             style={{
-              backgroundColor: consts.buttonStyles[Button.Exit].dark,
-              borderColor: consts.buttonStyles[Button.Exit].light,
+              backgroundColor: '#c2185b',
+              borderColor: '#e91e63',
             }}
-            onMouseDown={_ => this.props.client.setButton(Button.Exit, true)}
-            onMouseUp={_ => this.props.client.setButton(Button.Exit, false)}
-            onTouchStart={_ => this.props.client.setButton(Button.Exit, true)}
-            onTouchEnd={_ => this.props.client.setButton(Button.Exit, false)}
-            onTouchCancel={_ => this.props.client.setButton(Button.Exit, false)}
+            onClick={this.props.toggleFullscreen}
           >
-            Exit Platform
+            <FontAwesomeIcon
+              icon={this.props.isFullscreen ? faCompress : faExpand}
+            />
           </button>
-        </div>
-        {this.props.canShowMap && (
-          <div className='iconButton' onClick={this.props.showMap}>
-            <FontAwesomeIcon icon={faMapSigns} />
-          </div>
-        )}
-        <div className='iconButton' onClick={this.props.toggleFullscreen}>
-          <FontAwesomeIcon
-            icon={this.props.isFullscreen ? faCompress : faExpand}
-          />
         </div>
       </>
     );

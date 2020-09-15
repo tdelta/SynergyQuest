@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 /**
  * Utility component which represents a switch which can be activated or deactivated by players.
@@ -56,7 +57,10 @@ public class Switch : MonoBehaviour
     {
         Guid = GetComponent<Guid>();
         isPersistentAcrossScenes = !(Guid is null) && isPersistentAcrossScenes;
-        
+    }
+
+    private void Start()
+    {
         if (isPersistentAcrossScenes)
         {
             Value = DungeonDataKeeper.Instance.HasSwitchBeenActivated(this, Value);
