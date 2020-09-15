@@ -13,11 +13,11 @@
   },
   "scripts": {
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-    "build": "npm run lint && microbundle-crl --no-compress --format modern,cjs",
+    "build": "yarn lint && microbundle-crl --no-compress --format modern,cjs",
     "start": "microbundle-crl watch --no-compress --format modern,cjs",
     "prepublish": "run-s build",
     "test": "jest",
-    "predeploy": "cd example && npm install && npm run build",
+    "predeploy": "cd example && yarn install && yarn build",
     "deploy": "gh-pages -d example/build"
   },
   "peerDependencies": {

@@ -19,8 +19,8 @@
   },
   "scripts": {
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-    "start": "npm run lint ; react-scripts start",
-    "build": "npm run lint && react-scripts build",
+    "start": "yarn lint ; react-scripts start",
+    "build": "yarn lint && react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
