@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4233521782717815756}
   - component: {fileID: 4233521782717815757}
   - component: {fileID: 4233521782717815759}
+  - component: {fileID: 1143309742455674532}
   m_Layer: 13
   m_Name: Chasm
   m_TagString: Chasm
@@ -69,6 +70,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f5b064d5b9f64d6ba2a1b99bcc48947e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1143309742455674532
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4233521782717815747}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a4d90affdea415dad4b8ca85c3e1257, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &5018843421842693187

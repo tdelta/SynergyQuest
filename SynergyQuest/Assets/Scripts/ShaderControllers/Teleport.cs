@@ -64,6 +64,13 @@ public class Teleport : MonoBehaviour
                 )
             )
             .ToArray();
+
+        // While teleporting, we might loose contact to safe terrain, so we register this behavior as terrain unsafe 
+        // for respawning
+        foreach (var spawnable in GetComponentsInChildren<Spawnable>())
+        {
+            spawnable.RegisterTouchingUnsafeTerrain(this);
+        }
     }
 
     /**
@@ -222,6 +229,14 @@ public class Teleport : MonoBehaviour
             // If present, we cache it now before destroying this behavior to invoke it last:
             var onTeleportCompletedCallback = _onTeleportCompletedCallback;
             _onTeleportCompletedCallback = null;
+            
+            // While teleporting, we might loose contact to safe terrain, so we registered this behavior as terrain unsafe 
+            // for respawning.
+            // Now that the teleport has finished, we can unregister it again.
+            foreach (var spawnable in GetComponentsInChildren<Spawnable>())
+            {
+                spawnable.UnregisterTouchingUnsafeTerrain(this);
+            }
 
             // Destroy this behaviour when the effect finished
             DestroyImmediate(this);

@@ -75,11 +75,11 @@ public class PlayerControlledPlatform : MonoBehaviour
                     _player.Color.ToRGB(),
                     () =>
                     {
-                        // Reenable the ChasmContactTracker of players when they completely reappear.
+                        // Stop blocking registering respawn points
                         // See comments further below.
-                        if (oldPlayer.TryGetComponent<ChasmContactTracker>(out var chasmContactTracker))
+                        if (oldPlayer.TryGetComponent<Spawnable>(out var spawnable))
                         {
-                            chasmContactTracker.Paused = false;
+                            spawnable.UnregisterTouchingUnsafeTerrain(this);
                         }
                     }
                 );
@@ -96,11 +96,11 @@ public class PlayerControlledPlatform : MonoBehaviour
                 _player.Input.EnableButtons((Button.Exit, true));
 
                 // The player does not leave the chasm while controlling the platform, though they do disappear.
-                // Hence we have to temporarily disable the ChasmContactTracker of players so that it does not falsely
-                // register, that the player has left the chasm
-                if (_player.TryGetComponent<ChasmContactTracker>(out var chasmContactTracker))
+                // Hence, we have to temporarily tell Spawnable, that the player is not on safe terrain and should not
+                // safe respawn points.
+                if (_player.TryGetComponent<Spawnable>(out var spawnable))
                 {
-                    chasmContactTracker.Paused = true;
+                    spawnable.RegisterTouchingUnsafeTerrain(this);
                 }
 
                 // the player shall disappear, as long as they are controlling the platform

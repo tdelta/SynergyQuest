@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 6922572968159218425}
   - component: {fileID: 6922572968159218426}
   - component: {fileID: 6922572968159218427}
+  - component: {fileID: -827581891306808426}
   - component: {fileID: 6922572968159218423}
   - component: {fileID: 2160768360082992989}
   m_Layer: 0
@@ -99,6 +100,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   switches:
   - {fileID: 0}
+  autoDiscoveredSwitchTags: []
+  noDeactivation: 0
 --- !u!114 &6922572968159218427
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -116,6 +119,18 @@ MonoBehaviour:
   spikesUpSound: {fileID: 8300000, guid: bf269079a006ddf5ba14fa16560952a0, type: 3}
   spikesDownSound: {fileID: 8300000, guid: 276eb2b8c1cec7f2cb68f72c78405c34, type: 3}
   damage: 2
+--- !u!114 &-827581891306808426
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6922572968159218428}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a4d90affdea415dad4b8ca85c3e1257, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!61 &6922572968159218423
 BoxCollider2D:
   m_ObjectHideFlags: 0

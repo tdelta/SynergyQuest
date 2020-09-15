@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 295019931046563641}
   - component: {fileID: 8906027407775993872}
   - component: {fileID: 8588696617729186304}
+  - component: {fileID: 1482994914066713138}
   m_Layer: 0
   m_Name: RainbowTrap
   m_TagString: Untagged
@@ -123,3 +124,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   color: 0
+--- !u!114 &1482994914066713138
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3456755028496927529}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a4d90affdea415dad4b8ca85c3e1257, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

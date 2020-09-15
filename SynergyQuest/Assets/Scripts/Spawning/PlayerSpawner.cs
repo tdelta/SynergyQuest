@@ -81,15 +81,6 @@ public abstract class PlayerSpawner : MonoBehaviour
             SharedControllerState.Instance.SetGameState(GameState.Started);
 
             Spawn();
-            
-            // register local managed player instances for respawning at the position of this object
-            if (respawnAtSpawnerPosition && managedPreexistingPlayers != null)
-            {
-                foreach (var player in managedPreexistingPlayers)
-                {
-                    player.spawnable.defaultRespawnPosition = this.transform;
-                }
-            }
         }
     }
 
@@ -158,11 +149,6 @@ public abstract class PlayerSpawner : MonoBehaviour
         if (targetGroup != null)
         {
             targetGroup.AddMember(player.transform, 1, CameraSettings.Instance.PlayerInclusionRadius);
-        }
-
-        if (respawnAtSpawnerPosition)
-        {
-            player.spawnable.defaultRespawnPosition = this.transform;
         }
         
         OnSpawn(player);

@@ -21,7 +21,6 @@ public enum PlayerState{
 [RequireComponent(typeof(SpriteRenderer))]
 [RequireComponent(typeof(TintFlashController))]
 [RequireComponent(typeof(ItemController))]
-[RequireComponent(typeof(ChasmContactTracker))]
 [RequireComponent(typeof(Spawnable))]
 public class PlayerController : EntityController
 {
@@ -72,21 +71,7 @@ public class PlayerController : EntityController
     private Renderer _renderer;
     private ItemController _itemController;
     private Throwable _throwable;
-    private ChasmContactTracker _chasmContactTracker;
     public Spawnable spawnable { get; private set; }
-    
-    /**
-     * Caches the respawn provider at the point in time where this player was falling down a chasm.
-     * We need to remember it, since some time can pass between starting the falling animation and respawn.
-     */
-    private Optional<Func<Vector3>> _fallRespawnProvider = Optional<Func<Vector3>>.None();
-    /**
-     * Caches the respawn position at the point in time where this player was falling down a chasm.
-     * We need to remember it, since some time can pass between starting the falling animation and respawn.
-     *
-     * It is used as a fallback for <see cref="_fallRespawnProvider"/>.
-     */
-    private Optional<Vector3> _fallRespawnFallback = Optional<Vector3>.None();
 
     /**
      * Used to briefly flash the player in a certain color. For example red when they are hit.
@@ -189,7 +174,6 @@ public class PlayerController : EntityController
         spriteRenderer = GetComponent<SpriteRenderer>();
         _tintFlashController = GetComponent<TintFlashController>();
         _itemController = GetComponent<ItemController>();
-        _chasmContactTracker = GetComponent<ChasmContactTracker>();
         spawnable = GetComponent<Spawnable>();
     }
 
@@ -344,19 +328,16 @@ public class PlayerController : EntityController
             // If we died, we want to spawn gold on our last position
             var lostGold = Math.Min(goldLossOnDeath, _data.GoldCounter);
             _data.GoldCounter -= lostGold;
-            // If we were on a chasm while dying, we want to spawn the gold on the last position on solid ground before
-            // we entered the chasm
-            var goldSpawnPosition = _chasmContactTracker.ChasmEntryPoint.Match(
-                some: lastPosition => lastPosition,
-                none: () => this.Collider.bounds.center
-            );
+            // We want to spawn the gold on the last respawn position
+            // This is the last position of the player on solid ground
+            var goldSpawnPosition = spawnable.RespawnPosition;
             // spawn the gold
             for (int i = 0; i < lostGold; ++i)
             {
                 Instantiate(coinPrefab, goldSpawnPosition, Quaternion.identity);
             }
 
-            Respawn(Spawnable.RespawnReason.Death);
+            spawnable.Respawn(Spawnable.RespawnReason.Death);
         }
         return true;
     }
@@ -546,9 +527,10 @@ public class PlayerController : EntityController
     {
         if (_playerState != PlayerState.falling && _playerState != PlayerState.thrown)
         {
-            // Cache respawn position at the point in time where the fall has been initiated
-            _fallRespawnProvider = spawnable.DetermineCurrentRespawnProvider();
-            _fallRespawnFallback = Optional<Vector3>.Some(spawnable.DetermineCurrentRespawnPosition());
+            // While falling, the player is probably not on safe terrain, so we tell Spawnable to not safe any respawn
+            // positions
+            // (since we change layers during falling, Chasm may not register as unsafe terrain while falling)
+            spawnable.RegisterTouchingUnsafeTerrain(this);
             
             _playerState = PlayerState.falling;
             // If the player is being moved by a platform, they should no longer be moved when falling
@@ -600,12 +582,12 @@ public class PlayerController : EntityController
         // (which would respawn them anyway)
         if (originalHealth > 0)
         {
-            Respawn();
+            spawnable.Respawn();
         }
         
-        // Delete custom fall respawn point cache
-        _fallRespawnProvider = Optional<Func<Vector3>>.None();
-        _fallRespawnFallback = Optional<Vector3>.None();
+        // Stop blocking Spawnable from registering respawn positions, see also comment further above
+        // where the blocking started
+        spawnable.UnregisterTouchingUnsafeTerrain(this);
     }
 
 
@@ -766,30 +748,5 @@ public class PlayerController : EntityController
     {
         _playerState = onOff ? PlayerState.spring_jumping : PlayerState.walking;
         Animator.SetBool(SpringJumpState, onOff);
-    }
-    
-    /**
-     * <summary>
-     * Performs a respawn using <see cref="Spawnable"/>.
-     * If a custom respawn point has been cached in <see cref="_fallRespawnProvider"/> or
-     * <see cref="_fallRespawnFallback"/> it is used. Otherwise, respawn provided by <see cref="Spawnable"/> is used
-     * as is.
-     * </summary>
-     */
-    void Respawn(Spawnable.RespawnReason reason = Spawnable.RespawnReason.Other)
-    {
-        var maybeRespawnPoint = _fallRespawnProvider
-            .Map(provider => provider())
-            .Else(_fallRespawnFallback);
-
-        if (maybeRespawnPoint.IsNone())
-        {
-            spawnable.Respawn(reason);
-        }
-
-        else
-        {
-            spawnable.RespawnAt(maybeRespawnPoint.ValueOr(Vector3.zero), reason);
-        }
     }
 }

@@ -114,6 +114,14 @@ public class Throwable : MonoBehaviour
                 
                 _carrier.InitCarryingState(this);
                 _carrier.Input.EnableButtons((Button.Throw, true));
+
+                // While being thrown, we might loose contact to safe terrain, so we register this behavior as terrain unsafe 
+                // for respawning
+                if (TryGetComponent<Spawnable>(out var spawnable))
+                {
+                    spawnable.RegisterTouchingUnsafeTerrain(this);
+                }
+                
                 OnPickedUp?.Invoke(_carrier);
                 
                 StartCoroutine(PickUpCoroutine());
@@ -279,6 +287,14 @@ public class Throwable : MonoBehaviour
         foreach (var interactive in GetComponents<Interactive>())
         {
             interactive.enabled = true;
+        }
+        
+        // While being thrown, we might loose contact to safe terrain, so we registered this behavior as terrain unsafe 
+        // for respawning.
+        // Now that the throw has finished, we can unregister it again.
+        if (TryGetComponent<Spawnable>(out var spawnable))
+        {
+            spawnable.UnregisterTouchingUnsafeTerrain(this);
         }
         
         OnLanded?.Invoke();
