@@ -80,4 +80,14 @@ public class ItemController: MonoBehaviour
       }
   }
 
+  /**
+   * Reset cooldowns when the scene changes or a player dies
+   */
+  private void OnDisable()
+  {
+      foreach (var itemDescription in _player.CollectedItems) {
+          _cooldownFlags[itemDescription] = false;
+          _player.Input.SetCooldownButtons((itemDescription.UseButton, false));
+      }
+  }
 }
