@@ -1,9 +1,9 @@
 How to run Synergy Quest
 ========================
 
-If you are on Linux, open `SynergyQuestLinux/SynergyQuest.x86_64`
+If you are on Linux, run `./SynergyQuest.x86_64`
 
-If you are on Windows, open `SynergyQuestWindows/SynergyQuest.exe`
+If you are on Windows, open `SynergyQuest.exe`
 
 Troubleshooting
 ===============
