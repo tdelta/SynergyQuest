@@ -49,6 +49,11 @@ public class SceneController : BehaviourSingleton<SceneController>
     {
         LoadSceneByName("Credits");
     }
+    
+    public void LoadLicenseMenu()
+    {
+        LoadSceneByName("License");
+    }
 
     public void LoadNetworkSetup()
     {

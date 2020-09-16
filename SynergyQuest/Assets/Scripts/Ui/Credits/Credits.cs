@@ -38,8 +38,7 @@ public class Credits : MonoBehaviour
 
     public void OnViewLicensePressed()
     {
-        // FIXME
-        Debug.LogError("TO BE IMPLEMENTED");
+        SceneController.Instance.LoadLicenseMenu();
     }
 
     public void OnBackPressed()

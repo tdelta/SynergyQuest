@@ -1,4 +1,7 @@
+using System;
 using System.IO;
+using System.Linq;
+using System.Runtime.CompilerServices;
 using TMPro;
 using UnityEngine;
 using WebSocketSharp;
@@ -24,6 +27,19 @@ public class CreditsBlock : MonoBehaviour
         licenseValue.SetText(entry.license);
         descriptionValue.SetText(entry.description);
         modificationsValue.SetText(entry.modifications.IsNullOrEmpty() ? "None" : entry.modifications);
-        linkValue.SetText(entry.link);
+        
+        linkValue.SetText(
+            string.Join(
+                " ",
+                entry.link
+                    .Split(' ')
+                    .Select(token =>
+                        token.StartsWith("http") ?
+                            $"<u><link={token}>{token}</link></u>"
+                            : token
+                    )
+                    .ToArray()
+            )
+        );
     }
 }
