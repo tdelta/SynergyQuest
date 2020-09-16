@@ -124,7 +124,13 @@ export class OrientationControls extends React.Component<
           className='rowContainer'
           style={{ height: `${canvasHeightFactor * 100}%` }}
         >
-          <div style={{ position: 'absolute', left: '0px', bottom: `${exitButtonHeightFactor * 100}%` }}>
+          <div
+            style={{
+              position: 'absolute',
+              left: '0px',
+              bottom: `${exitButtonHeightFactor * 100}%`,
+            }}
+          >
             <Stage width={canvasWidth} height={canvasHeight}>
               <Layer>
                 <Text
