@@ -26,7 +26,10 @@ export class MenuScreen extends React.Component<
   render() {
     let scrollContent = <>Please follow the instructions on the game screen</>;
     if (this.props.enabledMenuActions.size > 0) {
-      const menuActions = Array.from(this.props.enabledMenuActions);
+      const menuActions = Array.from(this.props.enabledMenuActions).filter(
+        menuAction => menuAction !== MenuAction.ShowMap
+      );
+
       // Sort the available menu actions to display them in the intended order
       menuActions.sort((left, right) => {
         const leftIdx = menuActionDisplayOrder.indexOf(left);
