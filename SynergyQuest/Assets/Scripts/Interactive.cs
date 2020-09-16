@@ -222,14 +222,13 @@ public class Interactive : MonoBehaviour
                     }
                 }
             }
-        }
-
-        // If there has been a player interacting with this object
-        // and if this player stopped looking at this object,
-        // the player also stops interacting:
-        else if (!ReferenceEquals(InteractingPlayer, null) && !IsPlayerFacingThisObject(InteractingPlayer))
-        {
-            ClearInteractingPlayer();
+            // If there has been a player interacting with this object
+            // and if this player stopped looking at this object,
+            // the player also stops interacting:
+            else if (!ReferenceEquals(InteractingPlayer, null) && !IsPlayerFacingThisObject(InteractingPlayer))
+            {
+                ClearInteractingPlayer();
+            }
         }
     }
 
