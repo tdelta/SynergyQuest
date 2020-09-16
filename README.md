@@ -19,7 +19,7 @@ technical report (distributed on the `Releases` page of this repository).
 
 ## System Requirements
 
-* A Linux or Windows PC
+* A Linux 🐧 or Windows 🪟 PC
 * A smartphone for every player with a (very) modern web browser installed
   ("officially" supported is the newest version of Google Chrome on Android)
   

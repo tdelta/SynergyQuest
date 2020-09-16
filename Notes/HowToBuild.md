@@ -18,7 +18,24 @@ Development of the game has been done on Windows and Linux devices.
 This guide assumes the reader knows how to execute commands from a command line like
 `bash`. 
 
-## Building
+## Automatic Build Script
+
+If you do not want to manually build and bundle every component of the game,
+you can use an included build script which will build all components and bundle
+them into a standalone distributable folder for Linux or Windows.
+
+Follow these steps:
+
+1. Open [../SynergyQuest](../SynergyQuest) in the Unity editor.
+2. Select "SynergyQuest Build" in the menu bar at the top of the editor window
+3. Select "Windows Build" or "Linux Build", depending on the system for which
+   you want to bundle the game.
+4. The build process will now start and take quite some time.
+   As soon as it completes, a popup will appear informing you about the location
+   where the build has been saved.
+5. Optional: ZIP the build folder for distribution
+
+## Building Manually
 
 ### Building the Controller Web App
 

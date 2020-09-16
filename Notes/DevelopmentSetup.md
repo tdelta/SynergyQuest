@@ -112,9 +112,9 @@ since Unity will try to regenerate them.
   "Pixel Snap" is enabled for the material of the tilemap.
   You can also use the TileMap Material in the Materials folder
 * See also https://docs.unity3d.com/Packages/com.unity.render-pipelines.universal@7.1/manual/2d-pixelperfect.html
-* We also use a Pixel Perfect Camera for the game
-  (see https://blogs.unity3d.com/2019/03/13/2d-pixel-perfect-how-to-set-up-your-unity-project-for-retro-8-bits-games/
-   and https://docs.unity3d.com/Packages/com.unity.render-pipelines.universal@7.1/manual/pixel-cinemachine.html).
+* All imported tileset textures should be added to the
+  [Tilesets](../SynergyQuest/Assets/Art/Sprites/Tilesets.spriteatlas) Sprite
+  Atlas to prevent gaps in tilemaps
 
 ## The Debug Settings
 
