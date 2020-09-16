@@ -18,6 +18,11 @@ public class CoinGaugeController : MonoBehaviour
         {
             renderer.enabled = visible;
         }
+
+        if (visible)
+        {
+            StartCoroutine(DeactivateCoroutine());
+        }
     }
 
     public void Init(PlayerController player)
@@ -42,6 +47,8 @@ public class CoinGaugeController : MonoBehaviour
 
     private void OnEnable()
     {
+        SetVisiblility(false);
+        
         if (!_subscribedToGoldCounterChange && _player != null)
         {
             _player.Data.OnGoldCounterChanged += DrawGoldCounter;
@@ -51,6 +58,8 @@ public class CoinGaugeController : MonoBehaviour
 
     private void OnDisable()
     {
+        SetVisiblility(false);
+        
         if (_subscribedToGoldCounterChange && _player != null)
         {
             _player.Data.OnGoldCounterChanged -= DrawGoldCounter;
@@ -62,10 +71,9 @@ public class CoinGaugeController : MonoBehaviour
         SetVisiblility(true);
 
         _goldText.text = gold.ToString();
-        StartCoroutine(DeactiveCoroutine());
     }
 
-    IEnumerator DeactiveCoroutine() {
+    IEnumerator DeactivateCoroutine() {
         yield return new WaitForSeconds(2f);
         SetVisiblility(false);
     }
