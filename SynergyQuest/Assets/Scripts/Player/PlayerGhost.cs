@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using System.Linq;
 
 /**
@@ -30,8 +31,13 @@ public class PlayerGhost : MonoBehaviour
     bool _moveArround;
     bool _exorcised;
     float RotateSpeed = 1.75f;
-    float Radius = 0.125f;
     float _angle;
+    
+    [SerializeField] float Radius = 0.125f;
+    [SerializeField] private float minRadius = 0.03f;
+    private float rMod = 1.0f;
+    
+    [SerializeField] private float approachSpeed = 0.2f;
 
     float _playerChangeTime = 5;
     float _playerChangeTimer;
@@ -65,6 +71,7 @@ public class PlayerGhost : MonoBehaviour
     void OnAppear()
     {
         _moveArround = true;
+        StartCoroutine(PeriodicallyApproach());
     }
 
     void OnVanish()
@@ -99,6 +106,27 @@ public class PlayerGhost : MonoBehaviour
 
         return _followedPlayer;
     }
+    
+    private IEnumerator StartApproach()
+    {
+        var targetMod = minRadius / Radius;
+        while (rMod > targetMod)
+        {
+            rMod = Mathf.MoveTowards(rMod, targetMod, approachSpeed * Time.fixedDeltaTime);
+            yield return new WaitForFixedUpdate();
+        }
+
+        rMod = 1.0f;
+    }
+
+    private IEnumerator PeriodicallyApproach()
+    {
+        while (!_exorcised)
+        {
+            yield return new WaitForSeconds(4.0f);
+            yield return StartApproach();
+        }
+    }
 
     void FixedUpdate()
     {
@@ -111,7 +139,7 @@ public class PlayerGhost : MonoBehaviour
                 _angle += RotateSpeed * Time.deltaTime;
        
                  var position = _rigidbody2D.position;
-                 var rotation = new Vector2(Mathf.Sin(_angle), Mathf.Cos(_angle)) * Radius;
+                 var rotation = new Vector2(Mathf.Sin(_angle), Mathf.Cos(_angle)) * (Radius * rMod);
                  var direction = (followedPlayer.Center - position) * Time.deltaTime;
 
                  position += direction + rotation;

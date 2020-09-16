@@ -179,6 +179,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cfc6ab2a94fe0445e94ca62e26c425e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Radius: 0.125
+  minRadius: 0.03
+  approachSpeed: 0.2
 --- !u!82 &7000314575125443265
 AudioSource:
   m_ObjectHideFlags: 0
