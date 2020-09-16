@@ -69,8 +69,13 @@ export class OrientationControls extends React.Component<
     const image = new window.Image();
     image.src = consts.platforms[playerColorRaw];
 
+    const controlsBarHeightFactor = 0.12;
+    const exitButtonHeightFactor = this.props.canExit ? 0.1 : 0.0;
+    const canvasHeightFactor =
+      1.0 - controlsBarHeightFactor - exitButtonHeightFactor;
+
     const canvasWidth = this.state.viewportWidth;
-    const canvasHeight = 0.88 * this.state.viewportHeight;
+    const canvasHeight = canvasHeightFactor * this.state.viewportHeight;
 
     const platformWidthFactor = 0.2;
     const platformWidth = canvasWidth * platformWidthFactor;
@@ -98,7 +103,7 @@ export class OrientationControls extends React.Component<
           className='rowContainer'
           style={{
             width: '50%',
-            height: '12%',
+            height: `${controlsBarHeightFactor * 100}%`,
             left: '50%',
             top: '0',
             position: 'absolute',
@@ -113,32 +118,59 @@ export class OrientationControls extends React.Component<
             pause={this.props.pause}
             canShowMap={this.props.canShowMap}
             showMap={this.props.showMap}
-            canExit={this.props.enabledButtons.has(Button.Exit)}
           />
         </div>
-        <div className='rowContainer' style={{ height: '88%' }}>
-          <Stage width={canvasWidth} height={canvasHeight}>
-            <Layer>
-              <Text
-                text='Tilt your phone to control the platform!'
-                fontFamily='m6x11'
-                fontSize={0.07 * canvasHeight}
-                fill='white'
-                width={canvasWidth}
-                align='center'
-                y={0.1 * canvasHeight}
-              />
-            </Layer>
-            <Layer>
-              <Image
-                image={image}
-                width={platformWidth}
-                height={platformHeight}
-                x={platformX}
-                y={platformY}
-              />
-            </Layer>
-          </Stage>
+        <div
+          className='rowContainer'
+          style={{ height: `${canvasHeightFactor * 100}%` }}
+        >
+          <div style={{ position: 'absolute', left: '0px', bottom: `${exitButtonHeightFactor * 100}%` }}>
+            <Stage width={canvasWidth} height={canvasHeight}>
+              <Layer>
+                <Text
+                  text='Tilt your phone to control the platform!'
+                  fontFamily='m6x11'
+                  fontSize={0.07 * canvasHeight}
+                  fill='white'
+                  width={canvasWidth}
+                  align='center'
+                  y={0.1 * canvasHeight}
+                />
+              </Layer>
+              <Layer>
+                <Image
+                  image={image}
+                  width={platformWidth}
+                  height={platformHeight}
+                  x={platformX}
+                  y={platformY}
+                />
+              </Layer>
+            </Stage>
+          </div>
+          {this.props.canExit && (
+            <button
+              className='controllerMenuItem text'
+              style={{
+                backgroundColor: consts.buttonStyles[Button.Exit].dark,
+                borderColor: consts.buttonStyles[Button.Exit].light,
+                position: 'absolute',
+                left: '0px',
+                bottom: '0px',
+                height: `${exitButtonHeightFactor * 100}%`,
+                width: '100%',
+              }}
+              onMouseDown={_ => this.props.client.setButton(Button.Exit, true)}
+              onMouseUp={_ => this.props.client.setButton(Button.Exit, false)}
+              onTouchStart={_ => this.props.client.setButton(Button.Exit, true)}
+              onTouchEnd={_ => this.props.client.setButton(Button.Exit, false)}
+              onTouchCancel={_ =>
+                this.props.client.setButton(Button.Exit, false)
+              }
+            >
+              Exit Platform
+            </button>
+          )}
         </div>
       </div>
     );
@@ -160,6 +192,7 @@ interface OrientationControlsProbs {
   enabledButtons: Set<Button>;
   canPause: boolean;
   pause: () => void;
+  canExit: boolean;
   canShowMap: boolean;
   showMap: () => void;
   playerInfo?: PlayerInfo;

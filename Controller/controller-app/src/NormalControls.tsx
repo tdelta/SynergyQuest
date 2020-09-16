@@ -169,7 +169,6 @@ export class NormalControls extends React.Component<
                     pause={this.props.pause}
                     canShowMap={this.props.canShowMap}
                     showMap={this.props.showMap}
-                    canExit={false}
                   />
                 </div>
                 <div className='buttonColumn'>

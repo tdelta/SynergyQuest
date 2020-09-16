@@ -95,6 +95,7 @@ export class Controller extends React.Component<
           playerColor={this.props.playerColor}
           canPause={this.props.canPause}
           pause={this.props.pause}
+          canExit={this.props.enabledButtons.has(Button.Exit)}
           canShowMap={this.props.canShowMap}
           showMap={this.props.showMap}
           enabledButtons={this.props.enabledButtons}

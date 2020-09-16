@@ -1,4 +1,4 @@
-import { ControllerClient, PlayerColor, Button } from 'controller-client-lib';
+import { ControllerClient, PlayerColor } from 'controller-client-lib';
 import React from 'react';
 import './Controller.css';
 import PauseSymbol from './gfx/pause.png';
@@ -60,24 +60,6 @@ export class ControlsHeaderRow extends React.Component<
               onClick={_ => this.props.pause()}
             />
           )}
-          {this.props.canExit && (
-            <button
-              className='controllerMenuItem text'
-              style={{
-                backgroundColor: consts.buttonStyles[Button.Exit].dark,
-                borderColor: consts.buttonStyles[Button.Exit].light,
-              }}
-              onMouseDown={_ => this.props.client.setButton(Button.Exit, true)}
-              onMouseUp={_ => this.props.client.setButton(Button.Exit, false)}
-              onTouchStart={_ => this.props.client.setButton(Button.Exit, true)}
-              onTouchEnd={_ => this.props.client.setButton(Button.Exit, false)}
-              onTouchCancel={_ =>
-                this.props.client.setButton(Button.Exit, false)
-              }
-            >
-              Exit Platform
-            </button>
-          )}
           {this.props.canShowMap && (
             <button
               className='controllerMenuItem text'
@@ -119,5 +101,4 @@ interface ControlsHeaderRowProps {
   pause: () => void;
   canShowMap: boolean;
   showMap: () => void;
-  canExit: boolean;
 }

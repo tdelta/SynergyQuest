@@ -42,7 +42,6 @@ export class RevivalMinigameControls extends React.Component<
             pause={this.props.pause}
             canShowMap={this.props.canShowMap}
             showMap={this.props.showMap}
-            canExit={this.props.enabledButtons.has(Button.Exit)}
           />
         </div>
         <div className='rowContainer' style={{ height: '88%' }}>
