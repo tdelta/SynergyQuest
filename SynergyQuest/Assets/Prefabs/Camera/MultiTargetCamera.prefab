@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 8153043136341992037}
   - component: {fileID: 8153043136341992038}
-  - component: {fileID: 977397792853698120}
   m_Layer: 0
   m_Name: MultiTargetCamera
   m_TagString: Untagged
@@ -55,7 +54,7 @@ MonoBehaviour:
   m_Follow: {fileID: 0}
   m_Lens:
     FieldOfView: 60
-    OrthographicSize: 5
+    OrthographicSize: 8
     NearClipPlane: 0.1
     FarClipPlane: 5000
     Dutch: 0
@@ -68,18 +67,6 @@ MonoBehaviour:
         m_Calls: []
   m_LegacyBlendHint: 0
   m_ComponentOwner: {fileID: 8153043137652073261}
---- !u!114 &977397792853698120
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8153043136341992039}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1a8a05de0ac134f4f9d01bef6b9da077, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &8153043137652073262
 GameObject:
   m_ObjectHideFlags: 0
