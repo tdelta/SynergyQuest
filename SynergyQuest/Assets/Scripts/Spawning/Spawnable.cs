@@ -97,6 +97,7 @@ public class Spawnable : MonoBehaviour
 
     private void Start()
     {
+        SaveRespawnPosition();
         InvokeRepeating(nameof(SaveRespawnPosition), 0.0f, 0.1f);
     }
 
