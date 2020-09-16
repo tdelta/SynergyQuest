@@ -37,7 +37,6 @@ public class Chest : MonoBehaviour
         {
             _renderer.sprite = chestOpenSprite;
             _interactive.enabled = false;
-            _interactive.IgnoreCollisions = true;
         }
     }
 
@@ -61,8 +60,6 @@ public class Chest : MonoBehaviour
             DungeonDataKeeper.Instance.SaveChestActivation(this, true);
             
             _renderer.sprite = chestOpenSprite;
-            _interactive.SuppressSpeechBubble = true;
-            _interactive.IgnoreCollisions = true;
             _interactive.enabled = false;
             SpawnCoins();
         }

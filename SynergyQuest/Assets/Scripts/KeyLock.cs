@@ -25,9 +25,26 @@ public class KeyLock : MonoBehaviour
     
     private Switch _switch;
 
+    /**
+     * The interactive is an optional component in this case, but if there is
+     * one, make sure that it only creates speechbubbles and buttons when there
+     * are enough keys.
+     */
+    private Interactive _interactive;
+
     private void Awake()
     {
         _switch = GetComponent<Switch>();
+        _interactive = GetComponent<Interactive>();
+
+        if (!ReferenceEquals(_interactive, null))
+            _interactive.enabled = false;
+    }
+
+    private void OnCollisionStay2D(Collision2D other)
+    {
+        if (!ReferenceEquals(_interactive, null))
+            _interactive.enabled = PlayerDataKeeper.Instance.NumKeys > 0;
     }
 
     /**

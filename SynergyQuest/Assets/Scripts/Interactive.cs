@@ -184,37 +184,41 @@ public class Interactive : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D other)
     {
-        // If there is not already a player touching this object,
-        // if the other object touching this object is a player
-        // and if this player has a color compatible with the one of this object,
-        // and if this player is looking at this object,
-        // remember the object as the player who is potentially interacting with this object.
-        //
-        // See also the `Update` method
-        if (!IgnoreCollisions && ReferenceEquals(InteractingPlayer, null))
+        // only display speechbubbles and buttons when the interactive is enabled
+        if (enabled)
         {
-            // Players have a special collider child object `InteractorCollider` for
-            // and we use this one to detect collisions with the player.
+            // If there is not already a player touching this object,
+            // if the other object touching this object is a player
+            // and if this player has a color compatible with the one of this object,
+            // and if this player is looking at this object,
+            // remember the object as the player who is potentially interacting with this object.
             //
-            // See the class description of `InteractorCollider` for more information
-            if (other.gameObject.CompareTag("InteractorCollider"))
+            // See also the `Update` method
+            if (!IgnoreCollisions && ReferenceEquals(InteractingPlayer, null))
             {
-                var interactorCollider = other.gameObject.GetComponent<InteractorCollider>();
-                var maybeInteractingPlayer = interactorCollider.Player;
-                if (
-                    interactorCollider.CanInteract &&
-                    maybeInteractingPlayer.gameObject != this.gameObject && // do not interact with self
-                    Color.IsCompatibleWith(maybeInteractingPlayer.Color) &&
-                    IsPlayerFacingThisObject(maybeInteractingPlayer)
-                )
+                // Players have a special collider child object `InteractorCollider` for
+                // and we use this one to detect collisions with the player.
+                //
+                // See the class description of `InteractorCollider` for more information
+                if (other.gameObject.CompareTag("InteractorCollider"))
                 {
-                    InteractingPlayer = maybeInteractingPlayer;
-                    
-                    // Furthermore, we want to display a speech bubble on the player, which informs about the possible
-                    // interactions with this object.
-                    if (!SuppressSpeechBubble)
+                    var interactorCollider = other.gameObject.GetComponent<InteractorCollider>();
+                    var maybeInteractingPlayer = interactorCollider.Player;
+                    if (
+                        interactorCollider.CanInteract &&
+                        maybeInteractingPlayer.gameObject != this.gameObject && // do not interact with self
+                        Color.IsCompatibleWith(maybeInteractingPlayer.Color) &&
+                        IsPlayerFacingThisObject(maybeInteractingPlayer)
+                    )
                     {
-                        InteractingPlayer.InteractionSpeechBubble.DisplayBubble(button);
+                        InteractingPlayer = maybeInteractingPlayer;
+                        
+                        // Furthermore, we want to display a speech bubble on the player, which informs about the possible
+                        // interactions with this object.
+                        if (!SuppressSpeechBubble)
+                        {
+                            InteractingPlayer.InteractionSpeechBubble.DisplayBubble(button);
+                        }
                     }
                 }
             }
