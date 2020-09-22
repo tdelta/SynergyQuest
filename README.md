@@ -1,5 +1,9 @@
 # Synergy Quest - A Mobile-Controlled Cooperative Multiplayer Game
 
+<p align="center">
+  <img width="460" src="./Graphics/Logo/logo_web.png">
+</p>
+
 SynergyQuest is a 2D top-down cooperative multiplayer action-adventure video
 game.
 It entertains 2-4 players by letting them delve into dungeon levels
