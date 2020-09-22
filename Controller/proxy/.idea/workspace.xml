@@ -30,7 +30,30 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ea17c150-330d-4a97-b383-441aafdb5cb9" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../controller-app/src/App.css" beforeDir="false" afterPath="$PROJECT_DIR$/../controller-app/src/App.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../controller-app/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../controller-app/src/App.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../controller-app/src/ConnectScreen.css" beforeDir="false" afterPath="$PROJECT_DIR$/../controller-app/src/ConnectScreen.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../controller-app/src/ConnectScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../controller-app/src/ConnectScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../controller-app/src/Controller.css" beforeDir="false" afterPath="$PROJECT_DIR$/../controller-app/src/Controller.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../controller-app/src/Controller.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../controller-app/src/Controller.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../controller-app/src/ControlsHeaderRow.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../controller-app/src/ControlsHeaderRow.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../controller-app/src/EnumStrings.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../controller-app/src/EnumStrings.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../controller-app/src/InfoBar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../controller-app/src/InfoBar.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../controller-app/src/LoadingScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../controller-app/src/LoadingScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../controller-app/src/LobbyScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../controller-app/src/LobbyScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../controller-app/src/MenuScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../controller-app/src/MenuScreen.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../controller-app/src/NormalControls.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../controller-app/src/NormalControls.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../controller-app/src/OrientationControls.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../controller-app/src/OrientationControls.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../controller-app/src/RevivalMinigameControls.css" beforeDir="false" afterPath="$PROJECT_DIR$/../controller-app/src/RevivalMinigameControls.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../controller-app/src/RevivalMinigameControls.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../controller-app/src/RevivalMinigameControls.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../controller-app/src/asset-sources.md" beforeDir="false" afterPath="$PROJECT_DIR$/../controller-app/src/asset-sources.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../controller-app/src/consts.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../controller-app/src/consts.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../controller-client-lib/src/ControllerClient.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../controller-client-lib/src/ControllerClient.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../controller-client-lib/src/DiagnosticsClient.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../controller-client-lib/src/DiagnosticsClient.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../controller-client-lib/src/DiagnosticsMessage.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../controller-client-lib/src/DiagnosticsMessage.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../controller-client-lib/src/Message.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../controller-client-lib/src/Message.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../controller-client-lib/src/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../controller-client-lib/src/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/index.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,7 +72,7 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../ssl-warning-info" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../sensor-input-lib" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.standard" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -88,6 +111,7 @@
       <workItem from="1598133274495" duration="606000" />
       <workItem from="1599653724407" duration="6824000" />
       <workItem from="1599851129356" duration="71000" />
+      <workItem from="1600795731796" duration="10000" />
     </task>
     <servers />
   </component>
@@ -111,10 +135,11 @@
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
     <state x="798" y="169" width="1084" height="708" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1080@0.0.1920.1080" timestamp="1597502704222" />
-    <state x="735" y="229" width="428" height="476" key="FileChooserDialogImpl" timestamp="1599851198102">
+    <state x="733" y="209" width="428" height="476" key="FileChooserDialogImpl" timestamp="1600795740210">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
     <state x="741" y="289" width="428" height="476" key="FileChooserDialogImpl/0.0.1920.1080/0.0.1920.1080@0.0.1920.1080" timestamp="1597853204208" />
+    <state x="733" y="209" key="FileChooserDialogImpl/0.0.1920.1080@0.0.1920.1080" timestamp="1600795740210" />
     <state x="735" y="229" width="428" height="476" key="FileChooserDialogImpl/0.1080.1368.768/0.0.1920.1080@0.0.1920.1080" timestamp="1599851198102" />
     <state width="1437" height="350" key="GridCell.Tab.0.bottom" timestamp="1599850744057">
       <screen x="0" y="0" width="1920" height="1080" />
