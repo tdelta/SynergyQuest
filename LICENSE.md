@@ -1,5 +1,5 @@
 In the following, all file paths refer to the root folder of the source code
-repository:
+repository at https://github.com/tdelta/SynergyQuest :
 
 This work (the "Synergy Quest" game) is licensed under GNU GPL version 3 with
 additional permissions granted under section 7.

@@ -347,6 +347,8 @@ public class ProjectBuilder
     private static void CopyReadme(string buildDir)
     {
         FileUtil.ReplaceFile(ReadmeFile.Value, Path.Combine(buildDir, "ReadMe.txt").WinToNixPath());
+        
+        FileUtil.ReplaceFile(DebugSettings.Instance.PathToLicense, Path.Combine(buildDir, "LICENSE.md").WinToNixPath());
     }
 
     private static void RunCommand(string workingDir, string executable, string args)

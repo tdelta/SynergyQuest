@@ -94,6 +94,16 @@ public class DebugSettings: ScriptableObjectSingleton<DebugSettings>
      */
     public bool DisableRevivalMinigame => disableRevivalMinigame;
     [SerializeField] private bool disableRevivalMinigame = false;
+    
+    [Tooltip("Path to file containing the game license when the game is executed in Debug mode (Unity Editor)")]
+    [SerializeField] private string pathToLicenseDebugMode = "../LICENSE.md";
+    
+    [Tooltip("Path to file containing the game license when the game is executed in production mode (standalone executable)")]
+    [SerializeField] private string pathToLicenseProductionMode = "LICENSE.md";
+    
+    public string PathToLicense => DebugSettings.Instance.DebugMode
+      ? pathToLicenseDebugMode
+      : pathToLicenseProductionMode;
 }
 
 /**
