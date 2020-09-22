@@ -210,6 +210,7 @@ Art/Sprites/Items/bomb*.png:
 Art/Sprites/Environment/ShatteredPixelDungeon/**/*:
   author: Evan Debenham (00-Evan) and Oleg Dolya (Watabou)
   description: Graphics from "(Shattered) Pixel Dungeon"
+  modifications: Slight modifications to tileset (rounded corners etc.)
   license: GPLv3
   link: https://github.com/00-Evan/shattered-pixel-dungeon and https://github.com/watabou/pixel-dungeon
   
@@ -280,10 +281,10 @@ Art/Sprites/Player/ghost.png:
   link: https://github.com/00-Evan/shattered-pixel-dungeon and https://github.com/watabou/pixel-dungeon
   
 Art/Sounds/Player/ghost.mp3:
-  author: Evan Debenham (00-Evan) and Oleg Dolya (Watabou)
-  description: Ghost sound from "(Shattered) Pixel Dungeon"
-  license: GPLv3
-  link: https://github.com/00-Evan/shattered-pixel-dungeon and https://github.com/watabou/pixel-dungeon
+  author: freesound.org user "moogsy"
+  description: Ghost sound
+  license: CC0
+  link: https://freesound.org/people/moogsy/sounds/516445/
   
 Art/Sprites/Projectiles/fireball.png:
   author: Evan Debenham (00-Evan) and Oleg Dolya (Watabou)
@@ -292,10 +293,10 @@ Art/Sprites/Projectiles/fireball.png:
   link: https://github.com/00-Evan/shattered-pixel-dungeon and https://github.com/watabou/pixel-dungeon
 
 Art/Sounds/Projectiles/fireball.mp3:
-  author: Evan Debenham (00-Evan)
-  description: Gas sound from "Shattered Pixel Dungeon"
-  license: GPLv3
-  link: https://github.com/00-Evan/shattered-pixel-dungeon
+  author: Julien Matthey
+  description: Fireball sound
+  license: CC0
+  link: https://opengameart.org/content/fireball-1
 
 Art/Sprites/Interactive/platform.png:
   author: Evan Debenham (00-Evan) and Oleg Dolya (Watabou)

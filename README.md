@@ -25,7 +25,7 @@ technical report (distributed on the `Releases` page of this repository).
   
 ## Credits
 
-The game code (excluding engine) has been originally developed by
+The game code (excluding engine) and some assets have been originally developed by
 
 * Jonas Belouadi - [@potamides](https://github.com/potamides)
 * Marc Arnold - [@m-arnold](https://github.com/m-arnold)
@@ -68,7 +68,8 @@ See
 
 Excluding of course Unity, the libraries and external art assets,
 this work is licensed under **GPLv3**, but additional permissions under
-section 7 of GPLv3 apply. In short (informal):
+section 7 of GPLv3 apply.
+Short Explanation (informal, please see `LICENSE.md` for the formal terms):
 
 * Although Unity's license is not compatible with the standard GPLv3,
   we grant permission to convey (a modified version of) this work
@@ -77,10 +78,12 @@ section 7 of GPLv3 apply. In short (informal):
   [Watabou](http://www.watabou.ru/) from the
   [Shattered Pixel Dungeon](https://github.com/00-Evan/shattered-pixel-dungeon)
   and [Pixel Dungeon](https://github.com/watabou/pixel-dungeon) games
-  which are licensed under GPLv3. Similar permission as the above have been
+  which are licensed under GPLv3. Similar permission as the above has been
   granted by 00-Evan and Watabou to convey these assets with the Unity engine
-  when combined with this work.
+  when combined with this work but under certain conditions.
   Please see the complete note regarding their permission in [LICENSE.md](./LICENSE.md).
+
+Of course, for all external assets and especially the Unity components, their respective licenses apply and their terms must be upheld.
 
 Details see [LICENSE.md](./LICENSE.md).
 
