@@ -14,8 +14,13 @@ controllers. The game runs locally on a PC and serves a web-page to which the
 players can connect with their phones. Using touch controls and sensor input
 (accelerometer etc.) they can control their game character.
 
+* [Download for Linux (x86_64)](https://github.com/tdelta/SynergyQuest/releases/download/release/SynergyQuest_Linux.zip)
+* [Download for Windows](https://github.com/tdelta/SynergyQuest/releases/download/release/SynergyQuest_Windows.zip)
+
 For detailed information on the game and the development process, see the
 technical report (distributed on the `Releases` page of this repository).
+Information on how to **build** the project is included in the readme files of
+this repository:
 
 * [Components & Repository Structure](Notes/RepositoryStructure.md)
 * [How to Build ⚒](Notes/HowToBuild.md)
