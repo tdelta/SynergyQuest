@@ -7,7 +7,9 @@
 # on the licensing of these assets.
 #
 # All art not mentioned here has been originally made for this game by the authors and is
-# licensed under CC-BY 4.0.
+# licensed under GPLv3 with additional permissions granted under section 7 of
+# the GPLv3, see also LICENSE.md in the root folder of the source
+# repository.
 
 Art/Fonts/m6x11.ttf:
   author: Daniel Linssen
@@ -18,13 +20,13 @@ Art/Fonts/m6x11.ttf:
 Art/Music/hurry_up_by_cactusdude.ogg:
   author: itch.io user cactusdude
   description: background music "hurry up"
-  license: CC-BY 4.0
+  license: CC-BY 4.0 <u><link="https://creativecommons.org/licenses/by/4.0/">link</link></u>
   link: https://cactusdude.itch.io/free-game-soundtrack-by-cactusdude-hurry-up
 
 Art/Music/puzzle-1-*.mp3:
   author: Przemysław Sikorski / OpenGameArt.Org user rezoner
-  description: Background music for puzzles
-  license: CC-BY 3.0
+  description: Background music for puzzles. Title - "Puzzle tune 1"
+  license: CC-BY 3.0 <u><link="https://creativecommons.org/licenses/by/3.0/">link</link></u>
   link: https://opengameart.org/content/puzzle-tune-1
 
 Art/Music/Quirky Boss Loop.ogg:
@@ -89,8 +91,8 @@ Art/Sounds/fuse.ogg:
 
 Art/Sounds/coincollect.wav:
   author: artisticdude, submitted by user Obrebane to OpenGameArt.Org
-  description: Coin collect sound (Slightly modded)
-  license: CC-BY 3.0
+  description: Coin collect sound (Slightly modded). Title - "Inventory Sound Effects"
+  license: CC-BY 3.0 <u><link="https://creativecommons.org/licenses/by/3.0/">link</link></u>
   link: https://opengameart.org/content/inventory-sound-effects
 
 Art/Sounds/spring.ogg:
@@ -126,20 +128,20 @@ Art/Sounds/Player/Death/*:
 
 Art/Sounds/Player/Falling/fall*:
   author: JohnsonBrandEditing (Modified by OpenGameArt.Org user congusbongus)
-  description: Fall sounds
-  license: CC-BY 3.0
+  description: Fall sounds.
+  license: CC0
   link: http://freesound.org/people/JohnsonBrandEditing/sounds/173944/
 
 Art/Sounds/Player/Fighting/grunt*:
   author: OpenGameArt.Org user tinsin
-  description: Fighting grund sounds
-  license: CC-BY 3.0
+  description: Fighting grund sounds. Title - "Generic Hero Effort Noises"
+  license: CC-BY 3.0 <u><link="https://creativecommons.org/licenses/by/3.0/">link</link></u>
   link: https://opengameart.org/content/generic-hero-effort-noises
 
 Art/Sounds/Spikes/spikes*:
   author: The Berklee College of Music
-  description: Spike sounds (Modified)
-  license: CC-BY 3.0
+  description: Spike sounds (Modified). Title - "Knife sharpening slice 1"
+  license: CC-BY 3.0 <u><link="https://creativecommons.org/licenses/by/3.0/">link</link></u>
   link: https://opengameart.org/content/knife-sharpening-slice-1
 
 Art/Sounds/Switch/switch*:
@@ -150,20 +152,20 @@ Art/Sounds/Switch/switch*:
   
 Art/Sprites/Items/explosion.png:
   author: OpenGameArt.Org users qubodup and shimobayashi
-  description: Explosion animation
-  license: CC-BY 3.0
+  description: Bomb Explosion Animation
+  license: CC-BY 3.0 <u><link="https://creativecommons.org/licenses/by/3.0/">link</link></u>
   link: https://opengameart.org/content/bomb-explosion-animation
 
 Art/Sprites/Player/heart.png:
   author: DontMind8.blogspot.com
   description: Heart sprite
-  license: CC-BY 4.0
+  license: CC-BY 4.0 <u><link="https://creativecommons.org/licenses/by/4.0/">link</link></u>
   link: https://opengameart.org/content/heart-pixel-art
 
 Art/Sprites/Player/empty-heart.png:
   author: DontMind8.blogspot.com
   description: Empty heart sprite
-  license: CC-BY 4.0
+  license: CC-BY 4.0 <u><link="https://creativecommons.org/licenses/by/4.0/">link</link></u>
   modifications: Converted to monochrome
   link: https://opengameart.org/content/heart-pixel-art
   

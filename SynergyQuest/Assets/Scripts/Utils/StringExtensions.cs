@@ -12,4 +12,29 @@ public static class StringExtensions
     {
         return self.Replace('\\', '/');
     }
+    
+    /**
+     * <summary>
+     * Replaces any slashes (<c>/</c>) with backslashes (<c>\</c>) in a string.
+     * </summary>
+     */
+    public static string NixToWinPath(this string self)
+    {
+        return self.Replace('/', '\\');
+    }
+
+    /**
+     * <summary>
+     * Replaces any slashes (<c>/</c>) with backslashes (<c>\</c>) in a string on Windows systems.
+     * Replaces any backslashes (<c>\</c>) with slashes (<c>/</c>) on all other systems.
+     * </summary>
+     */
+    public static string CorrectFsSlashes(this string self)
+    {
+        #if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
+            return self.NixToWinPath();
+        #else
+            return self.WinToNixPath();
+        #endif
+    }
 }

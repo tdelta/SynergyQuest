@@ -1,12 +1,16 @@
+In the following, all file paths refer to the root folder of the source code
+repository:
+
 This work (the "Synergy Quest" game) is licensed under GNU GPL version 3 with
 additional permissions granted under section 7.
 
-Of course, all external work (art by external artists etc.), the source files
-and other (extension) components of the Unity engine which have been combined
-with this work are distributed under their own respective licenses whose terms
-must be upheld.
+Of course, all external work (art by external artists, libraries etc.),
+the source files and other (extension) components of the Unity engine which
+have been combined with this work are distributed under their own respective
+licenses whose terms must be upheld.
 A list of all external art combined with this work can be found
 [here](./SynergyQuest/Assets/Resources/ExternalArtCredits.yaml).
+For information on used libraries, see `README.md`.
 
 The terms of the additional permissions under section 7 of the GPLv3 follow now,
 the full text of the GPLv3 can be found further below.

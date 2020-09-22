@@ -55,7 +55,7 @@ libraries:
 * [YamlDotNet](https://github.com/aaubry/YamlDotNet) ([MIT License](https://github.com/aaubry/YamlDotNet/blob/master/LICENSE.txt))
 * [ZXing.Net](https://github.com/micjahn/ZXing.Net) ([Apache License 2.0](https://github.com/micjahn/ZXing.Net/blob/master/COPYING))
 
-(We ship pre-built versions of these libraries with this repository.)
+(We ship pre-built versions of these libraries with this repository. Binaries and license texts see [SynergyQuest/Assets/Plugins](./SynergyQuest/Assets/Plugins).)
 
 Furthermore, various Javascript/Typescript libraries are in use in the game controller web app.
 See
