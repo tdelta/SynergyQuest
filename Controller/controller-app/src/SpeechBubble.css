@@ -1,0 +1,13 @@
+.speechBubble {
+    font-family: "m6x11";
+    color: black;
+    image-rendering: crisp-edges;
+    border-image: url('gfx/speech_bubble.png');
+    border-image-slice: 4 6 4 6 fill;
+    border-width: 0.4em 0.6em 0.4em 0.6em;
+    border-style: solid;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 0.4em;
+}

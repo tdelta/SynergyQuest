@@ -52,7 +52,7 @@ export class Controller extends React.Component<
     super(probs);
 
     this.state = {
-      isFullscreen: false,
+      isFullscreen: fscreen.fullscreenElement != null,
     };
   }
 
@@ -88,13 +88,13 @@ export class Controller extends React.Component<
       );
     }
 
-    this.setState({ isFullscreen: makeFullscreen });
+    this.setState({ isFullscreen: fscreen.fullscreenElement != null });
   }
 
   onFullscreenChange() {
     this.setState({
       // Evaluates to true if window is in fullscreen
-      isFullscreen: fscreen.fullscreenElement !== null,
+      isFullscreen: fscreen.fullscreenElement != null,
     });
   }
 
