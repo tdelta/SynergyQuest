@@ -26,6 +26,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 /**
  * <summary>
@@ -133,11 +134,19 @@ public class Spawnable : MonoBehaviour
      * <remarks>
      * See the class description for an explanation on how respawn positions are determined.
      * This method will also make this object visible using <see cref="GameObjectExtensions.MakeVisible"/>.
+     *
+     * If the respawn position is blocked by a collider, this method will use
+     * <see cref="TilemapExtensions.NearestFreeGridPosition"/>
+     * to find a position near to it, which is not blocked by a collider.
      * </remarks>
      */
     public void Respawn(RespawnReason reason = RespawnReason.Other)
     {
         var respawnPosition = RespawnPosition;
+        if (TilemapExtensions.FindMainTilemap() is Tilemap tilemap)
+        {
+            respawnPosition = tilemap.NearestFreeGridPosition(respawnPosition);
+        }
         
         // Move to position of the spawner when respawning
         if (TryGetComponent(out PhysicsEffects physicsEffects))

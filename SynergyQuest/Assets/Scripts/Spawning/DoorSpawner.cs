@@ -23,7 +23,7 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
-﻿using UnityEngine;
+ using UnityEngine;
 
 /**
  * If players use a door to enter a room of a dungeon layout, they will be spawned by this spawner.
