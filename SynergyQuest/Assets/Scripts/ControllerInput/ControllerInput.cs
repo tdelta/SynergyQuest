@@ -91,10 +91,14 @@ public class ControllerInput: Input
         set
         {
             _inputMode = value;
-            
-            // When input mode is changed, controller must be informed
-            var msg = new Message.InputModeChangedMessage(value);
-            SendMessage(msg);
+
+            if (IsConnected())
+                // TODO: What if not connected? Handled by reconnect?
+            {
+                // When input mode is changed, controller must be informed
+                var msg = new Message.InputModeChangedMessage(value);
+                SendMessage(msg);
+            }
         }
     }
 
@@ -246,6 +250,7 @@ public class ControllerInput: Input
      */
     private void SendEnabledButtons()
     {
+        // TODO: Check if connected?
         var msg = new Message.SetEnabledButtonsMessage(_enabledButtons.ToList());
         SendMessage(msg);
     }
@@ -294,6 +299,7 @@ public class ControllerInput: Input
      */
     private void SendCooldownButtons()
     {
+        // TODO: Check if connected ?
         var msg = new Message.SetCooldownButtonsMessage(_cooldownButtons.ToList());
         SendMessage(msg);
     }
@@ -344,6 +350,7 @@ public class ControllerInput: Input
      */
     public void SetColor(PlayerColor color)
     {
+        // TODO: Check if connected ?
         _playerColor = color;
         
         var msg = new Message.PlayerColorMessage(color);
@@ -372,8 +379,12 @@ public class ControllerInput: Input
      */
     public void PlayVibrationFeedback(List<float> vibrationPattern)
     {
-        var msg = new Message.VibrationSequenceMessage(vibrationPattern);
-        SendMessage(msg);
+        if (IsConnected())
+            // Simply ignore vibration that happens while a controller is disconnected
+        {
+            var msg = new Message.VibrationSequenceMessage(vibrationPattern);
+            SendMessage(msg);
+        }
     }
 
     /**
