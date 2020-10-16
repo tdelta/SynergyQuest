@@ -156,7 +156,7 @@ public class PlayerDataKeeper: Singleton<PlayerDataKeeper>
         // Try finding a free position in the current grid to spawn the player
         // FIXME: Do not hardcode the "Grid" name, but make it configurable
         var spawnPosition = position;
-        if (GameObject.Find("Tilemap") is GameObject tilemapObj && tilemapObj.GetComponent<Tilemap>() is Tilemap tilemap)
+        if (TilemapExtensions.FindMainTilemap() is Tilemap tilemap)
         {
             spawnPosition = tilemap.NearestFreeGridPosition(position);
         }

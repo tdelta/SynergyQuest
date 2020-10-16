@@ -23,36 +23,36 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
+using System.Collections.Generic;
+using System.Linq;
+using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
 public static class TilemapExtensions
 {
     /**
+     * <summary>
      * Tries to find a position in a grid cell close to the given position which is free of colliders.
      * If none can be found, returns the given position.
+     * </summary>
      *
-     * FIXME: Actually do an exhaustive search, currently, this just checks four neighboring cells
+     * <param name="tilemap">Map which shall be searched for collider-free positions</param>
+     * <param name="position">target position. We will try to find a free grid cell close to it</param>
+     * <param name="maxChecks">how many cells we shall check before giving up</param>
      */
-    public static Vector3 NearestFreeGridPosition(this Tilemap tilemap, Vector3 position)
+    public static Vector3 NearestFreeGridPosition(this Tilemap tilemap, Vector3 position, int maxChecks = 30)
     {
         var centerCell = tilemap.layoutGrid.WorldToCell(position);
-        var toCheck = new[]
-        {
-            centerCell,
-            centerCell + Vector3Int.up,
-            centerCell + Vector3Int.left,
-            centerCell + Vector3Int.right,
-            centerCell + Vector3Int.down,
-            centerCell + Vector3Int.up + Vector3Int.left,
-            centerCell + Vector3Int.left + Vector3Int.down,
-            centerCell + Vector3Int.right + Vector3Int.up,
-            centerCell + Vector3Int.down + Vector3Int.right,
-        };
+        var toCheck = new Queue<Vector3Int>();
+        toCheck.Enqueue(centerCell);
+        var checkedPositions = new HashSet<Vector3Int>();
 
+        var numCheckedCells = 0;
         var colliderBuffer = new Collider2D[1];
-        foreach (var cell in toCheck)
+        while (toCheck.Any() && numCheckedCells < maxChecks)
         {
+            var cell = toCheck.Dequeue();
             var worldPos = tilemap.GetCellCenterWorld(cell);
             
             if (
@@ -62,9 +62,52 @@ public static class TilemapExtensions
             {
                 return new Vector3(worldPos.x, worldPos.y, position.z);
             }
+
+            else
+            {
+                checkedPositions.Add(cell);
+                var nextToCheck = new[]
+                {
+                    cell + Vector3Int.up,
+                    cell + Vector3Int.left,
+                    cell + Vector3Int.right,
+                    cell + Vector3Int.down,
+                    cell + Vector3Int.up + Vector3Int.left,
+                    cell + Vector3Int.left + Vector3Int.down,
+                    cell + Vector3Int.right + Vector3Int.up,
+                    cell + Vector3Int.down + Vector3Int.right,
+                };
+
+                foreach (var nextCell in nextToCheck.Where(nextCell => !checkedPositions.Contains(nextCell)))
+                {
+                    toCheck.Enqueue(nextCell);
+                }
+            }
+
+            ++numCheckedCells;
         }
 
         return position;
+    }
+
+    /**
+     * <summary>
+     * Tries to find a tilemap object of name "Tilemap".
+     * </summary>
+     */
+    [CanBeNull]
+    public static Tilemap FindMainTilemap()
+    {
+        if (GameObject.Find("Tilemap") is GameObject tilemapObj &&
+            tilemapObj.GetComponent<Tilemap>() is Tilemap tilemap)
+        {
+            return tilemap;
+        }
+
+        else
+        {
+            return null;
+        }
     }
 
     /**
