@@ -58,8 +58,8 @@ MonoBehaviour:
   damageFactor: 2
   smokeEffect: {fileID: 24872979894827348}
   hitSounds: {fileID: 2591332168760939140}
-  coin: {fileID: 7476413430186449276, guid: 4328b41c3928fc341a393f3a479abf6d, type: 3}
-  fireball: {fileID: 2864600893969043934, guid: 76a650fe6bc583225acee50373f482e7,
+  absorbables: {fileID: 11400000, guid: 86679ebb4b25bf7e3bd81c659e40e8e4, type: 2}
+  fireballPrefab: {fileID: 2864600893969043934, guid: 76a650fe6bc583225acee50373f482e7,
     type: 3}
   launchCoolDown: 2
   viewCone: 60

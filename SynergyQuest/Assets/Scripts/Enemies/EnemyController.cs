@@ -23,7 +23,7 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
-﻿using UnityEngine;
+using UnityEngine;
 using Single = System.Single;
 
 abstract public class EnemyController : EntityController
@@ -34,8 +34,7 @@ abstract public class EnemyController : EntityController
     [SerializeField] protected int damageFactor = 1;
     [SerializeField] ParticleSystem smokeEffect = default;
     [SerializeField] private MultiSound hitSounds = default;
-
-    public GameObject coin;
+    [SerializeField] Absorbables monsterDrops;
 
     protected float directionTimer;
     protected Vector2 direction;
@@ -43,6 +42,7 @@ abstract public class EnemyController : EntityController
     bool isDead;
     RaycastHit2D[] _hit = new RaycastHit2D[3];
     readonly int deadTrigger = Animator.StringToHash("Dead");
+    readonly System.Random rand = new System.Random();
 
     /**
      * Used to briefly flash an enemy in a certain color. For example red when it is hit.
@@ -114,7 +114,7 @@ abstract public class EnemyController : EntityController
             direction = -direction;
     }
 
-    protected override bool ChangeHealth(int amount, bool playSounds = true)
+    public override bool ChangeHealth(int amount, bool playSounds = true)
     {
         healthPoints += amount;
 
@@ -181,7 +181,7 @@ abstract public class EnemyController : EntityController
     {
         int amountCoins = Random.Range(0,5);
         for(int i = 0; i < amountCoins; i++) {
-            Instantiate(coin, transform.position, Quaternion.identity);    
+            Instantiate(monsterDrops[rand.Next(0, monsterDrops.Length)], transform.position, Quaternion.identity);    
         }
     }
 

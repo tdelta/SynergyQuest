@@ -58,7 +58,7 @@ MonoBehaviour:
   damageFactor: 1
   smokeEffect: {fileID: 5306489982219389968}
   hitSounds: {fileID: 9052991940343098414}
-  coin: {fileID: 0}
+  absorbables: {fileID: 11400000, guid: 86679ebb4b25bf7e3bd81c659e40e8e4, type: 2}
 --- !u!114 &3986429896781604294
 MonoBehaviour:
   m_ObjectHideFlags: 0
