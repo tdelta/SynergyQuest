@@ -23,7 +23,7 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
-﻿using UnityEngine;
+ using UnityEngine;
 
 abstract public class EntityController : MonoBehaviour {
     [SerializeField] float timeInvincible = 1;
@@ -93,5 +93,5 @@ abstract public class EntityController : MonoBehaviour {
      * is affected by health changes.
      * The return value should indicate if the change in health actually happened
      */
-    protected abstract bool ChangeHealth(int amount, bool playSounds = true);
+    public abstract bool ChangeHealth(int amount, bool playSounds = true);
 }

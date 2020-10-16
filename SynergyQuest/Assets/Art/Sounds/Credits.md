@@ -29,12 +29,6 @@
 * License: CC0
 * Slightly modded (denoise & cut)
 
-# coincollect.wav
-
-* Created by artisticdude, submitted by user Obrebane to OpenGameArt.Org
-* Link: https://opengameart.org/content/inventory-sound-effects
-* License: CC-BY 3.0
-
 # spring.ogg
 
 * Created by OpenGameArt.Org user rubberduck

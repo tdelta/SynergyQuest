@@ -108,7 +108,7 @@ MonoBehaviour:
   damageFactor: 1
   smokeEffect: {fileID: 6204671756597931383}
   hitSounds: {fileID: 6792248209785877500}
-  coin: {fileID: 7476413430186449276, guid: 4328b41c3928fc341a393f3a479abf6d, type: 3}
+  monsterDrops: {fileID: 11400000, guid: 86679ebb4b25bf7e3bd81c659e40e8e4, type: 2}
 --- !u!114 &2038427830744242232
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -133,6 +133,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e89ceed4394482f9eade6be87a68d82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  FrictionEnabled: 1
 --- !u!61 &4379324440833947342
 BoxCollider2D:
   m_ObjectHideFlags: 0

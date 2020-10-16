@@ -1,4 +1,4 @@
-// This file is part of the "Synergy Quest" game
+﻿// This file is part of the "Synergy Quest" game
 // (github.com/tdelta/SynergyQuest).
 // 
 // Copyright (c) 2020
@@ -23,18 +23,16 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
-﻿using UnityEngine;
-using Random = UnityEngine.Random;
+using UnityEngine;
 
-public class CoinController : MonoBehaviour
+/**
+ * Base class for the controller of absorbable gameobjects. Absorbable gameobjects behave differently from items in
+ * that regard, that their effect happens only once and is triggered immediately after pickup.
+ */
+public abstract class AbsorbableController : MonoBehaviour
 {
-    [SerializeField] private float thrust = default;
-    [SerializeField] private int deactivationTime = default;
-
-    public void Init(int deactivationTimeOverride)
-    {
-        deactivationTime = deactivationTimeOverride;
-    }
+    [SerializeField] private float thrust = 100;
+    [SerializeField] private int deactivationTime = 25;
     
     // Start is called before the first frame update
     void Start()
@@ -65,9 +63,10 @@ public class CoinController : MonoBehaviour
         var other = collision.collider;
         if (other.CompareTag("Player"))
         {
-            other.GetComponent<PlayerController>().IncreaseGoldCounter();
-            
-            this.gameObject.PlaySoundAndDestroy();
+            GetAbsorbed(other.GetComponent<PlayerController>());
+            gameObject.PlaySoundAndDestroy();
         } 
     }
+
+    protected abstract void GetAbsorbed(PlayerController player);
 }

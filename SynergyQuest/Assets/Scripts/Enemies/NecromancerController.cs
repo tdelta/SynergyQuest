@@ -23,7 +23,7 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
-﻿using UnityEngine;
+ using UnityEngine;
 using UnityEngine.Serialization;
 
 public class NecromancerController : EnemyController
@@ -101,7 +101,7 @@ public class NecromancerController : EnemyController
         return _offset;
     }
 
-    protected override bool ChangeHealth(int amount, bool playSounds = true)
+    public override bool ChangeHealth(int amount, bool playSounds = true)
     {
         // if we didn't receive damage from a player apply damage regularly
         if (!_attackedByPlayer)

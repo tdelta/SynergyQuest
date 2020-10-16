@@ -312,7 +312,7 @@ public class PlayerController : EntityController
         }
     }
 
-    protected override bool ChangeHealth(int delta, bool playSounds = true)
+    public override bool ChangeHealth(int delta, bool playSounds = true)
     {
         // if the player is thrown he shouldn't get any damage
         if (_playerState == PlayerState.thrown)
