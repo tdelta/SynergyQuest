@@ -23,14 +23,16 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
+/**
+ * ScriptableObject class which holds an array of absorbable gameObjects. This is used for e.g. monster drops to make
+ * it possible to add new absorbable gameObjects to all Monsters at the same time.
+ */
 [CreateAssetMenu(fileName = "Absorbables", menuName = "ScriptableObjects/Absorbables")]
 public class Absorbables : ScriptableObject
 {
-    [SerializeField] private AbsorbableController[] absorbables;
+    [SerializeField] private AbsorbableController[] absorbables = default;
 
     public AbsorbableController this[int index] => absorbables[index];
     public int Length => absorbables.Length;

@@ -23,11 +23,13 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
+/**
+ * Controller for coins, which can be picked up by players to increase their score.
+ */
 public class CoinController : AbsorbableController
 {
     protected override void GetAbsorbed(PlayerController player)
     {
         player.IncreaseGoldCounter();
-        this.gameObject.PlaySoundAndDestroy();
     }
 }

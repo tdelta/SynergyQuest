@@ -34,7 +34,12 @@ abstract public class EnemyController : EntityController
     [SerializeField] protected int damageFactor = 1;
     [SerializeField] ParticleSystem smokeEffect = default;
     [SerializeField] private MultiSound hitSounds = default;
-    [SerializeField] Absorbables monsterDrops;
+    
+    /**
+     * Instance of Absorbables ScriptableObject which holds all Absorbables
+     * a monster could potentially drop when it dies.
+     */
+    [SerializeField] Absorbables monsterDrops = default;
 
     protected float directionTimer;
     protected Vector2 direction;
@@ -128,7 +133,7 @@ abstract public class EnemyController : EntityController
             isDead = true;
             this.GetComponent<Collider2D>().enabled = false;
             Animator.SetTrigger(deadTrigger);
-            dropCoins();
+            DropAbsorbables();
             Destroy(gameObject, 1);
             OnDeath?.Invoke();
         }
@@ -177,7 +182,7 @@ abstract public class EnemyController : EntityController
         }
     }
 
-    private void dropCoins()
+    private void DropAbsorbables()
     {
         int amountCoins = Random.Range(0,5);
         for(int i = 0; i < amountCoins; i++) {

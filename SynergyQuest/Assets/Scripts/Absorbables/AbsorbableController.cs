@@ -25,6 +25,10 @@
 
 using UnityEngine;
 
+/**
+ * Base class for the controller of absorbable gameobjects. Absorbable gameobjects behave differently from items in
+ * that regard, that their effect happens only once and is triggered immediately after pickup.
+ */
 public abstract class AbsorbableController : MonoBehaviour
 {
     [SerializeField] private float thrust = 100;
@@ -60,6 +64,7 @@ public abstract class AbsorbableController : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             GetAbsorbed(other.GetComponent<PlayerController>());
+            gameObject.PlaySoundAndDestroy();
         } 
     }
 

@@ -10,6 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c9cb6d6bb268f44cbb91477c1cf5e48b, type: 3}
-  m_Name: Absorbables
+  m_Name: MonsterDrops
   m_EditorClassIdentifier: 
-  absorbables: []
+  absorbables:
+  - {fileID: 7476413430186449264, guid: 4328b41c3928fc341a393f3a479abf6d, type: 3}
+  - {fileID: 696213484219097905, guid: 8de32f487909ffcd2b78800f4858b53e, type: 3}

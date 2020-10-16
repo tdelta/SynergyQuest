@@ -25,6 +25,9 @@
 
 using UnityEngine;
 
+/**
+ * Controller for hearts, which can be picked up by players to restore their health.
+ */
 public class HeartController : AbsorbableController
 {
     [SerializeField] int amount = 1;
@@ -32,6 +35,5 @@ public class HeartController : AbsorbableController
     protected override void GetAbsorbed(PlayerController player)
     {
         player.ChangeHealth(amount);
-        this.gameObject.PlaySoundAndDestroy();
     }
 }
