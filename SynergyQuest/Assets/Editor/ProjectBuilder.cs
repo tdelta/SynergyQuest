@@ -29,7 +29,9 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using JetBrains.Annotations;
 using UnityEditor;
+using UnityEditor.UIElements;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 
@@ -45,45 +47,120 @@ using Debug = UnityEngine.Debug;
 public class ProjectBuilder
 {
     // === Paths and other constants needed for building ===
-    private static string YarnExecutable {
-        get {
-            #if UNITY_EDITOR_WIN
-                // try to find yarn on PATH
-                string yarnExecutable = null;
-                
-                var envDir = Environment.GetEnvironmentVariable("PATH");
-                foreach (var path in envDir.Split(Path.PathSeparator))
-                {
-                    var fullPath = Path.Combine(path, "yarn.cmd");
+    [CanBeNull]
+    private static string SearchPathForFile(string filename)
+    {
+        var envDir = Environment.GetEnvironmentVariable("PATH");
+        foreach (var path in envDir.Split(Path.PathSeparator))
+        {
+            Log($"PATH element: {path}");
+            var fullPath = Path.Combine(path, filename);
 
-                    if (File.Exists(fullPath))
-                    {
-                        yarnExecutable = fullPath;
-                    }
-                }
-
-                if (yarnExecutable == null)
-                {
-                    var errorMsg =
-                        "Can not find yarn. Please install yarn so that it is available on the system PATH. See also https://classic.yarnpkg.com/en/docs/install/#windows-stable";
-
-                    EditorUtility.DisplayDialog(
-                        "yarn not found",
-                        errorMsg,
-                        "Ok"
-                    );
-                    
-                    throw new ApplicationException(
-                        errorMsg
-                    );
-                }
-
-                return yarnExecutable;
-            #else
-                return "yarn";
-            #endif
+            if (File.Exists(fullPath))
+            {
+                return fullPath;
+            }
         }
+
+        return null;
     }
+    
+    private static readonly Lazy<string> lazyNpmExecutable = new Lazy<string>(() =>
+        {
+            #if UNITY_EDITOR_WIN
+                var npmBin = "npm.cmd";
+            #else
+                var npmBin = "npm";
+            #endif
+            
+            Log("=== Searching PATH for NPM executable... ===");
+            // try to find npm on PATH
+            var npmPath = SearchPathForFile(npmBin);
+            
+            if (npmPath == null)
+            {
+                var errorMsg = "Can not find NPM.";
+                Log(errorMsg);
+                throw new ApplicationException(
+                    errorMsg
+                );
+            }
+
+            else
+            {
+                Log($"Found npm executable at {npmPath}.");
+            }
+
+            return npmPath;
+        }
+    );
+    
+    private static readonly Lazy<string> lazyYarnExecutable = new Lazy<string>(() =>
+        {
+            #if UNITY_EDITOR_WIN
+                var yarnBin = "yarn.cmd";
+            #else
+                var yarnBin = "yarn";
+            #endif
+            
+            Log("=== Searching PATH for Yarn executable... ===");
+            var yarnPath = SearchPathForFile(yarnBin);
+
+            if (yarnPath == null)
+            {
+                Log("Could not find Yarn in path. Searching for NPM installation of yarn...");
+                var npmPath = lazyNpmExecutable.Value;
+                
+                var globalInstallationDir = RunCommand(ProjectDir.Value, npmPath, "root -g");
+                Log($"NPM installs globally to {globalInstallationDir}.");
+                var possibleYarnLocation = Path.Combine(
+                    Path.Combine(
+                        Path.Combine(globalInstallationDir, "yarn"),
+                        "bin"
+                    ),
+                    yarnBin
+                );
+
+                Log($"Searching Yarn at {possibleYarnLocation}...");
+                if (File.Exists(possibleYarnLocation))
+                {
+                    Log("Found Yarn!");
+                    yarnPath = possibleYarnLocation;
+                }
+
+                else
+                {
+                    Log("Found no NPM installation of Yarn.");
+                }
+            }
+            
+            if (yarnPath == null)
+            {
+                var errorMsg =
+                    "Can not find yarn. Please install yarn so that it is available on the system PATH. See also https://classic.yarnpkg.com/en/docs/install/";
+
+                Log(errorMsg);
+                EditorUtility.DisplayDialog(
+                    "yarn not found",
+                    errorMsg,
+                    "Ok"
+                );
+                
+                throw new ApplicationException(
+                    errorMsg
+                );
+            }
+
+            else
+            {
+                Log($"Found Yarn executable at {yarnPath}.");
+            }
+
+            return yarnPath;
+        }
+    );
+
+    private static string YarnExecutable => lazyYarnExecutable.Value;
     
     // ReSharper disable once PossibleNullReferenceException
     private static readonly Lazy<string> ProjectDir = new Lazy<string>(() => Directory.GetParent(Application.dataPath).Parent.FullName);
@@ -137,7 +214,7 @@ public class ProjectBuilder
         
         Log("Cleared all build folders.");
     }
-    
+
     /**
      * <summary>
      * Builds and bundles a standalone version of SynergyQuest for Windows
@@ -145,8 +222,37 @@ public class ProjectBuilder
      * </summary>
      */
     [MenuItem("SynergyQuest Build/Windows Build")]
-    public static void BuildForWindows ()
+    public static void BuildForWindowsBuildWeb()
     {
+        BuildForWindows(false);
+    }
+    
+    /**
+     * <summary>
+     * Builds and bundles a standalone version of SynergyQuest for Windows.
+     * Assumes, all web components are already pre-built.
+     * </summary>
+     */
+    public static void BuildForWindowsBuildNoWeb()
+    {
+        BuildForWindows(true);
+    }
+    
+    /**
+     * <summary>
+     * Builds and bundles a standalone version of SynergyQuest for Windows
+     * (Including all web libraries and apps etc.)
+     * </summary>
+     * <param name="assumePrebuiltWebComponents">Iff false, also builds web libraries and apps with yarn.</param>
+     */
+    public static void BuildForWindows(bool assumePrebuiltWebComponents)
+    {
+        if (!assumePrebuiltWebComponents)
+        {
+            // Force search for Yarn
+            var _ = YarnExecutable;
+        }
+        
         Log("=== Building standalone Windows Player ===");
         BuildPipeline.BuildPlayer(
             new BuildPlayerOptions
@@ -160,10 +266,16 @@ public class ProjectBuilder
 
         try
         {
-            BuildControllerApp();
+            if (!assumePrebuiltWebComponents)
+            {
+                BuildControllerApp();
+            }
             CopyControllerApp(WindowsBuildDirectory.Value);
-            
-            BuildSslWarningInfoApp();
+
+            if (!assumePrebuiltWebComponents)
+            {
+                BuildSslWarningInfoApp();
+            }
             CopySslWarningInfoApp(WindowsBuildDirectory.Value);
             
             CopyCertificateFiles(WindowsBuildDirectory.Value);
@@ -186,13 +298,42 @@ public class ProjectBuilder
     
     /**
      * <summary>
-     * Builds and bundles a standalone version of SynergyQuest for Linux
+     * Builds and bundles a standalone version of SynergyQuest for Linux.
      * (Including all web libraries and apps etc.)
      * </summary>
      */
     [MenuItem("SynergyQuest Build/Linux Build")]
-    public static void BuildForLinux ()
+    public static void BuildForLinuxBuildWeb()
     {
+        BuildForLinux(false);
+    }
+
+    /**
+     * <summary>
+     * Builds and bundles a standalone version of SynergyQuest for Linux.
+     * Assumes, all web components are already pre-built.
+     * </summary>
+     */
+    public static void BuildForLinuxBuildNoWeb()
+    {
+        BuildForLinux(true);
+    }
+
+    /**
+     * <summary>
+     * Builds and bundles a standalone version of SynergyQuest for Linux
+     * (Including all web libraries and apps etc.)
+     * </summary>
+     * <param name="assumePrebuiltWebComponents">Iff false, also builds web libraries and apps with yarn.</param>
+     */
+    public static void BuildForLinux(bool assumePrebuiltWebComponents)
+    {
+        if (!assumePrebuiltWebComponents)
+        {
+            // Force search for Yarn
+            var _ = YarnExecutable;
+        }
+        
         Log("=== Building standalone Linux Player ===");
         BuildPipeline.BuildPlayer(
             new BuildPlayerOptions
@@ -206,10 +347,16 @@ public class ProjectBuilder
 
         try
         {
-            BuildControllerApp();
+            if (!assumePrebuiltWebComponents)
+            {
+                BuildControllerApp();
+            }
             CopyControllerApp(LinuxBuildDirectory.Value);
             
-            BuildSslWarningInfoApp();
+            if (!assumePrebuiltWebComponents)
+            {
+                BuildSslWarningInfoApp();
+            }
             CopySslWarningInfoApp(LinuxBuildDirectory.Value);
             
             CopyCertificateFiles(LinuxBuildDirectory.Value);
@@ -351,7 +498,7 @@ public class ProjectBuilder
         FileUtil.ReplaceFile(DebugSettings.Instance.PathToLicense, Path.Combine(buildDir, "LICENSE.md").WinToNixPath());
     }
 
-    private static void RunCommand(string workingDir, string executable, string args)
+    private static string RunCommand(string workingDir, string executable, string args)
     {
         var process = new Process();
         var startInfo = new ProcessStartInfo
@@ -360,6 +507,7 @@ public class ProjectBuilder
             FileName = executable,
             Arguments = args,
             UseShellExecute = false,
+            RedirectStandardOutput = true,
             RedirectStandardError = true,
             WindowStyle = ProcessWindowStyle.Hidden,
         };
@@ -367,13 +515,19 @@ public class ProjectBuilder
         process.StartInfo = startInfo;
         process.Start();
 
+        var stdout = process.StandardOutput.ReadToEnd();
         var stderr = process.StandardError.ReadToEnd();
         process.WaitForExit();
+        
+        Log($"Stdout of '{executable} {args}' in {workingDir}:");
+        Log(stdout);
 
         if (process.ExitCode != 0)
         {
             throw new ApplicationException($"Non-zero exit code while running \"{executable} {args}\". Stderr: {stderr}");
         }
+
+        return stdout;
     }
 
     private static void Log(string msg)
