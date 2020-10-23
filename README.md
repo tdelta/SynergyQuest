@@ -1,7 +1,9 @@
 # Synergy Quest - A Mobile-Controlled Cooperative Multiplayer Game
 
 <p align="center">
-  <img width="460" src="./Graphics/Logo/logo_web.png">
+  <a href="https://youtu.be/S4HkH0xsG0k">
+    <img width="460" src="./Graphics/Logo/logo_trailer.png">
+  </a>
 </p>
 
 SynergyQuest is a 2D top-down cooperative multiplayer action-adventure video
