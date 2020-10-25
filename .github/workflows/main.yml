@@ -80,30 +80,35 @@ jobs:
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
       # Build Web Apps
+      - name: Build Build Scripts
+        working-directory: Controller/build-scripts
+        run: |
+          yarn install
+          yarn build
+
       - name: Build Controller Client Lib
         working-directory: Controller/controller-client-lib
         run: |
           yarn install
-          yarn build
+          yarn prepare-distribution
 
       - name: Build Sensor Input Lib
         working-directory: Controller/sensor-input-lib
         run: |
           yarn install
-          yarn build
+          yarn prepare-distribution
 
       - name: Build Main Controller App
         working-directory: Controller/controller-app
         run: |
           yarn install
-          yarn upgrade ../controller-client-lib ../sensor-input-lib
-          yarn build
+          yarn prepare-distribution
 
       - name: Build SSL Warning Info App
         working-directory: Controller/ssl-warning-info
         run: |
           yarn install
-          yarn build
+          yarn prepare-distribution
 
       # Linux build
       - name: Build Unity project for Linux

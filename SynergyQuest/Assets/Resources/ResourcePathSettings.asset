@@ -10,6 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6b919b47581f42459be72ebe84c9f916, type: 3}
-  m_Name: StartupSettings
+  m_Name: ResourcePathSettings
   m_EditorClassIdentifier: 
   initialDungeonLayoutFile: MainDungeon.json
+  externalArtCredits: {fileID: 4900000, guid: 6f6489d04dde7308bbe97f33fbb0d869, type: 3}
+  cSharpLibDisclaimers: {fileID: 4900000, guid: a651b872dee8938c3bc486bb2329a178,
+    type: 3}
+  webLibsListFile: web-libs-list.txt
+  webLibsDisclaimerFile: web-libs-disclaimers.txt

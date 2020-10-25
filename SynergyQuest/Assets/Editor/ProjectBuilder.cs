@@ -26,12 +26,9 @@
 #if UNITY_EDITOR
 
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using JetBrains.Annotations;
 using UnityEditor;
-using UnityEditor.UIElements;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 
@@ -47,131 +44,21 @@ using Debug = UnityEngine.Debug;
 public class ProjectBuilder
 {
     // === Paths and other constants needed for building ===
-    [CanBeNull]
-    private static string SearchPathForFile(string filename)
-    {
-        var envDir = Environment.GetEnvironmentVariable("PATH");
-        foreach (var path in envDir.Split(Path.PathSeparator))
-        {
-            Log($"PATH element: {path}");
-            var fullPath = Path.Combine(path, filename);
-
-            if (File.Exists(fullPath))
-            {
-                return fullPath;
-            }
-        }
-
-        return null;
-    }
-    
-    private static readonly Lazy<string> lazyNpmExecutable = new Lazy<string>(() =>
-        {
-            #if UNITY_EDITOR_WIN
-                var npmBin = "npm.cmd";
-            #else
-                var npmBin = "npm";
-            #endif
-            
-            Log("=== Searching PATH for NPM executable... ===");
-            // try to find npm on PATH
-            var npmPath = SearchPathForFile(npmBin);
-            
-            if (npmPath == null)
-            {
-                var errorMsg = "Can not find NPM.";
-                Log(errorMsg);
-                throw new ApplicationException(
-                    errorMsg
-                );
-            }
-
-            else
-            {
-                Log($"Found npm executable at {npmPath}.");
-            }
-
-            return npmPath;
-        }
-    );
-    
-    private static readonly Lazy<string> lazyYarnExecutable = new Lazy<string>(() =>
-        {
-            #if UNITY_EDITOR_WIN
-                var yarnBin = "yarn.cmd";
-            #else
-                var yarnBin = "yarn";
-            #endif
-            
-            Log("=== Searching PATH for Yarn executable... ===");
-            var yarnPath = SearchPathForFile(yarnBin);
-
-            if (yarnPath == null)
-            {
-                Log("Could not find Yarn in path. Searching for NPM installation of yarn...");
-                var npmPath = lazyNpmExecutable.Value;
-                
-                var globalInstallationDir = RunCommand(ProjectDir.Value, npmPath, "root -g");
-                Log($"NPM installs globally to {globalInstallationDir}.");
-                var possibleYarnLocation = Path.Combine(
-                    Path.Combine(
-                        Path.Combine(globalInstallationDir, "yarn"),
-                        "bin"
-                    ),
-                    yarnBin
-                );
-
-                Log($"Searching Yarn at {possibleYarnLocation}...");
-                if (File.Exists(possibleYarnLocation))
-                {
-                    Log("Found Yarn!");
-                    yarnPath = possibleYarnLocation;
-                }
-
-                else
-                {
-                    Log("Found no NPM installation of Yarn.");
-                }
-            }
-            
-            if (yarnPath == null)
-            {
-                var errorMsg =
-                    "Can not find yarn. Please install yarn so that it is available on the system PATH. See also https://classic.yarnpkg.com/en/docs/install/";
-
-                Log(errorMsg);
-                EditorUtility.DisplayDialog(
-                    "yarn not found",
-                    errorMsg,
-                    "Ok"
-                );
-                
-                throw new ApplicationException(
-                    errorMsg
-                );
-            }
-
-            else
-            {
-                Log($"Found Yarn executable at {yarnPath}.");
-            }
-
-            return yarnPath;
-        }
-    );
-
-    private static string YarnExecutable => lazyYarnExecutable.Value;
     
     // ReSharper disable once PossibleNullReferenceException
-    private static readonly Lazy<string> ProjectDir = new Lazy<string>(() => Directory.GetParent(Application.dataPath).Parent.FullName);
+    public static readonly Lazy<string> ProjectDir = new Lazy<string>(() => Directory.GetParent(Application.dataPath).Parent.FullName);
     
     private static readonly Lazy<string> GameProjectDir = new Lazy<string>(() => Directory.GetParent(Application.dataPath).FullName);
     
     private static readonly Lazy<string> ControllerProjectsDir = new Lazy<string>(() => Path.Combine(ProjectDir.Value, "Controller"));
+    private static readonly Lazy<string> BuildScriptsProjectDir = new Lazy<string>(() => Path.Combine(ControllerProjectsDir.Value, "build-scripts"));
     private static readonly Lazy<string> ControllerClientLibProjectDir = new Lazy<string>(() => Path.Combine(ControllerProjectsDir.Value, "controller-client-lib"));
     private static readonly Lazy<string> SensorInputLibProjectDir = new Lazy<string>(() => Path.Combine(ControllerProjectsDir.Value, "sensor-input-lib"));
     private static readonly Lazy<string> ControllerAppProjectDir = new Lazy<string>(() => Path.Combine(ControllerProjectsDir.Value, "controller-app"));
     private static readonly Lazy<string> SslWarningInfoAppProjectDir = new Lazy<string>(() => Path.Combine(ControllerProjectsDir.Value, "ssl-warning-info"));
+    // We expect web components to generate a list of dependencies and a disclaimer file at these locations:
+    private static readonly string WebLibListBuildPath = "build/dependencies-list.txt";
+    private static readonly string WebLibDisclaimerBuildPath = "build/dependencies-disclaimers.txt";
     
     private static readonly Lazy<string> BuildDirectory = new Lazy<string>(() => Path.Combine(GameProjectDir.Value, "Build"));
     private static readonly Lazy<string> WindowsBuildDirectory = new Lazy<string>(() => Path.Combine(Path.Combine(BuildDirectory.Value, "Windows"), "SynergyQuest"));
@@ -199,6 +86,8 @@ public class ProjectBuilder
     public static void CleanBuilds()
     {
         FileUtil.DeleteFileOrDirectory(BuildDirectory.Value.WinToNixPath());
+        
+        FileUtil.DeleteFileOrDirectory(Path.Combine(BuildScriptsProjectDir.Value, "dist").WinToNixPath());
         
         FileUtil.DeleteFileOrDirectory(Path.Combine(ControllerClientLibProjectDir.Value, "dist").WinToNixPath());
         FileUtil.DeleteFileOrDirectory(Path.Combine(ControllerClientLibProjectDir.Value, "node_modules").WinToNixPath());
@@ -250,50 +139,14 @@ public class ProjectBuilder
         if (!assumePrebuiltWebComponents)
         {
             // Force search for Yarn
-            var _ = YarnExecutable;
+            YarnUtils.EnsureYarnIsInstalled();
         }
         
-        Log("=== Building standalone Windows Player ===");
-        BuildPipeline.BuildPlayer(
-            new BuildPlayerOptions
-            {
-                locationPathName = Path.Combine(WindowsBuildDirectory.Value, WindowsExecutable).WinToNixPath(),
-                scenes = ScenesToBuild,
-                target = BuildTarget.StandaloneWindows,
-                options = BuildOptions.None
-            }
-        );
-
-        try
-        {
-            if (!assumePrebuiltWebComponents)
-            {
-                BuildControllerApp();
-            }
-            CopyControllerApp(WindowsBuildDirectory.Value);
-
-            if (!assumePrebuiltWebComponents)
-            {
-                BuildSslWarningInfoApp();
-            }
-            CopySslWarningInfoApp(WindowsBuildDirectory.Value);
-            
-            CopyCertificateFiles(WindowsBuildDirectory.Value);
-            
-            CopyReadme(WindowsBuildDirectory.Value);
-        }
-
-        catch
-        {
-            EditorUtility.ClearProgressBar();
-            throw;
-        }
+        BuildWindowsPlayer();
+        BuildWebComponents(WindowsBuildDirectory.Value, assumePrebuiltWebComponents);
+        CopyAdditionalFiles(WindowsBuildDirectory.Value);
         
-        EditorUtility.DisplayDialog(
-            "Windows Build finished",
-            $"The build can be found at {WindowsBuildDirectory.Value}.",
-            "Ok"
-        );
+        DisplayBuildFinishedMessage("Windows", WindowsBuildDirectory.Value);
     }
     
     /**
@@ -331,9 +184,19 @@ public class ProjectBuilder
         if (!assumePrebuiltWebComponents)
         {
             // Force search for Yarn
-            var _ = YarnExecutable;
+            YarnUtils.EnsureYarnIsInstalled();
         }
         
+        BuildLinuxPlayer();
+        BuildWebComponents(LinuxBuildDirectory.Value, assumePrebuiltWebComponents);
+        CopyAdditionalFiles(LinuxBuildDirectory.Value);
+
+        DisplayBuildFinishedMessage("Linux", LinuxBuildDirectory.Value);
+    }
+
+    // === Helper methods for building sub-components ===
+    private static void BuildLinuxPlayer()
+    {
         Log("=== Building standalone Linux Player ===");
         BuildPipeline.BuildPlayer(
             new BuildPlayerOptions
@@ -344,24 +207,44 @@ public class ProjectBuilder
                 options = BuildOptions.None
             }
         );
+    }
 
+    private static void BuildWindowsPlayer()
+    {
+        Log("=== Building standalone Windows Player ===");
+        BuildPipeline.BuildPlayer(
+            new BuildPlayerOptions
+            {
+                locationPathName = Path.Combine(WindowsBuildDirectory.Value, WindowsExecutable).WinToNixPath(),
+                scenes = ScenesToBuild,
+                target = BuildTarget.StandaloneWindows,
+                options = BuildOptions.None
+            }
+        );
+    }
+
+    private static void BuildWebComponents(string buildDirectory, bool assumePrebuiltWebComponents)
+    {
         try
         {
+            InitializeLibsDisclaimer(buildDirectory);
+
+            if (!assumePrebuiltWebComponents)
+            {
+                BuildBuildScripts();
+            }
+            
             if (!assumePrebuiltWebComponents)
             {
                 BuildControllerApp();
             }
-            CopyControllerApp(LinuxBuildDirectory.Value);
+            CopyControllerApp(buildDirectory);
             
             if (!assumePrebuiltWebComponents)
             {
                 BuildSslWarningInfoApp();
             }
-            CopySslWarningInfoApp(LinuxBuildDirectory.Value);
-            
-            CopyCertificateFiles(LinuxBuildDirectory.Value);
-            
-            CopyReadme(LinuxBuildDirectory.Value);
+            CopySslWarningInfoApp(buildDirectory);
         }
             
         catch
@@ -369,9 +252,28 @@ public class ProjectBuilder
             EditorUtility.ClearProgressBar();
             throw;
         }
+    }
 
-        var title = "=== Linux Build finished ===";
-        var msg = $"The build can be found at {LinuxBuildDirectory.Value}.";
+    private static void CopyAdditionalFiles(string buildDirectory)
+    {
+        try
+        {
+            CopyCertificateFiles(buildDirectory);
+            
+            CopyReadme(buildDirectory);
+        }
+            
+        catch
+        {
+            EditorUtility.ClearProgressBar();
+            throw;
+        }
+    }
+
+    private static void DisplayBuildFinishedMessage(string target, string buildDirectory)
+    {
+        var title = $"=== {target} build finished ===";
+        var msg = $"The build can be found at {buildDirectory}.";
         
         Log(title);
         Log(msg);
@@ -381,26 +283,31 @@ public class ProjectBuilder
             "Ok"
         );
     }
+    
+    private static void BuildBuildScripts()
+    {
+        var title = "=== Building build-scripts with yarn ===";
+        Log(title);
+        
+        EditorUtility.DisplayProgressBar(title, "building...", 0.0f);
+        YarnUtils.Install(BuildScriptsProjectDir.Value);
+        YarnUtils.Build(BuildScriptsProjectDir.Value);
+        EditorUtility.ClearProgressBar();
 
-    // === Helper methods for building sub-components ===
+        Log("Done: build-scripts");
+    }
     
     private static void BuildControllerClientLib()
     {
         var title = "=== Building controller-client-lib with yarn ===";
         Log(title);
-
-        var msg1 = "Installing dependencies for controller-client-lib";
-        EditorUtility.DisplayProgressBar(title, msg1, 0.0f);
-        Log(msg1);
-        RunCommand(ControllerClientLibProjectDir.Value, YarnExecutable, "install");
-
-        var msg2 = "Building controller-client-lib";
-        EditorUtility.DisplayProgressBar(title, msg1, 0.5f);
-        Log(msg2);
-        RunCommand(ControllerClientLibProjectDir.Value, YarnExecutable, "build");
         
+        EditorUtility.DisplayProgressBar(title, "installing dependencies...", 0.0f);
+        YarnUtils.Install(ControllerClientLibProjectDir.Value);
+        EditorUtility.DisplayProgressBar(title, "building...", 0.5f);
+        YarnUtils.PrepareDistribution(ControllerClientLibProjectDir.Value);
         EditorUtility.ClearProgressBar();
-        
+
         Log("Done: controller-client-lib");
     }
     
@@ -408,18 +315,11 @@ public class ProjectBuilder
     {
         var title = "=== Building sensor-input-lib with yarn ===";
         Log(title);
-
-        var msg1 = "Installing dependencies for sensor-input-lib";
-        EditorUtility.DisplayProgressBar(title, msg1, 0.0f);
-        Log(msg1);
-        RunCommand(SensorInputLibProjectDir.Value, YarnExecutable, "install");
-
-
-        var msg2 = "Building sensor-input-lib";
-        EditorUtility.DisplayProgressBar(title, msg2, 0.5f);
-        Log(msg2);
-        RunCommand(SensorInputLibProjectDir.Value, YarnExecutable, "build");
         
+        EditorUtility.DisplayProgressBar(title, "installing dependencies...", 0.0f);
+        YarnUtils.Install(SensorInputLibProjectDir.Value);
+        EditorUtility.DisplayProgressBar(title, "building...", 0.5f);
+        YarnUtils.PrepareDistribution(SensorInputLibProjectDir.Value);
         EditorUtility.ClearProgressBar();
         
         Log("Done: sensor-input-lib");
@@ -433,33 +333,27 @@ public class ProjectBuilder
         var title = "=== Building main controller web app with yarn ===";
         Log(title);
 
-        var msg1 = "Installing dependencies for controller-app";
-        EditorUtility.DisplayProgressBar(title, msg1, 0.0f);
-        Log(msg1);
-        RunCommand(ControllerAppProjectDir.Value, YarnExecutable, "install");
-        
-        var msg2 = "Upgrading dependency on controller-client-lib";
-        EditorUtility.DisplayProgressBar(title, msg2, 0.25f);
-        Log(msg2);
-        RunCommand(ControllerAppProjectDir.Value, YarnExecutable, $"upgrade ..{Path.DirectorySeparatorChar}controller-client-lib");
-        
-        var msg3 = "Upgrading dependency on sensor-input-lib";
-        EditorUtility.DisplayProgressBar(title, msg3, 0.5f);
-        Log(msg3);
-        RunCommand(ControllerAppProjectDir.Value, YarnExecutable, $"upgrade ..{Path.DirectorySeparatorChar}sensor-input-lib");
-        
-        var msg4 = "Building controller-app";
-        EditorUtility.DisplayProgressBar(title, msg4, 0.75f);
-        Log(msg4);
-        RunCommand(ControllerAppProjectDir.Value, YarnExecutable, "build");
-        
+        EditorUtility.DisplayProgressBar(title, "installing dependencies...", 0.0f);
+        YarnUtils.Install(ControllerAppProjectDir.Value);
+        EditorUtility.DisplayProgressBar(title, "building...", 0.5f);
+        YarnUtils.PrepareDistribution(ControllerAppProjectDir.Value);
         EditorUtility.ClearProgressBar();
+        
+        Log("Done: controller-app");
     }
     
     private static void BuildSslWarningInfoApp()
     {
-        RunCommand(SslWarningInfoAppProjectDir.Value, YarnExecutable, "install");
-        RunCommand(SslWarningInfoAppProjectDir.Value, YarnExecutable, "build");
+        var title = "=== Building ssl-warning-info web app with yarn ===";
+        Log(title);
+
+        EditorUtility.DisplayProgressBar(title, "installing dependencies...", 0.0f);
+        YarnUtils.Install(SslWarningInfoAppProjectDir.Value);
+        EditorUtility.DisplayProgressBar(title, "building...", 0.5f);
+        YarnUtils.PrepareDistribution(SslWarningInfoAppProjectDir.Value);
+        EditorUtility.ClearProgressBar();
+        
+        Log("Done: ssl-warning-info");
     }
 
     private static void CopyControllerApp(string buildDir)
@@ -467,6 +361,55 @@ public class ProjectBuilder
         FileUtil.ReplaceDirectory(
             Path.Combine(ControllerAppProjectDir.Value, "build").WinToNixPath(),
             Path.Combine(buildDir, ServerSettings.Instance.ControllerAppDocumentRoot).WinToNixPath()
+        );
+        
+        CopyWebLibDisclaimers(ControllerAppProjectDir.Value, buildDir);
+    }
+
+    private static void InitializeLibsDisclaimer(string buildDir)
+    {
+        var customHeader =
+            "THE FOLLOWING SETS FORTH ATTRIBUTION NOTICES FOR THIRD PARTY SOFTWARE THAT MAY BE CONTAINED IN THIS PRODUCT.\n\n";
+        var cSharpLibDisclaimers = ResourcePathSettings.Instance.CSharpLibDisclaimers.text;
+        
+        var disclaimerTargetFile = Path.Combine(buildDir, ResourcePathSettings.Instance.LibsDisclaimerFile);
+
+        File.WriteAllText(
+            disclaimerTargetFile,
+            $"{customHeader}\n\n----\n\n{cSharpLibDisclaimers}\n\n-----\n\n"
+        );
+        
+        // the remainder of this file will be filled by the copy methods of the web apps
+    }
+
+    /**
+     * Copies library lists, disclaimers and attribution notices generated for a web component and
+     * appends them to central files distributed with the game.
+     */
+    private static void CopyWebLibDisclaimers(string projectDir, string buildDir)
+    {
+        var listTargetFile = Path.Combine(buildDir, ResourcePathSettings.Instance.WebLibsListFile.CorrectFsSlashes());
+        var listSourceFile = Path.Combine(
+            projectDir,
+            WebLibListBuildPath.CorrectFsSlashes()
+        );
+        var sourceList = File.ReadAllText(listSourceFile);
+        
+        File.AppendAllText(
+            listTargetFile,
+            sourceList
+        );
+        
+        var disclaimerTargetFile = Path.Combine(buildDir, ResourcePathSettings.Instance.LibsDisclaimerFile.CorrectFsSlashes());
+        var disclaimerSourceFile = Path.Combine(
+            projectDir,
+            WebLibDisclaimerBuildPath.CorrectFsSlashes()
+        );
+        var sourceDisclaimer = File.ReadAllText(disclaimerSourceFile);
+        
+        File.AppendAllText(
+            disclaimerTargetFile,
+            sourceDisclaimer
         );
     }
     
@@ -476,6 +419,8 @@ public class ProjectBuilder
             Path.Combine(SslWarningInfoAppProjectDir.Value, "build").WinToNixPath(),
             Path.Combine(buildDir, ServerSettings.Instance.SslWarningInfoDocumentRoot).WinToNixPath()
         );
+        
+        CopyWebLibDisclaimers(SslWarningInfoAppProjectDir.Value, buildDir);
     }
 
     private static void CopyCertificateFiles(string buildDir)
@@ -497,39 +442,7 @@ public class ProjectBuilder
         
         FileUtil.ReplaceFile(DebugSettings.Instance.PathToLicense, Path.Combine(buildDir, "LICENSE.md").WinToNixPath());
     }
-
-    private static string RunCommand(string workingDir, string executable, string args)
-    {
-        var process = new Process();
-        var startInfo = new ProcessStartInfo
-        {
-            WorkingDirectory = workingDir,
-            FileName = executable,
-            Arguments = args,
-            UseShellExecute = false,
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            WindowStyle = ProcessWindowStyle.Hidden,
-        };
-
-        process.StartInfo = startInfo;
-        process.Start();
-
-        var stdout = process.StandardOutput.ReadToEnd();
-        var stderr = process.StandardError.ReadToEnd();
-        process.WaitForExit();
-        
-        Log($"Stdout of '{executable} {args}' in {workingDir}:");
-        Log(stdout);
-
-        if (process.ExitCode != 0)
-        {
-            throw new ApplicationException($"Non-zero exit code while running \"{executable} {args}\". Stderr: {stderr}");
-        }
-
-        return stdout;
-    }
-
+    
     private static void Log(string msg)
     {
         Debug.Log($"[ProjectBuilder] {msg}");

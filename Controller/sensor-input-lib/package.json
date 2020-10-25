@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Made with create-react-library",
   "author": "team-p09",
-  "license": "MIT",
+  "license": "GPL-3.0-or-later",
   "repository": "",
   "main": "dist/index.js",
   "module": "dist/index.modern.js",
@@ -13,12 +13,13 @@
   },
   "scripts": {
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-    "build": "yarn lint && microbundle-crl --no-compress --format modern,cjs",
-    "start": "microbundle-crl watch --no-compress --format modern,cjs",
+    "microbundle": "microbundle-crl --no-compress --format modern,cjs",
+    "build": "npm-run-all lint microbundle",
+    "microbundle-start": "microbundle-crl watch --no-compress --format modern,cjs",
+    "start": "npm-run-all lint microbundle-start",
     "prepublish": "run-s build",
     "test": "jest",
-    "predeploy": "cd example && yarn install && yarn build",
-    "deploy": "gh-pages -d example/build"
+    "prepare-distribution": "npm-run-all build"
   },
   "peerDependencies": {
     "react": "^16.0.0"

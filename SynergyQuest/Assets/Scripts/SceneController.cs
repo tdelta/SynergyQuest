@@ -70,6 +70,11 @@ public class SceneController : BehaviourSingleton<SceneController>
         LoadSceneByName("PreLobbyInfo");
     }
     
+    public void LoadExternalLibCredits()
+    {
+        LoadSceneByName("ExternalLibCredits");
+    }
+    
     public void LoadCredits()
     {
         LoadSceneByName("Credits");

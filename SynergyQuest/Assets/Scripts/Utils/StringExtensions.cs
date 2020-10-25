@@ -23,6 +23,9 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
+using System.IO;
+using System.Linq;
+
 public static class StringExtensions
 {
     /**
@@ -50,16 +53,28 @@ public static class StringExtensions
 
     /**
      * <summary>
-     * Replaces any slashes (<c>/</c>) with backslashes (<c>\</c>) in a string on Windows systems.
-     * Replaces any backslashes (<c>\</c>) with slashes (<c>/</c>) on all other systems.
+     * Removes any (back-)slashes (<c>/</c> or <c>\</c>) and replaces them with <see cref="Path.DirectorySeparatorChar"/>.
      * </summary>
      */
     public static string CorrectFsSlashes(this string self)
     {
-        #if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
-            return self.NixToWinPath();
-        #else
-            return self.WinToNixPath();
-        #endif
+        return self
+            .Replace('/', Path.DirectorySeparatorChar)
+            .Replace('\\', Path.DirectorySeparatorChar);
+    }
+
+    /**
+     * <summary>
+     * Removes the first n lines from a string.
+     * </summary>
+     */
+    public static string RemoveLeadingLines(this string self, int lines)
+    {
+        return string.Join(
+            "\n",
+            self
+                .Split('\n')
+                .Skip(lines)
+        );
     }
 }
