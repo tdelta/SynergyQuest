@@ -23,6 +23,7 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -43,10 +44,23 @@ public class SceneController : BehaviourSingleton<SceneController>
     private List<string> _loadMenuIPs;
 
     /**
+     * <summary>
      * Callback that will be invoked when a new scene has finished loading.
+     * </summary>
      */
-    public delegate void SceneLoadedCallback();
-    private SceneLoadedCallback _onSceneLoadedCallback;
+    public delegate void SceneFullyLoadedCallback();
+    
+    /**
+     * <summary>
+     * Callback that will be invoked when a new scene starts loading.
+     * </summary>
+     */
+    public delegate void NewSceneLoadingCallback();
+
+    public event NewSceneLoadingCallback OnNewSceneLoading;
+    public event SceneFullyLoadedCallback OnSceneFullyLoaded;
+    
+    private SceneFullyLoadedCallback onSceneFullyLoadedCallback;
     /**
      * Which transition animation to play when changing scenes.
      */
@@ -54,12 +68,24 @@ public class SceneController : BehaviourSingleton<SceneController>
 
     public bool IsLoadingScene { get; private set; } = false;
 
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    public static void EnsureInitialization()
+    {
+        var _ = Instance;
+    }
+
     protected override void OnInstantiate()
     {
-        // call the OnSceneLoaded method of this object, as soon as a level is loaded
-        SceneManager.sceneLoaded += OnSceneLoaded;
+        SceneManager.activeSceneChanged += OnActiveSceneChangedHandler;
+        SceneManager.sceneLoaded += OnSceneFullyLoadedHandler;
     }
-    
+
+    private void OnDestroy()
+    {
+        SceneManager.activeSceneChanged -= OnActiveSceneChangedHandler;
+        SceneManager.sceneLoaded -= OnSceneFullyLoadedHandler;
+    }
+
     public void LoadMainMenu()
     {
         LoadSceneByName("MainMenuScene");
@@ -132,9 +158,9 @@ public class SceneController : BehaviourSingleton<SceneController>
      *     callback to invoke, when the new scene has finished loading (optional)
      * </param>
      */
-    public void LoadSceneByName(string sceneName, TransitionType transitionType = TransitionType.None, SceneLoadedCallback callback = null)
+    public void LoadSceneByName(string sceneName, TransitionType transitionType = TransitionType.None, SceneFullyLoadedCallback callback = null)
     {
-        _onSceneLoadedCallback = callback;
+        onSceneFullyLoadedCallback = callback;
         _transitionType = transitionType;
         
         // Play animation to transition out of the current scene
@@ -147,7 +173,7 @@ public class SceneController : BehaviourSingleton<SceneController>
         });
     }
     
-    private void OnSceneLoaded(Scene scene, LoadSceneMode _)
+    private void OnSceneFullyLoadedHandler(Scene scene, LoadSceneMode _)
     {
         if (scene.name == "LobbyMenu")
         {
@@ -161,6 +187,13 @@ public class SceneController : BehaviourSingleton<SceneController>
         IsLoadingScene = false;
         
         // If a callback has been set, invoke it now, since the new scene has finished loading
-        _onSceneLoadedCallback?.Invoke();
+        onSceneFullyLoadedCallback?.Invoke();
+        
+        OnSceneFullyLoaded?.Invoke();
+    }
+
+    private void OnActiveSceneChangedHandler(Scene replacedScene, Scene nextScene)
+    {
+        OnNewSceneLoading?.Invoke();
     }
 }
