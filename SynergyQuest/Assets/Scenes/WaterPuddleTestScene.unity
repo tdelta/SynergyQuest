@@ -188,6 +188,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Knight
       objectReference: {fileID: 0}
+    - target: {fileID: 6235775845409623576, guid: 70fb5d4b16c32a5928ddb9b900ce3af0,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 70fb5d4b16c32a5928ddb9b900ce3af0, type: 3}
 --- !u!1001 &301317873
@@ -266,6 +271,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 8451649553765607536, guid: 896795d39b1254ea596a70557eeff80c,
+        type: 3}
+      propertyPath: orthographic size
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 8451649553765607538, guid: 896795d39b1254ea596a70557eeff80c,
         type: 3}
       propertyPath: m_Name
@@ -274,7 +284,7 @@ PrefabInstance:
     - target: {fileID: 8451649553765607551, guid: 896795d39b1254ea596a70557eeff80c,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.00000047683716
+      value: -0.0000009536743
       objectReference: {fileID: 0}
     - target: {fileID: 8451649553765607551, guid: 896795d39b1254ea596a70557eeff80c,
         type: 3}
@@ -485,6 +495,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Necromancer
       objectReference: {fileID: 0}
+    - target: {fileID: 6235775845409623576, guid: 8b657144a869fb5ea9b3cb3523a73df7,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8b657144a869fb5ea9b3cb3523a73df7, type: 3}
 --- !u!1 &1145065801
@@ -589,7 +604,7 @@ PrefabInstance:
     - target: {fileID: 8153043136341992037, guid: f925feb2d83cd4fc6b55ecd04fed0ebb,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.00000047683716
+      value: -0.0000009536743
       objectReference: {fileID: 0}
     - target: {fileID: 8153043136341992037, guid: f925feb2d83cd4fc6b55ecd04fed0ebb,
         type: 3}
@@ -665,6 +680,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Slime
       objectReference: {fileID: 0}
+    - target: {fileID: 4379324440833947341, guid: 6a13ea0bf761f33ce9577e68788b9501,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4379324440833947347, guid: 6a13ea0bf761f33ce9577e68788b9501,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -733,6 +753,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Bat
+      objectReference: {fileID: 0}
+    - target: {fileID: 5481500327407250211, guid: f0c1adf6b4e8d2006a9096257c9a2e80,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5481500327407250232, guid: f0c1adf6b4e8d2006a9096257c9a2e80,
         type: 3}

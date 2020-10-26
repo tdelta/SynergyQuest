@@ -330,3 +330,17 @@ Art/Sprites/Interactive/sign.png:
   description: Sign sprite from "(Shattered) Pixel Dungeon"
   license: GPLv3
   link: https://github.com/00-Evan/shattered-pixel-dungeon and https://github.com/watabou/pixel-dungeon
+
+Art/Sounds/Player/Walking/Puddle/*.ogg:
+  author: Jonathan Michael Shaw aka InspectorJ 
+  description: Puddle footsteps
+  modifications: Noise reduction and clip splitting
+  license: CC-BY 3.0
+  link: https://freesound.org/people/InspectorJ/sounds/329602/
+
+Art/Sounds/Player/Walking/Stone/*.ogg:
+  author: freesound.org user mypantsfelldown
+  description: Concrete footsteps
+  modifications: Noise-reduction, low-pass filter, clip splitting
+  license: CC0
+  link: https://freesound.org/people/mypantsfelldown/sounds/465299/
