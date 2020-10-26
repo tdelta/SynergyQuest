@@ -65,4 +65,10 @@ public class PrefabSettings : ScriptableObjectSingleton<PrefabSettings>
      */
     public SpeechBubble SpeechBubblePrefab => speechBubblePrefab;
     [SerializeField] private SpeechBubble speechBubblePrefab = default;
+    
+    public WaterReflectionCamera WaterReflectionCameraPrefab => waterReflectionCameraPrefab;
+    [SerializeField] private WaterReflectionCamera waterReflectionCameraPrefab = default;
+
+    public ParticleSystem WaterRipplesPrefab => waterRipplesPrefab;
+    [SerializeField] private ParticleSystem waterRipplesPrefab = default;
 }
