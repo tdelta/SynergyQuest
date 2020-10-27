@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 8359955005476865643}
   - component: {fileID: 8359955005476865640}
   - component: {fileID: 8359955005476865641}
-  - component: {fileID: 8359955005476865638}
   - component: {fileID: 5024494965461845148}
   m_Layer: 0
   m_Name: MonsterRoomDoor
@@ -101,7 +100,7 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
+    pivot: {x: 0.5, y: 0}
     oldSize: {x: 1, y: 1}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
@@ -111,23 +110,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &8359955005476865638
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8359955005476865639}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 91cfc7f899471653292d0c8f274688e1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  openedDoor: {fileID: -986098473432747232, guid: f14f8b22653167e47a2ed69e2a80a7eb,
-    type: 3}
-  closedDoor: {fileID: -888918324885179993, guid: f14f8b22653167e47a2ed69e2a80a7eb,
-    type: 3}
-  MonstersToKill: 1
 --- !u!82 &5024494965461845148
 AudioSource:
   m_ObjectHideFlags: 0

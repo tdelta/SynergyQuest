@@ -10,11 +10,10 @@ GameObject:
   m_Component:
   - component: {fileID: 6861803843683081524}
   - component: {fileID: 6861803843683081523}
-  - component: {fileID: 6861803843683081522}
   - component: {fileID: 5952670672313674902}
   - component: {fileID: 1673982881}
   m_Layer: 0
-  m_Name: SokobanDoor
+  m_Name: DO_NOT_USE_SokobanDoor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -85,23 +84,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &6861803843683081522
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6861803843683081521}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2334a008616c69647b608cd49a78f714, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  openedDoor: {fileID: -986098473432747232, guid: f14f8b22653167e47a2ed69e2a80a7eb,
-    type: 3}
-  closedDoor: {fileID: -888918324885179993, guid: f14f8b22653167e47a2ed69e2a80a7eb,
-    type: 3}
-  switches: []
 --- !u!82 &5952670672313674902
 AudioSource:
   m_ObjectHideFlags: 0
@@ -214,7 +196,7 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
+    pivot: {x: 0.5, y: 0}
     oldSize: {x: 1, y: 1}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
