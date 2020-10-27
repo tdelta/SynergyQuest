@@ -26,6 +26,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+ using UnityEngine.Experimental.Rendering.Universal;
 
 public class FireballProjectile : MonoBehaviour
 {
@@ -89,6 +90,7 @@ public class FireballProjectile : MonoBehaviour
         // remove gameobject, but keep it enabled so sounds can continue playing
         transform.localScale = Vector2.zero;
         StartCoroutine(DestroyWhenReady());
+        GetComponentInChildren<Light2D>().enabled = false;
     }
 
     IEnumerator DestroyWhenReady()

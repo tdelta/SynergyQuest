@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 6235775845409623577}
   - component: {fileID: 6235775845409623574}
   - component: {fileID: -4707208399938704776}
+  - component: {fileID: -2505099988165668740}
   m_Layer: 14
   m_Name: Necromancer
   m_TagString: Enemy
@@ -221,6 +222,28 @@ MonoBehaviour:
   reflectionOffset: {x: 0, y: 0, z: 0}
   ripplesOffset: {x: 0, y: 0, z: 0}
   enableRipples: 1
+--- !u!114 &-2505099988165668740
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6235775845409623576}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7db70e0ea77f5ac47a8f4565a9406397, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ShadowGroup: 0
+  m_HasRenderer: 0
+  m_UseRendererSilhouette: 1
+  m_CastsShadows: 1
+  m_SelfShadows: 0
+  m_ApplyToSortingLayers: 
+  m_ShapePath: []
+  m_ShapePathHash: 0
+  m_Mesh: {fileID: 0}
+  m_InstanceId: 0
 --- !u!1001 &3505025390366956328
 PrefabInstance:
   m_ObjectHideFlags: 0
