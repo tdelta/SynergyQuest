@@ -9,11 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cc90f977cabf4c11a33e8d8b0f87092e, type: 3}
-  m_Name: DebugSettings
+  m_Script: {fileID: 11500000, guid: 6faec6f22e014fbfa7206280a474ebc5, type: 3}
+  m_Name: BowDescribtion
   m_EditorClassIdentifier: 
-  _localDebugPlayers: []
-  _defaultDungeonPlayerNum: 2
-  disableRevivalMinigame: 0
-  pathToLicenseDebugMode: ../LICENSE.md
-  pathToLicenseProductionMode: LICENSE.md
+  itemInstancePrefab: {fileID: 5761273709248251392, guid: 804c837d28025064caf22f20f02561b7,
+    type: 3}
+  useButton: 7
+  cooldown: 1

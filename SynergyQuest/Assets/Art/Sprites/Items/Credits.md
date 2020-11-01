@@ -10,3 +10,11 @@ author: OpenGameArt.Org user IndigoFenix
 description: Bomb sprites
 license: CC0
 link: https://opengameart.org/content/bomb-2
+
+
+# rotbow_w_string_20x20.png
+
+author: OpenGameArt.Org user abetusk
+description: Bow Sprite
+license: Public Domain
+link: https://opengameart.org/content/20x20-bow-sprites

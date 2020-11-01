@@ -38,7 +38,8 @@ public enum PlayerState{
     thrown,
     falling,
     presenting_item,
-    spring_jumping
+    spring_jumping,
+    firingBow
 }
 
 [RequireComponent(typeof(Throwable))]
@@ -773,5 +774,16 @@ public class PlayerController : EntityController
     {
         _playerState = onOff ? PlayerState.spring_jumping : PlayerState.walking;
         Animator.SetBool(SpringJumpState, onOff);
+    }
+
+
+    public void SetBowFiringMode() 
+    {
+        _playerState = PlayerState.firingBow;
+    }
+
+    public void OnFiringBowFinished()
+    {
+        _playerState = PlayerState.walking;
     }
 }
