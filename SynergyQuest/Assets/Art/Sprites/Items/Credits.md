@@ -18,3 +18,11 @@ author: OpenGameArt.Org user abetusk
 description: Bow Sprite
 license: Public Domain
 link: https://opengameart.org/content/20x20-bow-sprites
+
+
+# Arrow.png
+
+author: OpenGameArt.Org user Randalinski 
+description: Arrow sprites
+license: Public Domain
+link: https://opengameart.org/content/rotating-arrow-projectile
