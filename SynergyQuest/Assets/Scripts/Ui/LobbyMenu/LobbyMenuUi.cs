@@ -23,7 +23,7 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -198,7 +198,7 @@ public class LobbyMenuUi : MonoBehaviour
             SharedControllerState.Instance.SetGameState(GameState.Started);
 
             DungeonLayout.Instance.LoadDungeon(
-                StartupSettings.Instance.InitialDungeonLayoutFile,
+                ResourcePathSettings.Instance.InitialDungeonLayoutFile,
                 ControllerServer.Instance.GetInputs().Count
             );
         }

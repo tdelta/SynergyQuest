@@ -2,8 +2,7 @@
   "name": "proxy",
   "version": "1.0.0",
   "main": "src/index.ts",
-  "license": "MIT",
-  "type": "module",
+  "license": "GPL-3.0-or-later",
   "dependencies": {
     "@types/express": "^4.17.7",
     "@types/http-proxy": "^1.17.4",
@@ -15,7 +14,7 @@
   },
   "scripts": {
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-    "start": "yarn lint && node --experimental-specifier-resolution=node --experimental-modules --loader ts-node/esm src/index.ts"
+    "start": "ts-node src/index.ts"
   },
   "devDependencies": {
     "@types/open": "^6.2.1",

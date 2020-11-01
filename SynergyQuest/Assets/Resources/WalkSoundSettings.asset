@@ -1,0 +1,64 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70ddd4fd5bb74198a3d6fc44d61c1b59, type: 3}
+  m_Name: WalkSoundSettings
+  m_EditorClassIdentifier: 
+  defaultWalkSound: 1
+  walkSoundClips:
+  - walkSoundType: 1
+    clips:
+    - {fileID: 8300000, guid: 0d5cbb2dd011ad2d5ab5bd349a0fcb5a, type: 3}
+    - {fileID: 8300000, guid: b843529abda057ba3a868e23f6fe3907, type: 3}
+    - {fileID: 8300000, guid: a9c0290f183e2b3f4a42a62811b4d6d6, type: 3}
+    - {fileID: 8300000, guid: afc6bfd0f28213969ae6daabe2f8f9db, type: 3}
+    - {fileID: 8300000, guid: bd8b5db6ed5954b89ba7c4a51a86beb1, type: 3}
+    - {fileID: 8300000, guid: 7681e3ddb7d827a7ebda6d3450b68330, type: 3}
+    - {fileID: 8300000, guid: 526b8ee26dfff10c6b102563ab422f6f, type: 3}
+    - {fileID: 8300000, guid: fddf0cd9ef04e12aabeb3e408ed93536, type: 3}
+    - {fileID: 8300000, guid: 85ab7e9fa2c0ea9ab8565a0ba6216ef4, type: 3}
+    - {fileID: 8300000, guid: 4b4571b80a6d102569e6519cc904f16b, type: 3}
+    - {fileID: 8300000, guid: f101c978a92647bdcb6c779beaa6025f, type: 3}
+  - walkSoundType: 2
+    clips:
+    - {fileID: 8300000, guid: c6dcb6b98bbaf58e495030aa8a5eff37, type: 3}
+    - {fileID: 8300000, guid: 6164a36b2093d23a697a0b11d62deed9, type: 3}
+    - {fileID: 8300000, guid: 03d3089fb2eefa33f9571b7ae36a72c4, type: 3}
+    - {fileID: 8300000, guid: 73b76b4bc350428faae8114d044d675a, type: 3}
+    - {fileID: 8300000, guid: a1c6e12a0809bca7da527f2276120313, type: 3}
+    - {fileID: 8300000, guid: 7e5ef1064f636764a99a73dd2009cbd6, type: 3}
+    - {fileID: 8300000, guid: f807312ffa9352508a93c356d89898ce, type: 3}
+    - {fileID: 8300000, guid: b9b07758bd2b3b9acbf26cd28ee03ad8, type: 3}
+    - {fileID: 8300000, guid: 417e5b0b3beb4a4849ed7089277564d0, type: 3}
+    - {fileID: 8300000, guid: 98c94d21649e423b8807375139841ba2, type: 3}
+    - {fileID: 8300000, guid: 899a73c918d0dc800abc4b685bef1e62, type: 3}
+    - {fileID: 8300000, guid: 898ebb70bec4a776fa667b74afc2a8e6, type: 3}
+    - {fileID: 8300000, guid: b96fda6b1b9e50300a7797ff9c97ba0c, type: 3}
+  walkSoundTilesAssociations:
+  - walkSoundType: 2
+    tiles:
+    - {fileID: 11400000, guid: d0b5e1a9ee65db26aa52ad1e83650a5b, type: 2}
+    - {fileID: 11400000, guid: f0fa7f6a1c50a339da3f012139ed0e3a, type: 2}
+    - {fileID: 11400000, guid: 4f9a2b124618f2fc29973d13b06d37ef, type: 2}
+    - {fileID: 11400000, guid: f03b401bf06ff5b2db886e4ad8247ed0, type: 2}
+    - {fileID: 11400000, guid: 2e433e6a7fd45a6d0ae0a738a33fedbc, type: 2}
+    - {fileID: 11400000, guid: 8a328b1c9e8bbf7828d54b47c188f439, type: 2}
+    - {fileID: 11400000, guid: 69787eb1287763fb0af456916128b070, type: 2}
+    - {fileID: 11400000, guid: 67809b557ee6398829097ae268cb07e4, type: 2}
+    - {fileID: 11400000, guid: 5f93b33c283646527a07401bbff361e4, type: 2}
+    - {fileID: 11400000, guid: ffdc8c62090225c929558116f2a7322a, type: 2}
+    - {fileID: 11400000, guid: 379166a6127325fb6a2d5395c9243440, type: 2}
+    - {fileID: 11400000, guid: b14c814eeca74a95e93da618932a37b2, type: 2}
+    - {fileID: 11400000, guid: 6c0cf89569a72d8ccb660c2bed046202, type: 2}
+    - {fileID: 11400000, guid: fadba2ace170256a2ba7c095c5934745, type: 2}
+    - {fileID: 11400000, guid: 82a5dce9e96998a7ba42811d0fd2fb2c, type: 2}
+    - {fileID: 11400000, guid: 1a2570baf177ecf1ebd7eee92b16bcd9, type: 2}
+    - {fileID: 11400000, guid: 69f9907117ed74ba68c9e5e0f18f3701, type: 2}

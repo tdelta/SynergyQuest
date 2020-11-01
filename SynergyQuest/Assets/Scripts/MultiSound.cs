@@ -23,7 +23,7 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
-﻿using System.Linq;
+using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 

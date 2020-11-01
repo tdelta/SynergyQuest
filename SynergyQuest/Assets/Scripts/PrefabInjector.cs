@@ -25,15 +25,41 @@
 
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "StartupSettings", menuName = "ScriptableObjects/StartupSettings")]
-public class StartupSettings: ScriptableObjectSingleton<StartupSettings>
+/**
+ * <summary>
+ * Whenever a new scene loads, this singleton initializes instances of all prefabs specified in <see cref="PrefabAutoInjectionSettings"/>.
+ * </summary>
+ * <remarks>
+ * The instances will be ready before the <c>Start</c> phase but not before the <c>OnEnable</c> phase.
+ * </remarks>
+ */
+public class PrefabInjector : BehaviourSingleton<PrefabInjector>
 {
-    /**
-     * <summary>
-     * Name of the dungeon layout file which shall be loaded by the game when exiting the lobby and
-     * starting the game.
-     * </summary>
-     */
-    public string InitialDungeonLayoutFile => initialDungeonLayoutFile;
-    [SerializeField] private string initialDungeonLayoutFile = "MainDungeon.json";
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    public static void EnsureInitialization()
+    {
+        var _ = Instance;
+    }
+
+    protected override void OnInstantiate()
+    {
+        SceneController.Instance.OnNewSceneLoading += OnNewSceneLoading;
+    }
+
+    private void OnDestroy()
+    {
+        var controllerInstance = SceneController.Instance;
+        if (controllerInstance != null)
+        {
+            controllerInstance.OnNewSceneLoading -= OnNewSceneLoading;
+        }
+    }
+
+    private void OnNewSceneLoading()
+    {
+        foreach (var prefab in PrefabAutoInjectionSettings.Instance.PrefabsToInject)
+        {
+            Instantiate(prefab);
+        }
+    }
 }

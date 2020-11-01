@@ -1,0 +1,18 @@
+name: Acquire activation file
+on: 
+  workflow_dispatch: {}
+jobs:
+  activation:
+    name: Request manual activation file
+    runs-on: ubuntu-latest
+    steps:
+      - name: Request manual activation file
+        id: getManualLicenseFile
+        uses: webbertakken/unity-request-manual-activation-file@v1.1
+        with:
+          unityVersion: 2019.4.2f1
+      - name: Expose as artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: ${{ steps.getManualLicenseFile.outputs.filePath }}
+          path: ${{ steps.getManualLicenseFile.outputs.filePath }}

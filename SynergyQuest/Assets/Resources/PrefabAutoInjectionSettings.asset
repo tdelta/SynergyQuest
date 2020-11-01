@@ -9,7 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6b919b47581f42459be72ebe84c9f916, type: 3}
-  m_Name: StartupSettings
+  m_Script: {fileID: 11500000, guid: 19302d9581ec41b0976217a631221efc, type: 3}
+  m_Name: PrefabAutoInjectionSettings
   m_EditorClassIdentifier: 
-  initialDungeonLayoutFile: MainDungeon.json
+  prefabsToInject: []

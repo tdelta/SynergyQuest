@@ -47,11 +47,17 @@ Art/Sounds/Monsters/Bat/qubodupSqueakyRat*.ogg:
   license: CC0
   link: https://opengameart.org/content/squeaky-rat
 
-Art/Sprites/Coins/spin_coin*.png:
+Art/Sprites/Absorbables/spin_coin*.png:
   author: Yevhen Danchenko aka OpenGameArt.Org user truezipp
   description: Spin coin sprite
   license: CC0
   link: https://opengameart.org/content/pixel-coins-asset
+
+Art/Sprites/Absorbables/health.png:
+  author: DonHellsing
+  description: health drop sprite
+  license: Informal (free for commercial use)
+  link: https://donhellsing.itch.io/heart1
 
 Art/Sprites/Interactive/lever*.png:
   author: Miloslav Číž aka OpenGameArt.Org user drummyfish
@@ -89,11 +95,17 @@ Art/Sounds/fuse.ogg:
   license: CC0
   link: https://freesound.org/people/theneedle.tv/
 
-Art/Sounds/coincollect.wav:
+Art/Sounds/Absorbables/coincollect.wav:
   author: artisticdude, submitted by user Obrebane to OpenGameArt.Org
   description: Coin collect sound (Slightly modded). Title - "Inventory Sound Effects"
   license: CC-BY 3.0 <u><link="https://creativecommons.org/licenses/by/3.0/">link</link></u>
   link: https://opengameart.org/content/inventory-sound-effects
+
+Art/Sounds/Absorbables/life_pickup.wav:
+  author: Blender Foundation, submitted by user Lamoot to OpenGameArt.Org
+  description: health collect sound
+  license: CC-BY 3.0 <u><link="https://creativecommons.org/licenses/by/3.0/">link</link></u>
+  link: https://opengameart.org/content/life-pickup-yo-frankie
 
 Art/Sounds/spring.ogg:
   author: OpenGameArt.Org user rubberduck
@@ -318,3 +330,17 @@ Art/Sprites/Interactive/sign.png:
   description: Sign sprite from "(Shattered) Pixel Dungeon"
   license: GPLv3
   link: https://github.com/00-Evan/shattered-pixel-dungeon and https://github.com/watabou/pixel-dungeon
+
+Art/Sounds/Player/Walking/Puddle/*.ogg:
+  author: Jonathan Michael Shaw aka InspectorJ 
+  description: Puddle footsteps
+  modifications: Noise reduction and clip splitting
+  license: CC-BY 3.0
+  link: https://freesound.org/people/InspectorJ/sounds/329602/
+
+Art/Sounds/Player/Walking/Stone/*.ogg:
+  author: freesound.org user mypantsfelldown
+  description: Concrete footsteps
+  modifications: Noise-reduction, low-pass filter, clip splitting
+  license: CC0
+  link: https://freesound.org/people/mypantsfelldown/sounds/465299/

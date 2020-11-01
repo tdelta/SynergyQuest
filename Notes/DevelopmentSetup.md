@@ -19,6 +19,7 @@ hint on this page.
 * [How to keep Graphics Pixel Perfect](#how-to-keep-graphics-pixel-perfect)
 * [The Debug Settings](#the-debug-settings)
 * [Scene Checklist](#scene-checklist)
+* [Water Effects](#water-effects)
 * [Working on the Controller Web App](#working-on-the-controller-web-app)
 
 ## Setup Git LFS when cloning this project
@@ -142,6 +143,7 @@ When adding a new scene, make sure the following criteria are met, since these a
   * Cell-Size: (1, 1, 1)
 * Tilemap
   * Layer: LevelStatic
+  * Material: TileMapMaterial
   * Tile Anchor: y=0
   * Position z=-2
   * Tilemap Renderer.Mode = Individual
@@ -157,6 +159,16 @@ When adding a new scene, make sure the following criteria are met, since these a
      [SynergyQuest/Assets/Scripts/Dungeon/DungeonLayout.cs](../SynergyQuest/Assets/Scripts/Dungeon/DungeonLayout.cs))
 * If Sokoban boxes are present:
   * There should usually be a Prefabs/Sokoban/SokobanPositionSaver instance, so that sokoban positions are saved when a riddle is solved
+
+# Water Effects
+
+SynergyQuests implements decorative reflective puddles.
+
+1. Make sure your tilemap uses the `TileMapMaterial`
+2. Make sure, your tilemap has the `PuddleShaderController` component
+3. Draw puddle tiles (they have a cyan key color in the palette)
+4. Add the `WaterReflectable` component to all game objects which should have a
+   reflection
 
 # Working on the Controller Web App
 

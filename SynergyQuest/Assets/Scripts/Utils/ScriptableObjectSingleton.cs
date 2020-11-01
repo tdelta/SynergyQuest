@@ -58,8 +58,12 @@ public abstract class ScriptableObjectSingleton<T>: ScriptableObject
         // We load and return this instance.
         var instance = Resources.Load<T>(name);
         
+        instance.OnInstantiate();
+        
         return instance;
     });
 
     public static T Instance => _instance.Value;
+    
+    protected virtual void OnInstantiate() {}
 }

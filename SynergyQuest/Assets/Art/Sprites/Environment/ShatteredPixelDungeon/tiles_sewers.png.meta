@@ -533,6 +533,9 @@ TextureImporter:
   - first:
       213: 7132270743656559083
     second: tiles_sewers_176
+  - first:
+      213: 1767668458124076812
+    second: tiles_sewers_177
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -4404,6 +4407,27 @@ TextureImporter:
       bones: []
       spriteID: be17f85f37aeaf260800000000000000
       internalID: 7132270743656559083
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tiles_sewers_177
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 208
+        width: 16
+        height: 16
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c07e52fd815088810800000000000000
+      internalID: 1767668458124076812
       vertices: []
       indices: 
       edges: []

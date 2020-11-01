@@ -433,7 +433,7 @@ public class PlayerController : EntityController
         // If we are pulling a box and trying to move in the pulling direction, we instruct the box to pull
         if (_playerState == PlayerState.pulling && DoesMoveInPullDirection())
         {
-            _pushableToPull.Pull(viewDirection.Inverse(), this);
+            _pushableToPull.Pull(viewDirection.Inverse());
         }
 
         // Otherwise, move normally
@@ -476,7 +476,8 @@ public class PlayerController : EntityController
      */
     public void DisablePulling()
     {
-        _playerState = PlayerState.walking;
+        if (_playerState != PlayerState.falling)
+            _playerState = PlayerState.walking;
         Animator.SetBool(PullingState, false);
         // `Pushable` objects have a timeout before a player can push them.
         // Since a player is in constant contact with the `Pushable` during pulling, this timeout has likely run out by

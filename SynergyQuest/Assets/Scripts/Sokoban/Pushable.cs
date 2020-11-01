@@ -67,12 +67,11 @@ public class Pushable : MonoBehaviour
     [SerializeField] private AudioClip pushSound = default;
 
     /**
-     * A Pushable should be part of an object with a box collider, a rigidbody and a `MovementBinder`.
+     * A Pushable should be part of an object with a box collider and a rigidbody.
      * These components are retrieved automatically during `Start`
      */
     private BoxCollider2D _boxCollider;
     private Rigidbody2D _body;
-    private MovementBinder _movementBinder;
     private AudioSource _audioSource;
 
     /**
@@ -126,6 +125,11 @@ public class Pushable : MonoBehaviour
      * An `Interactive` behavior must be used in conjunction with this behavior to enable pulling.
      */
     private Interactive _interactive;
+
+    /**
+     * When a player pulls a box a joint is used to keep the box and the player connected.
+     */
+    private Joint2D _joint;
     
 
     // Start is called before the first frame update
@@ -140,9 +144,12 @@ public class Pushable : MonoBehaviour
         
         _boxCollider = GetComponent<BoxCollider2D>();
         _body = GetComponent<Rigidbody2D>();
-        _movementBinder = GetComponent<MovementBinder>();
         _audioSource = GetComponent<AudioSource>();
         _interactive = GetComponent<Interactive>();
+        _joint = gameObject.AddComponent<FixedJoint2D>();
+        
+        // TODO: enabling collisions makes it possible to push boxes when in pulling state, is this desired?
+        _joint.enableCollision = true;
 
         // We move by the size of a grid cell and the gaps between them, if present
         _xMoveWidth = grid.cellSize.x + grid.cellGap.x;
@@ -166,6 +173,7 @@ public class Pushable : MonoBehaviour
             {
                 _pullingPlayer = _interactive.InteractingPlayer;
                 _pullingPlayer.EnablePulling(this);
+                _joint.connectedBody = _pullingPlayer.Rigidbody2D;
             }
         }
         
@@ -174,6 +182,7 @@ public class Pushable : MonoBehaviour
         else if (state == State.Resting && !ReferenceEquals(_pullingPlayer, null))
         {
             _pullingPlayer.DisablePulling();
+            _joint.connectedBody = null;
             _pullingPlayer = null;
         }
     }
@@ -187,7 +196,6 @@ public class Pushable : MonoBehaviour
         if (Mathf.Approximately(_remainingMoveDistance, 0))
         {
             state = State.Resting;
-            _movementBinder.Unbind(); // If we have been pulled, release the player, so that they are no longer moved along us
             // If the this object is no longer moving, we allow displaying interaction hints again
             _interactive.SuppressSpeechBubble = false;
             
@@ -279,20 +287,13 @@ public class Pushable : MonoBehaviour
      * @param pullingPlayer the box will take care of moving the player while pulling. Hence the player game object
      *                      shall be passed here
      */
-    public void Pull(Direction direction, PlayerController pullingPlayer)
+    public void Pull(Direction direction)
     {
         // We want to check the next 2 cells for obstacles, since otherwise a player might be crushed between this object
         // and a wall while pulling.
         // Hence we define additional raycasting distance.
         float additionalRayCastDistance = GetMoveDistance(direction);
-        
-        // Try to move
-        if (Move(direction, additionalRayCastDistance))
-        {
-            _pullingPlayer = pullingPlayer;
-            // If moving is possible, make sure the player is moved with us
-            _movementBinder.Bind(pullingPlayer.gameObject);
-        }
+        Move(direction, additionalRayCastDistance);
     }
 
     /**
@@ -445,4 +446,3 @@ public class Pushable : MonoBehaviour
         _inContactTimer = inContactTime;
     }
 }
-

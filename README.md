@@ -1,7 +1,9 @@
 # Synergy Quest - A Mobile-Controlled Cooperative Multiplayer Game
 
 <p align="center">
-  <img width="460" src="./Graphics/Logo/logo_web.png">
+  <a href="https://youtu.be/S4HkH0xsG0k">
+    <img width="460" src="./Graphics/Logo/logo_trailer.png">
+  </a>
 </p>
 
 SynergyQuest is a 2D top-down cooperative multiplayer action-adventure video
@@ -14,6 +16,8 @@ controllers. The game runs locally on a PC and serves a web-page to which the
 players can connect with their phones. Using touch controls and sensor input
 (accelerometer etc.) they can control their game character.
 
+Download links for the latest release:
+
 * [Download for Linux (x86_64)](https://github.com/tdelta/SynergyQuest/releases/download/release/SynergyQuest_Linux.zip)
 * [Download for Windows](https://github.com/tdelta/SynergyQuest/releases/download/release/SynergyQuest_Windows.zip)
 
@@ -25,6 +29,11 @@ this repository:
 * [Components & Repository Structure](Notes/RepositoryStructure.md)
 * [How to Build ⚒](Notes/HowToBuild.md)
 * [Setting up Development](Notes/DevelopmentSetup.md)
+
+If you want to check out a build of the latest development version, download the
+build artifact of the latest successful run at
+
+https://github.com/tdelta/SynergyQuest/actions?query=workflow%3A%22Synergy+Quest+CI%22
 
 ## System Requirements
 
