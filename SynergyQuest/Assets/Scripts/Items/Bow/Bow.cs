@@ -9,8 +9,8 @@ public class Bow : Item
 
     protected override void OnActivate(PlayerController player) {
         ActivateBowSprite(player);
-        var spawnPoint = player.LookDirection + player.Rigidbody2D.position;
-        var instance = BowProjectile.Launch(arrowPrefab, spawnPoint, player.LookDirection);
+        var spawnPoint = player.viewDirection.ToVector() + player.Rigidbody2D.position;
+        var instance = BowProjectile.Launch(arrowPrefab, spawnPoint, player.viewDirection.ToVector());
         Physics2D.IgnoreCollision(instance.Collider, player.GetComponent<Collider2D>());
     }
 
