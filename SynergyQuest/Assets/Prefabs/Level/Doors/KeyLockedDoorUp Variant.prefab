@@ -108,6 +108,11 @@ PrefabInstance:
       propertyPath: switches.Array.data[0]
       value: 
       objectReference: {fileID: 8600195905482185056}
+    - target: {fileID: 8352816944593828106, guid: 3817f4eb6fc042ec2a795e7683d41038,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 8579012082855823832, guid: 3817f4eb6fc042ec2a795e7683d41038,
         type: 3}
       propertyPath: m_LocalPosition.x
