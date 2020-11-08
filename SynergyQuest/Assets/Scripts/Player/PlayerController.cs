@@ -315,7 +315,8 @@ public class PlayerController : EntityController
     public override bool ChangeHealth(int delta, bool playSounds = true)
     {
         // if the player is thrown he shouldn't get any damage
-        if (_playerState == PlayerState.thrown)
+        // if the player gets healed it shouldn't exceed max value
+        if (_playerState == PlayerState.thrown || (delta > 0 && _data.HealthPoints == PlayerInfo.MAX_HEALTH_POINTS))
             return false;
 
         _data.HealthPoints += delta;
