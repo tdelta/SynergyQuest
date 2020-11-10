@@ -15,25 +15,25 @@ class Fragment():
     
     def check_above(self, fragment):
         for i in range(1,len(self.above)-1):
-            if not self.above[i] == '?' and not fragment.content[len(fragment.content)-1][i-1] == self.above[i]:
+            if not self.above[i] == '?' and not fragment.content[0][i-1] == self.above[i]:
                 return False
         return True
     
     def check_below(self, fragment):
         for i in range(1,len(self.below)-1):
-            if not self.below[i] == '?' and not fragment.content[0][i-1] == self.below[i]:
+            if not self.below[i] == '?' and not fragment.content[len(fragment.content)-1][i-1] == self.below[i]:
                 return False
         return True
     
     def check_left(self, fragment):
         for i in range(len(self.left)):
-            if not self.left[i] == '?' and not fragment.content[i][0] == self.left[i]:
+            if not self.left[i] == '?' and not fragment.content[i][len(fragment.content[i])-1] == self.left[i]:
                 return False
         return True
     
     def check_right(self, fragment):
         for i in range(len(self.right)):
-            if not self.right[i] == '?' and not fragment.content[i][len(fragment.content[i])-1] == self.right[i]:
+            if not self.right[i] == '?' and not fragment.content[i][0] == self.right[i]:
                 return False
         return True
 
