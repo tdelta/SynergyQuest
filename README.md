@@ -1,15 +1,19 @@
 # Synergy Quest - A Mobile-Controlled Cooperative Multiplayer Game
 
 <p align="center">
-  <a href="https://youtu.be/S4HkH0xsG0k">
-    <img width="460" src="./Graphics/Logo/logo_trailer.png">
-  </a>
+  <img width="460" src="./Graphics/Logo/logo_web.png">
 </p>
 
 SynergyQuest is a 2D top-down cooperative multiplayer action-adventure video
 game.
 It entertains 2-4 players by letting them delve into dungeon levels
 filled with a variety of puzzle challenges, mini-games, and battle sequences.
+
+<p align="center">
+  <a href="https://youtu.be/S4HkH0xsG0k">
+    <img width="230" src="./Graphics/Logo/trailer.png">
+  </a>
+</p>
 
 What is special about this game is that players use their smartphones as
 controllers. The game runs locally on a PC and serves a web-page to which the
@@ -37,7 +41,7 @@ https://github.com/tdelta/SynergyQuest/actions?query=workflow%3A%22Synergy+Quest
 
 ## System Requirements
 
-* A Linux 🐧 or Windows 🪟 PC
+* A Linux 🐧 or Windows 💰 PC
 * A smartphone for every player with a (very) modern web browser installed
   ("officially" supported is the newest version of Google Chrome on Android)
   
