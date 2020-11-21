@@ -24,7 +24,10 @@
 // see `LICENSE.md` at the root of this source code repository.
 
 using System;
+using Boo.Lang.Runtime;
+using UnityEditor;
 using UnityEngine;
+using Utils;
 
 /**
  * Scriptable object singletons allow to access asset data at runtime which can not be set otherwise using the inspector.
@@ -45,8 +48,9 @@ using UnityEngine;
  *    folder of the project.
  * 4. Now you can access this instance anywhere at runtime by reading `MySubClass.Instance`.
  */
-public abstract class ScriptableObjectSingleton<T>: ScriptableObject
-    where T: ScriptableObjectSingleton<T>
+public abstract class ScriptableObjectSingleton<T, InstantiateResourceWhenMissing>: ScriptableObject
+    where T: ScriptableObjectSingleton<T, InstantiateResourceWhenMissing>
+    where InstantiateResourceWhenMissing: BooleanLiteralType, new()
 {
     // An instance of this object is lazily loaded from the Resources folder
     [NonSerialized] // <- This attribute is needed, so that changes to this variable are not saved to the resource
@@ -55,8 +59,25 @@ public abstract class ScriptableObjectSingleton<T>: ScriptableObject
         // We assume, that an instance of the scriptable object is placed in the resources folder, and that it
         // has the same name as its type:
         var name = typeof(T).ToString();
+        
         // We load and return this instance.
         var instance = Resources.Load<T>(name);
+        if (instance == null)
+        {
+            if ((new InstantiateResourceWhenMissing()).Value)
+            {
+                instance = ScriptableObject.CreateInstance<T>();
+                AssetDatabase.CreateAsset(instance, $"{Application.dataPath}/Resources/${name}.asset");
+                AssetDatabase.SaveAssets();
+                AssetDatabase.Refresh();
+            }
+
+            else
+            {
+                throw new RuntimeException($"No instance asset of the ${name} scriptable object singleton has been created. Create an ${name} resource asset with the name \"${name}\".");
+            }
+        }
+        
         
         instance.OnInstantiate();
         
@@ -67,3 +88,7 @@ public abstract class ScriptableObjectSingleton<T>: ScriptableObject
     
     protected virtual void OnInstantiate() {}
 }
+
+public abstract class ScriptableObjectSingleton<T> : ScriptableObjectSingleton<T, FalseLiteralType>
+    where T: ScriptableObjectSingleton<T, FalseLiteralType>
+{ }

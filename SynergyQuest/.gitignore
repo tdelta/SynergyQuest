@@ -1,6 +1,9 @@
 controller-app
 ssl-warning-info
 
+# Debug settings instance should not be shared between users
+Assets/Resources/DebugSettings.asset
+
 # Unity Specific Ignores:
 # https://github.com/github/gitignore/blob/master/Unity.gitignore
 #
