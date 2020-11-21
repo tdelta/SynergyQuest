@@ -67,14 +67,14 @@ public abstract class ScriptableObjectSingleton<T, InstantiateResourceWhenMissin
             if ((new InstantiateResourceWhenMissing()).Value)
             {
                 instance = ScriptableObject.CreateInstance<T>();
-                AssetDatabase.CreateAsset(instance, $"{Application.dataPath}/Resources/${name}.asset");
+                AssetDatabase.CreateAsset(instance, $"Assets/Resources/{name}.asset"); // FIXME: Do not hardcode this path. Try to query it from Unity somehow
                 AssetDatabase.SaveAssets();
                 AssetDatabase.Refresh();
             }
 
             else
             {
-                throw new RuntimeException($"No instance asset of the ${name} scriptable object singleton has been created. Create an ${name} resource asset with the name \"${name}\".");
+                throw new RuntimeException($"No instance asset of the {name} scriptable object singleton has been created. Create an {name} resource asset with the name \"{name}\".");
             }
         }
         

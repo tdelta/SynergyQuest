@@ -1,8 +1,8 @@
-controller-app
-ssl-warning-info
+/controller-app
+/ssl-warning-info
 
 # Debug settings instance should not be shared between users
-Assets/Resources/DebugSettings.asset
+/Assets/Resources/DebugSettings.asset
 
 # Unity Specific Ignores:
 # https://github.com/github/gitignore/blob/master/Unity.gitignore
@@ -74,3 +74,6 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+
+
+/Assets/Resources/DebugSettings.asset.meta
