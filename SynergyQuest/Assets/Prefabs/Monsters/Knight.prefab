@@ -17,6 +17,8 @@ GameObject:
   - component: {fileID: 6235775845409623577}
   - component: {fileID: 6235775845409623574}
   - component: {fileID: 8287828032149032754}
+  - component: {fileID: -224400814639544321}
+  - component: {fileID: -342212117913406982}
   m_Layer: 14
   m_Name: Knight
   m_TagString: Enemy
@@ -218,6 +220,35 @@ MonoBehaviour:
   reflectionOffset: {x: 0, y: 0, z: 0}
   ripplesOffset: {x: 0, y: 0, z: 0}
   enableRipples: 1
+--- !u!114 &-224400814639544321
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6235775845409623576}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c9eb9a451f34f4283d6587f3812e902, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &-342212117913406982
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6235775845409623576}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44970a5b0647424da152826977091c91, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseColor: {r: 0.73333335, g: 0.078431375, b: 0, a: 1}
+  particlesPrefab: {fileID: 8397682343236543693, guid: 0c97de02b17a12c9ead38b9172d4b575,
+    type: 3}
+  bloodStainPrefab: {fileID: 8386572227100128554, guid: 5ae326a1b6fd4c98d88c539ee233b954,
+    type: 3}
 --- !u!1001 &3505025390366956328
 PrefabInstance:
   m_ObjectHideFlags: 0

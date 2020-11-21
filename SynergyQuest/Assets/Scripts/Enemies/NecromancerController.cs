@@ -23,10 +23,11 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
- using UnityEngine;
+using DamageSystem;
+using UnityEngine;
 using UnityEngine.Serialization;
 
-public class NecromancerController : EnemyController
+public class NecromancerController : EnemyController, AttackInhibitor
 {
     [FormerlySerializedAs("fireball")] [SerializeField] FireballProjectile fireballPrefab = default;
     [SerializeField] float launchCoolDown = 1;
@@ -110,7 +111,7 @@ public class NecromancerController : EnemyController
         else
         {
             _attackedByPlayer = false;
-            if (PlayerColorMethods.IsCompatibleWith(_currentColor, _attackingPlayer.Color))
+            if (_currentColor.IsCompatibleWith(_attackingPlayer.Color))
             {
                 var material = GetComponent<Renderer>().material;
                 _currentColor = PlayerColorMethods.NextColor(_attackingPlayer.Color,
@@ -122,5 +123,15 @@ public class NecromancerController : EnemyController
         }
 
         return false;
+    }
+
+    public bool IsAttackSuccessful(GameObject attacker)
+    {
+        if (attacker.TryGetComponent(out PlayerController _attackingPlayer))
+        {
+            return _currentColor.IsCompatibleWith(_attackingPlayer.Color);
+        }
+
+        return true;
     }
 }

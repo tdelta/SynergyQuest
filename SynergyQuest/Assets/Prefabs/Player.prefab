@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 268351232}
   - component: {fileID: 9283753934280254}
   - component: {fileID: 2703046263398990827}
+  - component: {fileID: 9023400757240619449}
   m_Layer: 2
   m_Name: AttackPointRight
   m_TagString: PlayerHit
@@ -99,6 +100,19 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 7
+--- !u!114 &9023400757240619449
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 268351230}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d01ca49c73dd418a9a878563a82ff30b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  customAttacker: {fileID: 4270148256400962766}
 --- !u!1 &645781148
 GameObject:
   m_ObjectHideFlags: 0
@@ -111,6 +125,7 @@ GameObject:
   - component: {fileID: 645781150}
   - component: {fileID: 8933781604585633881}
   - component: {fileID: 7283954946436885052}
+  - component: {fileID: 3708659498884105096}
   m_Layer: 2
   m_Name: AttackPointTop
   m_TagString: PlayerHit
@@ -199,6 +214,19 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 7
+--- !u!114 &3708659498884105096
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 645781148}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d01ca49c73dd418a9a878563a82ff30b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  customAttacker: {fileID: 4270148256400962766}
 --- !u!1 &1684417763
 GameObject:
   m_ObjectHideFlags: 0
@@ -211,6 +239,7 @@ GameObject:
   - component: {fileID: 1684417765}
   - component: {fileID: 6566295534855085481}
   - component: {fileID: 5395333289344715738}
+  - component: {fileID: 1330874643941727621}
   m_Layer: 2
   m_Name: AttackPointBottom
   m_TagString: PlayerHit
@@ -299,6 +328,19 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 7
+--- !u!114 &1330874643941727621
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1684417763}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d01ca49c73dd418a9a878563a82ff30b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  customAttacker: {fileID: 4270148256400962766}
 --- !u!1 &1894431301
 GameObject:
   m_ObjectHideFlags: 0
@@ -311,6 +353,7 @@ GameObject:
   - component: {fileID: 1894431303}
   - component: {fileID: 8053707630260868602}
   - component: {fileID: 4581795318486904352}
+  - component: {fileID: 8445122479682819787}
   m_Layer: 2
   m_Name: AttackPointLeft
   m_TagString: PlayerHit
@@ -398,6 +441,19 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 7
+--- !u!114 &8445122479682819787
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1894431301}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d01ca49c73dd418a9a878563a82ff30b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  customAttacker: {fileID: 4270148256400962766}
 --- !u!1 &185187689432217876
 GameObject:
   m_ObjectHideFlags: 0

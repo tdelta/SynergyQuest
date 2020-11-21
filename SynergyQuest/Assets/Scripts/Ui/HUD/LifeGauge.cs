@@ -23,7 +23,7 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
-﻿using System.Collections.Generic;
+ using System.Collections.Generic;
 using UnityEngine;
 
 /**
@@ -39,13 +39,17 @@ public class LifeGauge : MonoBehaviour
     /**
      * Background of the gauge
      */
-    [SerializeField] private GameObject lifeGaugeBg = default;
+    [SerializeField] private SpriteRenderer lifeGaugeBg = default;
     
     /**
      * Sources of heart sprites. Empty hearts are used to draw lost lives.
      */
-    [SerializeField] private ObjectPool heartObjectPool = default;
-    [SerializeField] private ObjectPool emptyHeartObjectPool = default;
+    [SerializeField] private SpriteRenderer heartObjectPrefab = default;
+    [SerializeField] private SpriteRenderer emptyHeartObjectPrefab = default;
+
+    class SpritePool : ObjectPool<SpriteRenderer> { };
+    private SpritePool _heartObjectPool = default;
+    private SpritePool _emptyHeartObjectPool = default;
 
     private Animator _animator;
 
@@ -57,8 +61,8 @@ public class LifeGauge : MonoBehaviour
     /**
      * We cache active instances of hearts here, so that we can manipulate their transparency values.
      */
-    private List<GameObject> _heartInstances = new List<GameObject>();
-    private List<GameObject> _emptyHeartInstances = new List<GameObject>();
+    private List<SpriteRenderer> _heartInstances = new List<SpriteRenderer>();
+    private List<SpriteRenderer> _emptyHeartInstances = new List<SpriteRenderer>();
     
     /**
      * Animation trigger for the fade-out effect.
@@ -69,7 +73,10 @@ public class LifeGauge : MonoBehaviour
     {
         _animator = GetComponent<Animator>();
         
-        _heartSize = heartObjectPool.Prefab.GetComponent<SpriteRenderer>().bounds.size;
+        _heartObjectPool = ObjectPool.Make<SpritePool, SpriteRenderer>(this.transform, heartObjectPrefab);
+        _emptyHeartObjectPool = ObjectPool.Make<SpritePool, SpriteRenderer>(this.transform, emptyHeartObjectPrefab);
+        
+        _heartSize = _heartObjectPool.Prefab.bounds.size;
     }
 
     /**
@@ -85,11 +92,11 @@ public class LifeGauge : MonoBehaviour
     /**
      * Sets the alpha value of a sprite to `this.alphaValue`
      */
-    private void SetAlpha(GameObject obj)
+    private void SetAlpha(SpriteRenderer renderer)
     {
-        var oldColor = obj.GetComponent<SpriteRenderer>().material.color;
+        var oldColor = renderer.material.color;
         var newColor = new Color(oldColor.r, oldColor.g, oldColor.b, alphaValue);
-        obj.GetComponent<SpriteRenderer>().material.color = newColor;
+        renderer.GetComponent<SpriteRenderer>().material.color = newColor;
     }
 
     private void OnEnable()
@@ -132,8 +139,7 @@ public class LifeGauge : MonoBehaviour
         var bgSize = new Vector2(bgWidth, bgHeight);
 
         // Adapt the size of the background
-        var bgRenderer = lifeGaugeBg.GetComponent<SpriteRenderer>();
-        bgRenderer.size = bgSize;
+        lifeGaugeBg.size = bgSize;
         
         // Where shall the first heart be drawn?
         var heartDrawPosition = new Vector3(
@@ -152,16 +158,16 @@ public class LifeGauge : MonoBehaviour
         // Draw a heart for every (lost) life:
         for (int i = 0; i < maxHealth; ++i)
         {
-            GameObject heart;
+            SpriteRenderer heart;
             if (i < health) // If the counter is less that the current health, we draw full hearts
             {
-                heart = heartObjectPool.GetInstance(lifeGaugeBg.transform);
+                heart = _heartObjectPool.GetInstance(lifeGaugeBg.transform);
                 _heartInstances.Add(heart);
             }
 
             else // otherwise, the health point has been lost and we draw an empty heart
             {
-                heart = emptyHeartObjectPool.GetInstance(lifeGaugeBg.transform);
+                heart = _emptyHeartObjectPool.GetInstance(lifeGaugeBg.transform);
                 _emptyHeartInstances.Add(heart);
             }
 
@@ -189,10 +195,10 @@ public class LifeGauge : MonoBehaviour
      */
     private void ClearHeartInstances()
     {
-        _heartInstances.ForEach(heart => heartObjectPool.ReturnInstance(heart));
+        _heartInstances.ForEach(heart => _heartObjectPool.ReturnInstance(heart));
         _heartInstances.Clear();
         
-        _emptyHeartInstances.ForEach(heart => emptyHeartObjectPool.ReturnInstance(heart));
+        _emptyHeartInstances.ForEach(heart => _emptyHeartObjectPool.ReturnInstance(heart));
         _emptyHeartInstances.Clear();
     }
 }

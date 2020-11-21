@@ -23,9 +23,13 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using Boo.Lang.Runtime;
 using UnityEngine;
+using Object = UnityEngine.Object;
+using Random = System.Random;
 
 /**
  * Object pools are used when lots of instances of a prefab must be drawn and the cost of frequent instantiations
@@ -36,16 +40,27 @@ using UnityEngine;
  *
  * This way, instances can be reused.
  */
-public class ObjectPool : MonoBehaviour
+public class ObjectPool<T>: MonoBehaviour
+    where T: Component
 {
     // Prefab that is instantiated by this pool
-    [SerializeField] private GameObject prefab = default;
+    private T prefab = null;
 
     // We store returned instances here until they are needed again
-    private Stack<GameObject> _unusedInstances = new Stack<GameObject>();
+    private Stack<T> _unusedInstances = new Stack<T>();
 
-    public GameObject Prefab => prefab;
+    public T Prefab => prefab;
 
+    public void Init(T prefab)
+    {
+        if (!ReferenceEquals(this.prefab, null))
+        {
+            throw new RuntimeException("This pool already has been initialized.");
+        }
+        
+        this.prefab = prefab;
+    }
+    
     /**
      * Returns an instance of `prefab`.
      * If no pre-allocated instances are stored, a new one will be created.
@@ -54,9 +69,9 @@ public class ObjectPool : MonoBehaviour
      * @param parent   set a parent for the instance (optional)
      * @param activate whether the instance shall be activated (SetActive)
      */
-    public GameObject GetInstance(Transform parent = null, bool activate = true)
+    public T GetInstance(Transform parent = null, bool activate = true)
     {
-        GameObject instance;
+        T instance;
         if (_unusedInstances.Any())
         {
             instance = _unusedInstances.Pop();
@@ -65,17 +80,17 @@ public class ObjectPool : MonoBehaviour
 
         else if (parent != null)
         {
-            instance = Instantiate(prefab, parent);
+            instance = Object.Instantiate(prefab, parent);
         }
 
         else
         {
-            instance = Instantiate(prefab);
+            instance = Object.Instantiate(prefab);
         }
 
         if (activate)
         {
-            instance.SetActive(true);
+            instance.gameObject.SetActive(true);
         }
 
         return instance;
@@ -84,15 +99,29 @@ public class ObjectPool : MonoBehaviour
     /**
      * Stores prefab instances for reuse. See also `GetInstance`.
      */
-    public void ReturnInstance(GameObject instance, bool deactivate = true)
+    public void ReturnInstance(T instance, bool deactivate = true)
     {
+        instance.transform.parent = this.transform;
         if (deactivate)
         {
-            instance.SetActive(false);
+            instance.gameObject.SetActive(false);
         }
 
         _unusedInstances.Push(instance);
     }
 }
 
+public class ObjectPool
+{
+    public static ConcretePool Make<ConcretePool, U>(Transform parent, U prefab)
+        where U: Component
+        where ConcretePool: ObjectPool<U>
+    {
+        var obj = new GameObject();
+        obj.transform.parent = parent;
+        var instance = obj.AddComponent<ConcretePool>();
+        instance.Init(prefab);
 
+        return instance;
+    }
+}
