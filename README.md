@@ -51,7 +51,7 @@ The game code (excluding engine) and some assets have been originally developed 
 
 * Jonas Belouadi - [@potamides](https://github.com/potamides)
 * Marc Arnold - [@m-arnold](https://github.com/m-arnold)
-* Martin Kerscher - [@didge-rydu](https://github.com/didge-rydu)
+* Martin Kerscher - [@maruker](https://github.com/maruker)
 * Anton Haubner - [@ahbnr](https://github.com/ahbnr)
 
 The main dungeon graphics stem from the mobile roguelike game
