@@ -34,9 +34,11 @@ namespace Effects
 
         public void Trigger(Vector2 direction)
         {
-            particleSystem.transform.rotation = Quaternion.Euler(
-                0, 0, direction.x > 0 ? -55 : 55
+            var rotation = Quaternion.FromToRotation(
+                Vector2.up,
+                direction
             );
+            particleSystem.transform.rotation = rotation;
             
             particleSystem.Play();
         }

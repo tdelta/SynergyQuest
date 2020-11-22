@@ -1,25 +1,43 @@
-using System;
-using System.Linq;
 using DamageSystem;
 using UnityEngine;
 
 public class Attackable : MonoBehaviour
 {
-    public delegate void AttackedAction(GameObject attacker, Optional<Vector2> fromDirection);
-    public event AttackedAction OnAttacked;
+    [SerializeField, Tooltip("How long the entity is immune to attacks after a successful hit")] private float invincibleTime = 0.8f;
+    public float InvincibleTime => invincibleTime;
+    public bool IsInvincible { get; private set; } = false;
 
-    private AttackInhibitor[] _attackInhibitors;
-
-    private void Awake()
+    public event InvincibilityChangedAction OnInvincibilityChanged;
+    public delegate void InvincibilityChangedAction(bool isInvincible);
+    
+    public event AttackAction OnPendingAttack;
+    public event AttackAction OnAttack;
+    public delegate void AttackAction(AttackData attack);
+    
+    public void Attack(AttackData attack)
     {
-        _attackInhibitors = BehaviourExtensions.GetComponentsByInterface<AttackInhibitor>(this);
-    }
-
-    public void Attack(GameObject attacker, Optional<Vector2> fromDirection)
-    {
-        if (_attackInhibitors.All(inhibitor => inhibitor.IsAttackSuccessful(attacker)))
+        if (this.enabled)
         {
-            OnAttacked?.Invoke(attacker, fromDirection);
+            if (IsInvincible)
+            {
+                return;
+            }
+            
+            OnPendingAttack?.Invoke(attack);
+            OnAttack?.Invoke(attack);
+
+            if (attack.damage > 0)
+            {
+                IsInvincible = true;
+                OnInvincibilityChanged?.Invoke(IsInvincible);
+                StartCoroutine(
+                    CoroutineUtils.Wait(invincibleTime, () =>
+                    {
+                        IsInvincible = false;
+                        OnInvincibilityChanged?.Invoke(IsInvincible);
+                    })
+                );
+            }
         }
     }
 }

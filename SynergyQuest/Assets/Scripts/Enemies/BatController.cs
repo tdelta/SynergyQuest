@@ -23,8 +23,6 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
-﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class BatController : EnemyController {
@@ -34,8 +32,10 @@ public class BatController : EnemyController {
     float flightTimer;
     int currentMotion = 0;
     readonly int moveYProperty = Animator.StringToHash("Move Y");
-    Vector2[] flightMotions = new []{new Vector2(-1, 1), new Vector2(-1, -1),
-        new Vector2(1, 1), new Vector2(1, -1)};
+    Vector2[] flightMotions = {
+        new Vector2(-1, 1), new Vector2(-1, -1),
+        new Vector2(1, 1), new Vector2(1, -1)
+    };
 
     protected override void Start() {
         base.Start();

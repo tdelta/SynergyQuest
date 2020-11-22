@@ -27,7 +27,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
+ using DamageSystem;
+ using UnityEngine;
 using UnityEngine.Tilemaps;
 
 [RequireComponent(typeof(Tilemap), typeof(Switch))]
@@ -100,7 +101,7 @@ public class EnemySpawn : MonoBehaviour {
         if (spawnPositions.Count > 0) { // if no spawn position with no collider inside radius exists
             int index = _rand.Next(spawnPositions.Count);
             var instance = Instantiate(obj, spawnPositions[index], Quaternion.identity);
-            instance.OnDeath += OnEnemyDead;
+            instance.GetComponent<Health>().OnDeath += OnEnemyDead;
             instance.ShowParticles();
             _spawnedEnemies++;
         }

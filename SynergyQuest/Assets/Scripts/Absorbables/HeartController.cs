@@ -23,6 +23,7 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
+using DamageSystem;
 using UnityEngine;
 
 /**
@@ -34,6 +35,10 @@ public class HeartController : AbsorbableController
     
     protected override void GetAbsorbed(PlayerController player)
     {
-        player.ChangeHealth(amount);
+        player.GetComponent<Attackable>().Attack(new AttackData
+        {
+            attacker = this.gameObject,
+            damage = -amount
+        });
     }
 }

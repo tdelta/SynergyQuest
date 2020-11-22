@@ -48,21 +48,7 @@ public struct Optional<T>
         _value = value;
         _hasValue = hasValue;
     }
-
-    public static Optional<U> FromNullable<U>(U maybeValue)
-        where U: class
-    {
-        if (ReferenceEquals(maybeValue, null))
-        {
-            return Optional<U>.None();
-        }
-        
-        else
-        {
-            return Optional<U>.Some(maybeValue);
-        }
-    }
-
+    
     /**
      * <summary>
      * Creates an instance which wraps a value
@@ -81,6 +67,20 @@ public struct Optional<T>
     public static Optional<T> None()
     {
         return new Optional<T>(default(T), false);
+    }
+
+    public static Optional<U> FromNullable<U>(U maybeValue)
+        where U: class
+    {
+        if (ReferenceEquals(maybeValue, null))
+        {
+            return Optional.None<U>();
+        }
+        
+        else
+        {
+            return Optional.Some<U>(maybeValue);
+        }
     }
 
     /**
@@ -203,5 +203,28 @@ public struct Optional<T>
             return predicate(_value);
         }
         return false;
+    }
+}
+
+public struct Optional
+{
+    /**
+     * <summary>
+     * Creates an instance which wraps a value
+     * </summary>
+     */
+    public static Optional<T> Some<T>(T value)
+    {
+        return Optional<T>.Some(value);
+    }
+    
+    /**
+     * <summary>
+     * Creates an instance which does not wrap a value
+     * </summary>
+     */
+    public static Optional<T> None<T>()
+    {
+        return Optional<T>.None();
     }
 }

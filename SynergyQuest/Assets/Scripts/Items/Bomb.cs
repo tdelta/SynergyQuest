@@ -23,6 +23,7 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
+using DamageSystem;
 using UnityEngine;
 
 public class Bomb : Item
@@ -69,7 +70,16 @@ public class Bomb : Item
 
         // Checks whether the bomb is still carried when it explodes. If so, damage the carrier
         if (_throwable.IsBeingCarried) {
-            _throwable.Carrier.PutDamage(1, (_throwable.Carrier.transform.position - transform.position).normalized);
+            if (_throwable.Carrier.TryGetComponent(out Attackable carrierAttackable))
+            {
+                carrierAttackable.Attack(new AttackData
+                {
+                    attacker = gameObject,
+                    damage = 1,
+                    knockback = 4,
+                    attackDirection = Optional.Some<Vector2>((_throwable.Carrier.transform.position - transform.position).normalized)
+                });
+            }
         }
 
     }
@@ -93,17 +103,18 @@ public class Bomb : Item
         if (explosion) 
         {
             var otherGameobject = other.collider.gameObject;
-            if (otherGameobject.CompareTag("Enemy") || otherGameobject.CompareTag("Player"))
+            if (otherGameobject.TryGetComponent(out Attackable otherAttackable))
             {
-                var entity = other.gameObject.GetComponent<EntityController>();
-                entity.PutDamage(1, (other.transform.position - transform.position).normalized); 
+                otherAttackable.Attack(new AttackData
+                {
+                    attacker = gameObject,
+                    damage = 1,
+                    knockback = 4,
+                    attackDirection = Optional.Some<Vector2>((other.transform.position - transform.position).normalized)
+                });
             }
-            else if (otherGameobject.CompareTag("Switch"))
-                otherGameobject.GetComponent<ShockSwitch>().Activate();
             else if (otherGameobject.CompareTag("DestroyableWall"))
                 Destroy(otherGameobject);
-            else if (other.gameObject.CompareTag("Ghost"))
-                other.gameObject.GetComponent<PlayerGhost>().Exorcise();
         }
     }
     

@@ -23,75 +23,66 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
- using UnityEngine;
+using DamageSystem;
+using UnityEngine;
 
-abstract public class EntityController : MonoBehaviour {
-    [SerializeField] float timeInvincible = 1;
-
+[RequireComponent(typeof(Attackable))]
+[RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(PhysicsEffects))]
+[RequireComponent(typeof(Animator))]
+public abstract class EntityController : MonoBehaviour {
     private Animator _animator;
     protected Animator Animator => _animator;
     
     private Rigidbody2D _rigidbody2D;
     public Rigidbody2D Rigidbody2D => _rigidbody2D;
-    
-    protected bool isInvincible;
-    protected float invincibleTimer;
 
     readonly int vulnerableTrigger = Animator.StringToHash("Vulnerable");
     readonly int hitTrigger = Animator.StringToHash("Hit");
 
-    protected float TimeInvincible => timeInvincible;
-
     private PhysicsEffects _physicsEffects;
     public PhysicsEffects PhysicsEffects => _physicsEffects;
 
+    protected Attackable attackable
+    {
+        get;
+        private set;
+    }
 
     protected virtual void Awake() {
         _animator = GetComponent<Animator>();
         _rigidbody2D = GetComponent<Rigidbody2D>();
         _physicsEffects = GetComponent<PhysicsEffects>();
+        attackable = GetComponent<Attackable>();
     }
 
-    protected virtual void Start() {
+    private void OnEnable()
+    {
+        attackable.OnAttack += OnAttack;
+        attackable.OnInvincibilityChanged += OnInvincibilityChanged;
+    }
+    
+    private void OnDisable()
+    {
+        attackable.OnAttack -= OnAttack;
+        attackable.OnInvincibilityChanged -= OnInvincibilityChanged;
     }
 
-    protected virtual void Update() {
-        if (isInvincible) {
-            invincibleTimer -= Time.deltaTime;
-            if (invincibleTimer < 0) {
-                isInvincible = false;
-                _animator.SetTrigger(vulnerableTrigger);
-            }
+    protected virtual void Start() { }
+
+    private void OnInvincibilityChanged(bool isInvincible)
+    {
+        if (!isInvincible)
+        {
+            _animator.SetTrigger(vulnerableTrigger);
         }
     }
 
-    /*
-     * This method can be used to damage an entity (player, enemy) on collision.
-     */
-    public void PutDamage(int amount, Vector2 knockbackDirection) {
-        // if invincible or entitiy doesn't accept change in health do nothing
-        if (isInvincible)
-            return;
-        
-
-        if (ChangeHealth(-amount))
-            PhysicsEffects.ApplyImpulse(knockbackDirection * 4);
-        // if the entity doesn't accept change in health (e.g. flying player) only apply (reduced) knockback
-        else {
-            PhysicsEffects.ApplyImpulse(knockbackDirection * 2);
-            return;
+    private void OnAttack(AttackData attack)
+    {
+        if (attack.damage >= 0)
+        {
+            _animator.SetTrigger(hitTrigger);
         }
-
-        _animator.SetTrigger(hitTrigger);
-
-        invincibleTimer = timeInvincible;
-        isInvincible = true;
     }
-
-    /*
-     * Each entity (player, enemy) should implement this method to control how it
-     * is affected by health changes.
-     * The return value should indicate if the change in health actually happened
-     */
-    public abstract bool ChangeHealth(int amount, bool playSounds = true);
 }

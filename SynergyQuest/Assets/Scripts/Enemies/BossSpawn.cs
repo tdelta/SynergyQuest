@@ -23,6 +23,7 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
+using DamageSystem;
 using UnityEngine;
 
 public class BossSpawn : MonoBehaviour
@@ -54,7 +55,7 @@ public class BossSpawn : MonoBehaviour
         {
             _switchable.OnActivationChanged -= OnSwitchActivate;
             var instance = Instantiate(boss, transform.position, Quaternion.identity);
-            instance.OnDeath += OnBossDead;
+            instance.GetComponent<Health>().OnDeath += OnBossDead;
             instance.ShowParticles();
             _audioSource.clip = bossActive;
             _audioSource.Play();
