@@ -62,7 +62,7 @@ public class Attackable : MonoBehaviour
     /**
      * <summary>
      * Emitted just before a new attack hits.
-     * Modifying the <see cref="AttackData"/> object is OK.
+     * Modifying the <see cref="WritableAttackData"/> object is OK (and the purpose of this event).
      * </summary>
      * <remarks>
      * Other behaviors should subscribe this event if they want to modify attacks before they hit.
@@ -71,12 +71,12 @@ public class Attackable : MonoBehaviour
      * does not have a certain color.
      * </remarks>
      */
-    public event AttackAction OnPendingAttack;
+    public event PendingAttackAction OnPendingAttack;
+    public delegate void PendingAttackAction(WritableAttackData attack);
     
     /**
      * <summary>
      * Emitted when a new attack hits.
-     * The <see cref="AttackData"/> object shall not be modified!
      * </summary>
      */
     public event AttackAction OnAttack;
@@ -93,7 +93,7 @@ public class Attackable : MonoBehaviour
      *   and the <see cref="OnInvincibilityChanged"/> event is emitted.
      * </remarks>
      */
-    public void Attack(AttackData attack)
+    public void Attack(WritableAttackData attack)
     {
         if (this.enabled)
         {
@@ -105,7 +105,7 @@ public class Attackable : MonoBehaviour
             OnPendingAttack?.Invoke(attack);
             OnAttack?.Invoke(attack);
 
-            if (attack.damage > 0)
+            if (attack.Damage > 0)
             {
                 IsInvincible = true;
                 OnInvincibilityChanged?.Invoke(IsInvincible);

@@ -128,7 +128,7 @@ public class DamageEffects : MonoBehaviour
             entityCenter = this.transform.position;
         }
         
-        if (attack.damage > 0)
+        if (attack.Damage > 0)
         {
             // Blood stains on the floor
             if (!ReferenceEquals(bloodStainPrefab, null))
@@ -149,7 +149,7 @@ public class DamageEffects : MonoBehaviour
             damageSounds?.PlayOneShot();
         }
 
-        if (attack.damage < 0)
+        if (attack.Damage < 0)
         {
             // Positive tint flash if being healed
             // ReSharper disable once Unity.NoNullPropagation
@@ -158,14 +158,14 @@ public class DamageEffects : MonoBehaviour
             );
         }
         
-        attack.attackDirection.Match(
+        attack.AttackDirection.Match(
             some: direction =>
             {
                 // knockback
                 // ReSharper disable once Unity.NoNullPropagation
-                physicsEffects?.ApplyImpulse(direction * (attack.knockback * (attack.damage == 0 ? knockbackReductionWhenNoDamage : 1)));
+                physicsEffects?.ApplyImpulse(direction * (attack.Knockback * (attack.Damage == 0 ? knockbackReductionWhenNoDamage : 1)));
 
-                if (attack.damage > 0)
+                if (attack.Damage > 0)
                 {
                     // blood particles in attack direction
                     if (!ReferenceEquals(particlesPool, null))

@@ -80,7 +80,7 @@ public abstract class EntityController : MonoBehaviour {
 
     private void OnAttack(AttackData attack)
     {
-        if (attack.damage >= 0)
+        if (attack.Damage >= 0)
         {
             _animator.SetTrigger(hitTrigger);
         }

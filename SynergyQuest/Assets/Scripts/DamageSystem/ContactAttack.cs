@@ -132,12 +132,12 @@ public class ContactAttack : MonoBehaviour
         var attackDirection = (Vector2) (targetCollider.transform.position - attacker.transform.position).normalized;
 
         target.Attack(
-            new AttackData
+            new WritableAttackData
             {
-                damage = damage,
-                knockback = knockback,
-                attacker = attacker,
-                attackDirection = Optional<Vector2>.Some(attackDirection)
+                Damage = damage,
+                Knockback = knockback,
+                Attacker = attacker,
+                AttackDirection = Optional<Vector2>.Some(attackDirection)
             }
         );
 

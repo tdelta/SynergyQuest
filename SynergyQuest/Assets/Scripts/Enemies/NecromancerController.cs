@@ -116,24 +116,24 @@ public class NecromancerController : EnemyController
      * Invoked by <see cref="Attackable"/>.
      * </summary>
      */
-    private void OnPendingAttack(AttackData attack)
+    private void OnPendingAttack(WritableAttackData attack)
     {
         // If the attacker is a player of incompatible color, cancel attack
-        if (attack.attacker.TryGetComponent(out PlayerController attackingPlayer))
+        if (attack.Attacker.TryGetComponent(out PlayerController attackingPlayer))
         {
             if (!_currentColor.IsCompatibleWith(attackingPlayer.Color))
             {
-                attack.damage = 0;
-                attack.knockback = 0;
+                attack.Damage = 0;
+                attack.Knockback = 0;
                 
                 // also knock back the attacker a bit
                 if (attackingPlayer.TryGetComponent(out Attackable playerAttackable))
                 {
-                    playerAttackable.Attack(new AttackData
+                    playerAttackable.Attack(new WritableAttackData
                     {
-                        attacker = this.gameObject,
-                        knockback = 2,
-                        attackDirection = attack.attackDirection.Map(attackDir=> -attackDir)
+                        Attacker = this.gameObject,
+                        Knockback = 2,
+                        AttackDirection = attack.AttackDirection.Map(attackDir=> -attackDir)
                     });
                 }
             }
@@ -148,7 +148,7 @@ public class NecromancerController : EnemyController
      */
     private void OnAttack(AttackData attack)
     {
-        if (attack.attacker.TryGetComponent(out PlayerController attackingPlayer))
+        if (attack.Attacker.TryGetComponent(out PlayerController attackingPlayer))
         {
             _lastAttackingPlayer = attackingPlayer;
             

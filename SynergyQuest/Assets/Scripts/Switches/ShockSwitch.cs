@@ -82,7 +82,7 @@ public class ShockSwitch : MonoBehaviour
      */
     private void OnAttack(AttackData attack)
     {
-        if (!attack.attacker.CompareTag("Enemy"))
+        if (!attack.Attacker.CompareTag("Enemy"))
         {
             Activate();
         }

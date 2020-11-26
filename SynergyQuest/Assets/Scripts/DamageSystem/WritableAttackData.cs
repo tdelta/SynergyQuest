@@ -23,6 +23,7 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace DamageSystem
@@ -32,26 +33,25 @@ namespace DamageSystem
      * Carries information about an attack, see <see cref="Attackable"/>.
      * </summary>
      */
-    public class AttackData
-    {
+    public interface AttackData {
         /**
          * <summary>The game object which attacked. May be <c>null</c> if there is no specific attacker.</summary>
          */
-        public GameObject attacker = null;
+        [CanBeNull] GameObject Attacker { get; }
         
         /**
          * <summary>
          * How much damage this attack applies. Negative damage is to be interpreted as a healing effect.
          * </summary>
          */
-        public int damage = 0;
+        int Damage { get; }
         
         /**
          * <summary>
-         * How many units the target of the attack shall be knocked back in <see cref="attackDirection"/>
+         * How many units the target of the attack shall be knocked back in <see cref="AttackDirection"/>
          * </summary>
          */
-        public float knockback = 0;
+        float Knockback { get; }
         
         /**
          * <summary>
@@ -60,6 +60,22 @@ namespace DamageSystem
          * It doesn't need to be defined (e.g. it can be None)
          * </summary>
          */
-        public Optional<Vector2> attackDirection = Optional<Vector2>.None();
+        Optional<Vector2> AttackDirection { get; }
+     }
+ 
+    /**
+     * <summary>
+     * Writable instance of <see cref="AttackData"/>.
+     * </summary>
+     */
+    public class WritableAttackData: AttackData
+    {
+        [CanBeNull] public GameObject Attacker { get; set; } = null;
+        
+        public int Damage { get; set; } = 0;
+        
+        public float Knockback { get; set; } = 0;
+        
+        public Optional<Vector2> AttackDirection { get; set; } = Optional<Vector2>.None();
     }
 }

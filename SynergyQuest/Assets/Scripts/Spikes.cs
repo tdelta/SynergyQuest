@@ -102,11 +102,11 @@ public class Spikes : MonoBehaviour
     {
         if (other.TryGetComponent(out Attackable target))
         {
-            target.Attack(new AttackData
+            target.Attack(new WritableAttackData
             {
-                attacker = gameObject,
-                damage = damage,
-                attackDirection = Optional.Some(Vector2.zero)
+                Attacker = gameObject,
+                Damage = damage,
+                AttackDirection = Optional.Some(Vector2.zero)
             });
         }
     }

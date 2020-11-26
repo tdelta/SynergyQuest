@@ -116,7 +116,7 @@ namespace DamageSystem
 
         private void OnAttack(AttackData attack)
         {
-            Value -= attack.damage;
+            Value -= attack.Damage;
         }
 
         public void Reset()

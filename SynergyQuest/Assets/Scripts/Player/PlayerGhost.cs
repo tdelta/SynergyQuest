@@ -204,7 +204,7 @@ public class PlayerGhost : MonoBehaviour
      */
     private void OnAttack(AttackData attack)
     {
-        if (attack.attacker.CompareTag("Player"))
+        if (attack.Attacker.CompareTag("Player"))
         {
             this.Exorcise();
         }

@@ -72,12 +72,12 @@ public class Bomb : Item
         if (_throwable.IsBeingCarried) {
             if (_throwable.Carrier.TryGetComponent(out Attackable carrierAttackable))
             {
-                carrierAttackable.Attack(new AttackData
+                carrierAttackable.Attack(new WritableAttackData
                 {
-                    attacker = gameObject,
-                    damage = 1,
-                    knockback = 4,
-                    attackDirection = Optional.Some<Vector2>((_throwable.Carrier.transform.position - transform.position).normalized)
+                    Attacker = gameObject,
+                    Damage = 1,
+                    Knockback = 4,
+                    AttackDirection = Optional.Some<Vector2>((_throwable.Carrier.transform.position - transform.position).normalized)
                 });
             }
         }
@@ -105,12 +105,12 @@ public class Bomb : Item
             var otherGameobject = other.collider.gameObject;
             if (otherGameobject.TryGetComponent(out Attackable otherAttackable))
             {
-                otherAttackable.Attack(new AttackData
+                otherAttackable.Attack(new WritableAttackData
                 {
-                    attacker = gameObject,
-                    damage = 1,
-                    knockback = 4,
-                    attackDirection = Optional.Some<Vector2>((other.transform.position - transform.position).normalized)
+                    Attacker = gameObject,
+                    Damage = 1,
+                    Knockback = 4,
+                    AttackDirection = Optional.Some<Vector2>((other.transform.position - transform.position).normalized)
                 });
             }
             else if (otherGameobject.CompareTag("DestroyableWall"))

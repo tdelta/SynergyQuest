@@ -356,19 +356,19 @@ public class PlayerController : EntityController
         spawnable.Respawn(Spawnable.RespawnReason.Death);
     }
 
-    private void OnPendingAttack(AttackData attack)
+    private void OnPendingAttack(WritableAttackData attack)
     {
         // if the player is thrown he shouldn't get any damage
         if (_playerState == PlayerState.thrown)
         {
-            attack.damage = 0;
-            attack.knockback = 0;
+            attack.Damage = 0;
+            attack.Knockback = 0;
         }
     }
 
     private void OnAttack(AttackData attack)
     {
-        if (attack.damage > 0)
+        if (attack.Damage > 0)
         {
             Input.PlayVibrationFeedback(new List<float>
             {
@@ -542,12 +542,12 @@ public class PlayerController : EntityController
         if ( _playerState == PlayerState.thrown)
         {
             if (!other.gameObject.CompareTag("Player") && other.gameObject.TryGetComponent(out Attackable otherAttackable)) {
-                otherAttackable.Attack(new AttackData
+                otherAttackable.Attack(new WritableAttackData
                 {
-                    attacker = this.gameObject,
-                    damage = 1,
-                    knockback = 4,
-                    attackDirection = Optional.Some<Vector2>((other.transform.position - transform.position).normalized)
+                    Attacker = this.gameObject,
+                    Damage = 1,
+                    Knockback = 4,
+                    AttackDirection = Optional.Some<Vector2>((other.transform.position - transform.position).normalized)
                 });
             }
         }
@@ -612,9 +612,9 @@ public class PlayerController : EntityController
 
         var originalHealth = _health.Value;
         // Remove some health from player for falling
-        attackable.Attack(new AttackData
+        attackable.Attack(new WritableAttackData
         {
-            damage = 1
+            Damage = 1
         });
         
         // Respawn them, if there health did not get down to zero

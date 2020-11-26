@@ -88,12 +88,12 @@ public class FireballProjectile : MonoBehaviour
     {
         if (other.gameObject != _source && other.gameObject.TryGetComponent(out Attackable attackable))
         {
-            attackable.Attack(new AttackData
+            attackable.Attack(new WritableAttackData
             {
-                attacker = _source,
-                damage = damageFactor,
-                knockback = 4,
-                attackDirection = Optional.Some<Vector2>((other.transform.position - transform.position).normalized)
+                Attacker = _source,
+                Damage = damageFactor,
+                Knockback = 4,
+                AttackDirection = Optional.Some<Vector2>((other.transform.position - transform.position).normalized)
             });
         }
         _animator.SetTrigger(HitTrigger);
