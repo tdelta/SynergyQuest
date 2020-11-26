@@ -23,22 +23,68 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Boo.Lang.Runtime;
 using UnityEngine;
 using Object = UnityEngine.Object;
-using Random = System.Random;
 
 /**
- * Object pools are used when lots of instances of a prefab must be drawn and the cost of frequent instantiations
- * and object destructions shall be avoided. For example in games where there are lots of projectiles.
+ * <summary>
+ * Object pools are used when lots of instances of a prefab must be instantiated and the cost of frequent
+ * instantiations and object destructions shall be avoided.
+ * For example in games where there are lots of projectiles.
+ * </summary>
  *
- * Instances can be retrieved from the pool by `GetInstance`.
- * As soon as you don't need the instance anymore, dont destroy it, but return it using `ReturnInstance`.
+ * <remarks>
+ * <list type="bullet">
+ *     <item><description>
+ *         Unity does not like behaviors with generics, so a dummy child class has to be created before use:
+ *         <code>
+ *         class ObjectPoolT: ObjectPool&lt;T&gt; {}
+ *         </code>
+ *     </description></item>
+ *     <item><description>
+ *         initialize using a prefab with <see cref="ObjectPool.Make"/>.
+ *     </description></item>
+ *     <item><description>
+ *         Instances can be retrieved from the pool by <see cref="GetInstance"/>.
+ *     </description></item>
+ *     <item><description>
+ *         As soon as you don't need the instance anymore, dont destroy it, but return it using <see cref="ReturnInstance"/>.
+ *     </description></item>
+ * </list>
+ * 
  *
  * This way, instances can be reused.
+ * </remarks>
+ * 
+ * <example>
+ * <code>
+ * class MyExampleClass {
+ *     [SerializeField] private MyBehaviour prefab;
+ * 
+ *     class Pool: MyBehaviourPool&lt;MyBehaviour&gt; {}
+ *     private Pool _pool = null;
+ *
+ *     void Awake() {
+ *         _pool = ObjectPool.Make&lt;MyBehaviourPool, MyBehaviour&gt;(this.transform, prefab);
+ *     }
+ *
+ *     void MethodA {
+ *         ...
+ *         var x = _pool.GetInstance();
+ *         ...
+ *     }
+ * 
+ *     void MethodB {
+ *         ...
+ *         _pool.ReturnInstance(x);
+ *         ...
+ *     }
+ * }
+ * </code>
+ * </example>
  */
 public class ObjectPool<T>: MonoBehaviour
     where T: Component
@@ -51,6 +97,12 @@ public class ObjectPool<T>: MonoBehaviour
 
     public T Prefab => prefab;
 
+    /**
+     * <summary>
+     * DO NOT USE. USE <see cref="ObjectPool.Make"/> instead.
+     * Sets prefab for pool.
+     * </summary>
+     */
     public void Init(T prefab)
     {
         if (!ReferenceEquals(this.prefab, null))
@@ -62,12 +114,14 @@ public class ObjectPool<T>: MonoBehaviour
     }
     
     /**
-     * Returns an instance of `prefab`.
+     * <summary>
+     * Returns an instance of <see cref="prefab"/>.
      * If no pre-allocated instances are stored, a new one will be created.
-     * Always return the instance with `ReturnInstance` when you don't need it anymore.
+     * Always return the instance with <see cref="ReturnInstance"/> when you don't need it anymore.
+     * </summary>
      *
-     * @param parent   set a parent for the instance (optional)
-     * @param activate whether the instance shall be activated (SetActive)
+     * <param name="parent">set a parent for the instance (optional)</param>
+     * <param name="activate">whether the instance shall be activated (SetActive)</param>
      */
     public T GetInstance(Transform parent = null, bool activate = true)
     {
@@ -97,7 +151,9 @@ public class ObjectPool<T>: MonoBehaviour
     }
 
     /**
-     * Stores prefab instances for reuse. See also `GetInstance`.
+     * <summary>
+     * Stores prefab instances for reuse. See also <see cref="GetInstance"/>.
+     * </summary>
      */
     public void ReturnInstance(T instance, bool deactivate = true)
     {
@@ -113,6 +169,11 @@ public class ObjectPool<T>: MonoBehaviour
 
 public class ObjectPool
 {
+    /**
+     * <summary>
+     * Instantiate and initialize an object pool.
+     * </summary>
+     */
     public static ConcretePool Make<ConcretePool, U>(Transform parent, U prefab)
         where U: Component
         where ConcretePool: ObjectPool<U>

@@ -23,11 +23,10 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
-﻿using System.Collections;
-using System.Collections.Generic;
- using DamageSystem;
- using UnityEngine;
- using UnityEngine.Experimental.Rendering.Universal;
+using System.Collections;
+using DamageSystem;
+using UnityEngine;
+using UnityEngine.Experimental.Rendering.Universal;
 
 public class FireballProjectile : MonoBehaviour
 {
@@ -70,6 +69,7 @@ public class FireballProjectile : MonoBehaviour
      * Instantiates a fireball projectile at a certain spawn point and launches into a given direction.
      * It will also play sounds etc.
      * </summary>
+     * <param name="source">The game object which fired this projectile.</param>
      */
     public static FireballProjectile Launch(GameObject source, FireballProjectile prefab, Vector3 spawnPoint, Vector2 direction)
     {

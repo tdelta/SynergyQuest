@@ -75,6 +75,11 @@ public class ShockSwitch : MonoBehaviour
         _animator.SetTrigger(timeoutTrigger);
     }
 
+    /**
+     * <summary>
+     * Trigger this switch if it is attacked by a non-enemy.
+     * </summary>
+     */
     private void OnAttack(AttackData attack)
     {
         if (!attack.attacker.CompareTag("Enemy"))

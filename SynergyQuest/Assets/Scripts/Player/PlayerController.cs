@@ -255,6 +255,7 @@ public class PlayerController : EntityController
             PlayerDataKeeper.Instance.RegisterExistingInstance(this, localInput);
         }
         
+        // Tell the controller about the initial health points
         _data.HealthPoints = _health.Value;
         
         coinGauge.Init(this);

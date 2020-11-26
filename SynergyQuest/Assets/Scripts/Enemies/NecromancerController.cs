@@ -49,11 +49,13 @@ public class NecromancerController : EnemyController
     private void OnEnable()
     {
         attackable.OnPendingAttack += OnPendingAttack;
+        attackable.OnAttack += OnAttack;
     }
     
     private void OnDisable()
     {
         attackable.OnPendingAttack -= OnPendingAttack;
+        attackable.OnAttack -= OnAttack;
     }
 
     protected override void Start()
@@ -108,6 +110,12 @@ public class NecromancerController : EnemyController
         return _offset;
     }
 
+    /**
+     * <summary>
+     * Cancels incoming attacks if they come from a player with a color incompatible with the current cape color.
+     * Invoked by <see cref="Attackable"/>.
+     * </summary>
+     */
     private void OnPendingAttack(AttackData attack)
     {
         // If the attacker is a player of incompatible color, cancel attack
@@ -132,6 +140,12 @@ public class NecromancerController : EnemyController
         }
     }
 
+    /**
+     * <summary>
+     * If an attack happens on this object, changes the current cape color to the next one.
+     * Invoked by <see cref="Attackable"/>.
+     * </summary>
+     */
     private void OnAttack(AttackData attack)
     {
         if (attack.attacker.TryGetComponent(out PlayerController attackingPlayer))

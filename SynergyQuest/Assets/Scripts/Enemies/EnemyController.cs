@@ -142,11 +142,22 @@ public abstract class EnemyController : EntityController
         }
     }
 
+    /**
+     * <summary>
+     * Invoked, if the <see cref="Health"/> component signals death (0 health points)
+     * Will...
+     * ...disable colliders
+     * ...trigger death animation
+     * ...drop items (absorbables)
+     * ...destroy this object
+     * </summary>
+     */
     private void OnDeath()
     {
         this.GetComponent<Collider2D>().enabled = false;
         Animator.SetTrigger(deadTrigger);
         DropAbsorbables();
+        // FIXME: Use event in death animation to trigger destroy instead of fixed timer.
         Destroy(gameObject, 1);
     }
 }

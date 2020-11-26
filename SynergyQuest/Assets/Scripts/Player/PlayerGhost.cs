@@ -23,7 +23,6 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
-using System;
 using System.Collections;
 using UnityEngine;
 using System.Linq;
@@ -197,6 +196,12 @@ public class PlayerGhost : MonoBehaviour
             Exorcise();
     }
 
+    /**
+     * <summary>
+     * Exorcise this ghost (<see cref="Exorcise"/>) if this object is attacked by a player.
+     * Invoked by <see cref="Attackable"/>.
+     * </summary>
+     */
     private void OnAttack(AttackData attack)
     {
         if (attack.attacker.CompareTag("Player"))

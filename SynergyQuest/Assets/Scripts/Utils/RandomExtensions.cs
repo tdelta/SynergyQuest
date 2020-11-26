@@ -5,6 +5,12 @@ namespace Utils
 {
     public class RandomExtensions
     {
+        /**
+         * <summary>
+         * Randomly selects an element from a collection.
+         * Uniform distribution.
+         * </summary>
+         */
         public static Optional<T> SelectUniform<T>(IList<T> elements)
         {
             if (elements.Count > 0)

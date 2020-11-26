@@ -1,3 +1,28 @@
+// This file is part of the "Synergy Quest" game
+// (github.com/tdelta/SynergyQuest).
+// 
+// Copyright (c) 2020
+//   Marc Arnold     (m_o_arnold@gmx.de)
+//   Martin Kerscher (martin_x@live.de)
+//   Jonas Belouadi  (jonas.belouadi@posteo.net)
+//   Anton W Haubner (anton.haubner@outlook.de)
+// 
+// This program is free software; you can redistribute it and/or modify it
+// under the terms of the GNU General Public License as published by the Free
+// Software Foundation; either version 3 of the License, or (at your option) any
+// later version.
+// 
+// This program is distributed in the hope that it will be useful, but WITHOUT
+// ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+// FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+// more details.
+// 
+// You should have received a copy of the GNU General Public License along with
+// this program; if not, see <https://www.gnu.org/licenses>.
+// 
+// Additional permission under GNU GPL version 3 section 7 apply,
+// see `LICENSE.md` at the root of this source code repository.
+
 using DamageSystem;
 using Effects;
 using JetBrains.Annotations;
@@ -22,29 +47,43 @@ using UnityEngine.Serialization;
 public class DamageEffects : MonoBehaviour
 {
     [SerializeField, FormerlySerializedAs("baseColor")]
+    [Tooltip("Color of all effects played for damaging attacks.")]
     private Color damageBaseColor = new Color(1, 0.149f, 0, 1);
 
-    [SerializeField] private Color healingBaseColor = Color.green;
+    [SerializeField]
+    [Tooltip("Color of all effects played for attacks with healing effect (negative damage).")]
+    private Color healingBaseColor = Color.green;
     
     [FormerlySerializedAs("particlesPrefab")]
-    [SerializeField, CanBeNull, Tooltip("Set to enable blood particles.")] private BloodParticles bloodParticlesPrefab = null;
-    [SerializeField, CanBeNull, Tooltip("Set to enable blood stains on floor.")] private BloodStain bloodStainPrefab = null;
-    [SerializeField, CanBeNull, Tooltip("Set to enable sprite tint flash on damage.")] private TintFlashController tintFlashController = null;
-    [SerializeField, CanBeNull, Tooltip("Set to enable damage sounds.")] private MultiSound damageSounds = null;
-    [SerializeField, CanBeNull, Tooltip("Set to enable knockback")] private PhysicsEffects physicsEffects = null;
+    [SerializeField, CanBeNull, Tooltip("Set to enable blood particles.")]
+    private BloodParticles bloodParticlesPrefab = null;
+    
+    [SerializeField, CanBeNull, Tooltip("Set to enable blood stains on floor.")]
+    private BloodStain bloodStainPrefab = null;
+    
+    [SerializeField, CanBeNull, Tooltip("Set to enable sprite tint flash on damage.")]
+    private TintFlashController tintFlashController = null;
+    
+    [SerializeField, CanBeNull, Tooltip("Set to enable damage sounds.")]
+    private MultiSound damageSounds = null;
+    
+    [SerializeField, CanBeNull, Tooltip("Set to enable knockback")]
+    private PhysicsEffects physicsEffects = null;
 
-    [SerializeField, Tooltip("Knockback will be multiplied by this, if there is no damage")] private float knockbackReductionWhenNoDamage = 0.5f;
+    [SerializeField, Tooltip("Knockback will be multiplied by this, if there is no damage")]
+    private float knockbackReductionWhenNoDamage = 0.5f;
     
     class ParticlesPool: ObjectPool<BloodParticles> {}
     [CanBeNull] private ParticlesPool particlesPool = null;
     // FIXME: ^Use a global pool
 
     private Attackable _attackable;
+    // If a renderer is present, we will use it to get a better estimate on the visual center point of this object
     [CanBeNull] private Renderer _renderer;
 
     private void Awake()
     {
-        // make sure our serialized parameters are real null values and not some weird Unity thing
+        // make sure our serialized parameters, if not set, are real null values and not some weird Unity thing
         bloodParticlesPrefab = bloodParticlesPrefab == null ? null : bloodParticlesPrefab;
         bloodStainPrefab = bloodStainPrefab == null ? null : bloodStainPrefab;
         tintFlashController = tintFlashController == null ? null : tintFlashController;
@@ -76,14 +115,17 @@ public class DamageEffects : MonoBehaviour
 
     private void OnAttack(AttackData attack)
     {
+        // Compute the center of this object
         Vector3 entityCenter;
-        if (ReferenceEquals(_renderer, null))
+        if (!ReferenceEquals(_renderer, null))
         {
-            entityCenter = this.transform.position;
+            // if there is a renderer, we can use the visual center
+            entityCenter = _renderer.bounds.center;
         }
         else
         {
-            entityCenter = _renderer.bounds.center;
+            // otherwise, we will use the transform
+            entityCenter = this.transform.position;
         }
         
         if (attack.damage > 0)
@@ -129,7 +171,7 @@ public class DamageEffects : MonoBehaviour
                     if (!ReferenceEquals(particlesPool, null))
                     {
                         var particles = particlesPool.GetInstance();
-                        particles.onDoneCallback = () =>
+                        particles.DoneCallback = () =>
                         {
                             if (particlesPool != null)
                             {

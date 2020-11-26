@@ -30,14 +30,18 @@ using UnityEngine;
 using Utils;
 
 /**
+ * <summary>
  * Scriptable object singletons allow to access asset data at runtime which can not be set otherwise using the inspector.
- * For example, the menu screen singletons (`PauseScreenLauncher` etc.) need access to their UI prefabs, but
+ * </summary>
+ * <remarks>
+ * For example, the menu screen singletons (<see cref="PauseScreenLauncher"/> etc.) need access to their UI prefabs, but
  * since the singleton is only instantiated dynamically at runtime, the prefab can not be set using the Unity
  * inspector.
+ * Instead, the scriptable object singleton <see cref="MenuPrefabSettings"/> provides access to the prefab.
  *
- * Instead, the scriptable object singleton `MenuPrefabSettings` provides access to the prefab.
  * Scriptable object singletons are like normal scriptable objects, but there must be an instance of them placed
- * in the `Resources` folder of the project.
+ * in the `Resources` folder of the project
+ * (unless <see cref="InstantiateResourceWhenMissing"/> is set to <see cref="TrueLiteralType"/>, see below.)
  * When instantiating, the scriptable object singleton will then load this instance.
  *
  * Usage instructions:
@@ -47,6 +51,13 @@ using Utils;
  * 3. Place an instance of the scriptable object with the same name as the subclass in the `Resources`
  *    folder of the project.
  * 4. Now you can access this instance anywhere at runtime by reading `MySubClass.Instance`.
+ * 
+ * </remarks>
+ * <typeparam name="InstantiateResourceWhenMissing">
+ *   Whether a resource file shall be created automatically if none exists.
+ *   Default: <see cref="FalseLiteralType"/>.
+ *   (boolean literal type <see cref="BooleanLiteralType"/>)
+ * </typeparam>
  */
 public abstract class ScriptableObjectSingleton<T, InstantiateResourceWhenMissing>: ScriptableObject
     where T: ScriptableObjectSingleton<T, InstantiateResourceWhenMissing>

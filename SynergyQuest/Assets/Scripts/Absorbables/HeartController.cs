@@ -35,6 +35,7 @@ public class HeartController : AbsorbableController
     
     protected override void GetAbsorbed(PlayerController player)
     {
+        // implement healing as attack with negative damage
         player.GetComponent<Attackable>().Attack(new AttackData
         {
             attacker = this.gameObject,

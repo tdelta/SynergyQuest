@@ -78,12 +78,4 @@ public static class BehaviourExtensions
             }
         }
     }
-
-    public static TInterface[] GetComponentsByInterface<TInterface>(Behaviour self)
-    {
-        return self
-            .GetComponents<MonoBehaviour>()
-            .OfType<TInterface>()
-            .ToArray();
-    }
 }

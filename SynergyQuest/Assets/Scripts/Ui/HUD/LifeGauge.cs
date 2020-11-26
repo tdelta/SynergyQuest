@@ -27,7 +27,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /**
+ * <summary>
  * Draws a bar of hearts which symbolizes a characters remaining HP. It slowly fades aways.
+ * </summary>
  */
 public class LifeGauge : MonoBehaviour
 {
