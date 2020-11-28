@@ -23,9 +23,9 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Boo.Lang.Runtime;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -107,7 +107,7 @@ public class ObjectPool<T>: MonoBehaviour
     {
         if (!ReferenceEquals(this.prefab, null))
         {
-            throw new RuntimeException("This pool already has been initialized.");
+            throw new InvalidOperationException("This pool already has been initialized.");
         }
         
         this.prefab = prefab;

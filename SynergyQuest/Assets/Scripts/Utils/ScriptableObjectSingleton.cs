@@ -24,7 +24,7 @@
 // see `LICENSE.md` at the root of this source code repository.
 
 using System;
-using Boo.Lang.Runtime;
+using System.IO;
 using UnityEditor;
 using UnityEngine;
 using Utils;
@@ -85,7 +85,7 @@ public abstract class ScriptableObjectSingleton<T, InstantiateResourceWhenMissin
 
             else
             {
-                throw new RuntimeException($"No instance asset of the {name} scriptable object singleton has been created. Create an {name} resource asset with the name \"{name}\".");
+                throw new FileNotFoundException($"No instance asset of the {name} scriptable object singleton has been created. Create an {name} resource asset with the name \"{name}\".");
             }
         }
         
