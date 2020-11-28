@@ -25,9 +25,12 @@
 
 using System;
 using System.IO;
-using UnityEditor;
 using UnityEngine;
 using Utils;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 /**
  * <summary>
@@ -55,6 +58,7 @@ using Utils;
  * </remarks>
  * <typeparam name="InstantiateResourceWhenMissing">
  *   Whether a resource file shall be created automatically if none exists.
+ *   (Will only be created in EDITOR/Play mode, not for builds.)
  *   Default: <see cref="FalseLiteralType"/>.
  *   (boolean literal type <see cref="BooleanLiteralType"/>)
  * </typeparam>
@@ -78,9 +82,11 @@ public abstract class ScriptableObjectSingleton<T, InstantiateResourceWhenMissin
             if ((new InstantiateResourceWhenMissing()).Value)
             {
                 instance = ScriptableObject.CreateInstance<T>();
-                AssetDatabase.CreateAsset(instance, $"Assets/Resources/{name}.asset"); // FIXME: Do not hardcode this path. Try to query it from Unity somehow
-                AssetDatabase.SaveAssets();
-                AssetDatabase.Refresh();
+                #if UNITY_EDITOR
+                    AssetDatabase.CreateAsset(instance, $"Assets/Resources/{name}.asset"); // FIXME: Do not hardcode this path. Try to query it from Unity somehow
+                    AssetDatabase.SaveAssets();
+                    AssetDatabase.Refresh();
+                #endif
             }
 
             else
