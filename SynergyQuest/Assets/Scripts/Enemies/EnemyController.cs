@@ -56,7 +56,7 @@ public abstract class EnemyController : EntityController
         _health = GetComponent<Health>();
     }
 
-    private void OnEnable()
+    protected virtual void OnEnable()
     {
         _health.OnDeath += OnDeath;
     }

@@ -19,7 +19,6 @@ GameObject:
   - component: {fileID: 8287828032149032754}
   - component: {fileID: -224400814639544321}
   - component: {fileID: -342212117913406982}
-  - component: {fileID: -2596091790326588594}
   - component: {fileID: -7141232187979643447}
   - component: {fileID: 7083851057007981497}
   m_Layer: 14
@@ -246,7 +245,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damageBaseColor: {r: 0.73333335, g: 0.078431375, b: 0, a: 1}
   healingBaseColor: {r: 0, g: 1, b: 0, a: 1}
-  particlesPrefab: {fileID: 8397682343236543693, guid: 0c97de02b17a12c9ead38b9172d4b575,
+  bloodParticlesPrefab: {fileID: 8397682343236543693, guid: 0c97de02b17a12c9ead38b9172d4b575,
     type: 3}
   bloodStainPrefab: {fileID: 8386572227100128554, guid: 5ae326a1b6fd4c98d88c539ee233b954,
     type: 3}
@@ -254,19 +253,6 @@ MonoBehaviour:
   damageSounds: {fileID: 2591332168760939140}
   physicsEffects: {fileID: 6862199451340551040}
   knockbackReductionWhenNoDamage: 0.5
---- !u!114 &-2596091790326588594
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6235775845409623576}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3c9eb9a451f34f4283d6587f3812e902, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  invincibleTime: 0.8
 --- !u!114 &-7141232187979643447
 MonoBehaviour:
   m_ObjectHideFlags: 0

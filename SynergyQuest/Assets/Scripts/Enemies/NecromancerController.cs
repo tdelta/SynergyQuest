@@ -46,8 +46,9 @@ public class NecromancerController : EnemyController
 
     private static readonly int CapeColor = Shader.PropertyToID("_CapeColor");
 
-    private void OnEnable()
+    protected override void OnEnable()
     {
+        base.OnEnable();
         attackable.OnPendingAttack += OnPendingAttack;
         attackable.OnAttack += OnAttack;
     }
@@ -119,7 +120,7 @@ public class NecromancerController : EnemyController
     private void OnPendingAttack(WritableAttackData attack)
     {
         // If the attacker is a player of incompatible color, cancel attack
-        if (attack.Attacker.TryGetComponent(out PlayerController attackingPlayer))
+        if (attack.Attacker != null && attack.Attacker.TryGetComponent(out PlayerController attackingPlayer))
         {
             if (!_currentColor.IsCompatibleWith(attackingPlayer.Color))
             {
@@ -148,7 +149,7 @@ public class NecromancerController : EnemyController
      */
     private void OnAttack(AttackData attack)
     {
-        if (attack.Attacker.TryGetComponent(out PlayerController attackingPlayer))
+        if (attack.Attacker != null && attack.Attacker.TryGetComponent(out PlayerController attackingPlayer))
         {
             _lastAttackingPlayer = attackingPlayer;
             

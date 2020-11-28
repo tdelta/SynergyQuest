@@ -23,6 +23,7 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
+using System;
 using DamageSystem;
 using UnityEngine;
 
@@ -41,6 +42,8 @@ public class Attackable : MonoBehaviour
 {
     [SerializeField, Tooltip("How long the entity is immune to attacks after a successful hit")]
     private float invincibleTime = 0.8f;
+    // used internally to keep track on when this entity last became invincible, so that the invincibility can time out
+    private float _invincibleTimer = -1;
     
     /**
      * <summary>
@@ -48,7 +51,20 @@ public class Attackable : MonoBehaviour
      * </summary>
      */
     public float InvincibleTime => invincibleTime;
-    public bool IsInvincible { get; private set; } = false;
+
+    public bool IsInvincible
+    {
+        get => _isInvincible;
+        private set
+        {
+            if (_isInvincible != value)
+            {
+                _isInvincible = value;
+                OnInvincibilityChanged?.Invoke(value);
+            }
+        }
+    }
+    private bool _isInvincible = false;
 
     /**
      * <summary>
@@ -81,7 +97,15 @@ public class Attackable : MonoBehaviour
      */
     public event AttackAction OnAttack;
     public delegate void AttackAction(AttackData attack);
-    
+
+    private void Update()
+    {
+        if (IsInvincible && Time.time - _invincibleTimer > InvincibleTime)
+        {
+            IsInvincible = false;
+        }
+    }
+
     /**
      * <summary>
      * Attack this object.
@@ -95,28 +119,18 @@ public class Attackable : MonoBehaviour
      */
     public void Attack(WritableAttackData attack)
     {
-        if (this.enabled)
+        if (IsInvincible)
         {
-            if (IsInvincible)
-            {
-                return;
-            }
-            
-            OnPendingAttack?.Invoke(attack);
-            OnAttack?.Invoke(attack);
+            return;
+        }
+        
+        OnPendingAttack?.Invoke(attack);
+        OnAttack?.Invoke(attack);
 
-            if (attack.Damage > 0)
-            {
-                IsInvincible = true;
-                OnInvincibilityChanged?.Invoke(IsInvincible);
-                StartCoroutine(
-                    CoroutineUtils.Wait(invincibleTime, () =>
-                    {
-                        IsInvincible = false;
-                        OnInvincibilityChanged?.Invoke(IsInvincible);
-                    })
-                );
-            }
+        if (attack.Damage > 0)
+        {
+            IsInvincible = true;
+            _invincibleTimer = Time.time;
         }
     }
 }
