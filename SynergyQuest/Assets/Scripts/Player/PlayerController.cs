@@ -26,6 +26,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using DamageSystem;
 using UnityEngine;
 
 public enum PlayerState{
@@ -47,6 +48,8 @@ public enum PlayerState{
 [RequireComponent(typeof(TintFlashController))]
 [RequireComponent(typeof(ItemController))]
 [RequireComponent(typeof(Spawnable))]
+[RequireComponent(typeof(Health))]
+[RequireComponent(typeof(Attackable))]
 public class PlayerController : EntityController
 {
     [SerializeField] private GameObject lifeGauge = default;
@@ -102,6 +105,8 @@ public class PlayerController : EntityController
      * Used to briefly flash the player in a certain color. For example red when they are hit.
      */
     private TintFlashController _tintFlashController;
+
+    private Health _health;
 
     private float _vertical;
     private float _horizontal;
@@ -200,6 +205,9 @@ public class PlayerController : EntityController
         _tintFlashController = GetComponent<TintFlashController>();
         _itemController = GetComponent<ItemController>();
         spawnable = GetComponent<Spawnable>();
+        
+        _health = GetComponent<Health>();
+        _health.MaxValue = PlayerInfo.MAX_HEALTH_POINTS;
     }
 
     private void OnEnable()
@@ -209,6 +217,11 @@ public class PlayerController : EntityController
         _throwable.OnLanded += OnLanded;
 
         spawnable.OnRespawn += OnRespawn;
+
+        _health.OnHealthChanged += OnHealthChanged;
+        _health.OnDeath += OnDeath;
+        attackable.OnPendingAttack += OnPendingAttack;
+        attackable.OnAttack += OnAttack;
     }
     
     private void OnDisable()
@@ -218,6 +231,11 @@ public class PlayerController : EntityController
         _throwable.OnLanded -= OnLanded;
         
         spawnable.OnRespawn -= OnRespawn;
+        
+        _health.OnHealthChanged -= OnHealthChanged;
+        _health.OnDeath -= OnDeath;
+        attackable.OnPendingAttack -= OnPendingAttack;
+        attackable.OnAttack -= OnAttack;
     }
 
     // Start is called before the first frame update
@@ -237,6 +255,9 @@ public class PlayerController : EntityController
             PlayerDataKeeper.Instance.RegisterExistingInstance(this, localInput);
         }
         
+        // Tell the controller about the initial health points
+        _data.HealthPoints = _health.Value;
+        
         coinGauge.Init(this);
 
         _playerState = PlayerState.walking;
@@ -245,10 +266,8 @@ public class PlayerController : EntityController
     }
 
     // Update is called once per frame
-    protected override void Update()
+    void Update()
     {
-        base.Update();
-        
         // Attacking
         if (Input.GetButtonDown(Button.Attack) && (_playerState == PlayerState.walking || _playerState == PlayerState.attacking)) {
             _playerState = PlayerState.attacking;
@@ -306,66 +325,56 @@ public class PlayerController : EntityController
             _throwable.Carrier.ThrowThrowable(_throwable, Vector2.zero);
         }
 
-        if (_data.HealthPoints <= 0)
+        if (_health.Value <= 0)
         {
-            ChangeHealth(PlayerInfo.MAX_HEALTH_POINTS);
+            _health.Reset();
         }
     }
 
-    public override bool ChangeHealth(int delta, bool playSounds = true)
+    private void OnHealthChanged(int value)
+    {
+        _data.HealthPoints = value;
+        DisplayLifeGauge();
+    }
+
+    private void OnDeath()
+    {
+        deathSounds.PlayOneShot();
+
+        // If we died, we want to spawn gold on our last position
+        var lostGold = Math.Min(goldLossOnDeath, _data.GoldCounter);
+        _data.GoldCounter -= lostGold;
+        // We want to spawn the gold on the last respawn position
+        // This is the last position of the player on solid ground
+        var goldSpawnPosition = spawnable.RespawnPosition;
+        // spawn the gold
+        for (int i = 0; i < lostGold; ++i)
+        {
+            Instantiate(coinPrefab, goldSpawnPosition, Quaternion.identity);
+        }
+
+        spawnable.Respawn(Spawnable.RespawnReason.Death);
+    }
+
+    private void OnPendingAttack(WritableAttackData attack)
     {
         // if the player is thrown he shouldn't get any damage
-        // if the player gets healed it shouldn't exceed max value
-        if (_playerState == PlayerState.thrown || (delta > 0 && _data.HealthPoints == PlayerInfo.MAX_HEALTH_POINTS))
-            return false;
-
-        _data.HealthPoints += delta;
-
-        // Display some effects when damaged
-        if (delta < 0)
+        if (_playerState == PlayerState.thrown)
         {
-            _tintFlashController.FlashTint(UnityEngine.Color.red, TimeInvincible);
-            if (playSounds)
-            {
-                hitSounds.PlayOneShot();
-            }
+            attack.Damage = 0;
+            attack.Knockback = 0;
+        }
+    }
+
+    private void OnAttack(AttackData attack)
+    {
+        if (attack.Damage > 0)
+        {
             Input.PlayVibrationFeedback(new List<float>
             {
                 200
             });
         }
-
-        if (delta > 0)
-        {
-            _tintFlashController.FlashTint(UnityEngine.Color.green, 0.5f);
-        }
-
-        if (delta != 0)
-        {
-            DisplayLifeGauge();
-        }
-
-        if (_data.HealthPoints <= 0) {
-            if (playSounds)
-            {
-                deathSounds.PlayOneShot();
-            }
-
-            // If we died, we want to spawn gold on our last position
-            var lostGold = Math.Min(goldLossOnDeath, _data.GoldCounter);
-            _data.GoldCounter -= lostGold;
-            // We want to spawn the gold on the last respawn position
-            // This is the last position of the player on solid ground
-            var goldSpawnPosition = spawnable.RespawnPosition;
-            // spawn the gold
-            for (int i = 0; i < lostGold; ++i)
-            {
-                Instantiate(coinPrefab, goldSpawnPosition, Quaternion.identity);
-            }
-
-            spawnable.Respawn(Spawnable.RespawnReason.Death);
-        }
-        return true;
     }
 
     /**
@@ -383,7 +392,7 @@ public class PlayerController : EntityController
                 0
             );
         
-        this.lifeGauge.GetComponent<LifeGauge>().DrawLifeGauge(_data.HealthPoints, PlayerInfo.MAX_HEALTH_POINTS);
+        this.lifeGauge.GetComponent<LifeGauge>().DrawLifeGauge(_health.Value, PlayerInfo.MAX_HEALTH_POINTS);
     }
     
     private void Attack()
@@ -532,15 +541,15 @@ public class PlayerController : EntityController
     {
         if ( _playerState == PlayerState.thrown)
         {
-            if (other.gameObject.CompareTag("Enemy"))
-            {
-                var enemy = other.gameObject.GetComponent<EntityController>();
-                enemy.PutDamage(1, (other.transform.position - transform.position).normalized); 
+            if (!other.gameObject.CompareTag("Player") && other.gameObject.TryGetComponent(out Attackable otherAttackable)) {
+                otherAttackable.Attack(new WritableAttackData
+                {
+                    Attacker = this.gameObject,
+                    Damage = 1,
+                    Knockback = 4,
+                    AttackDirection = Optional.Some<Vector2>((other.transform.position - transform.position).normalized)
+                });
             }
-            else if (other.gameObject.CompareTag("Switch"))
-                other.gameObject.GetComponent<ShockSwitch>().Activate();
-            else if (other.gameObject.CompareTag("Ghost"))
-                other.gameObject.GetComponent<PlayerGhost>()?.Exorcise();
         }
     }
     
@@ -601,9 +610,12 @@ public class PlayerController : EntityController
         // Make the player invisible until respawn
         spriteRenderer.enabled = false;
 
-        var originalHealth = _data.HealthPoints;
+        var originalHealth = _health.Value;
         // Remove some health from player for falling
-        ChangeHealth(-1, false);
+        attackable.Attack(new WritableAttackData
+        {
+            Damage = 1
+        });
         
         // Respawn them, if there health did not get down to zero
         // (which would respawn them anyway)

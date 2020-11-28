@@ -18,6 +18,10 @@ GameObject:
   - component: {fileID: 6235775845409623574}
   - component: {fileID: -4707208399938704776}
   - component: {fileID: -2505099988165668740}
+  - component: {fileID: 2367599459531460933}
+  - component: {fileID: 8895914626895475116}
+  - component: {fileID: -5612794444238626631}
+  - component: {fileID: -8988579804223523261}
   m_Layer: 14
   m_Name: Necromancer
   m_TagString: Enemy
@@ -53,13 +57,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 405a488cd89adb24796298b0348519fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeInvincible: 0.5
-  healthPoints: 5
   directionSpeed: 1
   directionChangeTime: 1.5
-  damageFactor: 2
   smokeEffect: {fileID: 24872979894827348}
-  hitSounds: {fileID: 2591332168760939140}
   monsterDrops: {fileID: 11400000, guid: 86679ebb4b25bf7e3bd81c659e40e8e4, type: 2}
   fireballPrefab: {fileID: 2864600893969043934, guid: 76a650fe6bc583225acee50373f482e7,
     type: 3}
@@ -235,15 +235,85 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ShadowGroup: 0
-  m_HasRenderer: 0
+  m_HasRenderer: 1
   m_UseRendererSilhouette: 1
   m_CastsShadows: 1
   m_SelfShadows: 0
   m_ApplyToSortingLayers: 
-  m_ShapePath: []
+  m_ShapePath:
+  - {x: -0.25, y: -0.5, z: 0}
+  - {x: 0.25, y: -0.5, z: 0}
+  - {x: 0.25, y: 0.5, z: 0}
+  - {x: -0.25, y: 0.5, z: 0}
   m_ShapePathHash: 0
   m_Mesh: {fileID: 0}
-  m_InstanceId: 0
+  m_InstanceId: 30068
+--- !u!114 &2367599459531460933
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6235775845409623576}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c9eb9a451f34f4283d6587f3812e902, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  invincibleTime: 0.8
+--- !u!114 &8895914626895475116
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6235775845409623576}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a39ba574c224aadb182aca865b43621, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxValue: 3
+--- !u!114 &-5612794444238626631
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6235775845409623576}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44970a5b0647424da152826977091c91, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damageBaseColor: {r: 1, g: 0.149, b: 0, a: 1}
+  healingBaseColor: {r: 0, g: 1, b: 0, a: 1}
+  bloodParticlesPrefab: {fileID: 8397682343236543693, guid: 0c97de02b17a12c9ead38b9172d4b575,
+    type: 3}
+  bloodStainPrefab: {fileID: 8386572227100128554, guid: 5ae326a1b6fd4c98d88c539ee233b954,
+    type: 3}
+  tintFlashController: {fileID: 5907530198393131452}
+  damageSounds: {fileID: 2591332168760939140}
+  physicsEffects: {fileID: 6862199451340551040}
+  knockbackReductionWhenNoDamage: 0.5
+--- !u!114 &-8988579804223523261
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6235775845409623576}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d01ca49c73dd418a9a878563a82ff30b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damage: 1
+  knockback: 4
+  frequency: 1
+  customAttacker: {fileID: 0}
+  ignoredTargetTags:
+  - Enemy
 --- !u!1001 &3505025390366956328
 PrefabInstance:
   m_ObjectHideFlags: 0

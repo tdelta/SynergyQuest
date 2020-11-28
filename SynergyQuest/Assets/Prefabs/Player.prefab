@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 268351231}
   - component: {fileID: 268351232}
-  - component: {fileID: 9283753934280254}
   - component: {fileID: 2703046263398990827}
+  - component: {fileID: 9023400757240619449}
   m_Layer: 2
   m_Name: AttackPointRight
   m_TagString: PlayerHit
@@ -66,18 +66,6 @@ PolygonCollider2D:
       - {x: 0.39991993, y: -0.35608613}
       - {x: 0.40871885, y: 0.025743932}
       - {x: 0.31898296, y: 0.46307996}
---- !u!114 &9283753934280254
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 268351230}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d8c6b75cce229254f948149bdf91a204, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!50 &2703046263398990827
 Rigidbody2D:
   serializedVersion: 4
@@ -99,6 +87,24 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 7
+--- !u!114 &9023400757240619449
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 268351230}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d01ca49c73dd418a9a878563a82ff30b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damage: 1
+  knockback: 4
+  frequency: 1
+  customAttacker: {fileID: 4270148256400962766}
+  ignoredTargetTags:
+  - Player
 --- !u!1 &645781148
 GameObject:
   m_ObjectHideFlags: 0
@@ -109,8 +115,8 @@ GameObject:
   m_Component:
   - component: {fileID: 645781149}
   - component: {fileID: 645781150}
-  - component: {fileID: 8933781604585633881}
   - component: {fileID: 7283954946436885052}
+  - component: {fileID: 3708659498884105096}
   m_Layer: 2
   m_Name: AttackPointTop
   m_TagString: PlayerHit
@@ -166,18 +172,6 @@ PolygonCollider2D:
       - {x: 0.652024, y: -0.5888164}
       - {x: 0.7387714, y: -0.272135}
       - {x: 0.6417667, y: 0.25231442}
---- !u!114 &8933781604585633881
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 645781148}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d8c6b75cce229254f948149bdf91a204, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!50 &7283954946436885052
 Rigidbody2D:
   serializedVersion: 4
@@ -199,6 +193,24 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 7
+--- !u!114 &3708659498884105096
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 645781148}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d01ca49c73dd418a9a878563a82ff30b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damage: 1
+  knockback: 4
+  frequency: 1
+  customAttacker: {fileID: 4270148256400962766}
+  ignoredTargetTags:
+  - Player
 --- !u!1 &1684417763
 GameObject:
   m_ObjectHideFlags: 0
@@ -209,8 +221,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1684417764}
   - component: {fileID: 1684417765}
-  - component: {fileID: 6566295534855085481}
   - component: {fileID: 5395333289344715738}
+  - component: {fileID: 1330874643941727621}
   m_Layer: 2
   m_Name: AttackPointBottom
   m_TagString: PlayerHit
@@ -266,18 +278,6 @@ PolygonCollider2D:
       - {x: 0.25677025, y: -0.579655}
       - {x: 0.3350882, y: -0.412393}
       - {x: 0.3426156, y: 0.05388982}
---- !u!114 &6566295534855085481
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1684417763}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d8c6b75cce229254f948149bdf91a204, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!50 &5395333289344715738
 Rigidbody2D:
   serializedVersion: 4
@@ -299,6 +299,24 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 7
+--- !u!114 &1330874643941727621
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1684417763}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d01ca49c73dd418a9a878563a82ff30b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damage: 1
+  knockback: 4
+  frequency: 1
+  customAttacker: {fileID: 4270148256400962766}
+  ignoredTargetTags:
+  - Player
 --- !u!1 &1894431301
 GameObject:
   m_ObjectHideFlags: 0
@@ -309,8 +327,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1894431302}
   - component: {fileID: 1894431303}
-  - component: {fileID: 8053707630260868602}
   - component: {fileID: 4581795318486904352}
+  - component: {fileID: 8445122479682819787}
   m_Layer: 2
   m_Name: AttackPointLeft
   m_TagString: PlayerHit
@@ -365,18 +383,6 @@ PolygonCollider2D:
       - {x: 0.0018517077, y: -0.5794424}
       - {x: 0.2460728, y: -0.502003}
       - {x: 0.41842416, y: -0.088862866}
---- !u!114 &8053707630260868602
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1894431301}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d8c6b75cce229254f948149bdf91a204, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!50 &4581795318486904352
 Rigidbody2D:
   serializedVersion: 4
@@ -398,6 +404,24 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 7
+--- !u!114 &8445122479682819787
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1894431301}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d01ca49c73dd418a9a878563a82ff30b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damage: 1
+  knockback: 4
+  frequency: 1
+  customAttacker: {fileID: 4270148256400962766}
+  ignoredTargetTags:
+  - Player
 --- !u!1 &185187689432217876
 GameObject:
   m_ObjectHideFlags: 0
@@ -1017,6 +1041,9 @@ GameObject:
   - component: {fileID: 5600992738212453487}
   - component: {fileID: 5518434239108301651}
   - component: {fileID: 4270148256400962754}
+  - component: {fileID: 2315645508682309211}
+  - component: {fileID: 5609641027168709057}
+  - component: {fileID: 6558045041921829758}
   - component: {fileID: 5898362498211708338}
   - component: {fileID: 3042749652083643236}
   - component: {fileID: 5440410435852969253}
@@ -1071,7 +1098,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fad7292b03eb81d43964fdc5d3fcfe1e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeInvincible: 1
   lifeGauge: {fileID: 9057244208906412714}
   coinGauge: {fileID: 4270148256667748091}
   speed: 4
@@ -1264,6 +1290,52 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &2315645508682309211
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4270148256400962766}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a39ba574c224aadb182aca865b43621, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxValue: 5
+--- !u!114 &5609641027168709057
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4270148256400962766}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c9eb9a451f34f4283d6587f3812e902, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  invincibleTime: 0.8
+--- !u!114 &6558045041921829758
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4270148256400962766}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44970a5b0647424da152826977091c91, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damageBaseColor: {r: 1, g: 0.149, b: 0, a: 1}
+  healingBaseColor: {r: 0, g: 1, b: 0, a: 1}
+  particlesPrefab: {fileID: 0}
+  bloodStainPrefab: {fileID: 0}
+  tintFlashController: {fileID: 880494710090650051}
+  damageSounds: {fileID: 2065851212643451053}
+  physicsEffects: {fileID: 1730820394476172617}
+  knockbackReductionWhenNoDamage: 0.5
 --- !u!114 &5898362498211708338
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1558,9 +1630,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 37e72f8d85c3e48ff94a706cf9f4acd0, type: 3}
---- !u!82 &6781982670220456450 stripped
-AudioSource:
-  m_CorrespondingSourceObject: {fileID: 5901695804182231811, guid: 37e72f8d85c3e48ff94a706cf9f4acd0,
+--- !u!4 &9056701887696250070 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8238955357890096599, guid: 37e72f8d85c3e48ff94a706cf9f4acd0,
     type: 3}
   m_PrefabInstance: {fileID: 1151083528782973185}
   m_PrefabAsset: {fileID: 0}
@@ -1576,9 +1648,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26078752b8f11fc7db40c2471cbcbf20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!4 &9056701887696250070 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 8238955357890096599, guid: 37e72f8d85c3e48ff94a706cf9f4acd0,
+--- !u!82 &6781982670220456450 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: 5901695804182231811, guid: 37e72f8d85c3e48ff94a706cf9f4acd0,
     type: 3}
   m_PrefabInstance: {fileID: 1151083528782973185}
   m_PrefabAsset: {fileID: 0}

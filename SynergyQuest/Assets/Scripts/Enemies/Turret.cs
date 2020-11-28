@@ -64,7 +64,7 @@ public class Turret : MonoBehaviour
 
     void LaunchProjectile()
     {
-        var instance = FireballProjectile.Launch(fireballPrefab, this.launchPoint.position, direction);
+        var instance = FireballProjectile.Launch(this.gameObject, fireballPrefab, this.launchPoint.position, direction);
 
         // If this object has a collider, the projectile shall not collide with it
         if (!ReferenceEquals(_collider, null))

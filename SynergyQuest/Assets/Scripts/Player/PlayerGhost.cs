@@ -23,9 +23,10 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
-﻿using System.Collections;
+using System.Collections;
 using UnityEngine;
 using System.Linq;
+using DamageSystem;
 
 /**
  * <summary>
@@ -38,25 +39,27 @@ using System.Linq;
  * </remarks>
  * <seealso cref="ReviveMinigame"/>
  */
+[RequireComponent(typeof(Attackable))]
 public class PlayerGhost : MonoBehaviour
 {
     // the player the ghost belongs to
     public PlayerController Player { get; private set; }
 
     // another active player the ghost currently follows
-    PlayerController _followedPlayer;
+    private PlayerController _followedPlayer;
 
-    Vector2 _respawnPosition;
-    Animator _animator;
-    Rigidbody2D _rigidbody2D;
-    PhysicsEffects _physicsEffects;
-    AudioSource _audioSource;
-    System.Random _rnd = new System.Random();
+    private Vector2 _respawnPosition;
+    private Animator _animator;
+    private Rigidbody2D _rigidbody2D;
+    private PhysicsEffects _physicsEffects;
+    private AudioSource _audioSource;
+    private Attackable _attackable;
+    private System.Random _rnd = new System.Random();
 
-    bool _moveArround;
-    bool _exorcised;
-    float RotateSpeed = 1.75f;
-    float _angle;
+    private bool _moveArround;
+    private bool _exorcised;
+    private float RotateSpeed = 1.75f;
+    private float _angle;
     
     [SerializeField] float Radius = 0.125f;
     [SerializeField] private float minRadius = 0.03f;
@@ -64,11 +67,11 @@ public class PlayerGhost : MonoBehaviour
     
     [SerializeField] private float approachSpeed = 0.2f;
 
-    float _playerChangeTime = 5;
-    float _playerChangeTimer;
+    private float _playerChangeTime = 5;
+    private float _playerChangeTimer;
 
-    readonly int MoveXProperty = Animator.StringToHash("Move X");
-    readonly int VanishTrigger = Animator.StringToHash("Vanish");
+    private readonly int MoveXProperty = Animator.StringToHash("Move X");
+    private readonly int VanishTrigger = Animator.StringToHash("Vanish");
 
     void Awake()
     {
@@ -76,6 +79,17 @@ public class PlayerGhost : MonoBehaviour
         _rigidbody2D = GetComponent<Rigidbody2D>();
         _physicsEffects = GetComponent<PhysicsEffects>();
         _audioSource = GetComponent<AudioSource>();
+        _attackable = GetComponent<Attackable>();
+    }
+
+    private void OnEnable()
+    {
+        _attackable.OnAttack += OnAttack;
+    }
+    
+    private void OnDisable()
+    {
+        _attackable.OnAttack -= OnAttack;
     }
 
     public void Register(PlayerController player, Vector2 respawnPosition)
@@ -86,8 +100,14 @@ public class PlayerGhost : MonoBehaviour
         Player.gameObject.SetFollowedByCamera(false);
         Player.Input.InputMode = InputMode.RevivalMinigame;
     }
-
-    public void Exorcise()
+    
+    /**
+     * <summary>
+     * Restore the player this ghost was created from.
+     * Currently, this is invoked by attacking this object, see <see cref="Attackable"/>.
+     * </summary>
+     */
+    private void Exorcise()
     {
         _animator.SetTrigger(VanishTrigger);
         _exorcised = true;
@@ -174,5 +194,19 @@ public class PlayerGhost : MonoBehaviour
             }        
         } else
             Exorcise();
+    }
+
+    /**
+     * <summary>
+     * Exorcise this ghost (<see cref="Exorcise"/>) if this object is attacked by a player.
+     * Invoked by <see cref="Attackable"/>.
+     * </summary>
+     */
+    private void OnAttack(AttackData attack)
+    {
+        if (attack.Attacker.CompareTag("Player"))
+        {
+            this.Exorcise();
+        }
     }
 }

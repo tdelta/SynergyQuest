@@ -23,7 +23,7 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
-using System;
+using DamageSystem;
 using UnityEngine;
 
 /**
@@ -92,13 +92,22 @@ public class Spikes : MonoBehaviour
         OnActivationChanged(_switchable.Activation);
     }
 
+    /**
+     * <summary>Deal damage to <see cref="Attackable"/> when in contact.</summary>
+     * <remarks>
+     * FIXME: Use <see cref="ContactAttack"/> component instead of this.
+     * </remarks>
+     */
     private void OnTriggerStay2D(Collider2D other)
     {
-        if (other.CompareTag("Player") || other.CompareTag("Enemy"))
+        if (other.TryGetComponent(out Attackable target))
         {
-            var player = other.GetComponent<EntityController>();
-            
-            player.PutDamage(damage, Vector2.zero);
+            target.Attack(new WritableAttackData
+            {
+                Attacker = gameObject,
+                Damage = damage,
+                AttackDirection = Optional.Some(Vector2.zero)
+            });
         }
     }
 

@@ -34,6 +34,7 @@ using System;
 [Serializable]
 public class PlayerInfo
 {
+    // FIXME: Move this to a scriptable object!
     public static int MAX_HEALTH_POINTS = 5;
 
     /**

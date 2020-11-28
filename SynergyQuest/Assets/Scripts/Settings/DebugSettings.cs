@@ -25,6 +25,7 @@
 
 using System;
 using UnityEngine;
+using Utils;
 
 /**
  * <summary>
@@ -33,7 +34,7 @@ using UnityEngine;
  * </summary>
  */
 [CreateAssetMenu(fileName = "DebugSettings", menuName = "ScriptableObjects/DebugSettings")]
-public class DebugSettings: ScriptableObjectSingleton<DebugSettings>
+public class DebugSettings: ScriptableObjectSingleton<DebugSettings, TrueLiteralType>
 {
     /**
      * <summary>

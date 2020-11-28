@@ -17,6 +17,10 @@ GameObject:
   - component: {fileID: 4188588700924867490}
   - component: {fileID: 2643077272644952694}
   - component: {fileID: 588770078081844133}
+  - component: {fileID: 1084440962287378340}
+  - component: {fileID: -1949790679575424297}
+  - component: {fileID: 5516383836931544455}
+  - component: {fileID: 7445943565338405669}
   m_Layer: 18
   m_Name: Bat
   m_TagString: Enemy
@@ -52,13 +56,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 947a0de2eeec8c7adac378ca1cf9f9b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeInvincible: 0.5
-  healthPoints: 3
   directionSpeed: 1.5
   directionChangeTime: 1
-  damageFactor: 1
   smokeEffect: {fileID: 1184984485077275557}
-  hitSounds: {fileID: 2848252042888453245}
   monsterDrops: {fileID: 11400000, guid: 86679ebb4b25bf7e3bd81c659e40e8e4, type: 2}
   flightSpeed: 2
   flightChangeTime: 0.15
@@ -219,6 +219,72 @@ MonoBehaviour:
   reflectionOffset: {x: 0, y: 0, z: 0}
   ripplesOffset: {x: 0, y: 0, z: 0}
   enableRipples: 0
+--- !u!114 &1084440962287378340
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5481500327407250211}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c9eb9a451f34f4283d6587f3812e902, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  invincibleTime: 0.8
+--- !u!114 &-1949790679575424297
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5481500327407250211}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44970a5b0647424da152826977091c91, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damageBaseColor: {r: 0.73333335, g: 0.078431375, b: 0, a: 1}
+  healingBaseColor: {r: 0, g: 1, b: 0, a: 1}
+  bloodParticlesPrefab: {fileID: 8397682343236543693, guid: 0c97de02b17a12c9ead38b9172d4b575,
+    type: 3}
+  bloodStainPrefab: {fileID: 8386572227100128554, guid: 5ae326a1b6fd4c98d88c539ee233b954,
+    type: 3}
+  tintFlashController: {fileID: 1807293467228889363}
+  damageSounds: {fileID: 2848252042888453245}
+  physicsEffects: {fileID: 7496465968518166009}
+  knockbackReductionWhenNoDamage: 0.5
+--- !u!114 &5516383836931544455
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5481500327407250211}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a39ba574c224aadb182aca865b43621, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxValue: 2
+--- !u!114 &7445943565338405669
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5481500327407250211}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d01ca49c73dd418a9a878563a82ff30b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damage: 1
+  knockback: 4
+  frequency: 1
+  customAttacker: {fileID: 0}
+  ignoredTargetTags:
+  - Enemy
 --- !u!1001 &2922863218444057504
 PrefabInstance:
   m_ObjectHideFlags: 0

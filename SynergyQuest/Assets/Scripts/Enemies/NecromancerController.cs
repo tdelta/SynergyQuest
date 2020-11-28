@@ -23,22 +23,41 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
- using UnityEngine;
+using DamageSystem;
+using JetBrains.Annotations;
+using UnityEngine;
 using UnityEngine.Serialization;
 
+[RequireComponent(typeof(Attackable))]
 public class NecromancerController : EnemyController
 {
-    [FormerlySerializedAs("fireball")] [SerializeField] FireballProjectile fireballPrefab = default;
-    [SerializeField] float launchCoolDown = 1;
-    [SerializeField] float viewCone = 1;
+    [FormerlySerializedAs("fireball")]
+    [SerializeField]
+    private FireballProjectile fireballPrefab = default;
+    [SerializeField] private float launchCoolDown = 1;
+    [SerializeField] private float viewCone = 1;
 
-    readonly int _moveXProperty = Animator.StringToHash("Move X");
-    float _launchTimer;
-    Vector2 _offset = new Vector2(0, 0);
-    RaycastHit2D[] _hit = new RaycastHit2D[3];
-    PlayerColor _currentColor = PlayerColor.Any;
-    PlayerController _attackingPlayer;
-    bool _attackedByPlayer = false;
+    private readonly int _moveXProperty = Animator.StringToHash("Move X");
+    private float _launchTimer;
+    private Vector2 _offset = new Vector2(0, 0);
+    private RaycastHit2D[] _hit = new RaycastHit2D[3];
+    private PlayerColor _currentColor = PlayerColor.Any;
+    [CanBeNull] private PlayerController _lastAttackingPlayer;
+
+    private static readonly int CapeColor = Shader.PropertyToID("_CapeColor");
+
+    protected override void OnEnable()
+    {
+        base.OnEnable();
+        attackable.OnPendingAttack += OnPendingAttack;
+        attackable.OnAttack += OnAttack;
+    }
+    
+    private void OnDisable()
+    {
+        attackable.OnPendingAttack -= OnPendingAttack;
+        attackable.OnAttack -= OnAttack;
+    }
 
     protected override void Start()
     {
@@ -46,22 +65,13 @@ public class NecromancerController : EnemyController
         _launchTimer = launchCoolDown;
     }
 
-    public PlayerController AttackingPlayer
-    {
-        set
-        {
-            _attackedByPlayer = true;
-            _attackingPlayer = value;
-        }
-    }
-
     (bool, Vector2) IsPlayerVisible()
     {
-        if (_attackingPlayer != null)
+        if (_lastAttackingPlayer != null)
         {
-            var target = _attackingPlayer.Center - Rigidbody2D.position;
+            var target = _lastAttackingPlayer.Center - Rigidbody2D.position;
             // if no gameObject blocks line of sight to player
-            if (Physics2D.LinecastNonAlloc(Rigidbody2D.position, _attackingPlayer.Center, _hit) == 2)
+            if (Physics2D.LinecastNonAlloc(Rigidbody2D.position, _lastAttackingPlayer.Center, _hit) == 2)
                 return (true, target.normalized);
         }
 
@@ -76,7 +86,7 @@ public class NecromancerController : EnemyController
         {
             var spawnPoint = direction + Rigidbody2D.position;
             
-            var instance = FireballProjectile.Launch(fireballPrefab, spawnPoint, direction);
+            var instance = FireballProjectile.Launch(this.gameObject, fireballPrefab, spawnPoint, direction);
             Physics2D.IgnoreCollision(instance.Collider, GetComponent<Collider2D>());
             
             _launchTimer = launchCoolDown;
@@ -101,26 +111,53 @@ public class NecromancerController : EnemyController
         return _offset;
     }
 
-    public override bool ChangeHealth(int amount, bool playSounds = true)
+    /**
+     * <summary>
+     * Cancels incoming attacks if they come from a player with a color incompatible with the current cape color.
+     * Invoked by <see cref="Attackable"/>.
+     * </summary>
+     */
+    private void OnPendingAttack(WritableAttackData attack)
     {
-        // if we didn't receive damage from a player apply damage regularly
-        if (!_attackedByPlayer)
-            return base.ChangeHealth(amount, playSounds);
-        // if we received damage from a player apply damage if playercolor is compatible
-        else
+        // If the attacker is a player of incompatible color, cancel attack
+        if (attack.Attacker != null && attack.Attacker.TryGetComponent(out PlayerController attackingPlayer))
         {
-            _attackedByPlayer = false;
-            if (PlayerColorMethods.IsCompatibleWith(_currentColor, _attackingPlayer.Color))
+            if (!_currentColor.IsCompatibleWith(attackingPlayer.Color))
             {
-                var material = GetComponent<Renderer>().material;
-                _currentColor = PlayerColorMethods.NextColor(_attackingPlayer.Color,
-                    PlayerDataKeeper.Instance.NumPlayers);
-                material.SetColor("_CapeColor", _currentColor.ToRGB());
-
-                return base.ChangeHealth(amount, playSounds);
+                attack.Damage = 0;
+                attack.Knockback = 0;
+                
+                // also knock back the attacker a bit
+                if (attackingPlayer.TryGetComponent(out Attackable playerAttackable))
+                {
+                    playerAttackable.Attack(new WritableAttackData
+                    {
+                        Attacker = this.gameObject,
+                        Knockback = 2,
+                        AttackDirection = attack.AttackDirection.Map(attackDir=> -attackDir)
+                    });
+                }
             }
         }
+    }
 
-        return false;
+    /**
+     * <summary>
+     * If an attack happens on this object, changes the current cape color to the next one.
+     * Invoked by <see cref="Attackable"/>.
+     * </summary>
+     */
+    private void OnAttack(AttackData attack)
+    {
+        if (attack.Attacker != null && attack.Attacker.TryGetComponent(out PlayerController attackingPlayer))
+        {
+            _lastAttackingPlayer = attackingPlayer;
+            
+            var material = GetComponent<Renderer>().material;
+            
+            _currentColor = attackingPlayer.Color.NextColor(PlayerDataKeeper.Instance.NumPlayers);
+            
+            material.SetColor(CapeColor, _currentColor.ToRGB());
+        }
     }
 }

@@ -60,9 +60,10 @@ public class PlayerData
       }
     }
 
-    private int _healthPoints;
+    // FIXME: For now we allow writing this so that the health data can reach the game controller.
+    // However, it should not be readable, since Health is already handled by the Health component and there should
+    // be only a single source of truth.
     public int HealthPoints {
-      get => _playerInfo.HealthPoints;
       set {
         _playerInfo.HealthPoints = value;
         _input.UpdatePlayerInfo(_playerInfo);

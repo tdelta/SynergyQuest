@@ -23,30 +23,43 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+using System.Collections;
+ using DamageSystem;
+ using UnityEngine;
 
+[RequireComponent(typeof(Attackable))]
 public class ShockSwitch : MonoBehaviour
 {
 
     [SerializeField] uint timeout = 0;
-    Switch switcher;
-    Animator animator;
+    private Switch _switcher;
+    private Animator _animator;
+    private Attackable _attackable;
 
-    readonly int hitTrigger = Animator.StringToHash("Hit");
-    readonly int timeoutTrigger = Animator.StringToHash("Timeout");
+    private readonly int hitTrigger = Animator.StringToHash("Hit");
+    private readonly int timeoutTrigger = Animator.StringToHash("Timeout");
 
     void Awake()
     {
-        switcher = GetComponent<Switch>();
-        animator = GetComponent<Animator>();
+        _switcher = GetComponent<Switch>();
+        _animator = GetComponent<Animator>();
+        _attackable = GetComponent<Attackable>();
     }
 
-    public void Activate()
+    private void OnEnable()
     {
-        animator.SetTrigger(hitTrigger);
-        switcher.Value = true;
+        _attackable.OnAttack += OnAttack;
+    }
+    
+    private void OnDisable()
+    {
+        _attackable.OnAttack -= OnAttack;
+    }
+
+    private void Activate()
+    {
+        _animator.SetTrigger(hitTrigger);
+        _switcher.Value = true;
 
         if (timeout > 0)
         {
@@ -55,12 +68,23 @@ public class ShockSwitch : MonoBehaviour
         }
     }
 
-    IEnumerator StartTimer()
+    private IEnumerator StartTimer()
     {
         yield return new WaitForSeconds(timeout);
-        switcher.Value = false;
-        animator.SetTrigger(timeoutTrigger);
-        Debug.Log("Deactivated");
+        _switcher.Value = false;
+        _animator.SetTrigger(timeoutTrigger);
     }
 
+    /**
+     * <summary>
+     * Trigger this switch if it is attacked by a non-enemy.
+     * </summary>
+     */
+    private void OnAttack(AttackData attack)
+    {
+        if (!attack.Attacker.CompareTag("Enemy"))
+        {
+            Activate();
+        }
+    }
 }

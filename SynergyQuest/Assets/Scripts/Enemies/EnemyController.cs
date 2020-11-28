@@ -23,55 +23,58 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
+using DamageSystem;
 using UnityEngine;
+using Random = UnityEngine.Random;
 using Single = System.Single;
 
-abstract public class EnemyController : EntityController
+[RequireComponent(typeof(Health))]
+public abstract class EnemyController : EntityController
 {
-    [SerializeField] protected int   healthPoints = 1;
     [SerializeField] protected float directionSpeed = 1;
     [SerializeField] protected float directionChangeTime = 1;
-    [SerializeField] protected int damageFactor = 1;
-    [SerializeField] ParticleSystem smokeEffect = default;
-    [SerializeField] private MultiSound hitSounds = default;
+    [SerializeField] private ParticleSystem smokeEffect = default;
     
     /**
      * Instance of Absorbables ScriptableObject which holds all Absorbables
      * a monster could potentially drop when it dies.
      */
-    [SerializeField] Absorbables monsterDrops = default;
+    [SerializeField] private Absorbables monsterDrops = default;
 
     protected float directionTimer;
     protected Vector2 direction;
     
-    bool isDead;
-    RaycastHit2D[] _hit = new RaycastHit2D[3];
-    readonly int deadTrigger = Animator.StringToHash("Dead");
-    readonly System.Random rand = new System.Random();
+    private RaycastHit2D[] _hit = new RaycastHit2D[3];
+    private readonly int deadTrigger = Animator.StringToHash("Dead");
+    private readonly System.Random rand = new System.Random();
 
-    /**
-     * Used to briefly flash an enemy in a certain color. For example red when it is hit.
-     */
-    private TintFlashController _tintFlashController;
+    private Health _health;
 
-    /**
-     * used by BossSpawn and EnemySpawn to find out when all enemies are dead to trigger switch
-     */
-    public delegate void EnemyDied();
-    public event EnemyDied OnDeath;
+    protected override void Awake()
+    {
+        base.Awake();
+        _health = GetComponent<Health>();
+    }
+
+    protected virtual void OnEnable()
+    {
+        _health.OnDeath += OnDeath;
+    }
+
+    private void OnDisable()
+    {
+        _health.OnDeath -= OnDeath;
+    }
 
     protected override void Start()
     {
         base.Start();
         directionTimer = directionChangeTime;
         direction = Random.insideUnitCircle.normalized;
-        
-        _tintFlashController = GetComponent<TintFlashController>();
     }
 
-    protected override void Update()
+    protected virtual void Update()
     {
-        base.Update();
         directionTimer -= Time.deltaTime;
 
         if (directionTimer < 0)
@@ -86,10 +89,10 @@ abstract public class EnemyController : EntityController
         Vector2 playerVector = new Vector2(0, 0);
         float minPlayerDistance = Single.PositiveInfinity;
 
-        foreach (var player in GameObject.FindObjectsOfType(typeof(PlayerController)) as PlayerController[])
+        foreach (var player in FindObjectsOfType<PlayerController>())
         {
             Vector2 target = player.Center - Rigidbody2D.position;
-            float distance = target.magnitude;
+            var distance = target.magnitude;
 
             if (Vector2.Angle(target, direction) <= viewCone / 2 && distance < minPlayerDistance &&
                 // if no gameObject blocks line of sight to player
@@ -103,41 +106,10 @@ abstract public class EnemyController : EntityController
         return (!Single.IsInfinity(minPlayerDistance), playerVector.normalized);
     }
 
-
-    void OnCollisionStay2D(Collision2D other)
-    {
-        if (other.gameObject.CompareTag("Player"))
-        {
-            var player = other.gameObject.GetComponent<EntityController>();
-            player.PutDamage(damageFactor, (other.transform.position - transform.position).normalized); 
-        }
-    }
-
     void OnCollisionEnter2D(Collision2D other)
     {
         if (!other.gameObject.CompareTag("Player") && !other.gameObject.CompareTag("PlayerHit"))
             direction = -direction;
-    }
-
-    public override bool ChangeHealth(int amount, bool playSounds = true)
-    {
-        healthPoints += amount;
-
-        if (amount <= 0)
-        {
-            PlayDamageEffects();
-        }
-
-        if (healthPoints <= 0)
-        {
-            isDead = true;
-            this.GetComponent<Collider2D>().enabled = false;
-            Animator.SetTrigger(deadTrigger);
-            DropAbsorbables();
-            Destroy(gameObject, 1);
-            OnDeath?.Invoke();
-        }
-        return true;
     }
 
     /*
@@ -148,7 +120,7 @@ abstract public class EnemyController : EntityController
     
     void FixedUpdate()
     {
-        if (!isDead)
+        if (!_health.IsDead)
         {
             Vector2 position = Rigidbody2D.position;
             position += ComputeOffset();
@@ -162,26 +134,6 @@ abstract public class EnemyController : EntityController
         smokeEffect.Play();
     }
 
-    /**
-     * Plays some effects to give feedback that the enemy has taken damage.
-     *
-     * Currently, it flashes the enemy red for the duration of its invincibility after being hit.
-     * It also plays a hit sound, when present
-     */
-    private void PlayDamageEffects()
-    {
-        // Flash enemy red for the duration of its temporary invincibility
-        _tintFlashController.FlashTint(
-            Color.red, TimeInvincible
-        );
-        
-        // Play sound
-        if (!ReferenceEquals(hitSounds, null))
-        {
-            hitSounds.PlayOneShot();
-        }
-    }
-
     private void DropAbsorbables()
     {
         int amountCoins = Random.Range(0,5);
@@ -190,4 +142,22 @@ abstract public class EnemyController : EntityController
         }
     }
 
+    /**
+     * <summary>
+     * Invoked, if the <see cref="Health"/> component signals death (0 health points)
+     * Will...
+     * ...disable colliders
+     * ...trigger death animation
+     * ...drop items (absorbables)
+     * ...destroy this object
+     * </summary>
+     */
+    private void OnDeath()
+    {
+        this.GetComponent<Collider2D>().enabled = false;
+        Animator.SetTrigger(deadTrigger);
+        DropAbsorbables();
+        // FIXME: Use event in death animation to trigger destroy instead of fixed timer.
+        Destroy(gameObject, 1);
+    }
 }

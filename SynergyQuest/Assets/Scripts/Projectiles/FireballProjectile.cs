@@ -23,10 +23,10 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
-﻿using System.Collections;
-using System.Collections.Generic;
+using System.Collections;
+using DamageSystem;
 using UnityEngine;
- using UnityEngine.Experimental.Rendering.Universal;
+using UnityEngine.Experimental.Rendering.Universal;
 
 public class FireballProjectile : MonoBehaviour
 {
@@ -40,6 +40,13 @@ public class FireballProjectile : MonoBehaviour
     Rigidbody2D _rigidbody2D;
     PhysicsEffects _physicsEffects;
     AudioSource _audioSource;
+
+    /**
+     * <summary>
+     * Source of this fireball. E.g. the monster which created it.
+     * </summary>
+     */
+    private GameObject _source;
 
     public BoxCollider2D Collider { get; private set; }
 
@@ -62,11 +69,13 @@ public class FireballProjectile : MonoBehaviour
      * Instantiates a fireball projectile at a certain spawn point and launches into a given direction.
      * It will also play sounds etc.
      * </summary>
+     * <param name="source">The game object which fired this projectile.</param>
      */
-    public static FireballProjectile Launch(FireballProjectile prefab, Vector3 spawnPoint, Vector2 direction)
+    public static FireballProjectile Launch(GameObject source, FireballProjectile prefab, Vector3 spawnPoint, Vector2 direction)
     {
         var instance = Instantiate(prefab, spawnPoint, Quaternion.identity);
-        
+
+        instance._source = source;
         // rotate projectile into direction of flight
         instance.transform.up = -direction;
         instance._direction = direction;
@@ -77,10 +86,15 @@ public class FireballProjectile : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D other)
     {
-        if (other.gameObject.CompareTag("Player"))
+        if (other.gameObject != _source && other.gameObject.TryGetComponent(out Attackable attackable))
         {
-            var player = other.gameObject.GetComponent<EntityController>();
-            player.PutDamage(damageFactor, (other.transform.position - transform.position).normalized); 
+            attackable.Attack(new WritableAttackData
+            {
+                Attacker = _source,
+                Damage = damageFactor,
+                Knockback = 4,
+                AttackDirection = Optional.Some<Vector2>((other.transform.position - transform.position).normalized)
+            });
         }
         _animator.SetTrigger(HitTrigger);
     }

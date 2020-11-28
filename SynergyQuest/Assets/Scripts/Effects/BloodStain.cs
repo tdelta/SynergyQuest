@@ -23,27 +23,45 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
-﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using Utils;
 
-public class PlayerHit : MonoBehaviour
+namespace Effects
 {
-    private void OnTriggerEnter2D(Collider2D other)
+    /**
+     * <summary>
+     * Renders a random blood stain sprite on the floor.
+     * </summary>
+     */
+    [RequireComponent(typeof(SpriteRenderer))]
+    public class BloodStain : MonoBehaviour
     {
-        if (other.gameObject.CompareTag("Enemy"))
-        {
-            if (other.gameObject.GetComponent<NecromancerController>() is NecromancerController neko) {
-                var player = gameObject.GetComponentInParent(typeof(PlayerController)) as PlayerController;
-                neko.AttackingPlayer = player;
-            }
+        [SerializeField]
+        [Tooltip("The sprites of the blood stains. Will be randomly selected. They should be grayscale so that they can be colored with the given blood color value.")]
+        private Sprite[] bloodStainSprites = new Sprite[0];
+        
+        /**
+         * <summary>The color of the blood.</summary>
+         */
+        public Color color = new Color(1, 0.149f, 0, 1);
 
-            var enemy = other.gameObject.GetComponent<EnemyController>();
-            enemy.PutDamage(1, (other.transform.position - transform.position).normalized); 
+        private SpriteRenderer _renderer = default;
+
+        private void Awake()
+        {
+            _renderer = GetComponent<SpriteRenderer>();
         }
-        else if (other.gameObject.CompareTag("Switch"))
-            other.gameObject.GetComponent<ShockSwitch>().Activate();
-        else if (other.gameObject.CompareTag("Ghost"))
-            other.gameObject.GetComponent<PlayerGhost>()?.Exorcise();
+
+        private void Start()
+        {
+            RandomExtensions
+                .SelectUniform(bloodStainSprites)
+                .Match(
+                    some: sprite => _renderer.sprite = sprite,
+                    none: () => Debug.LogError("No blood stain sprites available.")
+                );
+
+            _renderer.color = color;
+        }
     }
 }
