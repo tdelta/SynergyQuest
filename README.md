@@ -1,3 +1,5 @@
+![development build](https://github.com/tdelta/SynergyQuest/workflows/Synergy%20Quest%20CI/badge.svg?branch=develop)
+
 # Synergy Quest - A Mobile-Controlled Cooperative Multiplayer Game
 
 <p align="center">
