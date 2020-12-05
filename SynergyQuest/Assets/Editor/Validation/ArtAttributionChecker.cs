@@ -56,10 +56,11 @@ namespace Editor.Validation
          *
          * Also an exception will be thrown.
          * </remarks>
+         * <param name="noConfirmationIfNoFindings">If true, do not display a confirmation dialog when no issues have been found</param>
          * <exception cref="ApplicationException">Thrown if art assets without proper credit are found.</exception>
          */
         [MenuItem("SynergyQuest Tools/Validators/Is external art properly credited?")]
-        public static void CheckCorrectArtAttribution()
+        public static void CheckCorrectArtAttribution(bool noConfirmationIfNoFindings = false)
         {
             // get a set of all external art files which have been given proper credit
             var properlyCreditedExternalArt = GetAttributedExternalArt();
@@ -96,7 +97,7 @@ namespace Editor.Validation
                 throw new ApplicationException(warning);
             }
 
-            else
+            else if (!noConfirmationIfNoFindings)
             {
                 EditorUtility.DisplayDialog(
                     "Everything OK",

@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   initialDungeonLayoutFile: MainDungeon.json
   externalArtCredits: {fileID: 4900000, guid: 6f6489d04dde7308bbe97f33fbb0d869, type: 3}
+  originalArtList: {fileID: 4900000, guid: 17fc97bf54084d358adb18afe4d6e2f5, type: 3}
   cSharpLibDisclaimers: {fileID: 4900000, guid: a651b872dee8938c3bc486bb2329a178,
     type: 3}
   webLibsListFile: web-libs-list.txt
-  webLibsDisclaimerFile: web-libs-disclaimers.txt
+  libsDisclaimerFile: libs-disclaimers.txt

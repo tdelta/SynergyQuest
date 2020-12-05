@@ -449,7 +449,7 @@ public class ProjectBuilder
 
     private static void RunValidators()
     {
-        ArtAttributionChecker.CheckCorrectArtAttribution();
+        ArtAttributionChecker.CheckCorrectArtAttribution(true);
     }
     
     private static void Log(string msg)

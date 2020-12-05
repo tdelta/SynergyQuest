@@ -74,7 +74,11 @@ namespace Data
          */
         public static List<string> GetOriginalArtList()
         {
-            var ownArtCreditsRaw = ResourcePathSettings.Instance.OriginalArtList.text;
+            var ownArtCreditsRaw = ResourcePathSettings
+                .Instance
+                .OriginalArtList
+                .text;
+            
             var deserializer = new DeserializerBuilder()
                 .WithNamingConvention(CamelCaseNamingConvention.Instance)
                 .Build();
