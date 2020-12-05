@@ -53,6 +53,13 @@ public class ResourcePathSettings: ScriptableObjectSingleton<ResourcePathSetting
     [SerializeField] private TextAsset externalArtCredits;
     
     /**
+     * A text resource YAML file containing a list of all art originally made for the game.
+     * That is, no explicit attribution information must be displayed for this art.
+     */
+    public TextAsset OriginalArtList => originalArtList;
+    [SerializeField] private TextAsset originalArtList; 
+    
+    /**
      * A text resource file containing the licenses and disclaimers of all used C# libs
      * (except the Unity stuff)
      */

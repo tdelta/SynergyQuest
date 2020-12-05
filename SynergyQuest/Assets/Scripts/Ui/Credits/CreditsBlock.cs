@@ -23,17 +23,16 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
-using System;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
+using Data;
 using TMPro;
 using UnityEngine;
 using WebSocketSharp;
 
 /**
  * <summary>
- * Displays an instance of <see cref="CreditsEntry"/> in the UI.
+ * Displays an instance of <see cref="ExternalArtCredits.CreditsEntry"/> in the UI.
  * </summary>
  */
 public class CreditsBlock : MonoBehaviour
@@ -45,7 +44,7 @@ public class CreditsBlock : MonoBehaviour
     [SerializeField] private TextMeshProUGUI modificationsValue = default;
     [SerializeField] private TextMeshProUGUI linkValue = default;
 
-    public void Init(string filePath, CreditsEntry entry)
+    public void Init(string filePath, ExternalArtCredits.CreditsEntry entry)
     {
         authorValue.SetText(entry.author);
         fileValue.SetText(Path.GetFileName(filePath));

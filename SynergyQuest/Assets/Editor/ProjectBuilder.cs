@@ -28,6 +28,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using Editor.Validation;
 using UnityEditor;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
@@ -82,7 +83,7 @@ public class ProjectBuilder
      * Removes the build files for all sub-projects from the file system (game, web libraries, web apps, ...)
      * </summary>
      */
-    [MenuItem("SynergyQuest Build/Clean Builds")]
+    [MenuItem("SynergyQuest Tools/Build/Clean Builds")]
     public static void CleanBuilds()
     {
         FileUtil.DeleteFileOrDirectory(BuildDirectory.Value.WinToNixPath());
@@ -110,7 +111,7 @@ public class ProjectBuilder
      * (Including all web libraries and apps etc.)
      * </summary>
      */
-    [MenuItem("SynergyQuest Build/Windows Build")]
+    [MenuItem("SynergyQuest Tools/Build/Windows Build")]
     public static void BuildForWindowsBuildWeb()
     {
         BuildForWindows(false);
@@ -136,11 +137,7 @@ public class ProjectBuilder
      */
     public static void BuildForWindows(bool assumePrebuiltWebComponents)
     {
-        if (!assumePrebuiltWebComponents)
-        {
-            // Force search for Yarn
-            YarnUtils.EnsureYarnIsInstalled();
-        }
+        CrossPlatformBuildPreamble(assumePrebuiltWebComponents);
         
         BuildWindowsPlayer();
         BuildWebComponents(WindowsBuildDirectory.Value, assumePrebuiltWebComponents);
@@ -155,7 +152,7 @@ public class ProjectBuilder
      * (Including all web libraries and apps etc.)
      * </summary>
      */
-    [MenuItem("SynergyQuest Build/Linux Build")]
+    [MenuItem("SynergyQuest Tools/Build/Linux Build")]
     public static void BuildForLinuxBuildWeb()
     {
         BuildForLinux(false);
@@ -171,7 +168,7 @@ public class ProjectBuilder
     {
         BuildForLinux(true);
     }
-
+    
     /**
      * <summary>
      * Builds and bundles a standalone version of SynergyQuest for Linux
@@ -181,17 +178,24 @@ public class ProjectBuilder
      */
     public static void BuildForLinux(bool assumePrebuiltWebComponents)
     {
-        if (!assumePrebuiltWebComponents)
-        {
-            // Force search for Yarn
-            YarnUtils.EnsureYarnIsInstalled();
-        }
+        CrossPlatformBuildPreamble(assumePrebuiltWebComponents);
         
         BuildLinuxPlayer();
         BuildWebComponents(LinuxBuildDirectory.Value, assumePrebuiltWebComponents);
         CopyAdditionalFiles(LinuxBuildDirectory.Value);
 
         DisplayBuildFinishedMessage("Linux", LinuxBuildDirectory.Value);
+    }
+    
+    private static void CrossPlatformBuildPreamble(bool assumePrebuiltWebComponents)
+    {
+        RunValidators();
+        
+        if (!assumePrebuiltWebComponents)
+        {
+            // Force search for Yarn
+            YarnUtils.EnsureYarnIsInstalled();
+        }
     }
 
     // === Helper methods for building sub-components ===
@@ -441,6 +445,11 @@ public class ProjectBuilder
         FileUtil.ReplaceFile(ReadmeFile.Value, Path.Combine(buildDir, "ReadMe.txt").WinToNixPath());
         
         FileUtil.ReplaceFile(DebugSettings.Instance.PathToLicense, Path.Combine(buildDir, "LICENSE.md").WinToNixPath());
+    }
+
+    private static void RunValidators()
+    {
+        ArtAttributionChecker.CheckCorrectArtAttribution();
     }
     
     private static void Log(string msg)

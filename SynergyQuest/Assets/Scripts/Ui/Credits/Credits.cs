@@ -23,10 +23,8 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
-using System.Collections.Generic;
+using Data;
 using UnityEngine;
-using YamlDotNet.Serialization;
-using YamlDotNet.Serialization.NamingConventions;
 
 /**
  * <summary>
@@ -44,14 +42,7 @@ public class Credits : MonoBehaviour
     private void Awake()
     {
         // Read asset credits information from YAML resource
-        var externalArtCreditsRaw = ResourcePathSettings.Instance.ExternalArtCredits.text;
-        var deserializer = new DeserializerBuilder()
-            .WithNamingConvention(CamelCaseNamingConvention.Instance)
-            .Build();
-
-        var externalArtCredits = deserializer.Deserialize<
-            Dictionary<string, CreditsEntry>
-        >(externalArtCreditsRaw);
+        var externalArtCredits = ExternalArtCredits.GetExternalArtCredits();
 
         // Display each entry
         foreach (var keyValue in externalArtCredits)
