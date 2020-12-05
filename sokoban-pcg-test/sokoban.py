@@ -2,16 +2,13 @@
 import sys
 import pygame
 import string
-import Queue
-from enum import Enum
+import queue
 from copy import deepcopy
 from generator import Generator
+from state_space import StateSpace
+from utils import Color
 
-IMPASSABLE_OBJECTS = ['#','*','$','@','a','+','-','S','|','"',':']
-
-class Color(Enum):
-    RED = 1
-    BLUE = 2
+IMPASSABLE_OBJECTS = ['#','B_d','B','BW','RW','BW_d','RW_d','RB','BB','RB_d','BB_d']
 
 class Entity():
     """
@@ -35,11 +32,11 @@ class Worker(Entity):
         self.color = color
 
     def render(self, grid): 
-        if grid[self.y][self.x] == '.':
+        if grid[self.y][self.x] == 'd':
             # Worker is on dock
-            grid[self.y][self.x] = '+' if self.color == Color.BLUE else '-'
+            grid[self.y][self.x] = 'BW_d' if self.color == Color.BLUE else 'RW_d'
         else:
-            grid[self.y][self.x] = '@' if self.color == Color.BLUE else 'a'
+            grid[self.y][self.x] = 'BW' if self.color == Color.BLUE else 'RW'
         return grid
 
     def can_push(self, x, y, map):
@@ -89,11 +86,11 @@ class Box(Entity):
         self.color = color
 
     def render(self, grid): 
-        if grid[self.y][self.x] == '.':
+        if grid[self.y][self.x] == 'd':
             # Box is on dock
-            grid[self.y][self.x] = '*'
+            grid[self.y][self.x] = 'B_d'
         else:
-            grid[self.y][self.x] = '|' if self.color == Color.BLUE else 'S'
+            grid[self.y][self.x] = 'BB' if self.color == Color.BLUE else 'RB'
         return grid
 
 class Map():
@@ -104,6 +101,12 @@ class Map():
         self.entities = []
         self.workers = {}
 
+    def __eq__(self, other):
+        return not other is None and isinstance(other, Map) and other.__hash__() == self.__hash__()
+
+    def __hash__(self):
+        return hash("".join("".join(r) for r in self.render()))
+
     def add_floor(self):
         self.grid[-1].append(' ')
         self.current_x += 1
@@ -113,7 +116,7 @@ class Map():
         self.current_x += 1
     
     def add_dock(self):
-        self.grid[-1].append('.')
+        self.grid[-1].append('d')
         self.current_x += 1
 
     def next_row(self):
@@ -137,7 +140,7 @@ class Map():
     def is_completed(self):
         for entity in self.entities:
             if isinstance(entity, Box):
-                if not self.grid[entity.y][entity.x] == '.':
+                if not self.grid[entity.y][entity.x] == 'd':
                     # A box is not yet on a dock
                     return False
         # All boxes are on docks
@@ -168,17 +171,17 @@ class game:
     def is_valid_value(self,char):
         if ( char == ' ' or #floor
             char == '#' or #wall
-            char == '@' or #blue worker on floor
-            char == 'a' or #red worker on floor
-            char == '.' or #dock
-            char == '*' or #box on dock
-            char == ':' or
-            char == '"' or
-            char == '$' or #box
-            char == 'S' or
-            char == '|' or
-            char == '+' or #blue worker on dock
-            char == '-' ): #red worker on dock
+            char == 'BW' or #blue worker on floor
+            char == 'RW' or #red worker on floor
+            char == 'd' or #dock
+            char == 'B_d' or #box on dock
+            char == 'BB_d' or #blue box on dock
+            char == 'RB_d' or #red box on dock
+            char == 'B' or #box on floor
+            char == 'RB' or #blue box on floor
+            char == 'BB' or #red box on floor
+            char == 'BW_d' or #blue worker on dock
+            char == 'RW_d' ): #red worker on dock
             return True
         else:
             return False
@@ -189,36 +192,36 @@ class game:
             self.map.add_floor()
         elif char == '#':
             self.map.add_wall()
-        elif char == '@':
+        elif char == 'BW':
             self.map.add_worker(Color.BLUE)
             self.map.add_floor()
-        elif char == 'a':
+        elif char == 'RW':
             self.map.add_worker(Color.RED)
             self.map.add_floor()
-        elif char == '.':
+        elif char == 'd':
             self.map.add_dock()
-        elif char == '*':
+        elif char == 'B_d':
             self.map.add_box(Color.BLUE)
             self.map.add_dock()
-        elif char == ':':
+        elif char == 'BB_d':
             self.map.add_box(Color.BLUE)
             self.map.add_dock()
-        elif char == '"':
+        elif char == 'RB_d':
             self.map.add_box(Color.RED)
             self.map.add_dock()
-        elif char == '$':
+        elif char == 'B':
             self.map.add_box(Color.BLUE)
             self.map.add_floor()
-        elif char == 'S':
-            self.map.add_box(Color.BLUE)
-            self.map.add_floor()
-        elif char == '|':
+        elif char == 'RB':
             self.map.add_box(Color.RED)
             self.map.add_floor()
-        elif char == '+':
+        elif char == 'BB':
+            self.map.add_box(Color.BLUE)
+            self.map.add_floor()
+        elif char == 'BW_d':
             self.map.add_worker(Color.BLUE)
             self.map.add_dock()
-        elif char == '-':
+        elif char == 'RW_d':
             self.map.add_worker(Color.RED)
             self.map.add_dock()
 
@@ -233,11 +236,11 @@ class game:
             self.load_file(filename, level)
 
     def load_file(self, filename, level):
-        self.queue = Queue.LifoQueue()
+        self.queue = queue.LifoQueue()
         self.map = Map()
 #        if level < 1 or level > 50:
         if level < 1:
-            print "ERROR: Level "+str(level)+" is out of range"
+            print("ERROR: Level "+str(level)+" is out of range")
             sys.exit(1)
         else:
             file = open(filename,'r')
@@ -255,7 +258,7 @@ class game:
                             elif c == '\n': #jump to next row when newline
                                 continue
                             else:
-                                print "ERROR: Level "+str(level)+" has invalid value "+c
+                                print("ERROR: Level "+str(level)+" has invalid value "+c)
                                 sys.exit(1)
                     else:
                         break
@@ -306,23 +309,23 @@ def print_game(matrix,screen):
                 screen.blit(floor,(x,y))
             elif char == '#': #wall
                 screen.blit(wall,(x,y))
-            elif char == '@': #worker on floor
+            elif char == 'BW': #worker on floor
                 screen.blit(worker_blue,(x,y))
-            elif char == 'a': #worker on floor
+            elif char == 'RW': #worker on floor
                 screen.blit(worker_red,(x,y))
-            elif char == '.': #dock
+            elif char == 'd': #dock
                 screen.blit(docker,(x,y))
-            elif char == '*': #box on dock
+            elif char == 'B_d': #box on dock
                 screen.blit(box_docked,(x,y))
-            elif char == '$': #box
+            elif char == 'B': #box
                 screen.blit(box,(x,y))
-            elif char == 'S':
+            elif char == 'RB':
                 screen.blit(box_red,(x,y))
-            elif char == '|':
+            elif char == 'BB':
                 screen.blit(box_blue,(x,y))
-            elif char == '+': #worker on dock
+            elif char == 'BW_d': #worker on dock
                 screen.blit(worker_docked_blue,(x,y))
-            elif char == '-': #worker on dock
+            elif char == 'RW_d': #worker on dock
                 screen.blit(worker_docked_red,(x,y))
             x = x + 32
         x = 0
@@ -373,7 +376,7 @@ def ask(screen, question):
   "ask(screen, question) -> answer"
   pygame.font.init()
   current_string = []
-  display_box(screen, question + ": " + string.join(current_string,""))
+  display_box(screen, question + ": " + "".join(current_string))
   while 1:
     inkey = get_key()
     if inkey == pygame.K_BACKSPACE:
@@ -384,17 +387,13 @@ def ask(screen, question):
       current_string.append("_")
     elif inkey <= 127:
       current_string.append(chr(inkey))
-    display_box(screen, question + ": " + string.join(current_string,""))
-  return string.join(current_string,"")
+    display_box(screen, question + ": " + "".join(current_string))
+  return "".join(current_string)
 
 def start_game():
     start = pygame.display.set_mode((320,240))
     level = ask(start,"Select Level")
-    if level > 0:
-        return level
-    else:
-        print "ERROR: Invalid Level: "+str(level)
-        sys.exit(2)
+    return level
 
 wall = pygame.image.load('images/wall.png')
 floor = pygame.image.load('images/floor.png')
@@ -410,32 +409,41 @@ docker = pygame.image.load('images/dock.png')
 background = 255, 226, 191
 pygame.init()
 
-generator = Generator()
 level = start_game()
-
 if level == 'r':
-    level_map = generator.generate(3,5,5)
-    game = game('random', level_map)
-else:
-    game = game('levels',level)
+    generator = Generator()
+    level_map = generator.generate(2,1,1)
+    
+    game_instance = game('random', level_map)
+    state_space = StateSpace(game_instance.map)
+    solvable = state_space.solvable
 
-size = game.load_size()
+    #shortest_path = state_space.shortest_path()
+    #print(shortest_path)
+    #print("Shortest path: %d" % shortest_path)
+    
+    state_space.draw_graph()
+else:
+    game_instance = game('levels',level)
+
+
+size = game_instance.load_size()
 screen = pygame.display.set_mode(size)
 while 1:
-    if game.is_completed(): display_end(screen)
-    print_game(game.get_matrix(),screen)
+    if game_instance.is_completed(): display_end(screen)
+    print_game(game_instance.get_matrix(),screen)
     for event in pygame.event.get():
         red_pull=pygame.key.get_pressed()[pygame.K_e]
         blue_pull=pygame.key.get_pressed()[pygame.K_RSHIFT]
         if event.type == pygame.QUIT: sys.exit(0)
         elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP: game.move(Color.BLUE, 0,-1, True, blue_pull)
-            elif event.key == pygame.K_DOWN: game.move(Color.BLUE, 0,1, True, blue_pull)
-            elif event.key == pygame.K_LEFT: game.move(Color.BLUE, -1,0, True, blue_pull)
-            elif event.key == pygame.K_RIGHT: game.move(Color.BLUE, 1,0, True, blue_pull)
-            elif event.key == pygame.K_w: game.move(Color.RED, 0,-1, True, red_pull)
-            elif event.key == pygame.K_s: game.move(Color.RED, 0,1, True, red_pull)
-            elif event.key == pygame.K_a: game.move(Color.RED, -1,0, True, red_pull)
-            elif event.key == pygame.K_d: game.move(Color.RED, 1,0, True, red_pull)
+            if event.key == pygame.K_UP: game_instance.move(Color.BLUE, 0,-1, True, blue_pull)
+            elif event.key == pygame.K_DOWN: game_instance.move(Color.BLUE, 0,1, True, blue_pull)
+            elif event.key == pygame.K_LEFT: game_instance.move(Color.BLUE, -1,0, True, blue_pull)
+            elif event.key == pygame.K_RIGHT: game_instance.move(Color.BLUE, 1,0, True, blue_pull)
+            elif event.key == pygame.K_w: game_instance.move(Color.RED, 0,-1, True, red_pull)
+            elif event.key == pygame.K_s: game_instance.move(Color.RED, 0,1, True, red_pull)
+            elif event.key == pygame.K_a: game_instance.move(Color.RED, -1,0, True, red_pull)
+            elif event.key == pygame.K_d: game_instance.move(Color.RED, 1,0, True, red_pull)
             elif event.key == pygame.K_q: sys.exit(0)
     pygame.display.update()

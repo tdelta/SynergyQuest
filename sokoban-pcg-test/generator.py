@@ -43,43 +43,53 @@ class Generator():
         self.fragments = []
         self.load_fragments()
 
+    def find_floor(self, map):
+        while True:
+            y = int(random() * len(map))
+            x = int(random() * len(map[y]))
+            if map[y][x] == ' ':
+                # The position is a floor :)
+                break
+        return x, y
+
+    def count_floors(self, map):
+        return sum(sum(int(x == ' ') for x in row) for row in map)
+
     def generate(self, x, y, n_boxes):
         result = self.generate_walls(x, y)
-        x,y = 0,0
-        print(result)
+        # TODO: less floors could be possible if box is already on dock
+        while self.count_floors(result) < n_boxes*2 + 2:
+            result = self.generate_walls(x, y)
 
+        n_docks = 0
 
         for _ in range(n_boxes):
-            while True:
-                y = int(random() * len(result))
-                x = int(random() * len(result[y]))
-                if result[y][x] == ' ':
-                    # The position is a floor :)
-                    break
+            x, y = self.find_floor(result)
+            place_box_on_dock = False
+            if random() < 0.1:
+                place_box_on_dock = True
+            else:
+                # Box was not placed on a dock, need to add dock later
+                n_docks += 1
             if int(random() * 2) == 0:
                 # Blue Box
-                result[y][x] = 'S'
+                result[y][x] = 'BB_d' if place_box_on_dock else 'BB'
             else:
                 # Red Box
-                result[y][x] = '|'
+                result[y][x] = 'RB_d' if place_box_on_dock else 'RB'
  
-        while True:
-            y = int(random() * len(result))
-            x = int(random() * len(result[y]))
-            if result[y][x] == ' ':
-                # The position is on the floor :)
-                break
-        # Place Blue Worker
-        result[y][x] = '@' 
+        for _ in range(n_docks):
+            x, y = self.find_floor(result)
+            result[y][x] = 'd'
 
-        while True:
-            y = int(random() * len(result))
-            x = int(random() * len(result[y]))
-            if result[y][x] == ' ':
-                # The position is on the floor :)
-                break
+        x, y = self.find_floor(result)
+        # Place Blue Worker
+        result[y][x] = 'BW' 
+
+        x, y = self.find_floor(result)
         # Place Red Worker
-        result[y][x] = 'a'
+        result[y][x] = 'RW'
+        print(result)
         return result
 
     def generate_walls(self, x, y):
@@ -95,46 +105,34 @@ class Generator():
                     ##############################################
 
                     # TODO: Currently does not check the edges of constraints
-                    
-                    print(j,i)
-                    print("Selected fragment:")
-                    print(new_fragment.content)
-                    
+                     
                     constraint_violation = False
 
                     if i == 0:
                         if new_fragment.has_constraint(new_fragment.left):
                             # Cant put a fragment with left contraints to the left of the map
-                            print("fail 1")
                             constraint_violation = True
                     elif not new_fragment.check_left(result[j][i-1]):
-                        print("fail 2")
                         constraint_violation = True
                     elif not result[j][i-1].check_right(new_fragment):
-                        print("fail 3")
                         constraint_violation = True
                     
                     if i == x-1: 
                         if new_fragment.has_constraint(new_fragment.right):
                             # Cant put a fragment with right contraints to the right of the map
-                            print("fail 4")
                             constraint_violation = True
                     
                     if j == 0:
                         if new_fragment.has_constraint(new_fragment.above):
                             # Cant put a fragment with above contraints to the top of the map
-                            print("fail 5")
                             constraint_violation = True
                     elif not new_fragment.check_above(result[j-1][i]):
-                        print("fail 6")
                         constraint_violation = True
                     elif not result[j-1][i].check_right(new_fragment):
-                        print("fail 7")
                         constraint_violation = True
                     
                     if j == y-1 and new_fragment.has_constraint(new_fragment.below):
                         # Cant put a fragment with below contraints to the bottom of the map
-                        print("fail 8")
                         constraint_violation = True
 
                     if not constraint_violation:
