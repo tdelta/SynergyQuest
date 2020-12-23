@@ -61,8 +61,8 @@ class Worker(Entity):
 
     def move(self, x, y, level_map):
         if self.can_move(x, y, level_map):
-            self.x = x
-            self.y = y
+            self.x += x
+            self.y += y
             return True
         return False
 
@@ -394,7 +394,7 @@ def ask(screen, question):
 
 def start_game():
     start = pygame.display.set_mode((320, 240))
-    level = ask(start, "Select Level")
+    level = ask(start, "Select Level (r for random)")
     return level
 
 
@@ -427,7 +427,7 @@ if level == 'r':
 
     state_space.draw_graph()
 else:
-    game_instance = Game('levels', level)
+    game_instance = Game('levels', int(level))
 
 size = game_instance.load_size()
 screen = pygame.display.set_mode(size)
