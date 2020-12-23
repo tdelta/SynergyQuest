@@ -1,6 +1,7 @@
 import sys
 import pygame
-from copy import deepcopy
+import time
+
 from generator import Generator
 from state_space import StateSpace
 from utils import Color
@@ -63,6 +64,7 @@ class Worker(Entity):
         if self.can_move(x, y, level_map):
             self.x += x
             self.y += y
+            level_map.last_render_valid = False
             return True
         return False
 
@@ -71,14 +73,18 @@ class Worker(Entity):
         if can_push:
             box.x += x
             box.y += y
+            level_map.last_render_valid = False
             self.move(x, y, level_map)
+            level_map.last_render_valid = False
 
     def pull(self, x, y, level_map):
         can_pull, box = self.can_pull(x, y, level_map)
         if can_pull:
             box.x += x
             box.y += y
+            level_map.last_render_valid = False
             self.move(x, y, level_map)
+            level_map.last_render_valid = False
 
 
 class Box(Entity):
@@ -103,41 +109,68 @@ class Map:
         self.entities = []
         self.workers = {}
 
+        self.last_render = None
+        self.last_render_valid = False
+
     def __eq__(self, other):
         return other is not None and isinstance(other, Map) and other.__hash__() == self.__hash__()
 
     def __hash__(self):
         return hash("".join("".join(r) for r in self.render()))
 
+    def __deepcopy__(self, memodict=None):
+        copy = Map()
+        copy.grid = [x.copy() for x in self.grid]
+        copy.current_x = self.current_x
+        copy.current_y = self.current_y
+        for entity in self.entities:
+            if isinstance(entity, Box):
+                copy.entities.append(Box(entity.x, entity.y, entity.color))
+            elif isinstance(entity, Worker):
+                entity_copy = Worker(entity.x, entity.y, entity.color)
+                copy.entities.append(entity_copy)
+                copy.workers[entity_copy.color] = entity_copy
+        return copy
+
     def add_floor(self):
         self.grid[-1].append(' ')
         self.current_x += 1
+        self.last_render_valid = False
 
     def add_wall(self):
         self.grid[-1].append('#')
         self.current_x += 1
+        self.last_render_valid = False
 
     def add_dock(self):
         self.grid[-1].append('d')
         self.current_x += 1
+        self.last_render_valid = False
 
     def next_row(self):
         self.grid.append([])
         self.current_x = 0
         self.current_y += 1
+        self.last_render_valid = False
 
     def add_worker(self, color):
         self.entities.append(Worker(self.current_x, self.current_y, color))
         self.workers[color] = self.entities[-1]
+        self.last_render_valid = False
 
     def add_box(self, color):
         self.entities.append(Box(self.current_x, self.current_y, color))
+        self.last_render_valid = False
 
     def render(self):
-        grid = deepcopy(self.grid)
-        for entity in self.entities:
-            grid = entity.render(grid)
-        return grid
+        if not self.last_render_valid:
+            self.last_render = [x.copy() for x in self.grid]
+            for entity in self.entities:
+                self.last_render = entity.render(self.last_render)
+
+            self.last_render_valid = True
+
+        return self.last_render
 
     def is_completed(self):
         for entity in self.entities:
@@ -415,23 +448,34 @@ pygame.init()
 level = start_game()
 if level == 'r':
     generator = Generator()
-    level_map = generator.generate(2, 1, 1)
+    level_solvable = False
+    shortest_path = 0
+    while not level_solvable or shortest_path < 15:
+        print("Generating new map")
+        level_map = generator.generate(2, 1, 3)
 
-    game_instance = Game('random', level_map)
-    state_space = StateSpace(game_instance.map)
-    solvable = state_space.solvable
+        game_instance = Game('random', level_map)
+        state_space = StateSpace(game_instance.map)
+        level_solvable = state_space.solvable()
+        if level_solvable:
+            shortest_path = state_space.shortest_path_length()
+            print("Shortest path: %d" % shortest_path)
+        else:
+            print("Level not solvable")
 
-    # shortest_path = state_space.shortest_path()
-    # print(shortest_path)
-    # print("Shortest path: %d" % shortest_path)
-
-    state_space.draw_graph()
 else:
     game_instance = Game('levels', int(level))
 
 size = game_instance.load_size()
 screen = pygame.display.set_mode(size)
+
+for state in state_space.shortest_path():
+    print_game(state.render(), screen)
+    pygame.display.update()
+    time.sleep(1)
+
 while 1:
+    time.sleep(0.05)
     if game_instance.is_completed():
         display_end(screen)
 

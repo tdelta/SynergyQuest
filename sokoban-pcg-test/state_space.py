@@ -3,6 +3,10 @@ import networkx as nx
 import matplotlib.pyplot as plt
 from copy import deepcopy
 import multiprocessing
+from functools import reduce
+from tqdm import tqdm
+
+from generator import Generator
 
 direction_names = {
     (0, 1): "down",
@@ -37,6 +41,11 @@ def is_legal_move(state, color, x, y, pull):
     @param pull: True if the worker should pull a box
     @return: True if the move can be executed
     """
+    can_pull_before = state['map'].get_worker(color).can_pull(x, y, state['map'])[0]
+    state['map'].last_render_valid = False
+    can_pull_after = state['map'].get_worker(color).can_pull(x, y, state['map'])[0]
+    assert can_pull_after == can_pull_before
+
     if pull:
         return state['map'].get_worker(color).can_pull(x, y, state['map'])[0]
     else:
@@ -57,6 +66,7 @@ def make_move(state, color, x, y, pull):
     @param pull: True if the worker should pull a box
     @return: New state that appears after executing the move
     """
+
     new_map = deepcopy(state['map'])
     if pull:
         new_map.get_worker(color).pull(x, y, new_map)
@@ -66,8 +76,7 @@ def make_move(state, color, x, y, pull):
         else:
             new_map.get_worker(color).push(x, y, new_map)
 
-    new_state = deepcopy(state)
-    new_state['map'] = new_map
+    new_state = {'map': new_map}
     return new_state
 
 
@@ -81,16 +90,45 @@ class StateSpace:
         level_map = deepcopy(level_map)
         self.beginning = level_map
 
+        n_states = self.total_number_of_states(level_map.render())
+        self.statusbar = tqdm(total=n_states)
+
         self.state_graph.add_node(level_map, initial=True, goal=level_map.is_completed())
+        print("Traversing state graph (Statusbar uses an approximation of the number of possible states. "
+              "Sometimes not all states are reachable)")
         self.traverse_from_state({'map': level_map})
+        self.statusbar.close()
+
+    def shortest_path_length(self):
+        assert self.solvable()
+        return nx.shortest_path_length(
+            self.state_graph.to_undirected(),
+            source=self.beginning,
+            target=self.end
+        )
 
     def shortest_path(self):
-        assert self.solvable
-        return nx.algorithms.shortest_paths.generic.shortest_path_length(self.state_graph, source=self.beginning,
-                                                                         target=self.end)
+        assert self.solvable()
+        return nx.shortest_path(
+            self.state_graph.to_undirected(),
+            source=self.beginning,
+            target=self.end
+        )
 
     def solvable(self):
         return self.end is not None
+
+    @staticmethod
+    def total_number_of_states(level_map):
+        n_floors = sum(len(list(x for x in row
+                                if x in [" ", "BW", "RW", "BB", "RB", "BW_d", "RW_d", "BB_d", "RB_d", "d"]))
+                       for row in level_map)
+        n_boxes = sum(len(list(x for x in row
+                               if x in ["BB", "RB", "BB_d", "RB_d"]))
+                      for row in level_map)
+        n_entities = n_boxes + 2  # 2 workers
+        # All possible positions of all entities on empty floors
+        return reduce(lambda x, y: x*y, range(n_floors - n_entities+1, n_floors+1), 1)
 
     def draw_graph(self):
         p = multiprocessing.Process(target=self.draw_graph_blocking)
@@ -118,14 +156,16 @@ class StateSpace:
 
                     # Found new game state, add to graph and traverse from here later
                     if not next_state['map'] in self.state_graph:
+                        self.statusbar.update()
                         self.state_graph.add_node(next_state['map'], initial=False,
                                                   goal=next_state['map'].is_completed())
                         q.append(next_state)
 
                     if next_state['map'].is_completed():
-                        # Stop exploring after the first goal state, since this is also the on with the shortest path
+                        # Stop exploring after the first goal state, since this is also the one with the shortest path
                         q = []
-                        self.end = next_state['map']
+                        if self.end is None:
+                            self.end = next_state['map']
 
                     self.add_move(current_state, next_state, **move)
 
