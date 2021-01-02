@@ -43,6 +43,12 @@ namespace Editor.Validation
      */
     public class ArtAttributionChecker
     {
+        [MenuItem("SynergyQuest Tools/Validators/Is external art properly credited?")]
+        public static void CheckCorrectArtAttributionMenuItem()
+        {
+            CheckCorrectArtAttribution();
+        }
+        
         /**
          * <summary>
          * Searches the Assets/Art folders and compares the found files with the attribution notices in
@@ -59,9 +65,8 @@ namespace Editor.Validation
          * <param name="noConfirmationIfNoFindings">If true, do not display a confirmation dialog when no issues have been found</param>
          * <exception cref="ApplicationException">Thrown if art assets without proper credit are found.</exception>
          */
-        [MenuItem("SynergyQuest Tools/Validators/Is external art properly credited?")]
         public static void CheckCorrectArtAttribution(bool noConfirmationIfNoFindings = false)
-        {
+        { 
             // get a set of all external art files which have been given proper credit
             var properlyCreditedExternalArt = GetAttributedExternalArt();
             
