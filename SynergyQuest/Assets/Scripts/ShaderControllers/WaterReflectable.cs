@@ -45,6 +45,8 @@ public class WaterReflectable : MonoBehaviour
 {
     [Tooltip("Additional offset of the reflection")]
     [SerializeField] private Vector3 reflectionOffset = new Vector3(0, 0, 0);
+    [Tooltip("Scale reflection sprite")]
+    [SerializeField] private Vector3 reflectionScale = new Vector3(1, 1, 1);
     [Tooltip("Additional offset for the spawning position of the water ripples.")]
     [SerializeField] private Vector3 ripplesOffset = new Vector3(0, 0, 0);
     [Tooltip("Whether water ripple particles shall be spawned or not.")]
@@ -73,6 +75,7 @@ public class WaterReflectable : MonoBehaviour
         mirrorObject.layer = LayerMask.NameToLayer("WaterReflection");
         mirrorObject.transform.parent = this.gameObject.transform;
         mirrorObject.transform.localPosition = new Vector3(0, -spriteHeight, 0) + reflectionOffset;
+        mirrorObject.transform.localScale = reflectionScale;
 
         if (enableRipples)
         {
