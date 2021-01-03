@@ -23,7 +23,9 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
+using System;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 /**
  * <summary>
@@ -36,18 +38,20 @@ using UnityEngine;
  */
 public class PuddleShaderController : MonoBehaviour
 {
+    [SerializeField] private Color waterColor = ColorUtils.ToRGBA(0x206547);
+
     private Renderer _renderer;
     private WaterReflectionCamera _waterReflectionCamera;
 
     private MaterialPropertyBlock _materialPropertiesBuffer = null;
     
     private static readonly int ReflectedRenderTextureProperty = Shader.PropertyToID("_ReflectedRenderTexture");
+    private static readonly int WaterColor = Shader.PropertyToID("_WaterColor");
 
     private void Awake()
     {
-        _renderer = GetComponent<Renderer>();
         _waterReflectionCamera = WaterReflectionCamera.Instance;
-        _materialPropertiesBuffer = new MaterialPropertyBlock();
+        EnsureReady();
     }
     
     private void OnEnable()
@@ -60,10 +64,33 @@ public class PuddleShaderController : MonoBehaviour
         _waterReflectionCamera.OnRenderTextureUpdated -= OnRenderTextureUpdated;
     }
 
+    private void OnValidate()
+    {
+        EnsureReady();
+        OnRenderTextureUpdated();
+    }
+
     private void OnRenderTextureUpdated()
     {
         _renderer.GetPropertyBlock(_materialPropertiesBuffer);
-        _materialPropertiesBuffer.SetTexture(ReflectedRenderTextureProperty, _waterReflectionCamera.RenderTexture);
+        if (!ReferenceEquals(_waterReflectionCamera, null))
+        {
+            _materialPropertiesBuffer.SetTexture(ReflectedRenderTextureProperty, _waterReflectionCamera.RenderTexture);
+        }
+        _materialPropertiesBuffer.SetColor(WaterColor, waterColor);
         _renderer.SetPropertyBlock(_materialPropertiesBuffer);
+    }
+    
+    private void EnsureReady()
+    {
+        if (ReferenceEquals(_materialPropertiesBuffer, null))
+        {
+            _materialPropertiesBuffer = new MaterialPropertyBlock();
+        }
+
+        if (ReferenceEquals(_renderer, null))
+        {
+            _renderer = GetComponent<Renderer>();
+        }
     }
 }

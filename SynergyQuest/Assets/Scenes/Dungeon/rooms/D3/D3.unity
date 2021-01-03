@@ -2193,6 +2193,7 @@ GameObject:
   - component: {fileID: 3259863843287886119}
   - component: {fileID: 343129517711830943}
   - component: {fileID: 343129517711830942}
+  - component: {fileID: 343129517711830944}
   m_Layer: 10
   m_Name: Tilemap
   m_TagString: Untagged
@@ -2235,6 +2236,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   value: 0
   isPersistentAcrossScenes: 0
+--- !u!114 &343129517711830944
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 343129517711830941}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31bd5012e77f4abaa78b9114a900d44b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!19719996 &890659176966990388
 TilemapCollider2D:
   m_ObjectHideFlags: 0
@@ -6130,7 +6143,7 @@ TilemapRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: 786ff693d71ee049fbd35855293d77c5, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

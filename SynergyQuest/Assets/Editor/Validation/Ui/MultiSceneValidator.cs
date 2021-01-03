@@ -117,7 +117,7 @@ namespace Editor.Validation
                         if (autofix && issue.CanAutofix)
                         {
                             issue.Autofix();
-                            Debug.LogWarning($"AUTOFIXED {baseMsg}");
+                            Debug.Log($"AUTOFIXED {baseMsg}");
                         }
 
                         else

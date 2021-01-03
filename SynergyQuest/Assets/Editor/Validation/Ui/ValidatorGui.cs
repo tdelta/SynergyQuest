@@ -32,7 +32,7 @@ namespace Editor.Validation.Ui
                         if (autofix && issue.CanAutofix)
                         {
                             issue.Autofix();
-                            Debug.LogWarning($"AUTOFIXED {issue.GetLogText()}");
+                            Debug.Log($"AUTOFIXED {issue.GetLogText()}");
                         }
 
                         else
