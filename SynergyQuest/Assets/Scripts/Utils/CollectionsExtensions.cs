@@ -64,6 +64,24 @@ public static class CollectionsExtensions
             .Where(selected => !ReferenceEquals(selected, null));
     }
 
+    public static void ForEach<T>(this IEnumerable<T> self, Action<T> action)
+    {
+        foreach (var item in self)
+        {
+            action.Invoke(item);
+        }
+    }
+    
+    public static void ForEach<T>(this IEnumerable<T> self, Action<T, int> action)
+    {
+        int count = 0;
+        foreach (var item in self)
+        {
+            action.Invoke(item, count);
+            count++;
+        }
+    }
+
     /**
      * <summary>
      * Returns all but the last element of a collection.

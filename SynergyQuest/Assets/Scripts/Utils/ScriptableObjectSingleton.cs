@@ -73,7 +73,7 @@ public abstract class ScriptableObjectSingleton<T, InstantiateResourceWhenMissin
     {
         // We assume, that an instance of the scriptable object is placed in the resources folder, and that it
         // has the same name as its type:
-        var name = typeof(T).ToString();
+        var name = typeof(T).Name;
         
         // We load and return this instance.
         var instance = Resources.Load<T>(name);
