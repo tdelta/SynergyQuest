@@ -23,7 +23,7 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -85,6 +85,12 @@ public class ControllerInput: Input
 
     // Hint to controller, what inputs are currently expected
     private InputMode _inputMode = InputMode.Normal;
+    /**
+     * <summary>
+     * Set input mode of controller, see <see cref="InputMode"/>.
+     * If the controller is currently not connected, the current mode will be sent once it reconnects.
+     * </summary>
+     */
     public InputMode InputMode
     {
         get => _inputMode;
@@ -93,11 +99,9 @@ public class ControllerInput: Input
             _inputMode = value;
 
             if (IsConnected())
-                // TODO: What if not connected? Handled by reconnect?
             {
                 // When input mode is changed, controller must be informed
-                var msg = new Message.InputModeChangedMessage(value);
-                SendMessage(msg);
+                SendInputMode();
             }
         }
     }
@@ -222,6 +226,7 @@ public class ControllerInput: Input
         return _buttonPressStates[b].GetValueUp();
     }
 
+    // FIXME: Make PlayerInfo a property like InputMode
     public void UpdatePlayerInfo(PlayerInfo playerInfo)
     {
         this._playerInfo = playerInfo;
@@ -243,15 +248,32 @@ public class ControllerInput: Input
     }
 
     /**
+     * <summary>
      * Sends the list of currently enabled buttons to the controller.
-     * See also `EnableButtons`.
+     * See also <see cref="EnableButtons"/>.
      * 
-     * @throws ApplicationError if the controller is currently not connected
+     * This method is for internal use only, since it does not check whether we are currently connected and raises
+     * exceptions if not.
+     * </summary>
+     * <exception cref="ApplicationException">if the controller is currently not connected</exception>
      */
     private void SendEnabledButtons()
     {
-        // TODO: Check if connected?
         var msg = new Message.SetEnabledButtonsMessage(_enabledButtons.ToList());
+        SendMessage(msg);
+    }
+
+    /**
+     * <summary>
+     * Sends the current input mode (see <see cref="InputMode"/>) to the controller.
+     * This method is for internal use only, since it does not check whether we are currently connected and raises
+     * exceptions if not.
+     * </summary>
+     * <exception cref="ApplicationException">if the controller is currently not connected</exception>
+     */
+    private void SendInputMode()
+    {
+        var msg = new Message.InputModeChangedMessage(InputMode);
         SendMessage(msg);
     }
     
@@ -292,18 +314,32 @@ public class ControllerInput: Input
     }
     
     /**
+     * <summary>
      * Sends the list of buttons which are currently cooling down to the controller.
      * See also `SetCooldownButtons`.
-     * 
-     * @throws ApplicationError if the controller is currently not connected
+     * </summary>
+     * <exception cref="ApplicationException">if the controller is currently not connected</exception>
      */
     private void SendCooldownButtons()
     {
-        // TODO: Check if connected ?
         var msg = new Message.SetCooldownButtonsMessage(_cooldownButtons.ToList());
         SendMessage(msg);
     }
-    
+
+    /**
+     * <summary>
+     * Sends the set player color to the controller.
+     * This method is for internal use only, since it does not check whether we are currently connected and raises
+     * exceptions if not.
+     * </summary>
+     * <exception cref="ApplicationException">if the controller is currently not connected</exception>
+     */
+    private void SendPlayerColor()
+    {
+        var msg = new Message.PlayerColorMessage(_playerColor);
+        SendMessage(msg);
+    }
+
     /**
      * Tells the controller that certain buttons are still enabled, but have currently no effect, since they belong
      * to an action which has a cooldown timer.
@@ -345,16 +381,16 @@ public class ControllerInput: Input
 
     /**
      * Tells the controller, which color has been assigned to its player.
-     *
-     * @throws ApplicationError if the controller is currently not connected
+     * If not connected, the information will be resent, once the controller reconnects.
      */
     public void SetColor(PlayerColor color)
     {
-        // TODO: Check if connected ?
         _playerColor = color;
-        
-        var msg = new Message.PlayerColorMessage(color);
-        SendMessage(msg);
+
+        if (IsConnected())
+        {
+            SendPlayerColor();
+        }
     }
 
     /**
@@ -394,6 +430,8 @@ public class ControllerInput: Input
      * Tells the controller, which menu actions are currently available in the game.
      * For example, when the game can be paused, MenuAction.PauseGame should be enabled.
      *
+     * FIXME: Make this method non-public. Maybe there is some way to use "friend classes" like in C++
+     *
      * @throws ApplicationError if the controller is currently not connected
      */
     public void SetEnabledMenuActions(HashSet<MenuAction> enabledActions)
@@ -412,6 +450,8 @@ public class ControllerInput: Input
      * Tells the controller, in which state the game currently is.
      * For example, if the game is displaying the lobby and then starts, it should tell the controllers here
      * that the game is now in the state `GameState.Started`.
+     * 
+     * FIXME: Make this method non-public. Maybe there is some way to use "friend classes" like in C++
      *
      * @throws ApplicationError if the controller is currently not connected
      */
@@ -440,6 +480,8 @@ public class ControllerInput: Input
     /**
      * `ControllerServer` calls this method to inform this class, whether the underlying network connection is currently
      * established or not. Do NOT call it yourself.
+     * 
+     * FIXME: Make this method non-public. Maybe there is some way to use "friend classes" like in C++
      */
     public void SetStatus(ConnectionStatus status)
     {
@@ -450,10 +492,10 @@ public class ControllerInput: Input
         {
             case ConnectionStatus.Connected:
                 // # Resend state specific to this controller:
-                SetColor(_playerColor);
+                SendPlayerColor();
                 SendEnabledButtons();
                 SendCooldownButtons();
-                InputMode = InputMode;
+                SendInputMode();
                 SendPlayerInfo();
                 
                 OnReconnect?.Invoke(this);
@@ -485,6 +527,8 @@ public class ControllerInput: Input
      * You should NOT call it yourself.
      *
      * It caches the inputs received from a controller.
+     * 
+     * FIXME: Make this method non-public. Maybe there is some way to use "friend classes" like in C++
      */
     public void HandleMessage(Message baseMsg)
     {
