@@ -23,7 +23,7 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
-﻿using System.Collections.Generic;
+ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -173,6 +173,7 @@ public class InteractionSpeechBubble : MonoBehaviour
             {Button.Press, ("Press", new Color(0.957f, 0.318f, 0.118f))},
             {Button.Read, ("Read", new Color(1f, 0.702f, 0f))},
             {Button.Open, ("Open", new Color(0.76f, 0.094f, 0.357f))},
-            {Button.Attack, ("Attack", new Color(0.898f, 0.224f, 0.208f))}
+            {Button.Attack, ("Attack", new Color(0.898f, 0.224f, 0.208f))},
+            {Button.JumpBack, ("Jump", new Color(0.408f, 0.624f, 0.012f))}
         };
 }
