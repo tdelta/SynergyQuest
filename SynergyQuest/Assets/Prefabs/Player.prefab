@@ -101,11 +101,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damage: 1
   knockback: 4
+  knockbackBypassesIgnoreList: 1
   frequency: 1
   customAttacker: {fileID: 4270148256400962766}
   ignoredTargetTags:
-  - Player
-  knockbackNoDamageTargetTags:
   - Player
 --- !u!1 &645781148
 GameObject:
@@ -209,11 +208,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damage: 1
   knockback: 4
+  knockbackBypassesIgnoreList: 1
   frequency: 1
   customAttacker: {fileID: 4270148256400962766}
   ignoredTargetTags:
-  - Player
-  knockbackNoDamageTargetTags:
   - Player
 --- !u!1 &1684417763
 GameObject:
@@ -317,11 +315,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damage: 1
   knockback: 4
+  knockbackBypassesIgnoreList: 1
   frequency: 1
   customAttacker: {fileID: 4270148256400962766}
   ignoredTargetTags:
-  - Player
-  knockbackNoDamageTargetTags:
   - Player
 --- !u!1 &1894431301
 GameObject:
@@ -424,11 +421,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damage: 1
   knockback: 4
+  knockbackBypassesIgnoreList: 1
   frequency: 1
   customAttacker: {fileID: 4270148256400962766}
   ignoredTargetTags:
-  - Player
-  knockbackNoDamageTargetTags:
   - Player
 --- !u!1 &185187689432217876
 GameObject:
@@ -1338,7 +1334,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damageBaseColor: {r: 1, g: 0.149, b: 0, a: 1}
   healingBaseColor: {r: 0, g: 1, b: 0, a: 1}
-  particlesPrefab: {fileID: 0}
+  bloodParticlesPrefab: {fileID: 0}
   bloodStainPrefab: {fileID: 0}
   tintFlashController: {fileID: 880494710090650051}
   damageSounds: {fileID: 2065851212643451053}
@@ -1430,6 +1426,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   reflectionOffset: {x: 0, y: 0, z: 0}
+  reflectionScale: {x: 1, y: 1, z: 1}
   ripplesOffset: {x: 0, y: 0.1, z: 0}
   enableRipples: 1
 --- !u!114 &1319211454673280016

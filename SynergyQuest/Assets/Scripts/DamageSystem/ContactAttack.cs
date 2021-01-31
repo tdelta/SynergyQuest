@@ -26,6 +26,7 @@
 using System.Collections.Generic;
 using DamageSystem;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 /**
  * <summary>
@@ -36,14 +37,13 @@ public class ContactAttack : MonoBehaviour
 {
     [SerializeField, Tooltip("Negative values heal!")] private int damage = 1;
     [SerializeField, Tooltip("Units by which target will be knocked back.")] private float knockback = 4;
-
+    [SerializeField, Tooltip("Bypass the ignore list for knock backs")] private bool knockbackBypassesIgnoreList = false;
     [SerializeField, Tooltip("Frequency of attacks (in Hz), if target stays in contact with this object. No repeated attack if set to 0.")] private float frequency = 1;
     [SerializeField, Tooltip("If this is set, the set object will be identified as attacker instead of this.gameObject")] private GameObject customAttacker = default;
     [SerializeField, Tooltip("Targets with these tags will not receive attacks when coming in contact")]
     private string[] ignoredTargetTags = new string[0];
 
-    [SerializeField, Tooltip("Targets with these tags will be knocked back while receiving no damage")]
-    private string[] knockbackNoDamageTargetTags = new string[0];
+    
     /**
      * <summary>
      * In the inspector, we can only set <see cref="ignoredTargetTags"/> as an array.
@@ -52,14 +52,6 @@ public class ContactAttack : MonoBehaviour
      */
     private HashSet<string> _optimizedIgnoredTargetTags;
 
-    /**
-     * <summary>
-     * In the inspector, we can only set <see cref="knockbackNoDamageTargetTags"/> as an array.
-     * Thus, at runtime, we compute an optimized hashset from the array and store it here.
-     * </summary>
-     */
-    private HashSet<string> _optimizedKnockbackTargetTags;
-    
     /**
      * <summary>
      * Game objects subject to attack that currently in contact with this object (keys).
@@ -76,7 +68,6 @@ public class ContactAttack : MonoBehaviour
     {
         // compute an optimized version of the collection of tags of objects which shall knocked back or not be attacked 
         _optimizedIgnoredTargetTags = new HashSet<string>(ignoredTargetTags);
-        _optimizedKnockbackTargetTags = new HashSet<string>(knockbackNoDamageTargetTags);
         
         // if no custom attacker is set in the inspector, set the field to a true null value
         // (otherwise it seems we get some weird Unity thing that only compares by == to null)
@@ -104,8 +95,7 @@ public class ContactAttack : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D other)
     {
         // if the colliding object is an Attackable and its tag is not ignored or it is able to be knocked back ...
-        if (other.TryGetComponent(out Attackable attackable) && (!_optimizedIgnoredTargetTags.Contains(other.tag) 
-                                                                 || _optimizedKnockbackTargetTags.Contains(other.tag)))
+        if (other.TryGetComponent(out Attackable attackable) && (!_optimizedIgnoredTargetTags.Contains(other.tag) || knockbackBypassesIgnoreList))
         {
             //... then we attack it
             PerformAttack(attackable, other);
@@ -148,7 +138,7 @@ public class ContactAttack : MonoBehaviour
         {
             var effectiveDamage = damage;
             // If the target is a knockback-only target, dont apply damage
-            if (_optimizedKnockbackTargetTags.Contains(targetCollider.tag))
+            if (knockbackBypassesIgnoreList && _optimizedIgnoredTargetTags.Contains(targetCollider.tag))
             {
                 effectiveDamage = 0;
             }
