@@ -59,6 +59,7 @@ public class ContactAttack : MonoBehaviour
      * </summary>
      */
     private HashSet<string> _optimizedKnockbackTargetTags;
+    
     /**
      * <summary>
      * Game objects subject to attack that currently in contact with this object (keys).
@@ -145,34 +146,24 @@ public class ContactAttack : MonoBehaviour
         // Make sure the attacker does not attack itself
         if (!ReferenceEquals(target.gameObject ,attacker))
         {
-            
-            // Decide between knockback or damage attack
+            var effectiveDamage = damage;
+            // If the target is a knockback-only target, dont apply damage
             if (_optimizedKnockbackTargetTags.Contains(targetCollider.tag))
             {
-                target.Attack(
-                    new WritableAttackData
-                    {
-                        Damage = 0,
-                        Knockback = 7,
-                        Attacker = attacker,
-                        AttackDirection = Optional<Vector2>.Some(attackDirection)
-                    }
-                );
-            }
-            else
-            {
-                target.Attack(
-                    new WritableAttackData
-                    {
-                        Damage = damage,
-                        Knockback = knockback,
-                        Attacker = attacker,
-                        AttackDirection = Optional<Vector2>.Some(attackDirection)
-                    }
-                );
+                effectiveDamage = 0;
             }
             
+            target.Attack(
+                new WritableAttackData
+                {
+                    Damage = effectiveDamage,
+                    Knockback = knockback,
+                    Attacker = attacker,
+                    AttackDirection = Optional<Vector2>.Some(attackDirection)
+                }
+            );
         }
+        
         _currentTargets[target.gameObject] = (target, Time.time);
     }
 }
