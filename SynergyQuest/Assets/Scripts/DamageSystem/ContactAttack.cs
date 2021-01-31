@@ -42,6 +42,8 @@ public class ContactAttack : MonoBehaviour
     [SerializeField, Tooltip("Targets with these tags will not receive attacks when coming in contact")]
     private string[] ignoredTargetTags = new string[0];
 
+    [SerializeField, Tooltip("Targets with these tags will be knocked back while receiving no damage")]
+    private string[] knockbackNoDamageTargetTags = new string[0];
     /**
      * <summary>
      * In the inspector, we can only set <see cref="ignoredTargetTags"/> as an array.
@@ -50,6 +52,13 @@ public class ContactAttack : MonoBehaviour
      */
     private HashSet<string> _optimizedIgnoredTargetTags;
 
+    /**
+     * <summary>
+     * In the inspector, we can only set <see cref="knockbackNoDamageTargetTags"/> as an array.
+     * Thus, at runtime, we compute an optimized hashset from the array and store it here.
+     * </summary>
+     */
+    private HashSet<string> _optimizedKnockbackTargetTags;
     /**
      * <summary>
      * Game objects subject to attack that currently in contact with this object (keys).
@@ -64,8 +73,9 @@ public class ContactAttack : MonoBehaviour
 
     private void Awake()
     {
-        // compute an optimized version of the collection of tags of objects which shall not be attacked
+        // compute an optimized version of the collection of tags of objects which shall knocked back or not be attacked 
         _optimizedIgnoredTargetTags = new HashSet<string>(ignoredTargetTags);
+        _optimizedKnockbackTargetTags = new HashSet<string>(knockbackNoDamageTargetTags);
         
         // if no custom attacker is set in the inspector, set the field to a true null value
         // (otherwise it seems we get some weird Unity thing that only compares by == to null)
@@ -92,8 +102,9 @@ public class ContactAttack : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        // if the colliding object is an Attackable and its tag is not ignored...
-        if (other.TryGetComponent(out Attackable attackable) && !_optimizedIgnoredTargetTags.Contains(other.tag))
+        // if the colliding object is an Attackable and its tag is not ignored or it is able to be knocked back ...
+        if (other.TryGetComponent(out Attackable attackable) && (!_optimizedIgnoredTargetTags.Contains(other.tag) 
+                                                                 || _optimizedKnockbackTargetTags.Contains(other.tag)))
         {
             //... then we attack it
             PerformAttack(attackable, other);
@@ -130,17 +141,38 @@ public class ContactAttack : MonoBehaviour
         // ReSharper disable once Unity.NoNullCoalescing
         var attacker = customAttacker ?? this.gameObject;
         var attackDirection = (Vector2) (targetCollider.transform.position - attacker.transform.position).normalized;
-
-        target.Attack(
-            new WritableAttackData
+        
+        // Make sure the attacker does not attack itself
+        if (!ReferenceEquals(target.gameObject ,attacker))
+        {
+            
+            // Decide between knockback or damage attack
+            if (_optimizedKnockbackTargetTags.Contains(targetCollider.tag))
             {
-                Damage = damage,
-                Knockback = knockback,
-                Attacker = attacker,
-                AttackDirection = Optional<Vector2>.Some(attackDirection)
+                target.Attack(
+                    new WritableAttackData
+                    {
+                        Damage = 0,
+                        Knockback = 7,
+                        Attacker = attacker,
+                        AttackDirection = Optional<Vector2>.Some(attackDirection)
+                    }
+                );
             }
-        );
-
+            else
+            {
+                target.Attack(
+                    new WritableAttackData
+                    {
+                        Damage = damage,
+                        Knockback = knockback,
+                        Attacker = attacker,
+                        AttackDirection = Optional<Vector2>.Some(attackDirection)
+                    }
+                );
+            }
+            
+        }
         _currentTargets[target.gameObject] = (target, Time.time);
     }
 }

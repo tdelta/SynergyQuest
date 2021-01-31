@@ -105,6 +105,8 @@ MonoBehaviour:
   customAttacker: {fileID: 4270148256400962766}
   ignoredTargetTags:
   - Player
+  knockbackNoDamageTargetTags:
+  - Player
 --- !u!1 &645781148
 GameObject:
   m_ObjectHideFlags: 0
@@ -210,6 +212,8 @@ MonoBehaviour:
   frequency: 1
   customAttacker: {fileID: 4270148256400962766}
   ignoredTargetTags:
+  - Player
+  knockbackNoDamageTargetTags:
   - Player
 --- !u!1 &1684417763
 GameObject:
@@ -317,6 +321,8 @@ MonoBehaviour:
   customAttacker: {fileID: 4270148256400962766}
   ignoredTargetTags:
   - Player
+  knockbackNoDamageTargetTags:
+  - Player
 --- !u!1 &1894431301
 GameObject:
   m_ObjectHideFlags: 0
@@ -421,6 +427,8 @@ MonoBehaviour:
   frequency: 1
   customAttacker: {fileID: 4270148256400962766}
   ignoredTargetTags:
+  - Player
+  knockbackNoDamageTargetTags:
   - Player
 --- !u!1 &185187689432217876
 GameObject:
