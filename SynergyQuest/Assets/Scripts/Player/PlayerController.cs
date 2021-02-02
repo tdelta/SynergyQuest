@@ -438,6 +438,15 @@ public class PlayerController : EntityController
     {
         _vertical = (enableVertical) ? Input.GetVertical() : 0;
         _horizontal = (enableHorizontal) ? Input.GetHorizontal() : 0;
+        
+        // Scale movement speed by the input axis value and the passed time to get a delta which must be applied to the current position
+        Vector2 deltaPosition = new Vector2(
+            _horizontal,
+            _vertical
+        ) * (speed * Time.deltaTime);
+        
+        Animator.SetFloat(SpeedProperty, deltaPosition.magnitude);
+
 
         // If we are pulling a box and trying to move in the pulling direction, we instruct the box to pull
         if (_playerState == PlayerState.pulling && DoesMoveInPullDirection())
@@ -448,11 +457,7 @@ public class PlayerController : EntityController
         // Otherwise, move normally
         else
         {
-            // Scale movement speed by the input axis value and the passed time to get a delta which must be applied to the current position
-            Vector2 deltaPosition = new Vector2(
-                _horizontal,
-                _vertical
-            ) * (speed * Time.deltaTime);
+            
 
             if (!Mathf.Approximately(deltaPosition.x, 0.0f) || !Mathf.Approximately(deltaPosition.y, 0.0f)) {
                 _lookDirection.Set(deltaPosition.x, deltaPosition.y);
@@ -461,7 +466,6 @@ public class PlayerController : EntityController
 
             Animator.SetFloat(LookXProperty, _lookDirection.x);
             Animator.SetFloat(LookYProperty, _lookDirection.y);
-            Animator.SetFloat(SpeedProperty, deltaPosition.magnitude);
             
             PhysicsEffects.MoveBody(
                 Rigidbody2D.position + deltaPosition
