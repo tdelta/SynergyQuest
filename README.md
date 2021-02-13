@@ -55,6 +55,7 @@ The game code (excluding engine) and some assets have been originally developed 
 * Marc Arnold - [@m-arnold](https://github.com/m-arnold)
 * Martin Kerscher - [@maruker](https://github.com/maruker)
 * Anton Haubner - [@ahbnr](https://github.com/ahbnr)
+* David Heck - [@heckstrahler](https://github.com/heckstrahler)
 
 The main dungeon graphics stem from the mobile roguelike game
 [Shattered Pixel Dungeon](https://github.com/00-Evan/shattered-pixel-dungeon)

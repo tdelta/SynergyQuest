@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -276,7 +276,7 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 39.45
+  m_fontSize: 34.65
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -507,6 +507,9 @@ MonoBehaviour:
     *
     Anton Haubner (<u><link="https://github.com/ahbnr">github.com/ahbnr</link></u>)
 
+    *
+    David Heck (<u><link="https://github.com/heckstrahler">github.com/heckstrahler</link></u>)
+
 
     using
     the Unity engine: <u><link="https://unity.com/">unity.com</link></u>
@@ -558,7 +561,7 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 44
+  m_fontSize: 45.2
   m_fontSizeBase: 50
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -599,11 +602,11 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 338622099}
-    characterCount: 783
+    characterCount: 819
     spriteCount: 0
-    spaceCount: 118
-    wordCount: 125
-    linkCount: 10
+    spaceCount: 122
+    wordCount: 130
+    linkCount: 11
     lineCount: 23
     pageCount: 1
     materialCount: 1
@@ -819,7 +822,7 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 39.45
+  m_fontSize: 34.65
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1960,8 +1963,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1432961792}
   m_HandleRect: {fileID: 1432961791}
   m_Direction: 2
-  m_Value: 1
-  m_Size: 0.65909564
+  m_Value: 1.0000002
+  m_Size: 0.5933406
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -2253,7 +2256,7 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 39.45
+  m_fontSize: 34.65
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -2360,8 +2363,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 751.5253, y: 0}
-  m_SizeDelta: {x: 1503.0507, y: 0}
+  m_AnchoredPosition: {x: 821.28723, y: 0}
+  m_SizeDelta: {x: 1642.5745, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1700427544
 MonoBehaviour:

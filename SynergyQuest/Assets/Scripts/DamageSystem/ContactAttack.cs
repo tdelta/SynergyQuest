@@ -6,6 +6,7 @@
 //   Martin Kerscher (martin_x@live.de)
 //   Jonas Belouadi  (jonas.belouadi@posteo.net)
 //   Anton W Haubner (anton.haubner@outlook.de)
+//   David Heck (david@heck.info)
 // 
 // This program is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the Free

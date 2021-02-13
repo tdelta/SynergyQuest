@@ -1339,7 +1339,7 @@ MonoBehaviour:
   tintFlashController: {fileID: 880494710090650051}
   damageSounds: {fileID: 2065851212643451053}
   physicsEffects: {fileID: 1730820394476172617}
-  knockbackReductionWhenNoDamage: 0.5
+  knockbackReductionWhenNoDamage: 1
 --- !u!114 &5898362498211708338
 MonoBehaviour:
   m_ObjectHideFlags: 0
