@@ -58,12 +58,17 @@ public class LobbyMenuUi : MonoBehaviour
     [SerializeField] private JoinedPlayerPanel joinedPlayerPanelPrefab = default;
     [SerializeField] private GameObject additionalAddressesPanel = default;
     [SerializeField] private TextMeshProUGUI additionalAddressesLabel = default;
+    [SerializeField, Tooltip("Seconds until a button will appear, which allows the users to list all local addresses.")] private float secondsUntilNotWorkingButton = 30.0f;
     
     // minimum number of players to start the game
     [SerializeField] private int _minNumPlayers = 2;
 
-    // Local IPs which are used to build the displayed addresses.
-    // This field is set as a parameter by `SceneController` when loading this scene.
+    /**
+     * <summary>
+     * Local IPs which are used to build the displayed addresses.
+     * This field is set as a parameter by <see cref="SceneController"/> when loading this scene.
+     * </summary>
+     */
     public List<string> IPs;
 
     // if true, all local addresses are shown. See also `OnNotWorkingButton`
@@ -129,7 +134,7 @@ public class LobbyMenuUi : MonoBehaviour
      */
     private IEnumerator MakeNotWorkingButtonVisible()
     {
-        yield return new WaitForSeconds(5.0f);
+        yield return new WaitForSeconds(secondsUntilNotWorkingButton);
         notWorkingButton.gameObject.SetActive(true);
     }
 

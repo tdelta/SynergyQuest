@@ -23,7 +23,7 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
-﻿using UnityEngine;
+ using UnityEngine;
 
 /**
  * Controls the UI of a screen which offers the player to close the game or abort.

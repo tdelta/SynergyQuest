@@ -42,4 +42,9 @@ public class MainMenuScene : MonoBehaviour
     {
         SceneController.Instance.LoadCredits();
     }
+
+    public void OnExitButtonPressed()
+    {
+        SceneController.Instance.QuitGame();
+    }
 }

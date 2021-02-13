@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -314,6 +314,7 @@ MonoBehaviour:
     type: 3}
   additionalAddressesPanel: {fileID: 1516012894}
   additionalAddressesLabel: {fileID: 425394517}
+  secondsUntilNotWorkingButton: 30
   _minNumPlayers: 2
   IPs: []
 --- !u!1 &182623622
@@ -1901,7 +1902,7 @@ MonoBehaviour:
   m_ChildAlignment: 0
   rows: 1
   columns: 0
-  cellSize: {x: Infinity, y: 412.76282}
+  cellSize: {x: Infinity, y: 306.8356}
   spacing: {x: 30, y: 0}
   fitType: 3
 --- !u!114 &1059066698
@@ -2414,7 +2415,7 @@ MonoBehaviour:
   m_ChildAlignment: 0
   rows: 3
   columns: 1
-  cellSize: {x: 1087.0247, y: 175.09734}
+  cellSize: {x: 1376.4484, y: 135.86504}
   spacing: {x: 0, y: 0}
   fitType: 3
 --- !u!114 &1764919246
