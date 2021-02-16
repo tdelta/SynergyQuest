@@ -23,7 +23,7 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
-﻿using System;
+ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using UnityEngine;
@@ -288,7 +288,7 @@ public class ControllerServer : BehaviourSingleton<ControllerServer>
                     name, 
                     connectionId,
                     websocketId,
-                    newPlayerId => new ControllerInput(newPlayerId, name, new PlayerInfo(), this)
+                    newPlayerId => new ControllerInput(newPlayerId, name, this)
                 );
                 newInput.SetStatus(ConnectionStatus.Connected);
                 

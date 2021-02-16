@@ -37,8 +37,18 @@ namespace DamageSystem
      * </remarks>
      */
     [RequireComponent(typeof(Attackable))]
+
     public class Health : MonoBehaviour
     {
+        
+        private IHealthSaver _healthSaver = new DummyHealthSaver();
+
+        public void Init(IHealthSaver healthSaver)
+        {
+            _healthSaver = healthSaver;
+            _healthSaver.InitHealthPoints(maxValue);
+        }
+        
         [SerializeField, Tooltip("Maximum health points")] private int maxValue = 1;
         public int MaxValue
         {
@@ -60,10 +70,10 @@ namespace DamageSystem
          */
         public int Value
         {
-            get => _value;
+            get => _healthSaver.HealthPoints;
             private set
             {
-                _value = value;
+                _healthSaver.HealthPoints = value;
                 if (value > maxValue)
                 {
                     Value = maxValue;
@@ -76,8 +86,7 @@ namespace DamageSystem
                 }
             }
         }
-        private int _value = 0;
-
+        
         public bool IsDead => Value <= 0;
 
         /**
@@ -100,7 +109,7 @@ namespace DamageSystem
 
         private void Awake()
         {
-            _value = maxValue;
+            _healthSaver.InitHealthPoints(maxValue);
             _attackable = GetComponent<Attackable>();
         }
 

@@ -193,6 +193,11 @@ public class PlayerController : EntityController
     public void Init(PlayerData data)
     {
         _data = data;
+        _health.Init(_data);
+        
+        // These callbacks have to be set after the health component has the correct data
+        _health.OnHealthChanged += OnHealthChanged;
+        _health.OnDeath += OnDeath;
     }
 
     protected override void Awake()
@@ -207,7 +212,6 @@ public class PlayerController : EntityController
         spawnable = GetComponent<Spawnable>();
         
         _health = GetComponent<Health>();
-        _health.MaxValue = PlayerInfo.MAX_HEALTH_POINTS;
     }
 
     private void OnEnable()
@@ -217,9 +221,7 @@ public class PlayerController : EntityController
         _throwable.OnLanded += OnLanded;
 
         spawnable.OnRespawn += OnRespawn;
-
-        _health.OnHealthChanged += OnHealthChanged;
-        _health.OnDeath += OnDeath;
+        
         attackable.OnPendingAttack += OnPendingAttack;
         attackable.OnAttack += OnAttack;
     }
@@ -254,9 +256,6 @@ public class PlayerController : EntityController
 
             PlayerDataKeeper.Instance.RegisterExistingInstance(this, localInput);
         }
-        
-        // Tell the controller about the initial health points
-        _data.HealthPoints = _health.Value;
         
         coinGauge.Init(this);
 
@@ -333,7 +332,6 @@ public class PlayerController : EntityController
 
     private void OnHealthChanged(int value)
     {
-        _data.HealthPoints = value;
         DisplayLifeGauge();
     }
 
@@ -392,7 +390,7 @@ public class PlayerController : EntityController
                 0
             );
         
-        this.lifeGauge.GetComponent<LifeGauge>().DrawLifeGauge(_health.Value, PlayerInfo.MAX_HEALTH_POINTS);
+        this.lifeGauge.GetComponent<LifeGauge>().DrawLifeGauge(_health.Value, _health.MaxValue);
     }
     
     private void Attack()

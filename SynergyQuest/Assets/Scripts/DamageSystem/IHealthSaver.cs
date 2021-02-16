@@ -6,6 +6,7 @@
 //   Martin Kerscher (martin_x@live.de)
 //   Jonas Belouadi  (jonas.belouadi@posteo.net)
 //   Anton W Haubner (anton.haubner@outlook.de)
+//   David Heck (david@heck.info)
 // 
 // This program is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the Free
@@ -23,32 +24,34 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
-using System;
+namespace DamageSystem
 
 /**
- * Information about the player that is synchronized with the controller web app.
- *
- * To synchronize an additional field, add it to the PlayerInfo interface in ControllerClient.ts
- * and make sure ControllerInput.UpdatePlayerInfo is called (maybe from the PlayerData class).
+ * <summary>
+ * Saves the health points
+ * </summary>
+ * <remarks>
+ * While the health of an entity is managed by the <see cref="Health"> component, the actual value is managed by a different object.
+ * This allows us to persist the value between scenes.
+ * </remarks>
  */
-[Serializable]
-public class PlayerInfo
+
 {
-    /**
-     * <summary>
-     * Initialize to default values in order to spawn a new player.
-     * </summary>
-     *
-     * <param name="healthPoints">
-     * Initial health points
-     * </param>
-     */
-    public PlayerInfo()
+
+using UnityEngine;
+
+    public interface IHealthSaver
     {
-        HealthPoints = 0;
-        Gold = 0;
+        int HealthPoints { get; set; }
+        void InitHealthPoints(int healthPoints);
     }
+
+    public class DummyHealthSaver : IHealthSaver
+    {   
+        public int HealthPoints { get; set; }
     
-    public int HealthPoints;
-    public int Gold;
+        public void InitHealthPoints(int healthPoints){
+            HealthPoints = healthPoints;
+        }
+    }
 }

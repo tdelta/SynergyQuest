@@ -466,12 +466,11 @@ public class ControllerInput: Input
      * 
      * Use the `OnNewController` event of the `ControllerServer` class instead to gain a `ControllerInput` instance.
      */
-    public ControllerInput(int playerId, string playerName, PlayerInfo playerInfo, ControllerServer server)
+    public ControllerInput(int playerId, string playerName, ControllerServer server)
     {
         this.PlayerId = playerId;
         this.PlayerName = playerName;
         this._controllerServer = server;
-        this._playerInfo = playerInfo;
         foreach(Button button in Enum.GetValues(typeof(Button))){
             _buttonPressStates.Add(button, new ButtonPressState());
         }

@@ -25,16 +25,17 @@
 
 using JetBrains.Annotations;
 using System.Collections.Generic;
+using DamageSystem;
+using UnityEngine;
 
-public class PlayerData
+public class PlayerData : IHealthSaver
 {
     public PlayerData(
-        [NotNull] Input input,
-        [NotNull] PlayerInfo info
+        [NotNull] Input input
     )
     {
         _input = input;
-        _playerInfo = info;
+        _playerInfo = new PlayerInfo();
         
         _input.UpdatePlayerInfo(_playerInfo);
     }
@@ -46,7 +47,6 @@ public class PlayerData
 
     private Input _input;
     public Input input => _input;
-    public Item item { get; set; }
     
     public delegate void GoldCounterChangedAction(int goldCounter);
     public event GoldCounterChangedAction OnGoldCounterChanged;
@@ -60,11 +60,30 @@ public class PlayerData
       }
     }
 
-    // FIXME: For now we allow writing this so that the health data can reach the game controller.
-    // However, it should not be readable, since Health is already handled by the Health component and there should
-    // be only a single source of truth.
-    public int HealthPoints {
-      set {
+    private bool _healthPointsInitialized = false;
+
+    /**
+     * <summary>
+     * Set the health points to an initial value only if they have not been initialized in a previous scene yet.
+     * </summary>
+     */
+    public void InitHealthPoints(int healthPoints)
+    {
+        if (!_healthPointsInitialized)
+        {
+            HealthPoints = healthPoints;
+            _healthPointsInitialized = true;
+        }
+    }
+    
+    /*
+     * FIXME: This value should only be readable and writable by the Health component.
+     * If is is set here, OnHealthChanged will not be called.
+     */
+    public int HealthPoints
+    {
+        get => _playerInfo.HealthPoints;
+        set {
         _playerInfo.HealthPoints = value;
         _input.UpdatePlayerInfo(_playerInfo);
       }
