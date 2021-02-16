@@ -38,10 +38,6 @@ public class PlayerInfo
      * <summary>
      * Initialize to default values in order to spawn a new player.
      * </summary>
-     *
-     * <param name="healthPoints">
-     * Initial health points
-     * </param>
      */
     public PlayerInfo()
     {

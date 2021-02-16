@@ -194,10 +194,6 @@ public class PlayerController : EntityController
     {
         _data = data;
         _health.Init(_data);
-        
-        // These callbacks have to be set after the health component has the correct data
-        _health.OnHealthChanged += OnHealthChanged;
-        _health.OnDeath += OnDeath;
     }
 
     protected override void Awake()
@@ -210,7 +206,6 @@ public class PlayerController : EntityController
         _tintFlashController = GetComponent<TintFlashController>();
         _itemController = GetComponent<ItemController>();
         spawnable = GetComponent<Spawnable>();
-        
         _health = GetComponent<Health>();
     }
 
@@ -224,6 +219,9 @@ public class PlayerController : EntityController
         
         attackable.OnPendingAttack += OnPendingAttack;
         attackable.OnAttack += OnAttack;
+        
+        _health.OnHealthChanged += OnHealthChanged;
+        _health.OnDeath += OnDeath;
     }
     
     private void OnDisable()
