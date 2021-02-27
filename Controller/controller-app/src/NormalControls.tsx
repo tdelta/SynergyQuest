@@ -33,7 +33,6 @@ import nipplejs, {
   EventData,
   JoystickOutputData,
 } from 'nipplejs';
-import { BarLoader as CooldownSpinner } from 'react-spinners';
 import './Controller.css';
 
 import * as consts from './consts';
@@ -41,16 +40,17 @@ import * as consts from './consts';
 import { boundClass } from 'autobind-decorator';
 import { ControlsHeaderRow } from './ControlsHeaderRow';
 import { InfoBar } from './InfoBar';
+import { ControllerButtons } from './ControllerButtons';
 
 @boundClass
 export class NormalControls extends React.Component<
-  NormalControlsProbs,
+  NormalControlsProps,
   NormalControlsState
 > {
   private boob: React.RefObject<HTMLDivElement>;
 
-  constructor(probs: NormalControlsProbs) {
-    super(probs);
+  constructor(props: NormalControlsProps) {
+    super(props);
 
     this.boob = React.createRef();
     this.state = {};
@@ -96,83 +96,6 @@ export class NormalControls extends React.Component<
   }
 
   render() {
-    const buildCooldownOverlay = (inner: JSX.Element) => (
-      <div className='cooldownWrapper'>
-        {inner}
-        <div className='cooldownOverlay'>
-          <div className='cooldownProgressWrapper'>
-            <CooldownSpinner
-              css='background-color: rgba(255, 255, 255, 0.5)'
-              width='100%'
-              height='100%'
-              color='rgba(255, 255, 255, 0.9)'
-            />
-          </div>
-        </div>
-      </div>
-    );
-
-    // Define button with colors and events for readability
-    const buildButton = (button: Button) => {
-      const info: consts.ColorData = consts.buttonStyles[button];
-
-      const buttonElement = (
-        <button
-          key={button}
-          className='pixelButton text'
-          style={{ backgroundColor: info.dark, borderColor: info.light }}
-          onMouseDown={_ => this.onButtonChanged(button, true)}
-          onMouseUp={_ => this.onButtonChanged(button, false)}
-          onTouchStart={_ => this.onButtonChanged(button, true)}
-          onTouchEnd={_ => this.onButtonChanged(button, false)}
-          onTouchCancel={_ => this.onButtonChanged(button, false)}
-        >
-          {info.image != null ? (
-            <img alt='' className='buttonImage' src={info.image} />
-          ) : (
-            info.name
-          )}
-        </button>
-      );
-
-      if (this.props.cooldownButtons.has(button)) {
-        return buildCooldownOverlay(buttonElement);
-      } else {
-        return buttonElement;
-      }
-    };
-
-    const enabledButtons = Array.from(this.props.enabledButtons);
-
-    const placeholderButton = (
-      <button
-        className='pixelButton text'
-        style={{ backgroundColor: '#e0e0e0', borderColor: '#f5f5f5' }}
-      >
-        &nbsp;
-      </button>
-    );
-    const ensurePlaceholder = (buttons: Array<JSX.Element>) => {
-      if (buttons.length === 0) {
-        buttons.push(placeholderButton);
-      }
-    };
-    const enabledItemButtons = enabledButtons
-      .filter(button => consts.itemButtons.has(button))
-      .map(buildButton);
-    const enabledPrimaryButtons = enabledButtons
-      .filter(button => consts.primaryButtons.has(button))
-      .map(buildButton);
-    const enabledSecondaryButtons = enabledButtons
-      .filter(
-        button =>
-          !consts.itemButtons.has(button) && !consts.primaryButtons.has(button)
-      )
-      .map(buildButton);
-    ensurePlaceholder(enabledItemButtons);
-    ensurePlaceholder(enabledPrimaryButtons);
-    ensurePlaceholder(enabledSecondaryButtons);
-
     // Return DOM elements
     return (
       <div className='container'>
@@ -198,11 +121,11 @@ export class NormalControls extends React.Component<
                     showMap={this.props.showMap}
                   />
                 </div>
-                <div className='buttonColumn'>
-                  <div className='buttonRow'>{enabledItemButtons}</div>
-                  <div className='buttonRow'>{enabledPrimaryButtons}</div>
-                  <div className='buttonRow'>{enabledSecondaryButtons}</div>
-                </div>
+                <ControllerButtons
+                  enabledButtons={this.props.enabledButtons}
+                  cooldownButtons={this.props.cooldownButtons}
+                  onButtonChanged={this.onButtonChanged}
+                />
               </div>
             </div>
           </div>
@@ -214,7 +137,7 @@ export class NormalControls extends React.Component<
 
 interface NormalControlsState {}
 
-interface NormalControlsProbs {
+interface NormalControlsProps {
   client: ControllerClient;
   isFullscreen: boolean;
   enabledButtons: Set<Button>;
