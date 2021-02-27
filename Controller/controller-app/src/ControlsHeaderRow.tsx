@@ -42,7 +42,7 @@ import { boundClass } from 'autobind-decorator';
 import { SpeechBubble } from './SpeechBubble';
 
 @boundClass
-export class ControlsHeaderRow extends React.Component<
+export class ControlsHeaderRow extends React.PureComponent<
   ControlsHeaderRowProps,
   ControlsHeaderRowState
 > {

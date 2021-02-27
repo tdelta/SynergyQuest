@@ -34,7 +34,7 @@ import EmptyHeartSymbol from './gfx/empty_heart_large.png';
 
 import _ from 'lodash';
 
-export class InfoBar extends React.Component<InfoBarProps, InfoBarState> {
+export class InfoBar extends React.PureComponent<InfoBarProps, InfoBarState> {
   render() {
     if (!this.props.playerInfo) {
       // No information has been sent yet
