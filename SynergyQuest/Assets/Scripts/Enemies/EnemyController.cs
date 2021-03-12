@@ -71,6 +71,11 @@ public abstract class EnemyController : EntityController
         base.Start();
         directionTimer = directionChangeTime;
         direction = Random.insideUnitCircle.normalized;
+        
+        if (DebugSettings.Instance.PassiveEnemies && TryGetComponent(out ContactAttack contactAttack))
+        {
+            contactAttack.enabled = false;
+        }
     }
 
     protected virtual void Update()
@@ -120,7 +125,7 @@ public abstract class EnemyController : EntityController
     
     void FixedUpdate()
     {
-        if (!_health.IsDead)
+        if (!_health.IsDead && !DebugSettings.Instance.PassiveEnemies)
         {
             Vector2 position = Rigidbody2D.position;
             position += ComputeOffset();

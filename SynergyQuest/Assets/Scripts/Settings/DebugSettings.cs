@@ -24,6 +24,7 @@
 // see `LICENSE.md` at the root of this source code repository.
 
 using System;
+using System.Diagnostics.Eventing.Reader;
 using UnityEngine;
 using Utils;
 
@@ -95,6 +96,9 @@ public class DebugSettings: ScriptableObjectSingleton<DebugSettings, TrueLiteral
      */
     public bool DisableRevivalMinigame => disableRevivalMinigame;
     [SerializeField] private bool disableRevivalMinigame = false;
+
+    public bool PassiveEnemies => passiveEnemies;
+    [SerializeField, Tooltip("Enemies will not attack or move when enabled.")] private bool passiveEnemies = false;
     
     [Tooltip("Path to file containing the game license when the game is executed in Debug mode (Unity Editor)")]
     [SerializeField] private string pathToLicenseDebugMode = "../LICENSE.md";

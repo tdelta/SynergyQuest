@@ -129,6 +129,11 @@ public class ContactAttack : MonoBehaviour
      */
     private void PerformAttack(Attackable target, Collider2D targetCollider)
     {
+        if (!enabled)
+        {
+            return;
+        }
+        
         // ReSharper disable once Unity.NoNullCoalescing
         var attacker = customAttacker ?? this.gameObject;
         var attackDirection = (Vector2) (targetCollider.transform.position - attacker.transform.position).normalized;
