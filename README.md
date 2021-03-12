@@ -44,8 +44,10 @@ https://github.com/tdelta/SynergyQuest/actions?query=workflow%3A%22Synergy+Quest
 ## System Requirements
 
 * A Linux 🐧 or Windows 💰 PC
-* A smartphone for every player with a (very) modern web browser installed
-  ("officially" supported is the newest version of Google Chrome on Android)
+* A smartphone for every player with a modern web browser installed
+  ("officially" supported is the newest version of Google Chrome on Android
+   Not supported: Firefox)
+  * iOS devices are not supported
   
 ## Credits
 
