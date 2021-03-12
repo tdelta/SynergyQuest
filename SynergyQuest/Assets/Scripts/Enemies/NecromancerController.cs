@@ -80,6 +80,11 @@ public class NecromancerController : EnemyController
 
     void LaunchFireball(Vector2 direction)
     {
+        if (DebugSettings.Instance.PassiveEnemies)
+        {
+            return;
+        }
+        
         _launchTimer -= Time.deltaTime;
 
         if (_launchTimer < 0)
