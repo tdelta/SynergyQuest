@@ -67,6 +67,8 @@ public abstract class ScriptableObjectSingleton<T, InstantiateResourceWhenMissin
     where T: ScriptableObjectSingleton<T, InstantiateResourceWhenMissing>
     where InstantiateResourceWhenMissing: BooleanLiteralType, new()
 {
+    private const string AssetBasePath = "Assets/Resources/";
+    
     // An instance of this object is lazily loaded from the Resources folder
     [NonSerialized] // <- This attribute is needed, so that changes to this variable are not saved to the resource
     private static readonly Lazy<T> _instance = new Lazy<T>(() =>
@@ -83,7 +85,7 @@ public abstract class ScriptableObjectSingleton<T, InstantiateResourceWhenMissin
             {
                 instance = ScriptableObject.CreateInstance<T>();
                 #if UNITY_EDITOR
-                    AssetDatabase.CreateAsset(instance, $"Assets/Resources/{name}.asset"); // FIXME: Do not hardcode this path. Try to query it from Unity somehow
+                    AssetDatabase.CreateAsset(instance, $"{AssetBasePath}/{name}.asset"); // FIXME: Do not hardcode this path. Try to query it from Unity somehow
                     AssetDatabase.SaveAssets();
                     AssetDatabase.Refresh();
                 #endif

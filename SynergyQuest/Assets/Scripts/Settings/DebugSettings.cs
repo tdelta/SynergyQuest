@@ -24,6 +24,7 @@
 // see `LICENSE.md` at the root of this source code repository.
 
 using System;
+using UnityEditor;
 using UnityEngine;
 using Utils;
 
@@ -52,7 +53,11 @@ public class DebugSettings: ScriptableObjectSingleton<DebugSettings, TrueLiteral
     #else
         private bool _debugMode = false;
     #endif
-
+ 
+    [Header("Debug Players")]
+    [Tooltip("The default input method for a new debug player")]
+    [SerializeField] private LocalInput _defaultInput;
+ 
     /**
      * <summary>
      * For debugging purposes, one may want to spawn some number of locally controlled player instances in any scene
@@ -94,11 +99,13 @@ public class DebugSettings: ScriptableObjectSingleton<DebugSettings, TrueLiteral
      * </summary>
      */
     public bool DisableRevivalMinigame => disableRevivalMinigame;
+    [Header("Control Game Mechanics")]
     [SerializeField] private bool disableRevivalMinigame = false;
 
     public bool PassiveEnemies => passiveEnemies;
     [SerializeField, Tooltip("Enemies will not attack or move when enabled.")] private bool passiveEnemies = false;
     
+    [Header("Paths")]
     [Tooltip("Path to file containing the game license when the game is executed in Debug mode (Unity Editor)")]
     [SerializeField] private string pathToLicenseDebugMode = "../LICENSE.md";
     
@@ -108,6 +115,31 @@ public class DebugSettings: ScriptableObjectSingleton<DebugSettings, TrueLiteral
     public string PathToLicense => DebugSettings.Instance.DebugMode
       ? pathToLicenseDebugMode
       : pathToLicenseProductionMode;
+
+    private void OnEnable()
+    {
+        if (_defaultInput == null)
+        {
+            _defaultInput =
+                (LocalInput) AssetDatabase.LoadAssetAtPath("Assets/Prefabs/WASDInput.prefab", typeof(LocalInput));
+        }
+    }
+
+    private void OnValidate()
+    {
+        // Fill debug player configuration array with default values for the input prefabs
+        for (int i = 0; i < _localDebugPlayers.Length; ++i)
+        {
+            if (_localDebugPlayers[i] == null)
+            {
+                _localDebugPlayers[i] = new LocalDebugPlayerConfig();
+            }
+
+            if (_localDebugPlayers[i].inputPrefab == null) {
+                _localDebugPlayers[i].inputPrefab = _defaultInput;
+            }
+        }
+    }
 }
 
 /**
