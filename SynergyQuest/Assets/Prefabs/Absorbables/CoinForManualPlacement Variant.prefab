@@ -1,0 +1,133 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &2102409416870734427
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2606164128315824451}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8bff68cf2c7b4bf0b52ed47be27758f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2360824019131690179
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2606164128315824451}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c457c33eaa484ddd9aec52891f1086ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _guid: 
+--- !u!114 &8924580546469915380
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2606164128315824451}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94d7e2ead1444565b72bb4e392cae07e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  docstring: 'Use this coin prefab when placing coins manually.
+
+    It ensures that
+    the game remembers when players collected the coin, so that it does not spawn
+    again when the scene is reloaded.
+
+
+    (For this, the PersistentlyDestructible
+    component is used)'
+--- !u!1001 &4894139630726168639
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 7476413430186449264, guid: 4328b41c3928fc341a393f3a479abf6d,
+        type: 3}
+      propertyPath: thrust
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7476413430186449264, guid: 4328b41c3928fc341a393f3a479abf6d,
+        type: 3}
+      propertyPath: deactivationTime
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7476413430186449266, guid: 4328b41c3928fc341a393f3a479abf6d,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -9.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7476413430186449266, guid: 4328b41c3928fc341a393f3a479abf6d,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7476413430186449266, guid: 4328b41c3928fc341a393f3a479abf6d,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7476413430186449266, guid: 4328b41c3928fc341a393f3a479abf6d,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7476413430186449266, guid: 4328b41c3928fc341a393f3a479abf6d,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7476413430186449266, guid: 4328b41c3928fc341a393f3a479abf6d,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7476413430186449266, guid: 4328b41c3928fc341a393f3a479abf6d,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7476413430186449266, guid: 4328b41c3928fc341a393f3a479abf6d,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7476413430186449266, guid: 4328b41c3928fc341a393f3a479abf6d,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7476413430186449266, guid: 4328b41c3928fc341a393f3a479abf6d,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7476413430186449266, guid: 4328b41c3928fc341a393f3a479abf6d,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7476413430186449276, guid: 4328b41c3928fc341a393f3a479abf6d,
+        type: 3}
+      propertyPath: m_Name
+      value: CoinForManualPlacement Variant
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 4328b41c3928fc341a393f3a479abf6d, type: 3}
+--- !u!1 &2606164128315824451 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7476413430186449276, guid: 4328b41c3928fc341a393f3a479abf6d,
+    type: 3}
+  m_PrefabInstance: {fileID: 4894139630726168639}
+  m_PrefabAsset: {fileID: 0}
