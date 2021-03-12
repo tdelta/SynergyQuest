@@ -24,7 +24,6 @@
 // see `LICENSE.md` at the root of this source code repository.
 
 using System;
-using System.Diagnostics.Eventing.Reader;
 using UnityEngine;
 using Utils;
 
