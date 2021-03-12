@@ -34,19 +34,27 @@ namespace DamageSystem
      * <remarks>
      * * it requires an <see cref="Attackable"/> behavior to be present and adjusts the health points according to incoming attacks.
      * * other objects may listen to the events of this behavior to react to changes to the health points
+     * * since players and monsters manage health in different ways, the actual backend where the health value is saved
+     *   may be swapped out. See <see cref="SetCustomSaver"/> and <see cref="IHealthSaver"/>.
      * </remarks>
      */
     [RequireComponent(typeof(Attackable))]
-
     public class Health : MonoBehaviour
     {
-        
-        private IHealthSaver _healthSaver = new DummyHealthSaver();
+        /**
+         * Backend to store the current health points value.
+         */
+        private IHealthSaver _healthSaver = new DefaultHealthSaver();
 
-        public void Init(IHealthSaver healthSaver)
+        /**
+         * Use a custom backend to store the health value.
+         * Can for example be called to use a persistent storage, e.g. players use <see cref="PlayerData"/> so that their
+         * health points are persistently remembered across scenes.
+         */
+        public void SetCustomSaver(IHealthSaver healthSaver)
         {
             _healthSaver = healthSaver;
-            _healthSaver.InitHealthPoints(maxValue);
+            _healthSaver.InitHealthPoints(MaxValue);
         }
         
         [SerializeField, Tooltip("Maximum health points")] private int maxValue = 1;

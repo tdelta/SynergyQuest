@@ -131,7 +131,7 @@ public class Door : MonoBehaviour
             {
                 // Get the name of all players in the minigame (and color their name in their player color)
                 var playerNames = playersInRevivalMinigame
-                    .Select(player => $"<color=#{ColorUtility.ToHtmlStringRGB(player.Color.ToRGB())}>{player.Data.name}</color>")
+                    .Select(player => $"<color=#{ColorUtility.ToHtmlStringRGB(player.Color.ToRGB())}>{player.Data.Name}</color>")
                     .ToArray();
                 
                 var init = string.Join(", ", playerNames.Init());

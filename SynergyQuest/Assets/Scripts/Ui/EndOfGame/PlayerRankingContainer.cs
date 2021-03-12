@@ -48,7 +48,7 @@ public class PlayerRankingContainer : MonoBehaviour
                 group.Select(data => new Ranking()
                 {
                     Rank = index + 1,
-                    Name = data.name,
+                    Name = data.Name,
                     Gold = data.GoldCounter
                 })
             )

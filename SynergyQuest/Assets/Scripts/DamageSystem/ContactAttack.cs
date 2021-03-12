@@ -27,7 +27,6 @@
 using System.Collections.Generic;
 using DamageSystem;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 /**
  * <summary>

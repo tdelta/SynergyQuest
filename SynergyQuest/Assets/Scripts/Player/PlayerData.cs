@@ -67,11 +67,12 @@ public class PlayerData : IHealthSaver
      * Set the health points to an initial value only if they have not been initialized in a previous scene yet.
      * </summary>
      */
-    public void InitHealthPoints(int healthPoints)
+    public void InitHealthPoints(int maxHealthPoints)
     {
+        // Only set value to maximum on the first initialization.
         if (!_healthPointsInitialized)
         {
-            HealthPoints = healthPoints;
+            HealthPoints = maxHealthPoints;
             _healthPointsInitialized = true;
         }
     }
@@ -84,12 +85,12 @@ public class PlayerData : IHealthSaver
     {
         get => _playerInfo.HealthPoints;
         set {
-        _playerInfo.HealthPoints = value;
-        _input.UpdatePlayerInfo(_playerInfo);
-      }
+          _playerInfo.HealthPoints = value;
+          _input.UpdatePlayerInfo(_playerInfo);
+        }
     }
     
-    public string name
+    public string Name
     {
         get
         {

@@ -193,7 +193,9 @@ public class PlayerController : EntityController
     public void Init(PlayerData data)
     {
         _data = data;
-        _health.Init(_data);
+        
+        // Load and store health points persistently in the PlayerData object
+        _health.SetCustomSaver(_data);
     }
 
     protected override void Awake()

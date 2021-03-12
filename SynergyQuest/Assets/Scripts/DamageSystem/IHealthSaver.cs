@@ -25,33 +25,40 @@
 // see `LICENSE.md` at the root of this source code repository.
 
 namespace DamageSystem
-
-/**
- * <summary>
- * Saves the health points
- * </summary>
- * <remarks>
- * While the health of an entity is managed by the <see cref="Health"> component, the actual value is managed by a different object.
- * This allows us to persist the value between scenes.
- * </remarks>
- */
-
 {
-
-using UnityEngine;
-
+    /**
+     * <summary>
+     * Interface for different implementations of a health points store for the <see cref="Health"/> component of
+     * entities.
+     * 
+     * Monsters use a simple variable (<see cref="DefaultHealthSaver"/>).
+     * Players use a persistent <see cref="PlayerData"/> object.
+     * </summary>
+     * <remarks>
+     * While the health of an entity is managed by the <see cref="Health"> component, the actual value is managed by a
+     * different object. This allows us to persist the value between scenes for players.
+     * </remarks>
+     */
     public interface IHealthSaver
     {
+        /**
+         * Store / load a health points value
+         */
         int HealthPoints { get; set; }
-        void InitHealthPoints(int healthPoints);
+        
+        /**
+         * Initialize storage with the initial maximum health points value.
+         * May be called multiple times, but only the first call shall have any effect.
+         */
+        void InitHealthPoints(int maxHealthPoints);
     }
 
-    public class DummyHealthSaver : IHealthSaver
+    public class DefaultHealthSaver : IHealthSaver
     {   
         public int HealthPoints { get; set; }
     
-        public void InitHealthPoints(int healthPoints){
-            HealthPoints = healthPoints;
+        public void InitHealthPoints(int maxHealthPoints){
+            HealthPoints = maxHealthPoints;
         }
     }
 }
