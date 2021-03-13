@@ -81,6 +81,7 @@ libraries:
 * [Json.NET by Newtonsoft](https://www.newtonsoft.com/json) ([MIT License](https://github.com/JamesNK/Newtonsoft.Json/blob/master/LICENSE.md))
 * [YamlDotNet](https://github.com/aaubry/YamlDotNet) ([MIT License](https://github.com/aaubry/YamlDotNet/blob/master/LICENSE.txt))
 * [ZXing.Net](https://github.com/micjahn/ZXing.Net) ([Apache License 2.0](https://github.com/micjahn/ZXing.Net/blob/master/COPYING))
+* [Harmony2](https://github.com/pardeike/Harmony) ([MIT License](https://github.com/pardeike/Harmony/blob/master/LICENSE))
 
 (We ship pre-built versions of these libraries with this repository. Binaries and license texts see [SynergyQuest/Assets/Plugins](./SynergyQuest/Assets/Plugins).)
 

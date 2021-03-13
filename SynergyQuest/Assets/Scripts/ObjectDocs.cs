@@ -2,6 +2,7 @@ using UnityEngine;
 
 #if UNITY_EDITOR
 
+using HarmonyLib;
 using System;
 using UnityEditor;
 using System.Runtime.InteropServices;
@@ -12,7 +13,7 @@ using WebSocketSharp;
 /**
  * Allows to set a docstring for a Unity object / prefab.
  *
- * It will be displayed in the top of the inspector using <see cref="GameObjectInspector"/>
+ * It will be displayed in the top of the inspector using <see cref="GameObjectInspectorPatch"/>
  */
 public class ObjectDocs : MonoBehaviour
 {
@@ -24,92 +25,88 @@ public class ObjectDocs : MonoBehaviour
 
 #if UNITY_EDITOR
 
+
 /**
- * Custom editor for GameObject.
+ * <summary>
+ * Patches the code of the Unity inspector GUI for GameObjects at runtime, so that we can insert custom GUI elements at
+ * the top of the inspector.
  * 
- * Allows to display custom GUI elements at the top of the inspector.
- * Based on https://forum.unity.com/threads/inject-gui-code-in-inspectorwindow.313359/
+ * Currently only displays docstrings which have been set using <see cref="ObjectDocs"/>
+ * </summary>
  *
- * Currently only displays docstrings which have been set using <see cref="objectDocs"/>
- *
- * TODO: It would be cleaner to directly patch the OnInspectorGUI method of the original GameObjectInspector
- *   (https://github.com/Unity-Technologies/UnityCsReference/blob/master/Editor/Mono/Inspector/GameObjectInspector.cs)
- *   instead. Could maybe be done like this
- *     https://docs.microsoft.com/en-us/dotnet/api/system.reflection.emit.methodrental.swapmethodbody?view=netframework-4.8
- *   or like this
- *     https://stackoverflow.com/questions/7299097/dynamically-replace-the-contents-of-a-c-sharp-method
+ * <remarks>
+ * Uses the Harmony2 library (https://github.com/pardeike/Harmony) to inject custom code at the end of
+ * <see cref="UnityEngine.GameObjectInspector.OnInspectorGUI"/>
+ * (https://github.com/Unity-Technologies/UnityCsReference/blob/master/Editor/Mono/Inspector/GameObjectInspector.cs).
+ * </remarks>
  */
-[CanEditMultipleObjects, CustomEditor(typeof(GameObject))]
-public class GameObjectInspector : Editor 
+static class GameObjectInspectorPatch
 {
-    // Variables to capture handles to the original GameObjectInspector instead
-    private Type inspectorType;
-    private Editor editorInstance;
-    private _MethodInfo defaultHeaderGUI;
-    private _MethodInfo defaultPreviewGUI;
-
-    private ObjectDocs objectDocs;
-   
-    GameObjectInspector()
+    // Get a handle to the UnityEditor.GameObjectInspector type
+    // We need to use reflection here, since the type is marked as internal and can thus not be accessed by "typeof(..)"
+    static Lazy<Type> inspectorType = new Lazy<Type>(() => 
+        System.Reflection.Assembly.GetAssembly(typeof(Editor)).GetType("UnityEditor.GameObjectInspector")
+    );
+    
+    // Get a handle to the "target" getter method of UnityEditor.GameObjectInspector
+    static Lazy<_MethodInfo> mTarget = new Lazy<_MethodInfo>(() => 
+        inspectorType.Value.GetProperty("target")?.GetGetMethod()
+    );
+    
+    /**
+     * <summary>
+     * Appends a call to <see cref="Postfix"/> at the end of the
+     * <see cref="UnityEngine.GameObjectInspector.OnInspectorGUI"/> method
+     * </summary>
+     * 
+     * <remarks>
+     * Is automatically executed when our scripts have been recompiled and loaded.
+     * </remarks>
+     */
+    [UnityEditor.Callbacks.DidReloadScripts]
+    static void PerformPatch()
     {
-        // Capture handles to the original GameObjectInspector methods
-        inspectorType = System.Reflection.Assembly.GetAssembly(typeof(Editor)).GetType("UnityEditor.GameObjectInspector");
+        var harmony = new Harmony("de.synergyquest.objectdocs");
         
-        defaultHeaderGUI = inspectorType.GetMethod(
-            "OnHeaderGUI",
-            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic
-        );
-        
-        defaultPreviewGUI = inspectorType.GetMethod(
-            "OnPreviewGUI",
-            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic
-        );
+        var mOriginal = AccessTools.Method(inspectorType.Value, "OnInspectorGUI");
+        var mPostfix = SymbolExtensions.GetMethodInfo(() => Postfix(null));
+
+        harmony.Patch(mOriginal, null, new HarmonyMethod(mPostfix));
     }
     
-    private void OnEnable()
+    /**
+     * <summary>
+     * A call to this method is appended to <see cref="UnityEngine.GameObjectInspector.OnInspectorGUI"/>.
+     * </summary>
+     * <param name="__instance">
+     *     A reference to the <c>UnityEngine.GameObjectInspector</c> instance.
+     *     It is not typed since <c>UnityEngine.GameObjectInspector</c> is marked as "internal", so the compiler would
+     *     not accept the use of the type here.
+     * </param>
+     */
+    static void Postfix(object __instance)
     {
-        // If we dont have an instance of the original GameObjectInspector, create one
-        if (editorInstance == null)
-        {
-            editorInstance = Editor.CreateEditor(target, inspectorType);
-        }
+        // Get a reference to the object the inspector is currently displaying
+        GameObject target = (GameObject) mTarget.Value.Invoke(__instance, null);
         
-        // If there is a ObjectDocs component in the target object of this inspector, grab it
-        var typedTarget = (GameObject) target;
-        if (typedTarget.TryGetComponent(out ObjectDocs objectDocs))
-        {
-            this.objectDocs = objectDocs;
-        }
-
-        else
-        {
-            this.objectDocs = null;
-        }
-    }
-    
-    protected override void OnHeaderGUI()
-    {
-        // Draw the original header of the GameObjectInspector
-        defaultHeaderGUI.Invoke(editorInstance, null);
-    }
-
-    public override void OnInspectorGUI()
-    {
         // If ObjectDocs have been added to the target object of this inspector, display them
-        if (!ReferenceEquals(this.objectDocs, null) && !this.objectDocs.Docstring.IsNullOrEmpty())
+        if (target.TryGetComponent(out ObjectDocs objectDocs) && !objectDocs.Docstring.IsNullOrEmpty())
         {
-            GUILayout.Space(10);
-            GUILayout.Label("Docstring", EditorStyles.boldLabel);
-            GUILayout.Space(5);
-            GUILayout.Label(new GUIContent(this.objectDocs.Docstring, $"Edit docstring in {nameof(ObjectDocs)} component."), EditorStyles.wordWrappedLabel);
-            GUILayout.Space(10);
+            GUILayout.BeginHorizontal();
+                GUILayout.Space(10);
+            
+                GUILayout.BeginVertical();
+                    GUILayout.Space(10);
+                    GUILayout.Label("Docstring", EditorStyles.boldLabel);
+                    GUILayout.Space(5);
+                    GUILayout.Label(new GUIContent(objectDocs.Docstring, $"Edit docstring in {nameof(ObjectDocs)} component."), EditorStyles.wordWrappedLabel);
+                    GUILayout.Space(10);
+                GUILayout.EndVertical();
+            
+                GUILayout.Space(10);
+            GUILayout.EndHorizontal();
         }
-    }
-
-    public virtual void OnPreviewGUI(Rect r, GUIStyle background)
-    {
-        defaultPreviewGUI.Invoke(editorInstance, new object[] {r, background});
-    }
+    }   
 }
 
 #endif
