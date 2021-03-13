@@ -36,10 +36,13 @@ this repository:
 * [How to Build ⚒](Notes/HowToBuild.md)
 * [Setting up Development](Notes/DevelopmentSetup.md)
 
-If you want to check out a build of the latest development version, download the
-build artifact of the latest successful run at
+## Nightlies :milky_way:
 
-https://github.com/tdelta/SynergyQuest/actions?query=workflow%3A%22Synergy+Quest+CI%22
+You can download the latest builds of the development version here.
+They might be unstable though:
+
+* [Nightly for Linux (x86_64)](https://nightly.link/tdelta/SynergyQuest/workflows/main/develop/Linux%20x86_64%20Artifact.zip)
+* [Nightly for Windows](https://nightly.link/tdelta/SynergyQuest/workflows/main/develop/Windows%20Artifact.zip)
 
 ## System Requirements
 
