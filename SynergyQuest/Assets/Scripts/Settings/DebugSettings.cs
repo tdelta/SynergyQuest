@@ -24,9 +24,12 @@
 // see `LICENSE.md` at the root of this source code repository.
 
 using System;
-using UnityEditor;
 using UnityEngine;
 using Utils;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 /**
  * <summary>
@@ -116,30 +119,32 @@ public class DebugSettings: ScriptableObjectSingleton<DebugSettings, TrueLiteral
       ? pathToLicenseDebugMode
       : pathToLicenseProductionMode;
 
-    private void OnEnable()
-    {
-        if (_defaultInput == null)
+    #if UNITY_EDITOR
+        private void OnEnable()
         {
-            _defaultInput =
-                (LocalInput) AssetDatabase.LoadAssetAtPath("Assets/Prefabs/WASDInput.prefab", typeof(LocalInput));
-        }
-    }
-
-    private void OnValidate()
-    {
-        // Fill debug player configuration array with default values for the input prefabs
-        for (int i = 0; i < _localDebugPlayers.Length; ++i)
-        {
-            if (_localDebugPlayers[i] == null)
+            if (_defaultInput == null)
             {
-                _localDebugPlayers[i] = new LocalDebugPlayerConfig();
-            }
-
-            if (_localDebugPlayers[i].inputPrefab == null) {
-                _localDebugPlayers[i].inputPrefab = _defaultInput;
+                _defaultInput =
+                    (LocalInput) AssetDatabase.LoadAssetAtPath("Assets/Prefabs/WASDInput.prefab", typeof(LocalInput));
             }
         }
-    }
+        
+        private void OnValidate()
+        {
+            // Fill debug player configuration array with default values for the input prefabs
+            for (int i = 0; i < _localDebugPlayers.Length; ++i)
+            {
+                if (_localDebugPlayers[i] == null)
+                {
+                    _localDebugPlayers[i] = new LocalDebugPlayerConfig();
+                }
+
+                if (_localDebugPlayers[i].inputPrefab == null) {
+                    _localDebugPlayers[i].inputPrefab = _defaultInput;
+                }
+            }
+        }
+    #endif
 }
 
 /**
