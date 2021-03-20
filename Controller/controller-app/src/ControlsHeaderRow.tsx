@@ -29,15 +29,12 @@ import { ControllerClient, PlayerColor } from 'controller-client-lib';
 import React, { createRef } from 'react';
 import './Controller.css';
 import PauseSymbol from './gfx/pause.png';
+import MapSymbol from './gfx/map.png';
+import ActivateFullscreenSymbol from './gfx/activate_fullscreen.png';
+import DeactivateFullscreenSymbol from './gfx/deactivate_fullscreen.png';
 
 import * as consts from './consts';
 
-import {
-  faCompress,
-  faExpand,
-  faMapSigns,
-} from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { boundClass } from 'autobind-decorator';
 import { SpeechBubble } from './SpeechBubble';
 
@@ -100,11 +97,13 @@ export class ControlsHeaderRow extends React.PureComponent<
               style={{
                 backgroundColor: '#c2185b',
                 borderColor: '#e91e63',
+                backgroundImage: `url(${MapSymbol})`,
+                backgroundSize: 'auto 50%',
+                backgroundRepeat: 'no-repeat',
+                backgroundPosition: 'center',
               }}
               onClick={this.props.showMap}
-            >
-              <FontAwesomeIcon icon={faMapSigns} />
-            </button>
+            />
           )}
           <button
             ref={this.fullscreenHintRef}
@@ -112,13 +111,15 @@ export class ControlsHeaderRow extends React.PureComponent<
             style={{
               backgroundColor: '#c2185b',
               borderColor: '#e91e63',
+              backgroundImage: this.props.isFullscreen
+                ? `url(${DeactivateFullscreenSymbol})`
+                : `url(${ActivateFullscreenSymbol})`,
+              backgroundSize: 'auto 50%',
+              backgroundRepeat: 'no-repeat',
+              backgroundPosition: 'center',
             }}
             onClick={this.props.toggleFullscreen}
-          >
-            <FontAwesomeIcon
-              icon={this.props.isFullscreen ? faCompress : faExpand}
-            />
-          </button>
+          />
           {this.state.showFullscreenHint && !this.state.hintTimedOut && (
             <SpeechBubble
               style={{ fontSize: '6vh' }}
