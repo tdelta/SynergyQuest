@@ -1898,6 +1898,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2275310589415302370, guid: df2e0c3c1976fed06a9b0c91ebbade4b,
+        type: 3}
+      propertyPath: autoDiscoveredSwitchTags.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2275310589415302370, guid: df2e0c3c1976fed06a9b0c91ebbade4b,
+        type: 3}
+      propertyPath: autoDiscoveredSwitchTags.Array.data[0]
+      value: SokobanSwitch
+      objectReference: {fileID: 0}
     - target: {fileID: 4702731960386975227, guid: df2e0c3c1976fed06a9b0c91ebbade4b,
         type: 3}
       propertyPath: replacementWasPerformed
@@ -2672,7 +2682,7 @@ Tilemap:
     second:
       serializedVersion: 2
       m_TileIndex: 2
-      m_TileSpriteIndex: 21
+      m_TileSpriteIndex: 31
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -2888,7 +2898,7 @@ Tilemap:
     second:
       serializedVersion: 2
       m_TileIndex: 2
-      m_TileSpriteIndex: 20
+      m_TileSpriteIndex: 21
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -3374,7 +3384,7 @@ Tilemap:
     second:
       serializedVersion: 2
       m_TileIndex: 5
-      m_TileSpriteIndex: 19
+      m_TileSpriteIndex: 20
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -3968,7 +3978,7 @@ Tilemap:
     second:
       serializedVersion: 2
       m_TileIndex: 2
-      m_TileSpriteIndex: 18
+      m_TileSpriteIndex: 19
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -4805,7 +4815,7 @@ Tilemap:
     second:
       serializedVersion: 2
       m_TileIndex: 8
-      m_TileSpriteIndex: 16
+      m_TileSpriteIndex: 18
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -4832,7 +4842,7 @@ Tilemap:
     second:
       serializedVersion: 2
       m_TileIndex: 6
-      m_TileSpriteIndex: 9
+      m_TileSpriteIndex: 16
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -5038,8 +5048,8 @@ Tilemap:
   - m_RefCount: 5
     m_Data: {fileID: -1971767112463978869, guid: f14f8b22653167e47a2ed69e2a80a7eb,
       type: 3}
-  - m_RefCount: 1
-    m_Data: {fileID: -53490186173767741, guid: f14f8b22653167e47a2ed69e2a80a7eb, type: 3}
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
   - m_RefCount: 59
     m_Data: {fileID: -4470276175162997959, guid: f14f8b22653167e47a2ed69e2a80a7eb,
       type: 3}
@@ -5059,10 +5069,12 @@ Tilemap:
     m_Data: {fileID: -4785535524520341576, guid: f14f8b22653167e47a2ed69e2a80a7eb,
       type: 3}
   - m_RefCount: 1
-    m_Data: {fileID: 5045094259567956566, guid: f14f8b22653167e47a2ed69e2a80a7eb,
-      type: 3}
+    m_Data: {fileID: -53490186173767741, guid: f14f8b22653167e47a2ed69e2a80a7eb, type: 3}
   - m_RefCount: 2
     m_Data: {fileID: -3013491470731050289, guid: f14f8b22653167e47a2ed69e2a80a7eb,
+      type: 3}
+  - m_RefCount: 1
+    m_Data: {fileID: 5045094259567956566, guid: f14f8b22653167e47a2ed69e2a80a7eb,
       type: 3}
   - m_RefCount: 1
     m_Data: {fileID: 787657597836262823, guid: f14f8b22653167e47a2ed69e2a80a7eb, type: 3}
@@ -5071,9 +5083,6 @@ Tilemap:
       type: 3}
   - m_RefCount: 1
     m_Data: {fileID: 376468261206187876, guid: f14f8b22653167e47a2ed69e2a80a7eb, type: 3}
-  - m_RefCount: 1
-    m_Data: {fileID: 7524237349160250818, guid: f14f8b22653167e47a2ed69e2a80a7eb,
-      type: 3}
   - m_RefCount: 2
     m_Data: {fileID: -506572513291271758, guid: f14f8b22653167e47a2ed69e2a80a7eb,
       type: 3}
@@ -5101,8 +5110,9 @@ Tilemap:
   - m_RefCount: 1
     m_Data: {fileID: 8043797057870620851, guid: f14f8b22653167e47a2ed69e2a80a7eb,
       type: 3}
-  - m_RefCount: 0
-    m_Data: {fileID: 0}
+  - m_RefCount: 1
+    m_Data: {fileID: 7524237349160250818, guid: f14f8b22653167e47a2ed69e2a80a7eb,
+      type: 3}
   m_TileMatrixArray:
   - m_RefCount: 272
     m_Data:
@@ -5196,6 +5206,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31bd5012e77f4abaa78b9114a900d44b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  waterColor: {r: 0.1254902, g: 0.39607844, b: 0.2784314, a: 0}
 --- !u!1001 &2000488854
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5211,12 +5222,12 @@ PrefabInstance:
     - target: {fileID: 2891373481997250731, guid: de0a135ec1f08d7b3bc575d6e8e91cfc,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -6.52
+      value: -6.5
       objectReference: {fileID: 0}
     - target: {fileID: 2891373481997250731, guid: de0a135ec1f08d7b3bc575d6e8e91cfc,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 7.3
+      value: 7.5
       objectReference: {fileID: 0}
     - target: {fileID: 2891373481997250731, guid: de0a135ec1f08d7b3bc575d6e8e91cfc,
         type: 3}

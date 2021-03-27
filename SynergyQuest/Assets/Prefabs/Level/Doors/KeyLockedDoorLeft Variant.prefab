@@ -12,6 +12,11 @@ PrefabInstance:
       propertyPath: m_SpriteTilingProperty.oldSize.x
       value: 0.625
       objectReference: {fileID: 0}
+    - target: {fileID: 4082987362687912913, guid: 6e8f499b85e85ea598f2a46d9d2f22ab,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 5614403163359962297, guid: 6e8f499b85e85ea598f2a46d9d2f22ab,
         type: 3}
       propertyPath: switches.Array.size
@@ -88,10 +93,20 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 21300000, guid: ce216af780ef7f1178efbb9f5b658b1e,
         type: 3}
+    - target: {fileID: 9126920187992407691, guid: 6e8f499b85e85ea598f2a46d9d2f22ab,
+        type: 3}
+      propertyPath: switches.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9126920187992407691, guid: 6e8f499b85e85ea598f2a46d9d2f22ab,
+        type: 3}
+      propertyPath: switches.Array.data[0]
+      value: 
+      objectReference: {fileID: 7643939826686883235}
     - target: {fileID: 9182907407554082090, guid: 6e8f499b85e85ea598f2a46d9d2f22ab,
         type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6e8f499b85e85ea598f2a46d9d2f22ab, type: 3}
@@ -111,18 +126,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4f8a6f91989f4cda9de5e7cc34618acc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &5133125795723069415 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6492791223661263314, guid: 6e8f499b85e85ea598f2a46d9d2f22ab,
-    type: 3}
-  m_PrefabInstance: {fileID: 2100790143558204981}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d24f23144dba424dad23427c44dd0263, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &2100790144244477693
@@ -256,7 +259,7 @@ PrefabInstance:
         type: 3}
       propertyPath: contactTriggerToReset
       value: 
-      objectReference: {fileID: 5133125795723069415}
+      objectReference: {fileID: 0}
     - target: {fileID: 8589274080009821023, guid: 95698cb6128b449d88c9cf7cb2d5315b,
         type: 3}
       propertyPath: door

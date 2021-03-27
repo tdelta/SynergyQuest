@@ -34,13 +34,15 @@ using UnityEngine;
  * <remarks>
  * This behaviour records the ID of the door, which is used by the <see cref="DungeonLayout"/> class to determine which
  * room lies behind the door.
- * Also it provides a method to load this room. This behavior may be used in conjunction with the
- * <see cref="ContactTrigger"/> behavior to trigger this method when a player touches the door.
+ * Also it provides a method to load this room: <see cref="UseDoor"/>. Add the <see cref="ContactSwitch"/> behavior
+ * and a <see cref="Switchable"/> to a (sub-)object with the door collider and assign it to
+ * <see cref="contactSwitchable"/> if you want to load the room when a player makes contact with the door.
  *
  * Furthermore, a transition type can be defined, which determines the transition animation to use when loading the next
  * room. See also the <see cref="TransitionController"/> and <see cref="SceneController"/> singletons.
  *
- * A door can be open or closed. Objects using this behavior must also add a <see cref="Switchable"/> component to it.
+ * A door can be open or closed. For this, objects using this behavior must also assign an (sub-)object with a
+ * <see cref="Switchable"/> component to <see cref="lockSwitchable"/>.
  * The door is closed, if there is a connected switch, which is not triggered.
  * If the door is closed, it does not transition to the next room and its sprite changes accordingly.
  *
@@ -49,7 +51,7 @@ using UnityEngine;
  * using <see cref="SpeechBubble"/>.
  * </remarks>
  */
-[RequireComponent(typeof(Switchable), typeof(SpriteRenderer), typeof(AudioSource))]
+[RequireComponent(typeof(SpriteRenderer), typeof(AudioSource))]
 public class Door : MonoBehaviour
 {
     /**
@@ -78,7 +80,10 @@ public class Door : MonoBehaviour
 
     private SpriteRenderer _renderer;
     private AudioSource _audioSource;
-    private Switchable _switchable;
+    
+    [SerializeField] private Switchable lockSwitchable;
+    [SerializeField] private Switchable contactSwitchable;
+    
     /**
      * Stores whether the door is open or closed
      */
@@ -89,25 +94,26 @@ public class Door : MonoBehaviour
 
     public void Awake()
     {
-        _switchable = GetComponent<Switchable>();
         _renderer = GetComponent<SpriteRenderer>();
         _audioSource = GetComponent<AudioSource>();
     }
 
     private void OnEnable()
     {
-        _switchable.OnActivationChanged += OnActivationChanged;
+        lockSwitchable.OnActivationChanged += OnLockActivationChanged;
+        contactSwitchable.OnActivationChanged += OnContactActivationChanged;
     }
     
     private void OnDisable()
     {
-        _switchable.OnActivationChanged -= OnActivationChanged;
+        lockSwitchable.OnActivationChanged -= OnLockActivationChanged;
+        contactSwitchable.OnActivationChanged -= OnContactActivationChanged;
     }
 
     private void Start()
     {
         // When starting, refresh the opened/closed state and sprites, depending on the state of all connected switches
-        _open = _switchable.Activation;
+        _open = lockSwitchable.Activation;
         UpdateSprite();
     }
 
@@ -119,7 +125,7 @@ public class Door : MonoBehaviour
      *
      * This method has no effect, if the door is still locked (with a key lock or due to some other mechanism)
      */
-    public void UseDoor(PlayerController user)
+    public void UseDoor()
     {
         if (_open)
         {
@@ -151,9 +157,9 @@ public class Door : MonoBehaviour
     }
 
     /**
-     * Called, if the state of the connected `Switchable` component changes
+     * Called, if the state of the assigned <see cref="lockSwitchable"/> component changes
      */
-    private void OnActivationChanged(bool activation)
+    private void OnLockActivationChanged(bool activation)
     {
         // the door is opened, if connected switches are active
         if (_open != activation && activation)
@@ -163,6 +169,17 @@ public class Door : MonoBehaviour
         _open = activation;
         
         UpdateSprite();
+    }
+    
+    /**
+     * Called, if the state of the assigned <see cref="contactSwitchable"/> component changes
+     */
+    private void OnContactActivationChanged(bool activation)
+    {
+        if (activation)
+        {
+            UseDoor();
+        }
     }
 
     /**

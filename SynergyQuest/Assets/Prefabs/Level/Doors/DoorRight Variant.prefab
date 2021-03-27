@@ -19,6 +19,16 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: 6f292de19bc65ecd6a6b1a0efa5126fc,
         type: 2}
+    - target: {fileID: 3704757696666019236, guid: 6e8f499b85e85ea598f2a46d9d2f22ab,
+        type: 3}
+      propertyPath: playerMustSteerInto
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3704757696666019236, guid: 6e8f499b85e85ea598f2a46d9d2f22ab,
+        type: 3}
+      propertyPath: activationTimeout
+      value: 0.4
+      objectReference: {fileID: 0}
     - target: {fileID: 6492791223661263312, guid: 6e8f499b85e85ea598f2a46d9d2f22ab,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -97,7 +107,7 @@ PrefabInstance:
     - target: {fileID: 7587271599717125924, guid: 6e8f499b85e85ea598f2a46d9d2f22ab,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.4
+      value: -1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6e8f499b85e85ea598f2a46d9d2f22ab, type: 3}

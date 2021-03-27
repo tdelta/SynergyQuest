@@ -2339,7 +2339,7 @@ PrefabInstance:
     - target: {fileID: 2891373481997250731, guid: de0a135ec1f08d7b3bc575d6e8e91cfc,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 4
+      value: 4.5
       objectReference: {fileID: 0}
     - target: {fileID: 2891373481997250731, guid: de0a135ec1f08d7b3bc575d6e8e91cfc,
         type: 3}
@@ -6197,6 +6197,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: GateRight Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 3960557106778624329, guid: c6243668618dad348b6e0a3bed70c661,
+        type: 3}
+      propertyPath: autoDiscoveredSwitchTags.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3960557106778624329, guid: c6243668618dad348b6e0a3bed70c661,
+        type: 3}
+      propertyPath: autoDiscoveredSwitchTags.Array.data[0]
+      value: SokobanSwitch
+      objectReference: {fileID: 0}
     - target: {fileID: 7136383845380907358, guid: c6243668618dad348b6e0a3bed70c661,
         type: 3}
       propertyPath: replacementWasPerformed
@@ -6600,6 +6610,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31bd5012e77f4abaa78b9114a900d44b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  waterColor: {r: 0.1254902, g: 0.39607844, b: 0.2784314, a: 0}
 --- !u!19719996 &890659176966990388
 TilemapCollider2D:
   m_ObjectHideFlags: 0

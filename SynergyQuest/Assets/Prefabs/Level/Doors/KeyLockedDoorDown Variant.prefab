@@ -7,6 +7,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 553831738787418178, guid: 001c40ecf72be7a88941780f539929ba,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 819902398017715660, guid: 001c40ecf72be7a88941780f539929ba,
         type: 3}
       propertyPath: switches.Array.size
@@ -83,6 +88,26 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 21300000, guid: 1ebc37e2cccb9d3a79e10586924ea3fc,
         type: 3}
+    - target: {fileID: 5716259361648297514, guid: 001c40ecf72be7a88941780f539929ba,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5760227717432501581, guid: 001c40ecf72be7a88941780f539929ba,
+        type: 3}
+      propertyPath: switches.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5760227717432501581, guid: 001c40ecf72be7a88941780f539929ba,
+        type: 3}
+      propertyPath: switches.Array.data[0]
+      value: 
+      objectReference: {fileID: 7274847073554674237}
+    - target: {fileID: 7051682636750061161, guid: 001c40ecf72be7a88941780f539929ba,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 4
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 001c40ecf72be7a88941780f539929ba, type: 3}
 --- !u!4 &6374738383104990108 stripped
@@ -101,18 +126,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4f8a6f91989f4cda9de5e7cc34618acc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &6374738383104990110 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5454377374483969786, guid: 001c40ecf72be7a88941780f539929ba,
-    type: 3}
-  m_PrefabInstance: {fileID: 1424907258018278756}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d24f23144dba424dad23427c44dd0263, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &1424907258150562147
@@ -196,7 +209,7 @@ PrefabInstance:
         type: 3}
       propertyPath: contactTriggerToReset
       value: 
-      objectReference: {fileID: 6374738383104990110}
+      objectReference: {fileID: 0}
     - target: {fileID: 8589274080009821023, guid: 95698cb6128b449d88c9cf7cb2d5315b,
         type: 3}
       propertyPath: door

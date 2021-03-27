@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -7224,12 +7224,12 @@ PrefabInstance:
     - target: {fileID: 2891373481997250731, guid: de0a135ec1f08d7b3bc575d6e8e91cfc,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 3.14
+      value: 3.5
       objectReference: {fileID: 0}
     - target: {fileID: 2891373481997250731, guid: de0a135ec1f08d7b3bc575d6e8e91cfc,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.49
+      value: -0.5
       objectReference: {fileID: 0}
     - target: {fileID: 2891373481997250731, guid: de0a135ec1f08d7b3bc575d6e8e91cfc,
         type: 3}
@@ -7523,6 +7523,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: GateRight Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 3960557106778624329, guid: c6243668618dad348b6e0a3bed70c661,
+        type: 3}
+      propertyPath: autoDiscoveredSwitchTags.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3960557106778624329, guid: c6243668618dad348b6e0a3bed70c661,
+        type: 3}
+      propertyPath: autoDiscoveredSwitchTags.Array.data[0]
+      value: SokobanSwitch
       objectReference: {fileID: 0}
     - target: {fileID: 7136383845380907358, guid: c6243668618dad348b6e0a3bed70c661,
         type: 3}

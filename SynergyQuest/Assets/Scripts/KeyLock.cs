@@ -24,13 +24,14 @@
 // see `LICENSE.md` at the root of this source code repository.
 
 using UnityEngine;
+using Utils;
 
 /**
- * A switch which can be activated by using a key, see also the `Key` behaviour.
- * It is usually used in conjunction with doors.
+ * A switch which can be activated by using a key, see also the <see cref="Key"/> behaviour.
+ * It is usually used in conjunction with doors (<see cref="Door"/>).
  *
- * A game object implementing this behavior must also have a `Switch` component.
- * Moreover, you may want to use the `Interactive` component, to trigger the `Unlock` method of this behaviour.
+ * A game object implementing this behavior must also have a <see cref="Switch"/> component.
+ * Moreover, you may want to use the <see cref="Interactive"/> component, to trigger the <see cref="Unlock"/> method of this behaviour.
  */
 [RequireComponent(typeof(Switch))]
 public class KeyLock : MonoBehaviour
@@ -39,14 +40,14 @@ public class KeyLock : MonoBehaviour
      * Sprite of a key. It will be displayed during an animation while opening the lock.
      */
     [SerializeField] private Sprite keySprite = default;
+
     /**
-     * Usually doors use a `ContactTrigger` to detect, whether they shall be opened. Since the player is already in
-     * contact with a door while opening its lock, the trigger will not activate by itself, when opening the door.
-     *
-     * Hence, we use this reference to activate the trigger manually when opening this lock. Otherwise, the player would
-     * have to step back from the door and forth again to open it, after unlocking.
+     * Key-locked objects such as doors use <see cref="ContactSwitch"/> to detect interactions with players.
+     * Since such a <see cref="ContactSwitch"/> might trigger while this lock was still locked, we allow re-triggering
+     * the associated switchable when this lock is unlocked. For this to work, assign the switchable here.
      */
-    [SerializeField] private ContactTrigger contactTriggerToReset = default;
+    [Tooltip("Switchable of a contact switch of the locked object.")]
+    [SerializeField] private Switchable contactSwitchable = default;
     
     private Switch _switch;
 
@@ -92,11 +93,9 @@ public class KeyLock : MonoBehaviour
             // The player who unlocks this lock, shall present the key in an animation.
             unlocker.PresentItem(keySprite, () =>
             {
-                // Let the `ContactTrigger` of the door refire contact events after the animation completed. See also
-                // the description of the `contactTriggerToReset` field.
-                if (contactTriggerToReset != null)
+                if (contactSwitchable.IsNotNull())
                 {
-                    contactTriggerToReset.RecheckContacts();
+                    contactSwitchable.ForceRetriggerEvents();
                 }
             });
         }

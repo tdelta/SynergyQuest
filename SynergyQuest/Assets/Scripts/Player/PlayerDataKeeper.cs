@@ -26,7 +26,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Tilemaps;
+using Utils;
 using Debug = UnityEngine.Debug;
 
 /**
@@ -34,8 +34,8 @@ using Debug = UnityEngine.Debug;
  * Keeps track of all player data which is persistent across scenes, see also <see cref="PlayerData"/> class.
  * </summary>
  * <remarks>
- * It also allows to instantiate player prefabs from player data. The used prefab can be set in the
- * <see cref="PrefabSettings"/> scriptable object singleton.
+ * Instantiates player prefabs from player data using <see cref="PlayerObjectSpawningUtils"/>.
+ * The used prefab can be set in the * <see cref="PrefabSettings"/> scriptable object singleton.
  * </remarks>
  */
 public class PlayerDataKeeper: Singleton<PlayerDataKeeper>
@@ -84,7 +84,23 @@ public class PlayerDataKeeper: Singleton<PlayerDataKeeper>
     {
         return _playerDatas.Any(data => ReferenceEquals(data.input, input));
     }
+    
+    /**
+     * Instantiates all players for which data is present.
+     * This method should be used to instantiate existing players after loading a new scene.
+     */
+    public List<PlayerController> InstantiateExistingPlayers(Vector3 targetPosition)
+    {
+        var newObjects = PlayerObjectSpawningUtils.InstantiatePlayerObjects(_playerDatas.Count, targetPosition);
 
+        foreach (var (playerObject, playerData) in newObjects.Zip(_playerDatas))
+        {
+            playerObject.Init(playerData);
+        }
+
+        return newObjects;
+    }
+    
     /**
      * Instantiates a new player prefab and its across-scene-persistent data.
      *
@@ -93,33 +109,23 @@ public class PlayerDataKeeper: Singleton<PlayerDataKeeper>
      *                 The z-coordinate will be ignored, we always set it to 0.
      *                 Optional parameter which defaults to (0, 0, 0).
      */
-    public PlayerController InstantiateNewPlayer(Input input, Vector3 position = default)
+    public List<PlayerController> InstantiateNewPlayers(List<Input> inputs, Vector3 targetPosition)
     {
-        if (IsInputAssignedToPlayer(input))
+        var newObjects = PlayerObjectSpawningUtils.InstantiatePlayerObjects(inputs.Count, targetPosition);
+
+        foreach (var (playerObject, input) in newObjects.Zip(inputs))
         {
-            Debug.LogError("There has already a player been created with that input instance. We will continue, but this is likely an error in the game logic. Did you want to use `InstantiateExistingPlayers` instead?");
+            if (IsInputAssignedToPlayer(input))
+            {
+                Debug.LogError("There has already a player been created with that input instance. We will continue, but this is likely an error in the game logic. Did you want to use `InstantiateExistingPlayers` instead?");
+            }
+            
+            RegisterInstance(playerObject, input);
         }
-        
-        var data = new PlayerData(input);
-        _playerDatas.Add(data);
 
-        var instance = InstantiatePlayerFromData(
-            data,
-            position
-        );
-
-        return instance;
+        return newObjects;
     }
-
-    /**
-     * Instantiates all players for which data is present.
-     * This method should be used to instantiate existing players after loading a new scene.
-     */
-    public List<PlayerController> InstantiateExistingPlayers(Vector3 position = default)
-    {
-        return _playerDatas.Select(data => InstantiatePlayerFromData(data, position)).ToList();
-    }
-
+    
     /**
      * If a player prefab  instance has been created without using the methods of this singleton, it has not been
      * initialized with a PlayerData instance here.
@@ -133,7 +139,7 @@ public class PlayerDataKeeper: Singleton<PlayerDataKeeper>
      * @param instance player prefab instance which shall be initialized and its data registered
      * @param input    input instance which shall control the player
      */
-    public void RegisterExistingInstance(PlayerController instance, Input input)
+    public void RegisterInstance(PlayerController instance, Input input)
     {
         // Check if there is already a player using that input...
         var playerData = _playerDatas.FirstOrDefault(data => ReferenceEquals(data.input, input));
@@ -149,27 +155,5 @@ public class PlayerDataKeeper: Singleton<PlayerDataKeeper>
         }
         
         instance.Init(playerData);
-    }
-
-    private PlayerController InstantiatePlayerFromData(PlayerData data, Vector3 position)
-    {
-        // Try finding a free position in the current grid to spawn the player
-        // FIXME: Do not hardcode the "Grid" name, but make it configurable
-        var spawnPosition = position;
-        if (TilemapExtensions.FindMainTilemap() is Tilemap tilemap)
-        {
-            spawnPosition = tilemap.NearestFreeGridPosition(position);
-        }
-        
-        var instance = Object.Instantiate(
-            PrefabSettings.Instance.PlayerPrefab,
-            // Ensure, z-coordinate is always 0 for players
-            Vector3.Scale(spawnPosition, new Vector3(1, 1, 0)),
-            Quaternion.identity
-        );
-        
-        instance.Init(data);
-
-        return instance;
     }
 }

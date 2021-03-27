@@ -111,7 +111,7 @@ public class PhysicsEffects: MonoBehaviour
     
     private Vector2 _lastPosition = Vector2.zero;
     public Vector2 MovementDelta { get; private set; } = Vector2.zero;
-
+    
     private void Awake()
     {
         rigidbody2D = GetComponent<Rigidbody2D>();

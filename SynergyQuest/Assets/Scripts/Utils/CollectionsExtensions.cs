@@ -145,6 +145,25 @@ public static class CollectionsExtensions
 
     /**
      * <summary>
+     * Takes two enumerables and returns an enumerable of pairs of their elements.
+     * Like this:
+     *
+     * lhs = a, b, c, ...
+     * rhs = 1, 2, 3, ...
+     *
+     * returns (a, 1), (b, 2), (c, 3), ...
+     * </summary>
+     * <remarks>
+     * Its like the Haskell function "zip": https://hackage.haskell.org/package/base-4.14.1.0/docs/Prelude.html#v:zip
+     * </remarks>
+     */
+    public static IEnumerable<(A, B)> Zip<A, B>(this IEnumerable<A> lhs, IEnumerable<B> rhs)
+    {
+        return lhs.Zip(rhs, (left, right) => (left, right));
+    }
+
+    /**
+     * <summary>
      * Given an array and an element, return a new array containing the elements of the old array plus the given element
      * appended at the end.
      * </summary>

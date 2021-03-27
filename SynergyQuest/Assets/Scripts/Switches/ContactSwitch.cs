@@ -23,10 +23,8 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
-using System;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
+using Utils;
 
 /**
  * <summary>
@@ -41,6 +39,15 @@ public class ContactSwitch : MonoBehaviour
 
      private PlayerController _playerInContact = null;
 
+     [Tooltip("Only trigger this switch, if the player who is in contact also actively walks into the direction of this object.")]
+     [SerializeField] private bool playerMustSteerInto = false;
+     [Tooltip("Only trigger, if the contact persists at least for this amount of seconds.")]
+     [SerializeField] private float activationTimeout = 0.0f;
+
+     // Records the time when the contact with a player started.
+     // It is needed to ascertain, whether the activationTimeout elapsed or not
+     private float _contactStartTime = float.NaN;
+
      private void Awake()
      {
           _switch = GetComponent<Switch>();
@@ -50,22 +57,69 @@ public class ContactSwitch : MonoBehaviour
      {
           HandleContact(other, false);
      }
-
+     
      private void OnCollisionEnter2D(Collision2D other)
      {
           HandleContact(other.collider, false);
      }
-     
+
      private void OnTriggerExit2D(Collider2D other)
      {
           HandleContact(other, true);
      }
-
+     
      private void OnCollisionExit2D(Collision2D other)
      {
           HandleContact(other.collider, true);
      }
 
+     private void FixedUpdate()
+     {
+          // Repeatedly check, if the activationTimeout elapsed
+          CheckTimeout();
+     }
+
+     /**
+      * If a player is currently in contact, check if it has been in contact for at least <see cref="activationTimeout"/>
+      * seconds.
+      * Only then change the activation of the switch.
+      */
+     private void CheckTimeout()
+     {
+          // We only need to check for a timeout, if there is a player currently in contact
+          if (_playerInContact.IsNotNull())
+          {
+               // Check if _contactStartTime is set.
+               // If not, the timeout has already been completed
+               if ( !float.IsNaN(_contactStartTime) )
+               {
+                    // Either we dont require the player to actively walk into the direction of this object to activate
+                    // this switch,
+                    // OR the player must be actively walking into the direction of this object
+                    if (
+                         !playerMustSteerInto ||
+                         _playerInContact.PhysicsEffects.SteeringDirection.IsSameDirectionAs(
+                              this.transform.position - _playerInContact.transform.position
+                         )
+                    )
+                    {
+                         // If the timeout completed, activate the switch
+                         if ( Time.time - _contactStartTime >= activationTimeout )
+                         {
+                              _contactStartTime = float.NaN;
+                              _switch.Value = true;
+                         }
+                    }
+
+                    // If the steering conditions have been violated, reset the timeout
+                    else
+                    {
+                         _contactStartTime = Time.time;
+                    }
+               }
+          }
+     }
+     
      void HandleContact(Collider2D other, bool loosingContact)
      {
           // If no player is already triggering the switch and contact was established by a player...
@@ -75,9 +129,10 @@ public class ContactSwitch : MonoBehaviour
                other.CompareTag("Player")
           )
           {
-               // ...trigger the switch and remember the player, so that we can recognize them when they loose contact
+               // ...remember the player, so that we can recognize them when they loose contact
                _playerInContact = other.GetComponent<PlayerController>();
-               _switch.Value = true;
+               // ...and start the timeout required until the switch activates, see activationTimeout field
+               _contactStartTime = Time.time;
           }
           
           // Else if a player is already triggering the switch and the game object of this player looses contact with this object..

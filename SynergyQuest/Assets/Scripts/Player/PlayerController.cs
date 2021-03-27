@@ -254,7 +254,7 @@ public class PlayerController : EntityController
             var localInput = Instantiate(localInputPrefab, this.transform);
             localInput.SetColor(localControlsInitColor);
 
-            PlayerDataKeeper.Instance.RegisterExistingInstance(this, localInput);
+            PlayerDataKeeper.Instance.RegisterInstance(this, localInput);
         }
         
         coinGauge.Init(this);

@@ -23,7 +23,6 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
-﻿using System;
 using System.Linq;
 using UnityEngine;
 
@@ -82,6 +81,15 @@ public class Switchable : MonoBehaviour
      * Caches the event handlers we registered on every switch, so that we can unregister them in `OnDisable`.
      */
     private Switch.ValueChangedAction[] _switchChangeHandlers;
+
+    /**
+     * Re-sends <see cref="OnActivationChanged"/> event with the current activation value, even if the activation has
+     * not changed.
+     */
+    public void ForceRetriggerEvents()
+    {
+        OnActivationChanged?.Invoke(_activation);
+    }
 
     void Awake()
     {

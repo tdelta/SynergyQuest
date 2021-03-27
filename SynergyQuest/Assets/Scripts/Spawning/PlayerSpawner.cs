@@ -23,7 +23,8 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
- using System.Linq;
+using System.Collections.Generic;
+using System.Linq;
 using Cinemachine;
 using UnityEngine;
 
@@ -130,12 +131,17 @@ public abstract class PlayerSpawner : MonoBehaviour
     private void SpawnConnectedInputs()
     {
         // Collect all connected inputs which have not been assigned to a player prefab instance before
-        var inputs = ControllerServer.Instance.GetInputs().Where(input => !PlayerDataKeeper.Instance.IsInputAssignedToPlayer(input));
+        List<Input> inputs = ControllerServer.Instance
+            .GetInputs()
+            .Where(input => !PlayerDataKeeper.Instance.IsInputAssignedToPlayer(input))
+            .Select(input => (Input) input)
+            .ToList();
             
         // Spawn instances for them
-        foreach (var input in inputs)
+        var spawnedPlayers = PlayerDataKeeper.Instance.InstantiateNewPlayers(inputs, this.transform.position);
+        
+        foreach (var player in spawnedPlayers)
         {
-            var player = PlayerDataKeeper.Instance.InstantiateNewPlayer(input, this.transform.position);
             RegisterSpawnedInstance(player);
         }
     }
@@ -148,16 +154,25 @@ public abstract class PlayerSpawner : MonoBehaviour
         // Spawn locally controlled players as specified in the debug settings, if they have not already been spawned
         if (DebugSettings.Instance.DebugMode && !DebugSettings.Instance.DebugPlayersWereSpawned)
         {
-            foreach (var playerConfig in DebugSettings.Instance.LocalDebugPlayers)
-            {
-                var input = Instantiate(playerConfig.inputPrefab);
-                input.SetColor(playerConfig.color);
+            var inputs = DebugSettings.Instance
+                .LocalDebugPlayers
+                .Select(playerConfig =>
+                {
+                    var input = Instantiate(playerConfig.inputPrefab);
+                    input.SetColor(playerConfig.color);
 
-                var player = PlayerDataKeeper.Instance.InstantiateNewPlayer(input, this.transform.position);
-                // ReSharper disable once Unity.InstantiateWithoutParent
-                input.transform.SetParent(player.gameObject.transform);
+                    return (Input) input;
+                })
+                .ToList();
+
+            var playerObjects = PlayerDataKeeper.Instance.InstantiateNewPlayers(inputs, this.transform.position);
+            
+            foreach (var playerObject in playerObjects)
+            {
+                var typedInput = (LocalInput) playerObject.Data.input;
+                typedInput.transform.SetParent(playerObject.gameObject.transform);
                 
-                RegisterSpawnedInstance(player);
+                RegisterSpawnedInstance(playerObject);
             }
 
             // Remember that the debug player instances have been spawned
@@ -188,8 +203,15 @@ public abstract class PlayerSpawner : MonoBehaviour
             input.SetColor(_nextPlayerColor);
             _nextPlayerColor = _nextPlayerColor.NextColor();
 
-            var player = PlayerDataKeeper.Instance.InstantiateNewPlayer(input, this.transform.position);
-            RegisterSpawnedInstance(player);
+            var playerObjects = PlayerDataKeeper.Instance.InstantiateNewPlayers(
+                new List<Input> {input},
+                this.transform.position
+            );
+
+            foreach (var playerObject in playerObjects)
+            {
+                RegisterSpawnedInstance(playerObject);
+            }
         }
     }
 

@@ -27,6 +27,7 @@ using JetBrains.Annotations;
 using Settings;
 using UnityEditor;
 using UnityEngine.Tilemaps;
+using Utils;
 
 namespace Editor.Validation.Issues
 {
