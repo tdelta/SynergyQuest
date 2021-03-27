@@ -26,6 +26,7 @@ Download links for the latest release:
 
 * [Download for Linux (x86_64)](https://github.com/tdelta/SynergyQuest/releases/download/release/SynergyQuest_Linux.zip)
 * [Download for Windows](https://github.com/tdelta/SynergyQuest/releases/download/release/SynergyQuest_Windows.zip)
+* [Experimental Development Builds](#nightlies-milky_way)
 
 For detailed information on the game and the development process, see the
 technical report (distributed on the `Releases` page of this repository).
@@ -73,6 +74,15 @@ Furthermore, additional art, music and sounds have been sourced from many extern
 through [OpenGameArt.Org](https://opengameart.org) etc.
 All external artists are credited in the game menu and in
 [SynergyQuest/Assets/Resources/ExternalArtCredits.yaml](SynergyQuest/Assets/Resources/ExternalArtCredits.yaml).
+
+<br />
+<p align="center">
+<i>We thank <a href="https://jb.gg/OpenSource">JetBrains</a> for supporting SynergyQuest with licenses for the Rider IDE and their other products</i>
+
+<a href="https://jb.gg/OpenSource">
+    <img width="153" src="./Graphics/Supporters/jetbrains.png">
+</a>
+</p>
 
 ### Used Libraries
 
