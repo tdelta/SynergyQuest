@@ -34,69 +34,10 @@ namespace Utils
     public static partial class TilemapExtensions
     {
         /**
-     * <summary>
-     * Tries to find a position in a grid cell close to the given position which is free of colliders.
-     * If none can be found, returns the given position.
-     * </summary>
-     *
-     * <param name="tilemap">Map which shall be searched for collider-free positions</param>
-     * <param name="position">target position. We will try to find a free grid cell close to it</param>
-     * <param name="maxChecks">how many cells we shall check before giving up</param>
-     */
-        public static Vector3 NearestFreeGridPosition(this Tilemap tilemap, Vector3 position, int maxChecks = 30)
-        {
-            var centerCell = tilemap.layoutGrid.WorldToCell(position);
-            var toCheck = new Queue<Vector3Int>();
-            toCheck.Enqueue(centerCell);
-            var checkedPositions = new HashSet<Vector3Int>();
-
-            var numCheckedCells = 0;
-            var colliderBuffer = new Collider2D[1];
-            while (toCheck.Any() && numCheckedCells < maxChecks)
-            {
-                var cell = toCheck.Dequeue();
-                var worldPos = tilemap.GetCellCenterWorld(cell);
-            
-                if (
-                    //Physics2D.OverlapCircleNonAlloc(worldPos, Mathf.Max(tilemap.cellSize.x, tilemap.cellSize.y), colliderBuffer) == 0
-                    Physics2D.OverlapBoxNonAlloc(worldPos, tilemap.cellSize * 0.95f, 0, colliderBuffer) == 0
-                )
-                {
-                    return new Vector3(worldPos.x, worldPos.y, position.z);
-                }
-
-                else
-                {
-                    checkedPositions.Add(cell);
-                    var nextToCheck = new[]
-                    {
-                        cell + Vector3Int.up,
-                        cell + Vector3Int.left,
-                        cell + Vector3Int.right,
-                        cell + Vector3Int.down,
-                        cell + Vector3Int.up + Vector3Int.left,
-                        cell + Vector3Int.left + Vector3Int.down,
-                        cell + Vector3Int.right + Vector3Int.up,
-                        cell + Vector3Int.down + Vector3Int.right,
-                    };
-
-                    foreach (var nextCell in nextToCheck.Where(nextCell => !checkedPositions.Contains(nextCell)))
-                    {
-                        toCheck.Enqueue(nextCell);
-                    }
-                }
-
-                ++numCheckedCells;
-            }
-
-            return position;
-        }
-
-        /**
-     * <summary>
-     * Tries to find a tilemap object of name "Tilemap".
-     * </summary>
-     */
+         * <summary>
+         * Tries to find a tilemap object of name "Tilemap".
+         * </summary>
+         */
         [CanBeNull]
         public static Tilemap FindMainTilemap()
         {
@@ -113,11 +54,11 @@ namespace Utils
         }
 
         /**
-     * <summary>
-     * Sometimes the collider of a <see cref="Tilemap"/> are not rebuilt when its contents are changed with
-     * <see cref="Tilemap.SetTile"/> etc. This extension method forces the collider to fix itself.
-     * </summary>
-     */
+         * <summary>
+         * Sometimes the collider of a <see cref="Tilemap"/> are not rebuilt when its contents are changed with
+         * <see cref="Tilemap.SetTile"/> etc. This extension method forces the collider to fix itself.
+         * </summary>
+         */
         public static void RefreshColliders(this Tilemap tilemap)
         {
             if (tilemap.TryGetComponent(out TilemapCollider2D collider))

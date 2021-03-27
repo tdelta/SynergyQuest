@@ -144,9 +144,15 @@ public class Spawnable : MonoBehaviour
     public void Respawn(RespawnReason reason = RespawnReason.Other)
     {
         var respawnPosition = RespawnPosition;
+        
         if (TilemapExtensions.FindMainTilemap() is Tilemap tilemap)
         {
-            respawnPosition = tilemap.NearestFreeGridPosition(respawnPosition);
+            var nearestFreePositions = tilemap.FindReachableFreeTilesAsWorldPosition(respawnPosition, 1);
+
+            if (nearestFreePositions.Any())
+            {
+                respawnPosition = nearestFreePositions.First();
+            }
         }
         
         // Move to position of the spawner when respawning

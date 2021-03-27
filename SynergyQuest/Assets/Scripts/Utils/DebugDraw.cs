@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -46,6 +47,34 @@ namespace Utils
                 upperRight,
                 upperLeft
             );
+        }
+
+        /**
+         * Draws the outline of a circle
+         */
+        public static void DrawCircle(
+            Vector3 center,
+            float radius,
+            Color color,
+            int numSegments,
+            float lineWidth = 0.05f)
+        {
+            // Based on https://gamedev.stackexchange.com/a/126429
+            var theta = 0.0f;
+            var deltaTheta = 2.0f * Mathf.PI / numSegments;
+
+            var positions = Enumerable
+                .Range(0, numSegments)
+                .Select(_ =>
+                {
+                    var position = center + radius * new Vector3(Mathf.Cos(theta), Mathf.Sin(theta), 0.0f);
+                    theta += deltaTheta;
+
+                    return position;
+                })
+                .ToArray();
+            
+            DrawLine(color, lineWidth, true, positions);
         }
 
         /**

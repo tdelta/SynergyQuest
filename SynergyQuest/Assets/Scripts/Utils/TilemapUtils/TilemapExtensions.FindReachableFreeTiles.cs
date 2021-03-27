@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -34,6 +35,23 @@ namespace Utils
             return tilemap
                 .traverse(startCellPosition2d, new TraversalVisitor(numPositionsToFind))
                 .ValueOr(new List<Vector2Int>());
+        }
+        
+
+        /**
+         * Same as <see cref="FindReachableFreeTiles(UnityEngine.Tilemaps.Tilemap,UnityEngine.Vector3,int)"/>, but
+         * returns the world position of the center of the found tiles.
+         */
+        public static List<Vector3> FindReachableFreeTilesAsWorldPosition(this Tilemap tilemap, Vector3 startPosition, int numNeededPositions)
+        {
+            return tilemap.FindReachableFreeTiles(startPosition,
+                    numNeededPositions
+                )
+                .Select(tilemapPosition =>
+                {
+                    return tilemap.layoutGrid.GetCellCenterWorld(tilemapPosition);
+                })
+                .ToList();
         }
         
         /**

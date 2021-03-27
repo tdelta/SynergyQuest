@@ -56,14 +56,10 @@ namespace Utils
             if (TilemapExtensions.FindMainTilemap() is Tilemap tilemap)
             {
                 freePositions.AddRange(
-                    tilemap.FindReachableFreeTiles(
+                    tilemap.FindReachableFreeTilesAsWorldPosition(
                             startPosition,
                             numNeededPositions
                         )
-                        .Select(tilemapPosition =>
-                        {
-                            return tilemap.layoutGrid.GetCellCenterWorld(tilemapPosition);
-                        })
                 );
             }
             
