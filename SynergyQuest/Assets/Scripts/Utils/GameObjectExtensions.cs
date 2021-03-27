@@ -38,17 +38,17 @@ public static class GameObjectExtensions
      */
     public static void SetVisibility(this GameObject self, bool visible)
     {
-        if (self.TryGetComponent<Renderer>(out var renderer))
+        foreach (var renderer in self.GetComponentsInChildren<Renderer>())
         {
             renderer.enabled = visible;
         }
 
-        if (self.TryGetComponent<Collider2D>(out var collider))
+        foreach (var collider in self.GetComponentsInChildren<Collider2D>())
         {
             collider.enabled = visible;
         }
 
-        foreach (var interactive in self.GetComponents<Interactive>())
+        foreach (var interactive in self.GetComponentsInChildren<Interactive>())
         {
             interactive.enabled = visible;
         }

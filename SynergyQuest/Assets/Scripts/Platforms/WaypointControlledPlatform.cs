@@ -23,7 +23,7 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
-﻿using System;
+ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -36,7 +36,7 @@ public class WaypointControlledPlatform : MonoBehaviour
      * Time to wait when a endpoint has been reached before traveling the reverse direction
      */
     [SerializeField] private float endPointWaitTime = 0.0f;
-
+    
     private bool _hasNextWaypoint = false;
     private (WayPointController, int) _nextWayPoint;
 
@@ -62,8 +62,8 @@ public class WaypointControlledPlatform : MonoBehaviour
         if (_hasNextWaypoint)
         {
             var wayPoint = _nextWayPoint.Item1;
-
-            if (isMoveHorizontalNeeded(wayPoint)) {
+            
+            if (IsMoveHorizontalNeeded(wayPoint)) {
                 MoveHorizontal();
             } 
             
@@ -101,12 +101,12 @@ public class WaypointControlledPlatform : MonoBehaviour
 
     private bool IsMoveVerticalNeeded(WayPointController wayPoint)
     {
-        return Math.Abs(transform.position.y - wayPoint.transform.position.y) >= .9f;
+        return Math.Abs(transform.position.y - wayPoint.transform.position.y) > 0.0f;
     }
 
-    private Boolean isMoveHorizontalNeeded(WayPointController wayPoint) 
+    private Boolean IsMoveHorizontalNeeded(WayPointController wayPoint) 
     {
-        return Math.Abs(transform.position.x - wayPoint.transform.position.x) >= .9f;
+        return Math.Abs(transform.position.x - wayPoint.transform.position.x) > 0.0f;
     }
 
     private void MoveHorizontal()
@@ -116,12 +116,13 @@ public class WaypointControlledPlatform : MonoBehaviour
 
         // Need to move Left
         if (wayPoint.transform.position.x < transform.position.x) {
-            deltaPosition.x = deltaPosition.x - speed * Time.deltaTime;
+            deltaPosition.x = Mathf.Max(deltaPosition.x - speed * Time.deltaTime, wayPoint.transform.position.x);
         }
         // Need to move right
         else {
-            deltaPosition.x = deltaPosition.x + speed * Time.deltaTime;
+            deltaPosition.x = Mathf.Min(deltaPosition.x + speed * Time.deltaTime, wayPoint.transform.position.x);
         }
+        
         transform.position = deltaPosition;
     }
 
@@ -132,12 +133,13 @@ public class WaypointControlledPlatform : MonoBehaviour
 
         // Need to move Down
         if (wayPoint.transform.position.y < transform.position.y) {
-            deltaPosition.y = deltaPosition.y - speed * Time.deltaTime;
+            deltaPosition.y = Mathf.Max(deltaPosition.y - speed * Time.deltaTime, wayPoint.transform.position.y);
         }
         // Need to move Up
         else {
-            deltaPosition.y = deltaPosition.y + speed * Time.deltaTime;
+            deltaPosition.y = Mathf.Min(deltaPosition.y + speed * Time.deltaTime, wayPoint.transform.position.y);
         }
+        
         transform.position = deltaPosition;
     }
 
