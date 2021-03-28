@@ -1,4 +1,5 @@
 ![development build](https://github.com/tdelta/SynergyQuest/workflows/Synergy%20Quest%20CI/badge.svg?branch=develop)
+![license](https://img.shields.io/badge/license-GPLv3-blue)
 
 # Synergy Quest - A Mobile-Controlled Cooperative Multiplayer Game
 
