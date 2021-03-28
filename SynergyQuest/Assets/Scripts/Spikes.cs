@@ -23,6 +23,7 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
+using Audio;
 using DamageSystem;
 using UnityEngine;
 
@@ -38,7 +39,7 @@ using UnityEngine;
 [RequireComponent(typeof(Switchable))]
 [RequireComponent(typeof(SpriteRenderer))]
 [RequireComponent(typeof(BoxCollider2D))]
-[RequireComponent(typeof(AudioSource))]
+[RequireComponent(typeof(SharedAudioSource))]
 public class Spikes : MonoBehaviour
 {
     /**
@@ -65,14 +66,14 @@ public class Spikes : MonoBehaviour
     private SpriteRenderer _renderer;
     private Switchable _switchable;
     private BoxCollider2D _collider;
-    private AudioSource _audioSource;
+    private SharedAudioSource _sharedAudioSource;
 
     private void Awake()
     {
         _renderer = GetComponent<SpriteRenderer>();
         _switchable = GetComponent<Switchable>();
         _collider = GetComponent<BoxCollider2D>();
-        _audioSource = GetComponent<AudioSource>();
+        _sharedAudioSource = GetComponent<SharedAudioSource>();
     }
 
     private void OnEnable()
@@ -87,9 +88,7 @@ public class Spikes : MonoBehaviour
 
     private void Start()
     {
-        // The Switchable component does not trigger this callback by itself for the initial activation when loading the
-        // scene. Hence, we look the initial value up ourselves
-        OnActivationChanged(_switchable.Activation);
+        ChangeSpikeState(_switchable.Activation, false);
     }
 
     /**
@@ -117,20 +116,31 @@ public class Spikes : MonoBehaviour
      */
     void OnActivationChanged(bool activation)
     {
+        ChangeSpikeState(activation, true);
+    }
+
+    void ChangeSpikeState(bool activation, bool playSound)
+    {
         // The spikes are enabled, when the switch is not active
         // (Currently we only use this component together with DeadManSwitches)
         var spikesAreOn = !activation;
         
         if (spikesAreOn)
         {
-            _audioSource.PlayOneShot(spikesUpSound);
+            if (playSound)
+            {
+                _sharedAudioSource.PlayOneShotIfAvailable(spikesUpSound);
+            }
             _renderer.sprite = spikesOnSprite;
             _collider.enabled = true;
         }
         
         else
         {
-            _audioSource.PlayOneShot(spikesDownSound);
+            if (playSound)
+            {
+                _sharedAudioSource.PlayOneShotIfAvailable(spikesDownSound);
+            }
             _renderer.sprite = spikesOffSprite;
             _collider.enabled = false;
         }
