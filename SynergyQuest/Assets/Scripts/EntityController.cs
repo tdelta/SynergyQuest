@@ -43,7 +43,7 @@ public abstract class EntityController : MonoBehaviour {
     private PhysicsEffects _physicsEffects;
     public PhysicsEffects PhysicsEffects => _physicsEffects;
 
-    protected Attackable attackable
+    protected Attackable Attackable
     {
         get;
         private set;
@@ -53,19 +53,19 @@ public abstract class EntityController : MonoBehaviour {
         _animator = GetComponent<Animator>();
         _rigidbody2D = GetComponent<Rigidbody2D>();
         _physicsEffects = GetComponent<PhysicsEffects>();
-        attackable = GetComponent<Attackable>();
+        Attackable = GetComponent<Attackable>();
     }
 
     private void OnEnable()
     {
-        attackable.OnAttack += OnAttack;
-        attackable.OnInvincibilityChanged += OnInvincibilityChanged;
+        Attackable.OnAttack += OnAttack;
+        Attackable.OnInvincibilityChanged += OnInvincibilityChanged;
     }
     
     private void OnDisable()
     {
-        attackable.OnAttack -= OnAttack;
-        attackable.OnInvincibilityChanged -= OnInvincibilityChanged;
+        Attackable.OnAttack -= OnAttack;
+        Attackable.OnInvincibilityChanged -= OnInvincibilityChanged;
     }
 
     protected virtual void Start() { }

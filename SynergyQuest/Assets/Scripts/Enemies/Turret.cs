@@ -23,6 +23,7 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
+using Audio;
 using UnityEngine;
 
 /**
@@ -30,6 +31,8 @@ using UnityEngine;
  * An entity which periodically fires projectiles into a certain direction.
  * </summary>
  */
+[RequireComponent(typeof(SharedAudioSource))]
+[RequireComponent(typeof(Collider2D))]
 public class Turret : MonoBehaviour
 {
     /**
@@ -50,10 +53,12 @@ public class Turret : MonoBehaviour
     [SerializeField] FireballProjectile fireballPrefab = default;
 
     private Collider2D _collider;
+    private SharedAudioSource _audioSource;
 
     private void Awake()
     {
         _collider = GetComponent<Collider2D>();
+        _audioSource = GetComponent<SharedAudioSource>();
     }
 
     private void Start()
@@ -64,7 +69,7 @@ public class Turret : MonoBehaviour
 
     void LaunchProjectile()
     {
-        var instance = FireballProjectile.Launch(this.gameObject, fireballPrefab, this.launchPoint.position, direction);
+        var instance = FireballProjectile.Launch(this.gameObject, fireballPrefab, this.launchPoint.position, direction, _audioSource.GetAudioSource());
 
         // If this object has a collider, the projectile shall not collide with it
         if (!ReferenceEquals(_collider, null))

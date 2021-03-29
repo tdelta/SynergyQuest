@@ -219,8 +219,8 @@ public class PlayerController : EntityController
 
         spawnable.OnRespawn += OnRespawn;
         
-        attackable.OnPendingAttack += OnPendingAttack;
-        attackable.OnAttack += OnAttack;
+        Attackable.OnPendingAttack += OnPendingAttack;
+        Attackable.OnAttack += OnAttack;
         
         _health.OnHealthChanged += OnHealthChanged;
         _health.OnDeath += OnDeath;
@@ -236,8 +236,8 @@ public class PlayerController : EntityController
         
         _health.OnHealthChanged -= OnHealthChanged;
         _health.OnDeath -= OnDeath;
-        attackable.OnPendingAttack -= OnPendingAttack;
-        attackable.OnAttack -= OnAttack;
+        Attackable.OnPendingAttack -= OnPendingAttack;
+        Attackable.OnAttack -= OnAttack;
     }
 
     // Start is called before the first frame update
@@ -610,7 +610,7 @@ public class PlayerController : EntityController
 
         var originalHealth = _health.Value;
         // Remove some health from player for falling
-        attackable.Attack(new WritableAttackData
+        Attackable.Attack(new WritableAttackData
         {
             Damage = 1
         });

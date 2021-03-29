@@ -26,6 +26,7 @@
 using Audio;
 using DamageSystem;
 using UnityEngine;
+using Utils;
 
 /**
  * <summary>
@@ -129,7 +130,7 @@ public class Spikes : MonoBehaviour
         {
             if (playSound)
             {
-                _sharedAudioSource.PlayOneShotIfAvailable(spikesUpSound);
+                _sharedAudioSource.GetAudioSource().PlayOneShotIfAvailable(spikesUpSound);
             }
             _renderer.sprite = spikesOnSprite;
             _collider.enabled = true;
@@ -139,7 +140,7 @@ public class Spikes : MonoBehaviour
         {
             if (playSound)
             {
-                _sharedAudioSource.PlayOneShotIfAvailable(spikesDownSound);
+                _sharedAudioSource.GetAudioSource().PlayOneShotIfAvailable(spikesDownSound);
             }
             _renderer.sprite = spikesOffSprite;
             _collider.enabled = false;

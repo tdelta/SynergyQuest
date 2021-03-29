@@ -23,11 +23,22 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
-using System.Collections;
 using DamageSystem;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering.Universal;
+using Utils;
 
+/**
+ * <summary>
+ * Fireball that flies into a certain direction and damages entities it touches.
+ * </summary>
+ * <remarks>
+ * Only instantiate using the <see cref="Launch"> method, since it handles the proper initialization.
+ * </remarks>
+ */
+[RequireComponent(typeof(Animator))]
+[RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(PhysicsEffects))]
 public class FireballProjectile : MonoBehaviour
 {
     [SerializeField] int thrust = 1;
@@ -39,7 +50,6 @@ public class FireballProjectile : MonoBehaviour
     Animator _animator;
     Rigidbody2D _rigidbody2D;
     PhysicsEffects _physicsEffects;
-    AudioSource _audioSource;
 
     /**
      * <summary>
@@ -55,7 +65,6 @@ public class FireballProjectile : MonoBehaviour
         _animator = GetComponent<Animator>();
         _rigidbody2D = GetComponent<Rigidbody2D>();
         _physicsEffects = GetComponent<PhysicsEffects>();
-        _audioSource = GetComponent<AudioSource>();
         Collider = GetComponent<BoxCollider2D>();
     }
 
@@ -71,7 +80,7 @@ public class FireballProjectile : MonoBehaviour
      * </summary>
      * <param name="source">The game object which fired this projectile.</param>
      */
-    public static FireballProjectile Launch(GameObject source, FireballProjectile prefab, Vector3 spawnPoint, Vector2 direction)
+    public static FireballProjectile Launch(GameObject source, FireballProjectile prefab, Vector3 spawnPoint, Vector2 direction, AudioSource audioSource)
     {
         var instance = Instantiate(prefab, spawnPoint, Quaternion.identity);
 
@@ -79,7 +88,7 @@ public class FireballProjectile : MonoBehaviour
         // rotate projectile into direction of flight
         instance.transform.up = -direction;
         instance._direction = direction;
-        instance._audioSource.Play();
+        audioSource.PlayIfAvailable();
 
         return instance;
     }
@@ -103,13 +112,7 @@ public class FireballProjectile : MonoBehaviour
     {
         // remove gameobject, but keep it enabled so sounds can continue playing
         transform.localScale = Vector2.zero;
-        StartCoroutine(DestroyWhenReady());
         GetComponentInChildren<Light2D>().enabled = false;
-    }
-
-    IEnumerator DestroyWhenReady()
-    {       
-        yield return new WaitWhile(() => _audioSource.isPlaying);
         Destroy(gameObject);
     }
 }

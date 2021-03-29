@@ -1,4 +1,4 @@
-# ./fireball.mp3
+# ./fireball.ogg
 
 author: Julien Matthey
 description: Fireball sound

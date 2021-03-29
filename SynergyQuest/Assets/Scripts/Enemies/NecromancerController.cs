@@ -23,12 +23,14 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
+using Audio;
 using DamageSystem;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.Serialization;
 
 [RequireComponent(typeof(Attackable))]
+[RequireComponent(typeof(AudioSource))]
 public class NecromancerController : EnemyController
 {
     [FormerlySerializedAs("fireball")]
@@ -46,17 +48,25 @@ public class NecromancerController : EnemyController
 
     private static readonly int CapeColor = Shader.PropertyToID("_CapeColor");
 
+    private AudioSource _audioSource;
+
+    protected override void Awake()
+    {
+        base.Awake();
+        _audioSource = GetComponent<AudioSource>();
+    }
+
     protected override void OnEnable()
     {
         base.OnEnable();
-        attackable.OnPendingAttack += OnPendingAttack;
-        attackable.OnAttack += OnAttack;
+        Attackable.OnPendingAttack += OnPendingAttack;
+        Attackable.OnAttack += OnAttack;
     }
     
     private void OnDisable()
     {
-        attackable.OnPendingAttack -= OnPendingAttack;
-        attackable.OnAttack -= OnAttack;
+        Attackable.OnPendingAttack -= OnPendingAttack;
+        Attackable.OnAttack -= OnAttack;
     }
 
     protected override void Start()
@@ -86,7 +96,7 @@ public class NecromancerController : EnemyController
         {
             var spawnPoint = direction + Rigidbody2D.position;
             
-            var instance = FireballProjectile.Launch(this.gameObject, fireballPrefab, spawnPoint, direction);
+            var instance = FireballProjectile.Launch(this.gameObject, fireballPrefab, spawnPoint, direction, _audioSource);
             Physics2D.IgnoreCollision(instance.Collider, GetComponent<Collider2D>());
             
             _launchTimer = launchCoolDown;

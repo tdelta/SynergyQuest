@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: 2160768360082992989}
   m_Layer: 26
   m_Name: Spikes
-  m_TagString: Spikes
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -170,6 +170,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 329e20b202b944f6b5cef4dadae387ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  audioSourceId: Spikes
 --- !u!82 &2160768360082992989
 AudioSource:
   m_ObjectHideFlags: 0

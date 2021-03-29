@@ -63,6 +63,16 @@ public static class CollectionsExtensions
             .Select(selector)
             .Where(selected => !ReferenceEquals(selected, null));
     }
+    
+    public static bool IsEmpty<TSource>(this IEnumerable<TSource> source)
+    {
+        return !source.Any();
+    }
+    
+    public static bool IsNotEmpty<TSource>(this IEnumerable<TSource> source)
+    {
+        return source.Any();
+    }
 
     public static void ForEach<T>(this IEnumerable<T> self, Action<T> action)
     {
@@ -112,6 +122,24 @@ public static class CollectionsExtensions
         else
         {
             return defaultValue;
+        }
+    }
+
+    /**
+     * Returns the value for the given key. If the key is not found in the map, <see cref="value"/>
+     * is added to the map under the given key and returned.
+     */
+    public static V GetOrAdd<K, V>(this Dictionary<K, V> dictionary, K key, Lazy<V> value)
+    {
+        if (dictionary.TryGetValue(key, out var output))
+        {
+            return output;
+        }
+
+        else
+        {
+            dictionary.Add(key, value.Value);
+            return value.Value;
         }
     }
 
