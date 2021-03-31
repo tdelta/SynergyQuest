@@ -23,7 +23,7 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
-﻿using UnityEngine;
+ using UnityEngine;
 
 /**
  * A Pushable can either be resting or be moving
@@ -140,7 +140,7 @@ public class Pushable : MonoBehaviour
             grid = GameObject.Find("Grid").GetComponent<Grid>();
         }
         
-        _raycastLayerMask  = LayerMask.GetMask("LevelStatic", "Box", "Chasm", "Monster");
+        _raycastLayerMask  = LayerMask.GetMask("LevelStatic", "Box", "Chasm");
         
         _boxCollider = GetComponent<BoxCollider2D>();
         _body = GetComponent<Rigidbody2D>();

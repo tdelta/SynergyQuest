@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using TMPro;
+using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -42,6 +43,7 @@ namespace Utils
                 color,
                 lineWidth,
                 true,
+                float.PositiveInfinity,
                 lowerLeftCorner,
                 lowerRight,
                 upperRight,
@@ -57,7 +59,8 @@ namespace Utils
             float radius,
             Color color,
             int numSegments,
-            float lineWidth = 0.05f)
+            float lineWidth = 0.05f,
+            float timeout = float.PositiveInfinity)
         {
             // Based on https://gamedev.stackexchange.com/a/126429
             var theta = 0.0f;
@@ -74,7 +77,7 @@ namespace Utils
                 })
                 .ToArray();
             
-            DrawLine(color, lineWidth, true, positions);
+            DrawLine(color, lineWidth, true, timeout, positions);
         }
 
         /**
@@ -82,8 +85,9 @@ namespace Utils
          * Draws a line
          * </summary>
          * <param name="loop">if true, connect the first and last position, closing the line to a shape</param>
+         * <param name="lifetime">How long the line will be display. Use <c>float.PositiveInfinity</c> if the line should never be removed.</param>
          */
-        public static void DrawLine(Color color, float width, bool loop, params Vector3[] positions)
+        public static void DrawLine(Color color, float width, bool loop, float lifetime, params Vector3[] positions)
         {
             var lineObj = new GameObject("Debug Line");
             var lineRenderer = lineObj.AddComponent<LineRenderer>();
@@ -105,6 +109,11 @@ namespace Utils
             lineRenderer.endWidth = 1.0f;
 
             lineRenderer.widthMultiplier = width;
+
+            if (!float.IsPositiveInfinity(lifetime))
+            {
+                GameObject.Destroy(lineObj, lifetime);
+            }
         }
 
         /**

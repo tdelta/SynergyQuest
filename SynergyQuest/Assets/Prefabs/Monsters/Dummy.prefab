@@ -20,6 +20,7 @@ GameObject:
   - component: {fileID: 2670889343545392009}
   - component: {fileID: 2498213870734536640}
   - component: {fileID: 8147191937968428138}
+  - component: {fileID: -8232786587539407146}
   m_Layer: 14
   m_Name: Dummy
   m_TagString: Enemy
@@ -241,7 +242,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damageBaseColor: {r: 1, g: 0.149, b: 0, a: 1}
   healingBaseColor: {r: 0, g: 1, b: 0, a: 1}
-  particlesPrefab: {fileID: 8397682343236543693, guid: 0c97de02b17a12c9ead38b9172d4b575,
+  bloodParticlesPrefab: {fileID: 8397682343236543693, guid: 0c97de02b17a12c9ead38b9172d4b575,
     type: 3}
   bloodStainPrefab: {fileID: 8386572227100128554, guid: 5ae326a1b6fd4c98d88c539ee233b954,
     type: 3}
@@ -263,10 +264,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damage: 1
   knockback: 4
+  knockbackBypassesIgnoreList: 0
   frequency: 1
   customAttacker: {fileID: 0}
   ignoredTargetTags:
   - Enemy
+--- !u!114 &-8232786587539407146
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4902970935976127950}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae191ae2e9ce4fcfa63ea287ef3886db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  penetrationLimit: 0.35
+  samplingRate: 4
+  timeoutBeforeDamage: 0.7
+  damage: 1
 --- !u!1001 &7994074954605405570
 PrefabInstance:
   m_ObjectHideFlags: 0

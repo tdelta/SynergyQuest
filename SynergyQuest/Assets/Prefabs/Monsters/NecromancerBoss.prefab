@@ -22,6 +22,7 @@ GameObject:
   - component: {fileID: 7725576281834211880}
   - component: {fileID: -1695042216929829854}
   - component: {fileID: 6074888008281712781}
+  - component: {fileID: -5423640967219598366}
   m_Layer: 14
   m_Name: NecromancerBoss
   m_TagString: Enemy
@@ -386,6 +387,22 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &-5423640967219598366
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6235775845409623576}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae191ae2e9ce4fcfa63ea287ef3886db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  penetrationLimit: 0.35
+  samplingRate: 4
+  timeoutBeforeDamage: 0.7
+  damage: 1
 --- !u!1001 &3505025390366956328
 PrefabInstance:
   m_ObjectHideFlags: 0
