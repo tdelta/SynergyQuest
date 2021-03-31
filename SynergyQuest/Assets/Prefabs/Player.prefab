@@ -1336,6 +1336,9 @@ MonoBehaviour:
   healingBaseColor: {r: 0, g: 1, b: 0, a: 1}
   bloodParticlesPrefab: {fileID: 0}
   bloodStainPrefab: {fileID: 0}
+  unstainableGroundLayers:
+    serializedVersion: 2
+    m_Bits: 8192
   tintFlashController: {fileID: 880494710090650051}
   damageSounds: {fileID: 2065851212643451053}
   physicsEffects: {fileID: 1730820394476172617}

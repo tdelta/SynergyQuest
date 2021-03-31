@@ -23,6 +23,7 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
+using System.Linq;
 using DamageSystem;
 using Effects;
 using JetBrains.Annotations;
@@ -60,7 +61,15 @@ public class DamageEffects : MonoBehaviour
     
     [SerializeField, CanBeNull, Tooltip("Set to enable blood stains on floor.")]
     private BloodStain bloodStainPrefab = null;
-    
+
+    [SerializeField,
+     Tooltip(
+         "If objects of these layers are in the way, dont spawn blood stains. (Eg. you dont want blood stains on chasms)"
+     )]
+    private LayerMask unstainableGroundLayers = new LayerMask();
+    // To check more efficiently for objects of the above layers, we use this buffer to store collisions
+    private Collider2D[] _collisionBuffer = new Collider2D[1];
+
     [SerializeField, CanBeNull, Tooltip("Set to enable sprite tint flash on damage.")]
     private TintFlashController tintFlashController = null;
     
@@ -133,9 +142,20 @@ public class DamageEffects : MonoBehaviour
             // Blood stains on the floor
             if (!ReferenceEquals(bloodStainPrefab, null))
             {
-                var stain = Instantiate(bloodStainPrefab);
-                stain.color = damageBaseColor;
-                stain.transform.position = VectorExtensions.Assign2D(stain.transform.position, entityCenter);
+                // Check if the ground does support blood stains.
+                // For example, there should be no stains on Chasms.
+                // 
+                // For this, we check the bounds of the blood stain for collisions with any object that is on the
+                // unstainableGroundTags list.
+                var size = Physics2D.OverlapBoxNonAlloc(entityCenter, bloodStainPrefab.gameObject.DetermineAABB().size, 0.0f, _collisionBuffer, unstainableGroundLayers);
+
+                // If no collisions have been found, we can safely place the stain
+                if (size == 0)
+                {
+                    var stain = Instantiate(bloodStainPrefab);
+                    stain.color = damageBaseColor;
+                    stain.transform.position = VectorExtensions.Assign2D(stain.transform.position, entityCenter);
+                }
             }
             
             // Flash tint for the duration of the temporary invincibility

@@ -171,4 +171,34 @@ public static class GameObjectExtensions
             }
         }
     }
+
+    /**
+     * <summary>
+     * Tries to return an axis-aligned bounding box for this game object.
+     * </summary>
+     * <remarks>
+     * It tries to acquire a bounding box in the following order:
+     * 1. From a 2D collider
+     * 2. From a renderer (sprite size)
+     *
+     * If all of the above fail, an empty bounding box at the position of the object is returned
+     * </remarks>
+     */
+    public static Bounds DetermineAABB(this GameObject go)
+    {
+        if (go.TryGetComponent(out Collider2D collider))
+        {
+            return collider.bounds;
+        }
+        
+        else if (go.TryGetComponent(out Renderer renderer))
+        {
+            return renderer.bounds;
+        }
+
+        else
+        {
+            return new Bounds(go.transform.position, Vector3.zero);
+        }
+    }
 }

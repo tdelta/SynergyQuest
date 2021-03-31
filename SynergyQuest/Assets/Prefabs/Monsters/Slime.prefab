@@ -249,6 +249,9 @@ MonoBehaviour:
     type: 3}
   bloodStainPrefab: {fileID: 8386572227100128554, guid: 5ae326a1b6fd4c98d88c539ee233b954,
     type: 3}
+  unstainableGroundLayers:
+    serializedVersion: 2
+    m_Bits: 8192
   tintFlashController: {fileID: 2038427830744242232}
   damageSounds: {fileID: 6792248209785877500}
   physicsEffects: {fileID: 33827682950747616}
@@ -297,7 +300,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae191ae2e9ce4fcfa63ea287ef3886db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  penetrationLimit: 0.35
+  depthLimit: 0.35
   samplingRate: 4
   timeoutBeforeDamage: 0.7
   damage: 1
