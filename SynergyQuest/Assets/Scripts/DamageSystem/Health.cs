@@ -133,7 +133,18 @@ namespace DamageSystem
 
         private void OnAttack(AttackData attack)
         {
-            Value -= attack.Damage;
+            // ReSharper disable once Unity.NoNullPropagation
+            if (DebugSettings.Instance.Instagib && attack.Damage > 0 && (attack.Attacker?.CompareTag("Player") ?? false))
+            {
+                // Kill instantly, if instagib debug option is activated and the attacker is a player
+                Value = 0;
+            }
+
+            else
+            {
+                // Otherwise subtract damage normally
+                Value -= attack.Damage;
+            }
         }
 
         public void Reset()

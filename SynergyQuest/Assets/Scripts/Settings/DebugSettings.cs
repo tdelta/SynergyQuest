@@ -107,6 +107,10 @@ public class DebugSettings: ScriptableObjectSingleton<DebugSettings, TrueLiteral
 
     public bool PassiveEnemies => passiveEnemies;
     [SerializeField, Tooltip("Enemies will not attack or move when enabled.")] private bool passiveEnemies = false;
+
+    public bool Instagib => instagib;
+    [SerializeField, Tooltip("Player attacks kill instantly.")]
+    private bool instagib = false;
     
     [Header("Paths")]
     [Tooltip("Path to file containing the game license when the game is executed in Debug mode (Unity Editor)")]
