@@ -100,6 +100,9 @@ public class PlayerController : EntityController
     private Renderer _renderer;
     private ItemController _itemController;
     private Throwable _throwable;
+    // ReSharper disable once InconsistentNaming
+    public Throwable throwable => _throwable;
+    // ReSharper disable once InconsistentNaming
     public Spawnable spawnable { get; private set; }
     
     // ReSharper disable once InconsistentNaming

@@ -78,7 +78,8 @@ public class ItemController: MonoBehaviour
       {
           if (
               _player.Input.GetButtonDown(itemDescription.UseButton) &&
-              !_cooldownFlags.GetOrDefault(itemDescription, false) // ...and whether it is not currently cooling down
+              !_cooldownFlags.GetOrDefault(itemDescription, false) && // ...and whether it is not currently cooling down
+              !_player.throwable.IsBeingCarried // a player can not use items when being carried
           )
           {
               // Instantiate the item
