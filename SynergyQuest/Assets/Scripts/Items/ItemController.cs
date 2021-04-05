@@ -78,13 +78,15 @@ public class ItemController: MonoBehaviour
       {
           if (
               _player.Input.GetButtonDown(itemDescription.UseButton) &&
-              !_cooldownFlags.GetOrDefault(itemDescription, false) &&  // ...and whether it is not currently cooling down
-              // check if we can spawn item, or if an object is in the way
-              Physics2D.Raycast(_player.Center, direction, direction.magnitude).collider == null
+              !_cooldownFlags.GetOrDefault(itemDescription, false) // ...and whether it is not currently cooling down
           )
           {
               // Instantiate the item
-              var itemInstance = Instantiate(itemDescription.ItemInstancePrefab, this.transform.position, Quaternion.identity);
+              var itemInstance = Instantiate(
+                  itemDescription.ItemInstancePrefab,
+                  VectorExtensions.Assign2D(itemDescription.ItemInstancePrefab.transform.position, this.transform.position),
+                  Quaternion.identity
+              );
               // Tell it, that this player is using it
               itemInstance.Activate(_player, itemDescription);
               

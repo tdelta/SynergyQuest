@@ -24,6 +24,7 @@
 // see `LICENSE.md` at the root of this source code repository.
 
 using System.Collections;
+using System.Linq;
 using JetBrains.Annotations;
 using UnityEngine;
 
@@ -224,6 +225,32 @@ public class Throwable : MonoBehaviour
         else if (direction is Direction.Up)
         {
             distance -= position.y - carrierPosition.y;
+            
+            // If the object to be thrown is within a collider, then we dont allow throwing upwards at all
+            // (distance := 0)
+            //
+            // Why? Imagine a player is standing directly below a wall, holding a bomb. The bomb is now within the
+            // collider of the wall.
+            // The right behaviour is now to immediately collide when throwing upwards => the bomb falls down.
+            // Without this check, it would be possible to throw the bomb through the wall
+
+            // Find the collisions:
+            // ReSharper disable once Unity.PreferNonAllocApi
+            var collisions = Physics2D.OverlapBoxAll(
+                _collider.transform.position, // Check at the position of the collider of this object
+                _collider.bounds.size,
+                0.0f,
+                Physics2D.GetLayerCollisionMask(_collider.gameObject.layer) // and ignore any collisions with layers the collider would ignore too
+            )
+                // Also, we dont want to register any collisions with the player who is carrying the collider
+                .Where(otherCollider => otherCollider.TryGetComponent(out PlayerController player) &&
+                                        !ReferenceEquals(player, _carrier));
+            
+            // If there any collisions, reset the distance to be thrown to 0 for the reasons explained above
+            if (collisions.Any())
+            {
+                distance = 0;
+            }
         }
         
         var gravity = -PhysicsEffects.GravitationalAcceleration;
