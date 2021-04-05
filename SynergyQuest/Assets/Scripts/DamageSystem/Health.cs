@@ -81,16 +81,20 @@ namespace DamageSystem
             get => _healthSaver.HealthPoints;
             private set
             {
-                _healthSaver.HealthPoints = value;
-                if (value > maxValue)
+                // Only do something, if the new value is actually different from the old one
+                if (value != _healthSaver.HealthPoints)
                 {
-                    Value = maxValue;
-                }
-                
-                OnHealthChanged?.Invoke(value);
-                if (value <= 0)
-                {
-                    OnDeath?.Invoke();
+                    _healthSaver.HealthPoints = value;
+                    if (value > maxValue)
+                    {
+                        Value = maxValue;
+                    }
+                    
+                    OnHealthChanged?.Invoke(value);
+                    if (value <= 0)
+                    {
+                        OnDeath?.Invoke();
+                    }
                 }
             }
         }
