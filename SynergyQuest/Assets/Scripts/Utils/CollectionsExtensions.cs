@@ -263,4 +263,20 @@ public static class CollectionsExtensions
 
         return newArray;
     }
+
+    /**
+     * Allows to deconstruct dictionary entries into tuples.
+     * See also
+     * https://docs.microsoft.com/en-us/dotnet/csharp/deconstruct#deconstructing-user-defined-types
+     */
+    public static void Deconstruct<K, V>(this KeyValuePair<K, V> pair, out K key, out V value)
+    {
+        key = pair.Key;
+        value = pair.Value;
+    }
+
+    public static IEnumerable<KeyValuePair<K, V>> Entries<K, V>(this Dictionary<K, V> dictionary)
+    {
+        return dictionary.AsEnumerable();
+    }
 }

@@ -40,6 +40,9 @@ using DamageSystem;
  * <seealso cref="ReviveMinigame"/>
  */
 [RequireComponent(typeof(Attackable))]
+[RequireComponent(typeof(Animator))]
+[RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(AudioSource))]
 public class PlayerGhost : MonoBehaviour
 {
     // the player the ghost belongs to
@@ -54,6 +57,7 @@ public class PlayerGhost : MonoBehaviour
     private PhysicsEffects _physicsEffects;
     private AudioSource _audioSource;
     private Attackable _attackable;
+    
     private System.Random _rnd = new System.Random();
 
     private bool _moveArround;
@@ -97,7 +101,7 @@ public class PlayerGhost : MonoBehaviour
         Player = player;
         _respawnPosition = respawnPosition;
         Player.gameObject.SetActive(false);
-        Player.gameObject.SetFollowedByCamera(false);
+        Player.cameraTracked.Tracking = false;
         Player.Input.InputMode = InputMode.RevivalMinigame;
     }
     
@@ -122,7 +126,7 @@ public class PlayerGhost : MonoBehaviour
     void OnVanish()
     {
         Player.gameObject.SetActive(true);
-        Player.gameObject.SetFollowedByCamera(true);
+        Player.cameraTracked.Tracking = true;
         // Move player to position of the spawner when respawning
         Player.PhysicsEffects.Teleport(_respawnPosition);
         // Make player visible again, if they have been invisible

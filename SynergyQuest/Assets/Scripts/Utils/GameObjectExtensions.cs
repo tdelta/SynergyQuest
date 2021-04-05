@@ -53,9 +53,9 @@ public static class GameObjectExtensions
             interactive.enabled = visible;
         }
 
-        if (self.CompareTag("Player"))
+        if (self.TryGetComponent(out PlayerController player))
         {
-            self.SetFollowedByCamera(visible);
+            player.cameraTracked.enabled = visible;
         }
     }
 
@@ -119,55 +119,6 @@ public static class GameObjectExtensions
             if (effects.GetImpulse() == Vector2.zero)
             {
                 self.transform.localScale -= scaleFactor;
-            }
-        }
-    }
-
-    /**
-     * <summary>
-     * Can set all <see cref="CinemachineTargetGroup"/>s to either follow or not follow an object.
-     * </summary>
-     * <param name="followed">Whether the object shall be followed by cameras.</param>
-     * <param name="radius">
-     *     Radius around every object which must be included in the camera view.
-     *     If set to NaN (default), the bounds of a <see cref="Collider2D"/> component will be used, if present.
-     *     If there is also no <see cref="Collider2D"/>, then 0.0f will be used.
-     * </param>
-     */
-    public static void SetFollowedByCamera(this GameObject self, bool followed, float radius = float.NaN)
-    {
-        if (followed)
-        {
-            foreach (var cameraTargetGroup in Object.FindObjectsOfType<CinemachineTargetGroup>())
-            {
-                if (float.IsNaN(radius))
-                {
-                    radius = 0.0f;
-                    if (self.TryGetComponent(out PlayerController _))
-                    {
-                        radius = CameraSettings.Instance.PlayerInclusionRadius;
-                    }
-                    
-                    else if (self.TryGetComponent(out Collider2D collider))
-                    {
-                        var bounds = collider.bounds;
-                        radius = Mathf.Max(bounds.extents.x, bounds.extents.y);
-                    }
-                }
-                
-                cameraTargetGroup.AddMember(
-                    self.transform,
-                    1,
-                    radius
-                );
-            }
-        }
-
-        else
-        {
-            foreach (var cameraTargetGroup in Object.FindObjectsOfType<CinemachineTargetGroup>())
-            {
-                cameraTargetGroup.RemoveMember(self.transform);
             }
         }
     }

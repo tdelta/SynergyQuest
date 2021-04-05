@@ -23,6 +23,7 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
+using CameraUtils;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -37,12 +38,15 @@ using UnityEngine.UI;
  * This class uses the prefab set in <see cref="PrefabSettings"/>.
  * </remarks>
  */
+[RequireComponent(typeof(CameraTracked))]
 public class SpeechBubble : MonoBehaviour
 {
     [Tooltip("The text of the speech bubble will be displayed using this object.")]
     [SerializeField] private TextMeshProUGUI text = default;
     [Tooltip("All parent layout groups wrapping the text sorted from inside to outside. Will be rebuilt when text changes.")]
     [SerializeField] private LayoutGroup[] layoutGroups = default;
+
+    private CameraTracked _cameraTracked;
 
     /**
      * <summary>
@@ -73,17 +77,20 @@ public class SpeechBubble : MonoBehaviour
         return instance;
     }
 
+    private void Awake()
+    {
+        _cameraTracked = GetComponent<CameraTracked>();
+    }
+
     private void Start()
     {
         // Make sure the speech bubble is visible on screen by making the cameras follow it
-        this.gameObject.SetFollowedByCamera(
-            true,
-            ((RectTransform) this.transform).rect.size.MaxComponent()
-        );
+        _cameraTracked.Radius = ((RectTransform) this.transform).rect.size.MaxComponent();
+        _cameraTracked.Tracking = true;
     }
 
     private void OnDestroy()
     {
-        this.gameObject.SetFollowedByCamera(false);
+        _cameraTracked.Tracking = false;
     }
 }

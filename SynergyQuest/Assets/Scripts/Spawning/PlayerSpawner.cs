@@ -25,7 +25,6 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using Cinemachine;
 using UnityEngine;
 
 /**
@@ -37,12 +36,6 @@ using UnityEngine;
  */
 public abstract class PlayerSpawner : MonoBehaviour
 {
-    /**
-     * If you want the new players to be tracked by a specific camera, assign the camera target group here.
-     * If it is not assigned, a CinemachineTargetGroup instance will be searched for automatically.
-     */
-    [SerializeField] private CinemachineTargetGroup targetGroup = default;
-
     /**
      * There can be player instances pre-created in the scene. Especially local instances for debugging.
      * Those instances should be added to a spawner in this field, so that they can be respawned
@@ -71,15 +64,6 @@ public abstract class PlayerSpawner : MonoBehaviour
      * room.
      */
     protected abstract bool IsSpawnerActive();
-
-    private void Awake()
-    {
-        // If no camera target group has been provided manually, we try to retrieve it ourselves
-        if (ReferenceEquals(targetGroup, null))
-        {
-            targetGroup = FindObjectOfType<CinemachineTargetGroup>();
-        }
-    }
 
     private void OnEnable()
     {
@@ -119,7 +103,7 @@ public abstract class PlayerSpawner : MonoBehaviour
     {
         PlayerDataKeeper.Instance
             .InstantiateExistingPlayers(this.transform.position)
-            .ForEach(RegisterSpawnedInstance);
+            .ForEach(OnSpawn);
 
         SpawnConnectedInputs();
         SpawnDebugPlayers();
@@ -142,7 +126,7 @@ public abstract class PlayerSpawner : MonoBehaviour
         
         foreach (var player in spawnedPlayers)
         {
-            RegisterSpawnedInstance(player);
+            OnSpawn(player);
         }
     }
 
@@ -172,26 +156,12 @@ public abstract class PlayerSpawner : MonoBehaviour
                 var typedInput = (LocalInput) playerObject.Data.input;
                 typedInput.transform.SetParent(playerObject.gameObject.transform);
                 
-                RegisterSpawnedInstance(playerObject);
+                OnSpawn(playerObject);
             }
 
             // Remember that the debug player instances have been spawned
             DebugSettings.Instance.DebugPlayersWereSpawned = true;
         }
-    }
-    
-    /**
-     * Given a player prefab instance which has just been spawned, assign it to the camera target group and
-     * ensure it is respawned at the position of this spawner.
-     */
-    private void RegisterSpawnedInstance(PlayerController player)
-    {
-        if (targetGroup != null)
-        {
-            targetGroup.AddMember(player.transform, 1, CameraSettings.Instance.PlayerInclusionRadius);
-        }
-        
-        OnSpawn(player);
     }
 
     void OnNewController(ControllerInput input)
@@ -210,7 +180,7 @@ public abstract class PlayerSpawner : MonoBehaviour
 
             foreach (var playerObject in playerObjects)
             {
-                RegisterSpawnedInstance(playerObject);
+                OnSpawn(playerObject);
             }
         }
     }

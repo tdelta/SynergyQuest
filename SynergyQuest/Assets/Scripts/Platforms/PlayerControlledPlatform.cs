@@ -23,6 +23,7 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
+using CameraUtils;
 using UnityEngine;
 
 /**
@@ -44,6 +45,7 @@ using UnityEngine;
 [RequireComponent(typeof(Switchable))]
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Platform))]
+[RequireComponent(typeof(CameraTracked))]
 public class PlayerControlledPlatform : MonoBehaviour
 {
     /**
@@ -58,7 +60,7 @@ public class PlayerControlledPlatform : MonoBehaviour
     private Switchable _switchable;
     private Rigidbody2D _body;
     private ColorReplacer _replacer;
-    private Collider2D _collider;
+    private CameraTracked _cameraTracked;
 
     // Player currently controlling this platform (is null, if no player is controlling the platform)
     private PlayerController _player;
@@ -143,7 +145,7 @@ public class PlayerControlledPlatform : MonoBehaviour
         _body = GetComponent<Rigidbody2D>();
         _replacer = GetComponent<ColorReplacer>();
         _switchable = GetComponent<Switchable>();
-        _collider = GetComponent<Collider2D>();
+        _cameraTracked = GetComponent<CameraTracked>();
 
         // Make sure, the ColorSwitch activating this platform is registered in the Switchable component which
         // ultimately observes the switch state
@@ -196,7 +198,7 @@ public class PlayerControlledPlatform : MonoBehaviour
                 Player = null;
                 
                 // if the platform is no longer being controlled, the camera can stop following it
-                this.gameObject.SetFollowedByCamera(false);
+                _cameraTracked.Tracking = false;
             }
         }
     }
@@ -226,7 +228,7 @@ public class PlayerControlledPlatform : MonoBehaviour
                 Teleport.TeleportOut(colorSwitch.gameObject, colorSwitch.Color.ToRGB());
 
                 // Also the camera should now follow this platform as it is a player controlled entity now
-                this.gameObject.SetFollowedByCamera(true);
+                _cameraTracked.Tracking = true;
             }
 
             else

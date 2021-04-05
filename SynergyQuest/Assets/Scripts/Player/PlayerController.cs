@@ -26,6 +26,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using CameraUtils;
 using DamageSystem;
 using UnityEngine;
 
@@ -45,11 +46,11 @@ public enum PlayerState{
 [RequireComponent(typeof(Throwable))]
 [RequireComponent(typeof(BoxCollider2D))]
 [RequireComponent(typeof(SpriteRenderer))]
-[RequireComponent(typeof(TintFlashController))]
 [RequireComponent(typeof(ItemController))]
 [RequireComponent(typeof(Spawnable))]
 [RequireComponent(typeof(Health))]
 [RequireComponent(typeof(Attackable))]
+[RequireComponent(typeof(CameraTracked))]
 public class PlayerController : EntityController
 {
     [SerializeField] private GameObject lifeGauge = default;
@@ -100,11 +101,9 @@ public class PlayerController : EntityController
     private ItemController _itemController;
     private Throwable _throwable;
     public Spawnable spawnable { get; private set; }
-
-    /**
-     * Used to briefly flash the player in a certain color. For example red when they are hit.
-     */
-    private TintFlashController _tintFlashController;
+    
+    // ReSharper disable once InconsistentNaming
+    public CameraTracked cameraTracked { get; private set; }
 
     private Health _health;
 
@@ -205,10 +204,10 @@ public class PlayerController : EntityController
         _throwable = GetComponent<Throwable>();
         Collider = GetComponent<BoxCollider2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
-        _tintFlashController = GetComponent<TintFlashController>();
         _itemController = GetComponent<ItemController>();
         spawnable = GetComponent<Spawnable>();
         _health = GetComponent<Health>();
+        cameraTracked = GetComponent<CameraTracked>();
     }
 
     private void OnEnable()
