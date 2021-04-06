@@ -7,6 +7,26 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2417987521270452753, guid: cc09a8b58d8c98e358edfde338248704,
+        type: 3}
+      propertyPath: m_SpriteTilingProperty.oldSize.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2417987521270452753, guid: cc09a8b58d8c98e358edfde338248704,
+        type: 3}
+      propertyPath: m_SpriteTilingProperty.oldSize.y
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2417987521270452753, guid: cc09a8b58d8c98e358edfde338248704,
+        type: 3}
+      propertyPath: m_Size.x
+      value: 0.1584878
+      objectReference: {fileID: 0}
+    - target: {fileID: 2417987521270452753, guid: cc09a8b58d8c98e358edfde338248704,
+        type: 3}
+      propertyPath: m_Size.y
+      value: 2.1387377
+      objectReference: {fileID: 0}
     - target: {fileID: 6988144452922508416, guid: cc09a8b58d8c98e358edfde338248704,
         type: 3}
       propertyPath: m_Sprite
@@ -71,7 +91,7 @@ PrefabInstance:
     - target: {fileID: 6988144452922508422, guid: cc09a8b58d8c98e358edfde338248704,
         type: 3}
       propertyPath: m_Offset.x
-      value: 0.008103609
+      value: 0.5625
       objectReference: {fileID: 0}
     - target: {fileID: 6988144452922508422, guid: cc09a8b58d8c98e358edfde338248704,
         type: 3}
@@ -86,22 +106,22 @@ PrefabInstance:
     - target: {fileID: 6988144452922508422, guid: cc09a8b58d8c98e358edfde338248704,
         type: 3}
       propertyPath: m_Size.x
-      value: 0.1584878
+      value: 0.13
       objectReference: {fileID: 0}
     - target: {fileID: 6988144452922508422, guid: cc09a8b58d8c98e358edfde338248704,
         type: 3}
       propertyPath: m_Offset.y
-      value: 0.023424625
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6988144452922508422, guid: cc09a8b58d8c98e358edfde338248704,
         type: 3}
       propertyPath: m_Size.y
-      value: 2.1387377
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6988144452922508425, guid: cc09a8b58d8c98e358edfde338248704,
         type: 3}
       propertyPath: m_Name
-      value: platformReturnerLeft
+      value: platformReturnerLeft Variant
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cc09a8b58d8c98e358edfde338248704, type: 3}

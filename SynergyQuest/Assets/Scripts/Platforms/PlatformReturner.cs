@@ -31,7 +31,8 @@ using UnityEngine;
  * <summary>
  * Behavior for a pressure plate which resets a <see cref="Platform"/> to its original position when starting the scene.
  * If players are standing on the platform, their positions are reset, too, relative to the platform.
- * It deactivates itself, if the platform did not move (too much) from its original position.
+ * It deactivates itself, if the platform did not move (too much) from its original position
+ * (its deactivated when the platform touches the trigger collider of this object).
  *
  * It uses the <see cref="Teleport"/> effect when changing the position of players and platforms for better visuals.
  * </summary>
@@ -45,9 +46,6 @@ public class PlatformReturner : MonoBehaviour
     [Tooltip("Some platform implementations have their collider to detect collisions with players on a child object. Hence, the collider of the platform must be provided here manually.")]
     [SerializeField] private Collider2D platformPlayerCollider = default;
     
-    [Tooltip("The platform must be at least this far from its original position so that the returner triggers a teleport back.")]
-    [SerializeField] private float minimumDistanceFromReturnPoint = 0.1f;
-    
     [Tooltip("The ColorReplacer component is used to color the sprite of this pressure plate. This color is used, when the platform is not far enough away to be returned.")]
     [SerializeField] private Color disabledColor = new Color(0.4f, 0.4f, 0.4f);
     [Tooltip("The ColorReplacer component is used to color the sprite of this pressure plate. This color is used, when the platform is far enough away to be returned.")]
@@ -57,6 +55,7 @@ public class PlatformReturner : MonoBehaviour
      * Position to which the platform is returned when this behavior activates.
      */
     private Vector3 _platformReturnPoint;
+    private bool _didPlatformLeave = true;
     
     private Switchable _switchable;
     private ColorReplacer _colorReplacer;
@@ -84,36 +83,35 @@ public class PlatformReturner : MonoBehaviour
         _switchable.OnActivationChanged -= OnActivationChanged;
     }
 
-    private void Start()
+    private void OnTriggerEnter2D(Collider2D other)
     {
-        // We do not need to check every frame, whether the platform left its return point.
-        // Instead, we do it every 0.5s which is enough
-        InvokeRepeating(nameof(CheckIfPlatformLeft), 0.0f, 0.5f);
+        if (ReferenceEquals(other.gameObject, platformToReturn))
+        {
+            OnPlatformLeaveOrReturn(false);
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (ReferenceEquals(other.gameObject, platformToReturn))
+        {
+            OnPlatformLeaveOrReturn(true);
+        }
     }
 
     /**
      * <summary>
-     * Checks whether the platform left its return point. If so, this method will enable the <see cref="Switchable"/>
+     * If the platform left its starting region (that is, the region covered by the trigger collider of this object),
+     * this method will enable the <see cref="Switchable"/>
      * which can trigger the return of the platform.
      *
      * Futhermore, we adjust the coloring of the sprite.
      * </summary>
      */
-    void CheckIfPlatformLeft()
+    void OnPlatformLeaveOrReturn(bool didPlatformLeave)
     {
-        // Only do something, if this component is currently enabled.
-        // We check this, since this method is invoked using `InvokeRepeating`, which is not paused when this component
-        // is disabled
-        if (this.enabled)
-        {
-            // Determine, whether the platform has left its return point.
-            // That is, when its distance to the return point exceeds the set threshold.
-            var hasPlatformLeft = Vector3.Distance(_platformReturnPoint, platformToReturn.transform.position)
-                                  > minimumDistanceFromReturnPoint;
-
-            _switchable.enabled = hasPlatformLeft;
-            _colorReplacer.ReplacementColor = hasPlatformLeft ? enabledColor : disabledColor;
-        }
+        _switchable.enabled = didPlatformLeave;
+        _colorReplacer.ReplacementColor = didPlatformLeave ? enabledColor : disabledColor;
     }
 
     /**
