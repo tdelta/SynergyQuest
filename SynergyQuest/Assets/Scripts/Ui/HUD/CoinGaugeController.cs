@@ -23,9 +23,11 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
-﻿using System.Collections;
-using UnityEngine;
+ using System.Collections;
+ using Teleporting;
+ using UnityEngine;
 
+[RequireComponent(typeof(TeleportHandler))]
 public class CoinGaugeController : MonoBehaviour
 {
     // ToDo: Adjust height, so that lifeGauge and goldGauge can be displayed concurrently!
@@ -34,17 +36,30 @@ public class CoinGaugeController : MonoBehaviour
 
     private TextMesh _goldText;
     private PlayerController _player;
+    private TeleportHandler _teleportHandler;
 
     private bool _subscribedToGoldCounterChange = false;
 
-    private void SetVisiblility(bool visible)
+    private bool _visibility = true;
+
+    private bool Visibility
+    {
+        get => _visibility;
+        set
+        {
+            _visibility = value;
+            ApplyVisibility(true);
+        }
+    }
+
+    private void ApplyVisibility(bool timeout)
     {
         foreach (var renderer in renderers)
         {
-            renderer.enabled = visible;
+            renderer.enabled = _visibility;
         }
-
-        if (visible)
+        
+        if (_visibility && timeout)
         {
             StartCoroutine(DeactivateCoroutine());
         }
@@ -63,44 +78,61 @@ public class CoinGaugeController : MonoBehaviour
     private void Awake()
     {
         _goldText = this.gameObject.transform.GetChild(0).gameObject.GetComponent<TextMesh>();
-    }
 
-    private void Start()
-    {
-        SetVisiblility(false);
+        _teleportHandler = GetComponent<TeleportHandler>();
     }
 
     private void OnEnable()
     {
-        SetVisiblility(false);
+        Visibility = false;
         
         if (!_subscribedToGoldCounterChange && _player != null)
         {
             _player.Data.OnGoldCounterChanged += DrawGoldCounter;
             _subscribedToGoldCounterChange = true;
         }
+
+        _teleportHandler.OnTeleportIn += OnTeleportIn;
+        _teleportHandler.OnTeleportOut += OnTeleportOut;
     }
 
     private void OnDisable()
     {
-        SetVisiblility(false);
+        Visibility = false;
         
         if (_subscribedToGoldCounterChange && _player != null)
         {
             _player.Data.OnGoldCounterChanged -= DrawGoldCounter;
             _subscribedToGoldCounterChange = false;
         }
+        
+        _teleportHandler.OnTeleportIn -= OnTeleportIn;
+        _teleportHandler.OnTeleportOut -= OnTeleportOut;
     }
 
-    private void DrawGoldCounter(int gold) {
-        SetVisiblility(true);
+    private void DrawGoldCounter(int gold)
+    {
+        Visibility = true;
 
         _goldText.text = gold.ToString();
     }
 
     IEnumerator DeactivateCoroutine() {
         yield return new WaitForSeconds(2f);
-        SetVisiblility(false);
+        Visibility = false;
+    }
+
+    private void OnTeleportIn()
+    {
+        // Invoke the visibility setter again, since teleporting messes with the renderers and we want to reset them to
+        // a known state
+        ApplyVisibility(false);
+    }
+
+    private void OnTeleportOut()
+    {
+        _visibility = false;
+        ApplyVisibility(false);
     }
 }
 

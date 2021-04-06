@@ -25,7 +25,8 @@
 
 ﻿using System;
 using System.Linq;
-using UnityEngine;
+ using Teleporting;
+ using UnityEngine;
 
 /**
  * <summary>
@@ -51,6 +52,9 @@ using UnityEngine;
  *
  * This can easily be implemented by using the <c>Shaders/SubGraphs/TeleportEffect</c> shader sub-graph in the shader of
  * the material.
+ *
+ * If you want to implement custom logic on an object when teleporting starts, add the <see cref="TeleportHandler"/>
+ * behaviour to them and subscribe to its events.
  * </summary>
  */
 [RequireComponent(typeof(SpriteRenderer))]
@@ -166,6 +170,11 @@ public class Teleport : MonoBehaviour
         instance._isTeleportingOut = true;
         instance._onTeleportCompletedCallback = onTeleportCompletedCallback;
         instance.SetColor(color);
+        
+        foreach (var teleportHandler in go.GetComponentsInChildren<TeleportHandler>())
+        {
+            teleportHandler.TriggerTeleportOut();
+        }
     }
     
     /**
@@ -218,6 +227,10 @@ public class Teleport : MonoBehaviour
         instance.SetColor(color);
         
         go.MakeVisible();
+        foreach (var teleportHandler in go.GetComponentsInChildren<TeleportHandler>())
+        {
+            teleportHandler.TriggerTeleportIn();
+        }
     }
 
     private void Update()
