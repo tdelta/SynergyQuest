@@ -25,7 +25,7 @@
  * see `LICENSE.md` at the root of this source code repository.
  */
 
-import { Button, ControllerClient, PlayerInfo } from 'controller-client-lib';
+import { Button, IControllerClient, PlayerInfo } from 'controller-client-lib';
 import React from 'react';
 import nipplejs, {
   JoystickManager,
@@ -138,7 +138,7 @@ export class NormalControls extends React.Component<
 interface NormalControlsState {}
 
 interface NormalControlsProps {
-  client: ControllerClient;
+  client: IControllerClient;
   isFullscreen: boolean;
   enabledButtons: Set<Button>;
   cooldownButtons: Set<Button>;

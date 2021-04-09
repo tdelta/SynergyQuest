@@ -117,6 +117,122 @@ export interface PlayerInfo {
   Gold: number;
 }
 
+export interface IControllerClient {
+  onConnectFailure: (reason: ConnectFailureReason) => any;
+  onReady: () => any;
+  onDisconnect: () => any;
+  onError: () => any;
+  onSetPlayerColor: (color: PlayerColor) => any;
+  onSetEnabledMenuActions: (enabledActions: Set<MenuAction>) => any;
+  onGameStateChanged: (state: GameState) => any;
+  onInputModeChanged: (inputMode: InputMode) => any;
+  onSetEnabledButtons: (enabledButtons: Set<Button>) => any;
+  onSetCooldownButtons: (cooldownButtons: Set<Button>) => any;
+  onSetPlayerInfo: (playerInfo: PlayerInfo) => any;
+  onVibrationRequest: (vibrationPattern: number[]) => any;
+  connect: (name: string, address: string, port: number) => void;
+  setJoystickPosition: (vertical: number, horizontal: number) => void;
+  setImuOrientation: (vertical: number, horizontal: number) => void;
+  setButton: (button: Button, onOff: boolean) => void;
+  getColor: () => PlayerColor | undefined;
+  triggerMenuAction: (action: MenuAction) => void;
+  getEnabledMenuActions: () => Set<MenuAction>;
+  getEnabledButtons: () => Set<Button>;
+  getCooldownButtons: () => Set<Button>;
+  getGameState: () => GameState;
+  getInputMode: () => InputMode;
+  getPlayerInfo: () => PlayerInfo | undefined;
+  isReady: () => boolean;
+}
+
+@boundClass
+export class DummyControllerClient implements IControllerClient {
+  private playerColor = PlayerColor.Any;
+  private enabledMenuActions = new Set<MenuAction>();
+  private enabledButtons = new Set<Button>();
+  private cooldownButtons = new Set<Button>();
+
+  public onConnectFailure: (reason: ConnectFailureReason) => any;
+  public onReady: () => any;
+  public onDisconnect: () => any;
+  public onError: () => any;
+  public onSetPlayerColor: (color: PlayerColor) => any;
+  public onSetEnabledMenuActions: (enabledActions: Set<MenuAction>) => any;
+  public onGameStateChanged: (state: GameState) => any;
+  public onInputModeChanged: (inputMode: InputMode) => any;
+  public onSetEnabledButtons: (enabledButtons: Set<Button>) => any;
+  public onSetCooldownButtons: (cooldownButtons: Set<Button>) => any;
+  public onSetPlayerInfo: (playerInfo: PlayerInfo) => any;
+  public onVibrationRequest: (vibrationPattern: number[]) => any;
+  // Network related stuff -> don't do anything
+  public connect = (_name: string, _address: string, _port: number) => {};
+  public setJoystickPosition = (_vertical: number, _horizontal: number) => {};
+  public setImuOrientation = (_vertical: number, _horizontal: number) => {};
+  public setButton = (_button: Button, _onOff: boolean) => {};
+  public triggerMenuAction = (_action: MenuAction) => {};
+
+  private playerInfo: PlayerInfo = {
+    HealthPoints: 5,
+    Gold: 100,
+  };
+
+  public setColor(color: PlayerColor): void {
+    this.playerColor = color;
+  }
+
+  public addEnabledButton(button: Button): void {
+    this.enabledButtons.add(button);
+    this.onSetEnabledButtons?.(this.enabledButtons);
+  }
+
+  public addCooldownButton(button: Button): void {
+    this.cooldownButtons.add(button);
+    this.onSetCooldownButtons?.(this.cooldownButtons);
+  }
+
+  public addEnabledMenuAction(action: MenuAction): void {
+    this.enabledMenuActions.add(action);
+    this.onSetEnabledMenuActions?.(this.enabledMenuActions);
+  }
+
+  public setPlayerInfo(playerInfo: PlayerInfo): void {
+    this.playerInfo = playerInfo;
+    this.onSetPlayerInfo?.(this.playerInfo);
+  }
+
+  public getColor = () => {
+    return this.playerColor;
+  };
+
+  public getEnabledMenuActions = () => {
+    return this.enabledMenuActions;
+  };
+
+  public getEnabledButtons = () => {
+    return this.enabledButtons;
+  };
+
+  public getCooldownButtons = () => {
+    return this.cooldownButtons;
+  };
+
+  public getGameState = () => {
+    return GameState.Started;
+  };
+
+  public getInputMode = () => {
+    return InputMode.Normal;
+  };
+
+  public getPlayerInfo = () => {
+    return this.playerInfo;
+  };
+
+  public isReady = () => {
+    return true;
+  };
+}
+
 /**
  * Allows to connect to a Coop-Dungeon game and send controller inputs
  * or receive messages from the game.
@@ -147,7 +263,82 @@ export interface PlayerInfo {
  * example application `controller-lib-test-app`.
  */
 @boundClass
-export class ControllerClient {
+export class ControllerClient implements IControllerClient {
+  /**
+   * Callback which can be set by users and which is called if the server
+   * refused to establish a connection for the given reason.
+   */
+  onConnectFailure: (reason: ConnectFailureReason) => any;
+
+  /**
+   * Callback which can be set by users and which is called when a connection to
+   * a game has been fully established so that it is ready to receive inputs.
+   */
+  onReady: () => any;
+
+  /**
+   * Callback which can be set by users and which is called when the connection
+   * to a game has been closed
+   */
+  onDisconnect: () => any;
+
+  /**
+   * Callback which can be set by users and which is called when the connection
+   * to a game experienced some sort of error.
+   */
+  onError: () => any;
+
+  /**
+   * Callback which can be set by users and which is called whenever the server
+   * assigns this client a color.
+   */
+  onSetPlayerColor: (color: PlayerColor) => any;
+
+  /**
+   * Callback which can be set by users and which is called whenever the game
+   * enables or disables some menu action for the controller
+   */
+  onSetEnabledMenuActions: (enabledActions: Set<MenuAction>) => any;
+
+  /**
+   * Callback which can be set by users and which is called whenever the game
+   * changes its state, e.g. from "Lobby" to "Started"
+   */
+  onGameStateChanged: (state: GameState) => any;
+
+  /**
+   * Callback which can be set by users and which is called whenever the game
+   * changes the controllers' input mode, e.g. from "Normal" to "IMUControlled"
+   */
+  onInputModeChanged: (inputMode: InputMode) => any;
+
+  /**
+   * Callback which can be set by users and which is called whenever the game
+   * enables/disables some button for the controller.
+   */
+  onSetEnabledButtons: (enabledButtons: Set<Button>) => any;
+
+  /**
+   * Callback which can be set by users and which is called whenever the game
+   * tells the controller that some button is cooling down / not cooling down
+   * anymore
+   */
+  onSetCooldownButtons: (cooldownButtons: Set<Button>) => any;
+
+  /**
+   * Callback which can be set by users and which is called whenever the game
+   * updates information that the controller should display (gold, health)
+   */
+  onSetPlayerInfo: (playerInfo: PlayerInfo) => any;
+
+  /**
+   * Callback which can be set by users and which is called whenever the game
+   * wants the controller to vibrate.
+   *
+   * @param vibrationPattern alternating number of milliseconds to vibrate and pause
+   */
+  onVibrationRequest: (vibrationPattern: number[]) => any;
+
   private socket: WebSocket.WebSocket;
 
   /**
@@ -214,81 +405,6 @@ export class ControllerClient {
    * `InputMode`.
    */
   private inputMode: InputMode = InputMode.Normal;
-
-  /**
-   * Callback which can be set by users and which is called if the server
-   * refused to establish a connection for the given reason.
-   */
-  public onConnectFailure: (reason: ConnectFailureReason) => any;
-
-  /**
-   * Callback which can be set by users and which is called when a connection to
-   * a game has been fully established so that it is ready to receive inputs.
-   */
-  public onReady: () => any;
-
-  /**
-   * Callback which can be set by users and which is called when the connection
-   * to a game has been closed
-   */
-  public onDisconnect: () => any;
-
-  /**
-   * Callback which can be set by users and which is called when the connection
-   * to a game experienced some sort of error.
-   */
-  public onError: () => any;
-
-  /**
-   * Callback which can be set by users and which is called whenever the server
-   * assigns this client a color.
-   */
-  public onSetPlayerColor: (color: PlayerColor) => any;
-
-  /**
-   * Callback which can be set by users and which is called whenever the game
-   * enables or disables some menu action for the controller
-   */
-  public onSetEnabledMenuActions: (enabledActions: Set<MenuAction>) => any;
-
-  /**
-   * Callback which can be set by users and which is called whenever the game
-   * changes its state, e.g. from "Lobby" to "Started"
-   */
-  public onGameStateChanged: (state: GameState) => any;
-
-  /**
-   * Callback which can be set by users and which is called whenever the game
-   * changes the controllers' input mode, e.g. from "Normal" to "IMUControlled"
-   */
-  public onInputModeChanged: (inputMode: InputMode) => any;
-
-  /**
-   * Callback which can be set by users and which is called whenever the game
-   * enables/disables some button for the controller.
-   */
-  public onSetEnabledButtons: (enabledButtons: Set<Button>) => any;
-
-  /**
-   * Callback which can be set by users and which is called whenever the game
-   * tells the controller that some button is cooling down / not cooling down
-   * anymore
-   */
-  public onSetCooldownButtons: (cooldownButtons: Set<Button>) => any;
-
-  /**
-   * Callback which can be set by users and which is called whenever the game
-   * updates information that the controller should display (gold, health)
-   */
-  public onSetPlayerInfo: (playerInfo: PlayerInfo) => any;
-
-  /**
-   * Callback which can be set by users and which is called whenever the game
-   * wants the controller to vibrate.
-   *
-   * @param vibrationPattern alternating number of milliseconds to vibrate and pause
-   */
-  public onVibrationRequest: (vibrationPattern: number[]) => any;
 
   /**
    * Creates a ControllerClient instance.

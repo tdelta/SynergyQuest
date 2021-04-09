@@ -31,7 +31,7 @@ import { OrientationInput } from 'sensor-input-lib';
 import { boundClass } from 'autobind-decorator';
 import { Image, Layer, Stage, Text } from 'react-konva';
 import {
-  ControllerClient,
+  IControllerClient,
   Button,
   PlayerColor,
   PlayerInfo,
@@ -218,7 +218,7 @@ interface OrientationControlsState {
 }
 
 interface OrientationControlsProbs {
-  client: ControllerClient;
+  client: IControllerClient;
   isFullscreen: boolean;
   toggleFullscreen: () => Promise<any>;
   playerColor: consts.ColorData;

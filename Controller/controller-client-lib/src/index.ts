@@ -26,7 +26,9 @@
  */
 
 export {
+  IControllerClient,
   ControllerClient,
+  DummyControllerClient,
   Button,
   MenuAction,
   PlayerColor,

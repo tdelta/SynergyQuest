@@ -30,6 +30,8 @@ import {
   Button,
   ConnectFailureReason,
   ControllerClient,
+  DummyControllerClient,
+  IControllerClient,
   GameState,
   MenuAction,
   PlayerColor,
@@ -55,9 +57,9 @@ const NotConnectedC: NotConnected = { kind: 'NotConnected' };
 
 interface Connecting {
   kind: 'Connecting';
-  client: ControllerClient;
+  client: IControllerClient;
 }
-function ConnectingC(c: ControllerClient): Connecting {
+function ConnectingC(c: IControllerClient): Connecting {
   return {
     kind: 'Connecting',
     client: c,
@@ -66,9 +68,9 @@ function ConnectingC(c: ControllerClient): Connecting {
 
 interface Connected {
   kind: 'Connected';
-  client: ControllerClient;
+  client: IControllerClient;
 }
-function ConnectedC(c: ControllerClient): Connected {
+function ConnectedC(c: IControllerClient): Connected {
   return {
     kind: 'Connected',
     client: c,
@@ -122,14 +124,30 @@ class App extends React.Component<{}, AppState> {
     this.state = App.initialState;
   }
 
+  componentDidMount() {
+    if (process.env.REACT_APP_DEBUG) {
+      // Simply display the controller without connecting to the proxy or server.
+      // This is used by the command 'yarn start-dummy'
+      this.connect('Debug Player', true);
+    }
+  }
+
   /**
    * Calls the library to establish a connection to the game.
    * Updates the connection state accordingly.
    *
    * Is called when the Connect button is pressed.
+   *
+   * @param debugMode - Use dummy client instead of connecting to the game.
+   * Used by 'yarn start-dummy'.
    */
-  connect(playerName: string) {
-    const client = new ControllerClient();
+  connect(playerName: string, debugMode: boolean = false) {
+    let client: IControllerClient;
+    if (debugMode) {
+      client = new DummyControllerClient();
+    } else {
+      client = new ControllerClient();
+    }
 
     client.onReady = () => {
       // If we connected successfully, we remember the name we connected with.
@@ -138,7 +156,6 @@ class App extends React.Component<{}, AppState> {
       window.localStorage.setItem('name', playerName);
 
       this.setState({
-        ...this.state,
         connectionStatus: ConnectedC(client),
         failureMessage: undefined,
         gameState: client.getGameState(),
@@ -175,27 +192,24 @@ class App extends React.Component<{}, AppState> {
 
     client.onError = () => {
       this.setState({
-        ...this.state,
         failureMessage: 'Some sort of connection error occured.',
       });
     };
 
     client.onSetPlayerColor = (color: PlayerColor) =>
       this.setState({
-        ...this.state,
         color: color, // <- set new color
       });
 
     client.onSetEnabledMenuActions = _ =>
       this.setState({
-        ...this.state,
         enabledMenuActions: client.getEnabledMenuActions(),
       });
 
     client.onSetEnabledButtons = _ =>
       this.setState({
-        enabledButtons: client.getEnabledButtons(),
-      });
+          enabledButtons: client.getEnabledButtons(),
+        });
 
     client.onSetCooldownButtons = _ =>
       this.setState({
@@ -204,13 +218,11 @@ class App extends React.Component<{}, AppState> {
 
     client.onGameStateChanged = (state: GameState) =>
       this.setState({
-        ...this.state,
         gameState: state,
       });
 
     client.onInputModeChanged = (inputMode: InputMode) =>
       this.setState({
-        ...this.state,
         inputMode: inputMode,
       });
 
@@ -224,10 +236,24 @@ class App extends React.Component<{}, AppState> {
 
     client.connect(playerName, window.location.hostname, consts.port);
 
-    // Update the state to "Connecting"
-    this.setState({
-      connectionStatus: ConnectingC(client),
-    });
+    if (debugMode) {
+      // Do some things manually that the server would normally be doing.
+      const dummyClient = client as DummyControllerClient;
+      dummyClient.setColor(PlayerColor.Red);
+      dummyClient.addEnabledButton(Button.Attack);
+      dummyClient.addEnabledMenuAction(MenuAction.PauseGame);
+      dummyClient.addEnabledMenuAction(MenuAction.ShowMap);
+      dummyClient.setPlayerInfo({
+        HealthPoints: 1,
+        Gold: 100,
+      });
+      dummyClient.onReady();
+    } else {
+      // Update the state to "Connecting"
+      this.setState({
+        connectionStatus: ConnectingC(client),
+      });
+    }
   }
 
   startGame() {
@@ -252,7 +278,6 @@ class App extends React.Component<{}, AppState> {
 
   displayFailure(message: string) {
     this.setState({
-      ...this.state,
       failureMessage: message,
     });
   }

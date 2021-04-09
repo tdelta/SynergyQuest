@@ -36,3 +36,14 @@ project.
 When resuming development at a later point in time, you can omit the first 4 steps after having
 them executed at least once the first time.
 However, if you change one of the local libs, you have to run the first 4 steps again.
+
+## Debugging & Designing
+
+In case you want to display the game controls without starting the actual game and connecting to it, we provide a dummy client implementation, that simply acts as if it was connected to a game server.
+
+You can display the game controls using:
+```sh
+yarn start-dummy
+```
+
+The dummy allows setting values such as the current health points or the enabled buttons (see ``App.tsx``), which simplifies work on the visual design of the UI.

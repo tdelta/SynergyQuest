@@ -25,7 +25,7 @@
  * see `LICENSE.md` at the root of this source code repository.
  */
 
-import { ControllerClient, PlayerColor } from 'controller-client-lib';
+import { IControllerClient, PlayerColor } from 'controller-client-lib';
 import React, { createRef } from 'react';
 import './Controller.css';
 import PauseSymbol from './gfx/pause.png';
@@ -190,7 +190,7 @@ interface ControlsHeaderRowState {
 }
 
 interface ControlsHeaderRowProps {
-  client: ControllerClient;
+  client: IControllerClient;
   isFullscreen: boolean;
   toggleFullscreen: () => any;
   playerColor: consts.ColorData;

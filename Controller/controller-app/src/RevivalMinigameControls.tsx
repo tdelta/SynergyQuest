@@ -29,7 +29,7 @@ import React from 'react';
 import './Controller.css';
 import './RevivalMinigameControls.css';
 import { boundClass } from 'autobind-decorator';
-import { ControllerClient, Button, PlayerInfo } from 'controller-client-lib';
+import { IControllerClient, Button, PlayerInfo } from 'controller-client-lib';
 import { ControlsHeaderRow } from './ControlsHeaderRow';
 import { InfoBar } from './InfoBar';
 import * as consts from './consts';
@@ -88,7 +88,7 @@ export class RevivalMinigameControls extends React.Component<
 interface RevivalMinigameControlsState {}
 
 interface RevivalMinigameControlsProps {
-  client: ControllerClient;
+  client: IControllerClient;
   isFullscreen: boolean;
   toggleFullscreen: () => Promise<any>;
   playerColor: consts.ColorData;

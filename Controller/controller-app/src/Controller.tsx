@@ -27,7 +27,7 @@
 
 import {
   Button,
-  ControllerClient,
+  IControllerClient,
   InputMode,
   PlayerInfo,
 } from 'controller-client-lib';
@@ -169,7 +169,7 @@ interface ControllerState {
 }
 
 interface ControllerProbs {
-  client: ControllerClient;
+  client: IControllerClient;
   inputMode: InputMode;
   playerColor: consts.ColorData;
   enabledButtons: Set<Button>;
