@@ -241,6 +241,8 @@ class App extends React.Component<{}, AppState> {
       const dummyClient = client as DummyControllerClient;
       dummyClient.setColor(PlayerColor.Red);
       dummyClient.addEnabledButton(Button.Attack);
+      dummyClient.addEnabledButton(Button.Throw);
+      dummyClient.addEnabledButton(Button.Pull);
       dummyClient.addEnabledMenuAction(MenuAction.PauseGame);
       dummyClient.addEnabledMenuAction(MenuAction.ShowMap);
       dummyClient.setPlayerInfo({

@@ -35,6 +35,16 @@
 .controllerMenuItem {
   flex-grow: 1;
   flex-basis: 100%;
+  background-color: #c2185b;
+  background-size: auto 50%;
+  background-repeat: no-repeat;
+  background-position: center;
+  border: none;
+  outline: none;
+}
+
+.controllerMenuItem:active {
+  background-color: #e91e63;
 }
 
 .pixelButton {
@@ -42,13 +52,36 @@
   outline: none;
   flex-grow: 1;
   user-select: none;
+  background-color: var(--bg-dark);
+  image-rendering: crisp-edges;
+  border-image: url('gfx/pixel_button.png');
+  border-image-slice: 10 10 10 10;
+  border-style: solid;
+  border-width: 0.3em 0.3em 0.3em 0.3em;
 }
+
+.pixelButton:enabled:active {
+  image-rendering: crisp-edges;
+  border-image: url('gfx/pixel_button_pressed.png');
+  border-image-slice: 10 10 10 10;
+  border-style: solid;
+  border-width: 0.3em 0.3em 0.3em 0.3em;
+  background-color: var(--bg-light);
+}
+
 .no-click {
     pointer-events: none;
 }
 .pixelButton::-moz-focus-inner{
   border: 0;
 }
+
+html *{
+  font-family: "m6x11";
+  font-weight: bold;
+  font-size: 5vh;
+}
+
 .text {
   display: flex;
   font-family: "m6x11";
@@ -62,7 +95,8 @@
 .textImage {
   height: 5vh;
   width: 5vh;
-  margin: 3pt
+  margin: 0.1em;
+  vertical-align: middle;
 }
 
 .playerAvatar {
@@ -90,9 +124,13 @@
 
 .buttonColumn {
   height: 88%;
-  width: 100%;
+  width: calc(100% - 0.3em);
   display: flex;
   flex-direction: column;
+  border-image: url('gfx/pixel_borders_connected.png');
+  border-image-slice: 10 10 10 10;
+  border-style: solid;
+  border-width: 0 0 0 0.3em;
 }
 
 .buttonRow {
@@ -112,7 +150,8 @@
   top: 12%;
   height: 88%;
   width: 50%;
-  background: #43A047;
+  background: radial-gradient(#43A047,#2b682e);
+  background-image: radial-gradient(#43A047E0,#2b6820E0), url('gfx/pixel_texture.png');
 }
 .iconButton {
   display: flex;
@@ -127,12 +166,14 @@
   position: absolute;
   background-color: #e0e0e0;
   border-color: #f5f5f5;
-  height: 12%;
-  width: 50%;
+  height: calc(12% - 0.58em);
+  width: calc(50% - 2.28em);
   top: 0;
   left: 0;
   color: #000;
   justify-content: space-between;
+  padding-left: 1em;
+  padding-right: 1em;
 }
 
 .cooldownWrapper {
@@ -158,6 +199,62 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+}
+
+.leftBorders {
+  image-rendering: crisp-edges;
+  border-image: url('gfx/pixel_borders.png');
+  border-image-slice: 10 10 10 10;
+  border-style: solid;
+  border-width: 0.3em 0 0.3em 0.3em;
+}
+
+button.middleBorders.controllerMenuItem {
+  image-rendering: crisp-edges;
+  border-image: url('gfx/pixel_button_borders_middle.png');
+  border-image-slice: 15 5 15 15;
+  border-style: solid;
+  border-width: 0.45em 0.15em 0.45em 0.45em;
+}
+
+button.middleBorders.controllerMenuItem:active {
+  image-rendering: crisp-edges;
+  border-image: url('gfx/pixel_button_borders_middle_pressed.png');
+  border-image-slice: 15 5 15 15;
+  border-style: solid;
+  border-width: 0.45em 0.15em 0.45em 0.45em;
+}
+
+button.rightBorders.controllerMenuItem {
+  image-rendering: crisp-edges;
+  border-image: url('gfx/pixel_button_borders.png');
+  border-image-slice: 15 15 15 15;
+  border-style: solid;
+  border-width: 0.45em 0.45em 0.45em 0.45em;
+}
+
+button.rightBorders.controllerMenuItem:active {
+  image-rendering: crisp-edges;
+  border-image: url('gfx/pixel_button_borders_pressed.png');
+  border-image-slice: 15 15 15 15;
+  border-style: solid;
+  border-width: 0.45em 0.45em 0.45em 0.45em;
+}
+
+.middleBorders {
+  image-rendering: crisp-edges;
+  border-image: url('gfx/pixel_borders_connected.png');
+  border-image-slice: 10 10 10 10;
+  border-style: solid;
+  border-width: 0.3em 0 0.3em 0.3em;
+}
+
+.rightBorders {
+  image-rendering: crisp-edges;
+  border-image: url('gfx/pixel_borders_connected.png');
+  border-image-slice: 10 10 10 10;
+  border-style: solid;
+  border-width: 0.3em 0.3em 0.3em 0.3em;
 }
 
 canvas {

@@ -31,6 +31,7 @@ import { PlayerInfo } from 'controller-client-lib';
 import GoldSymbol from './gfx/gold_large.png';
 import HeartSymbol from './gfx/heart_large.png';
 import EmptyHeartSymbol from './gfx/empty_heart_large.png';
+import Crack from './gfx/crack.png';
 
 import _ from 'lodash';
 
@@ -51,15 +52,21 @@ export class InfoBar extends React.PureComponent<InfoBarProps, InfoBarState> {
     }
 
     return (
-      <button className='pixelButton text no-click' id='infoBar'>
+      <div className='leftBorders text' id='infoBar'>
         <div style={{ display: 'inline-flex' }}>
           <img className='textImage' src={GoldSymbol} alt='Coins' />
-          <div style={{ margin: '3pt' }}>{this.props.playerInfo.Gold}</div>
+          <div style={{
+            margin: '0.1em',
+            marginTop: '0.2em',
+          }}>{this.props.playerInfo.Gold}</div>
         </div>
-        <div>
-          {_.times(healthPoints, () => (
-            <img className='textImage' src={HeartSymbol} alt='Heart' />
-          ))}
+        {healthPoints === 1 &&
+          <img 
+            src={Crack} 
+            style={{ height:'100%'}}
+            alt='Cracked Stone' />
+        }     
+        <div style={{display: 'inline' }}>
           {_.times(5 - healthPoints, () => (
             <img
               className='textImage'
@@ -67,8 +74,11 @@ export class InfoBar extends React.PureComponent<InfoBarProps, InfoBarState> {
               alt='Empty Heart'
             />
           ))}
+          {_.times(healthPoints, () => (
+            <img className='textImage' src={HeartSymbol} alt='Heart' />
+          ))}
         </div>
-      </button>
+      </div>
     );
   }
 }

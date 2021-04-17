@@ -66,11 +66,16 @@ export class ControllerButtons extends React.PureComponent<
 
     const info: consts.ColorData = consts.buttonStyles[button];
 
+    const buttonStyleCSS = {
+      '--bg-dark': info.dark,
+      '--bg-light': info.light
+    } as React.CSSProperties;
+
     const buttonElement = (
       <button
         key={button}
         className='pixelButton text'
-        style={{ backgroundColor: info.dark, borderColor: info.light }}
+        style={buttonStyleCSS}
         onMouseDown={_ => this.props.onButtonChanged(button, true)}
         onMouseUp={_ => this.props.onButtonChanged(button, false)}
         onTouchStart={_ => this.props.onButtonChanged(button, true)}
@@ -99,6 +104,7 @@ export class ControllerButtons extends React.PureComponent<
       <button
         className='pixelButton text'
         style={{ backgroundColor: '#e0e0e0', borderColor: '#f5f5f5' }}
+        disabled
       >
         &nbsp;
       </button>

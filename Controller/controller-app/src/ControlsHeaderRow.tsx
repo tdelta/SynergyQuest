@@ -65,58 +65,40 @@ export class ControlsHeaderRow extends React.PureComponent<
     return (
       <>
         <div className='controllerMenuContainer'>
-          <button
-            className='controllerMenuItem text no-click'
+          <div
+            className='middleBorders controllerMenuItem text'
             style={{
               backgroundColor: '#e0e0e0', // cplayerColor.dark,
-              borderColor: '#eeeeee',
               alignItems: 'center',
               backgroundImage: `url(${consts.avatars[playerColorRaw]})`,
-              backgroundSize: 'auto 95%',
-              backgroundRepeat: 'no-repeat',
-              backgroundPosition: 'center',
+              backgroundSize: 'auto 100%',
             }}
           />
           {this.props.canPause && (
             <button
-              className='controllerMenuItem text'
+              className='middleBorders controllerMenuItem text'
               style={{
-                backgroundColor: '#c2185b',
-                borderColor: '#e91e63',
                 backgroundImage: `url(${PauseSymbol})`,
-                backgroundSize: 'auto 50%',
-                backgroundRepeat: 'no-repeat',
-                backgroundPosition: 'center',
               }}
               onClick={_ => this.props.pause()}
             />
           )}
           {this.props.canShowMap && (
             <button
-              className='controllerMenuItem text'
+              className='middleBorders controllerMenuItem text'
               style={{
-                backgroundColor: '#c2185b',
-                borderColor: '#e91e63',
                 backgroundImage: `url(${MapSymbol})`,
-                backgroundSize: 'auto 50%',
-                backgroundRepeat: 'no-repeat',
-                backgroundPosition: 'center',
               }}
               onClick={this.props.showMap}
             />
           )}
           <button
             ref={this.fullscreenHintRef}
-            className='controllerMenuItem text'
+            className='rightBorders controllerMenuItem text'
             style={{
-              backgroundColor: '#c2185b',
-              borderColor: '#e91e63',
               backgroundImage: this.props.isFullscreen
                 ? `url(${DeactivateFullscreenSymbol})`
                 : `url(${ActivateFullscreenSymbol})`,
-              backgroundSize: 'auto 50%',
-              backgroundRepeat: 'no-repeat',
-              backgroundPosition: 'center',
             }}
             onClick={this.props.toggleFullscreen}
           />
