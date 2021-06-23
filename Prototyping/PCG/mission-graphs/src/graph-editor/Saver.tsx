@@ -1,5 +1,4 @@
 import {EditorContextProps} from "gg-editor/lib/components/EditorContext";
-import {GraphData, TreeGraphData} from "@antv/g6/lib/types";
 import React from "react";
 import {withEditorContext} from "gg-editor";
 import { saveAs } from 'file-saver'
@@ -9,6 +8,7 @@ import {LinkData, NodeData} from "../App";
 import { Graph } from "ngraph.graph";
 import {nGraphFromG6} from "./nGraphFromG6";
 import {fileDialog} from "file-select-dialog";
+import {GraphData, TreeGraphData } from "@antv/g6";
 
 interface SaverProps extends EditorContextProps {
     onGraphChanged?: (g6Graph: GraphData | TreeGraphData) => unknown;
@@ -33,7 +33,7 @@ class SaverRaw extends React.Component<SaverProps, any> {
     }
 
     handleGraphChange(): GraphData {
-        const graph = this.props.graph!.save();
+        const graph = this.props.graph!.save() as any;
 
         if (this.props.onGraphChanged != null) {
             this.props.onGraphChanged(graph)

@@ -3,6 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@antv/algorithm": "^0.1.9",
+    "@antv/g6": "^4.3.3",
+    "@antv/path-util": "^2.0.9",
+    "@babel/runtime": "^7.14.6",
     "@material-ui/core": "^4.11.3",
     "@material-ui/icons": "^4.11.2",
     "@testing-library/jest-dom": "^5.11.4",
@@ -13,6 +17,7 @@
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
     "colors": "^1.4.0",
+    "diagram-editor": "^0.0.15",
     "extend": "^3.0.2",
     "file-saver": "^2.0.5",
     "file-select-dialog": "^1.5.4",
@@ -31,6 +36,7 @@
     "react-dom": "^17.0.2",
     "react-scripts": "4.0.3",
     "subgraph-isomorphism": "^1.0.0",
+    "tslib": "^2.3.0",
     "typescript": "^4.1.2",
     "web-vitals": "^1.0.1"
   },
@@ -60,6 +66,8 @@
   },
   "devDependencies": {
     "@types/file-saver": "^2.0.2",
-    "@types/lodash": "^4.14.170"
+    "@types/lodash": "^4.14.170",
+    "eslint-config-react": "^1.1.7",
+    "eslint-config-react-app": "^6.0.0"
   }
 }

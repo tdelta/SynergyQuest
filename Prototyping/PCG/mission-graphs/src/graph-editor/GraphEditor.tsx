@@ -1,11 +1,11 @@
 import React from "react";
-import {GraphData, TreeGraphData} from "@antv/g6/lib/types";
 import {nGraphFromG6} from "./nGraphFromG6";
 import GGEditor, {EditableLabel, Flow, Item, ItemPanel} from "gg-editor";
 import {g6FromNGraph} from "./g6FromNGraph";
 import {Saver} from "./Saver";
 import {LinkData, NodeData} from "../App";
 import {Graph} from 'ngraph.graph'
+import { GraphData, TreeGraphData } from "@antv/g6";
 
 interface GraphEditorProps {
     graph: Graph<NodeData, LinkData>,

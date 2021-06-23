@@ -4,11 +4,11 @@ import 'litegraph.js/css/litegraph.css';
 // import RuleEditor from "./RuleEditor";
 import './graph-editor/bizEdge'
 import './graph-editor/bizExNode'
-import {EdgeConfig, NodeConfig} from "@antv/g6/lib/types";
 import createGraph, {Graph, Link, Node, NodeId} from 'ngraph.graph';
 import findSubgraphIsomorphisms from "./graphtools/subgraphIsomorphism";
 import {GraphEditor} from "./graph-editor/GraphEditor";
 import toJson from "ngraph.tojson";
+import {EdgeConfig, NodeConfig } from '@antv/g6';
 
 export interface NodeData {
     type: string;

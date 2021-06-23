@@ -45,7 +45,7 @@ const bizFlowEdge: CustomEdge = {
         },
     },
 
-    createLabelWrapper(group: GGroup) {
+    createLabelWrapper(group: any) {
         const label = group.findByClassName(EDGE_LABEL_CLASS_NAME);
         const labelWrapper = group.findByClassName(EDGE_LABEL_WRAPPER_CLASS_NAME);
 
@@ -70,7 +70,7 @@ const bizFlowEdge: CustomEdge = {
         group.sort();
     },
 
-    updateLabelWrapper(group: GGroup) {
+    updateLabelWrapper(group: any) {
         const label = group.findByClassName(EDGE_LABEL_CLASS_NAME);
         const labelWrapper = group.findByClassName(EDGE_LABEL_WRAPPER_CLASS_NAME);
 
@@ -108,7 +108,7 @@ const bizFlowEdge: CustomEdge = {
     },
 
     setState(name, value, item) {
-        const shape: GShape = item?.get('keyShape')!;
+        const shape: any = item?.get('keyShape')!;
 
         if (!shape) {
             return;
@@ -133,6 +133,6 @@ const bizFlowEdge: CustomEdge = {
     },
 };
 
-G6.registerEdge('bizEdge', bizFlowEdge, 'polyline');
+G6.registerEdge('bizEdge', bizFlowEdge as any, 'polyline');
 
 export {}

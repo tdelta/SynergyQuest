@@ -1,7 +1,7 @@
 import {LinkData, NodeData} from "../App";
 
 import {Graph} from 'ngraph.graph';
-import {EdgeConfig, GraphData, NodeConfig} from "@antv/g6/lib/types";
+import {EdgeConfig, GraphData, NodeConfig} from "@antv/algorithm/lib/types";
 
 export function g6FromNGraph(nGraph: Graph<NodeData, LinkData>, useRuleIds: boolean = true): GraphData {
     const nodes: NodeConfig[] = []

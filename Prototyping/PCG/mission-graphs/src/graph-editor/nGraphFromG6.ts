@@ -1,7 +1,7 @@
-import {GraphData} from "@antv/g6/lib/types";
 import {LinkData, NodeData} from "../App";
 
 import createGraph, {Graph} from 'ngraph.graph';
+import { GraphData } from "@antv/g6";
 
 export function nGraphFromG6(g6Graph: GraphData, useRuleIds: boolean = true): Graph<NodeData, LinkData> {
     const g6Nodes = g6Graph.nodes || [];

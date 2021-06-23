@@ -78,7 +78,7 @@ const bizExNode: CustomNode = {
 
      */
 
-    drawContent(model: NodeModel, group: GGroup) {
+    drawContent(model: NodeModel, group: any) {
         const [width, height] = this.getSize!(model);
         const { contentStyle } = this.getOptions(model);
 
@@ -217,4 +217,4 @@ const bizExNode: CustomNode = {
     */
 };
 
-G6.registerNode('bizExNode', bizExNode, 'bizFlowNode');
+G6.registerNode('bizExNode', bizExNode as any, 'bizFlowNode');
