@@ -62,6 +62,15 @@ public class Throwable : MonoBehaviour
     private float _cachedMass;
 
     /**
+     * When being thrown, objects can be very fast moving.
+     * To not miss any collisions of a thrown object, we temporarily set the collision detection mode of its rigidbody
+     * to "Dynamic", which has bad performance, but detects all collisions.
+     *
+     * We store the original collision detection mode before the throw in here, so that it can be restored afterwards.
+     */
+    private CollisionDetectionMode2D _cachedCollisionDetectionMode;
+
+    /**
      * Event which is invoked if this object has just been picked up by a player
      */
     public event PickedUpAction OnPickedUp;
@@ -177,6 +186,12 @@ public class Throwable : MonoBehaviour
             _physicsEffects.rigidbody2D.mass = _cachedMass;
             _physicsEffects.FrictionEnabled = false;
             
+            // When being thrown, objects can be very fast moving.
+            // To not miss any collisions of a thrown object, we temporarily set the collision detection mode of its rigidbody
+            // to "Dynamic", which has bad performance, but detects all collisions.
+            _cachedCollisionDetectionMode = _physicsEffects.rigidbody2D.collisionDetectionMode;
+            _physicsEffects.rigidbody2D.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+            
             ApplyThrowingMovement(direction);
             
             _hingeJoint2D.connectedBody = null;
@@ -225,32 +240,52 @@ public class Throwable : MonoBehaviour
         else if (direction is Direction.Up)
         {
             distance -= position.y - carrierPosition.y;
-            
-            // If the object to be thrown is within a collider, then we dont allow throwing upwards at all
-            // (distance := 0)
-            //
-            // Why? Imagine a player is standing directly below a wall, holding a bomb. The bomb is now within the
-            // collider of the wall.
-            // The right behaviour is now to immediately collide when throwing upwards => the bomb falls down.
-            // Without this check, it would be possible to throw the bomb through the wall
-
-            // Find the collisions:
-            // ReSharper disable once Unity.PreferNonAllocApi
-            var collisions = Physics2D.OverlapBoxAll(
-                _collider.transform.position, // Check at the position of the collider of this object
-                _collider.bounds.size,
-                0.0f,
-                Physics2D.GetLayerCollisionMask(_collider.gameObject.layer) // and ignore any collisions with layers the collider would ignore too
-            )
-                // Also, we dont want to register any collisions with the player who is carrying the collider
-                .Where(otherCollider => otherCollider.TryGetComponent(out PlayerController player) &&
-                                        !ReferenceEquals(player, _carrier));
-            
-            // If there any collisions, reset the distance to be thrown to 0 for the reasons explained above
-            if (collisions.Any())
-            {
-                distance = 0;
-            }
+        }
+        
+        // If there is a collider next to the carrier in the direction that we want to throw, we allow trowing only with a
+        // distance of 0 (object being thrown immediately falls down)
+        //
+        // We only consider collisions with the 'LevelStatic' layer though, since it should still be possible to throw objects against other movable objects (eg. players)
+        // which are not part of the static level structure (eg. walls).
+        // 
+        // This prevents some bugs where it was possible to throw players into locations which are normally not accessible
+        // For example, without this check, it would be possible to throw objects through walls (since the physics does sometimes not detect the collisions fast enough / resolve them correctly)
+        
+        // Determine position next to the carrier where we want to check for collisions
+        Vector3 collisionCheckPosition = _carrier.gameObject.DetermineAABB().GetBorderCenter(direction);
+        switch (direction)
+        {
+            case Direction.Up:
+                collisionCheckPosition.y += _collider.bounds.extents.y;
+                break;
+            case Direction.Down:
+                collisionCheckPosition.y -= _collider.bounds.extents.y;
+                break;
+            case Direction.Left:
+                collisionCheckPosition.x -= _collider.bounds.extents.x;
+                break;
+            case Direction.Right:
+                collisionCheckPosition.x += _collider.bounds.extents.x;
+                break;
+        }
+        
+        // Find the collisions:
+        // ReSharper disable once Unity.PreferNonAllocApi
+        var collisions = Physics2D.OverlapBoxAll(
+            collisionCheckPosition,
+            _collider.bounds.size,
+            0.0f,
+            Physics2D.GetLayerCollisionMask(_collider.gameObject.layer) // and ignore any collisions with layers the collider would ignore too
+        )
+            // Also, we dont want to register any collisions with the player who is carrying the collider
+            .Where(otherCollider =>     !this.gameObject.IsParentOf(otherCollider.gameObject) &&
+                                        !_carrier.gameObject.IsParentOf(otherCollider.gameObject)
+                                    );
+        
+        // If there any collisions, reset the distance to be thrown to 0 for the reasons explained above
+        if (collisions.Any())
+        {
+            distance = 0;
         }
         
         var gravity = -PhysicsEffects.GravitationalAcceleration;
@@ -335,6 +370,9 @@ public class Throwable : MonoBehaviour
         this.gameObject.layer = _cachedLayer;
         Physics2D.IgnoreCollision(_collider, _carrier.Collider, false);
         _renderer.sortingOrder--;
+        
+        // restore collision detectoin mode
+        _physicsEffects.rigidbody2D.collisionDetectionMode = _cachedCollisionDetectionMode;
         
         foreach (var interactive in GetComponents<Interactive>())
         {

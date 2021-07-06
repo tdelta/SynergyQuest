@@ -23,6 +23,7 @@
 // Additional permission under GNU GPL version 3 section 7 apply,
 // see `LICENSE.md` at the root of this source code repository.
 
+using System.Linq;
 using Cinemachine;
 using UnityEngine;
 
@@ -150,6 +151,21 @@ public static class GameObjectExtensions
         else
         {
             return new Bounds(go.transform.position, Vector3.zero);
+        }
+    }
+
+    public static bool IsParentOf(this GameObject self, GameObject other)
+    {
+        if (ReferenceEquals(self, other))
+        {
+            return true;
+        }
+
+        else
+        {
+            return Enumerable.Range(0, self.transform.childCount)
+                .Select(childIdx => self.transform.GetChild(childIdx).gameObject)
+                .Any(child => child.IsParentOf(other));
         }
     }
 }

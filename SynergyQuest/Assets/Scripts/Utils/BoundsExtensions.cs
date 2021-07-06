@@ -87,4 +87,35 @@ public static class BoundsExtensions
             ComputeAxisOverlap(lhsMin.z, lhsMax.z, rhsMin.z, rhsMax.z)
         );
     }
+
+    /**
+     * Computes centered position on the border of the given bounds, e.g.
+     * if <see cref="Direction"/> is <see cref="Direction.Up"/>, then the
+     * horizontally centered position on top of the given bounds is returned.
+     */
+    public static Vector3 GetBorderCenter(this Bounds lhs, Direction direction)
+    {
+        var ret = lhs.center;
+
+        switch (direction)
+        {
+            case Direction.Up:
+                ret.y += lhs.extents.y;
+                break;
+            
+            case Direction.Down:
+                ret.y -= lhs.extents.y;
+                break;
+            
+            case Direction.Left:
+                ret.x -= lhs.extents.x;
+                break;
+            
+            case Direction.Right:
+                ret.x += lhs.extents.x;
+                break;
+        }
+        
+        return ret;
+    }
 }
