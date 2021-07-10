@@ -1,0 +1,40 @@
+new graph RewriteRules "Mission"
+
+new :Start($=S)
+new:End($=F)
+new:Task($="T1")
+new:Task($="T2")
+new:Task($="T3")
+new:Task($="T4")
+new:Task($="T5")
+new:Task($="T6")
+new:Task($="T7")
+new:Task($="T8")
+
+new@(S)    -:Next-> @("T1")
+new@("T1") -:Next-> @("T2")
+new@("T2") -:Next-> @("T3")
+new@("T3") -:Next-> @("T4")
+new@("T4") -:Next-> @("T5")
+new@("T5") -:Next-> @("T6")
+new@("T6") -:Next-> @("T7")
+new@("T7") -:Next-> @("T8")
+new@("T8") -:Next-> @(F)
+
+dump set node Node bordercolor Black
+dump set edge Edge color Black
+
+dump set edge Next labels off
+
+dump set node Task color Blue
+
+dump set node Lock color Red
+dump set node Lock shape hexagon
+
+dump set node Key color Green
+dump set node Key shape circle
+
+dump set edge BelongsTo linestyle dashed
+dump set edge BelongsTo color Grey
+
+debug exec ($[reorganize] $| $[addKeyAndLock] $| $[moveLockForward] $| $[moveKeyBackward])*

@@ -1,0 +1,14 @@
+abstract node class Mission {}
+
+node class Start extends Mission { }
+
+node class Task extends Mission { }
+
+node class Key extends Mission { }
+
+node class Lock extends Mission { }
+
+node class End extends Mission { }
+
+edge class Next { }
+edge class BelongsTo { }

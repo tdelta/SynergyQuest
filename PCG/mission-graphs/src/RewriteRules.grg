@@ -1,0 +1,39 @@
+#using "Mission.gm"
+
+rule addKeyAndLock {
+  t1:Task -d1:Next-> t2:Task;
+
+  replace {
+    t1 -:Next-> l1:Lock -:Next-> t2;
+    t1 -:Next-> k1:Key -:BelongsTo-> l1;
+  }
+}
+
+rule moveLockForward {
+  t1:Task -:Next-> n:Mission -:Next-> l1:Lock;
+
+  replace {
+    t1 -:Next-> l1;
+    t1 -:Next-> n;
+  }
+}
+
+rule moveKeyBackward {
+  n:Mission -:Next-> k1:Key -:BelongsTo-> l1:Lock -:Next-> t1:Task -:Next-> t2:Task;
+
+  replace {
+    n -:Next-> t1 -:Next-> k1 -:BelongsTo-> l1 -:Next-> t2;
+  }
+}
+
+rule reorganize {
+  t1:Task -d1:Next-> t2:Task -d2:Next-> t3:Task;
+  replace{
+    t1 -:Next-> t2;
+    t1 -:Next-> t3;
+  }
+}
+
+sequence randomRule() {
+  $[reorganize] $| $[addKeyAndLock] $| $[moveLockForward] $| $[moveKeyBackward]
+}
